@@ -642,15 +642,25 @@
 .hero-content {
   position: relative;
   z-index: 2;
-
   width: 100%;
 
-  padding:
-    160px 0 60px;
+  padding-left: clamp(32px, 6.5vw, 120px);
+  padding-right: clamp(32px, 6.5vw, 120px);
+  padding-bottom: 60px;
+}
+
+.hero-topline {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.hero h1 {
+  max-width: 920px;
 }
 
 .hero-description {
-  max-width: 560px;
+  max-width: 600px;
+}
 
   font-size: 1rem;
   line-height: 1.85;
