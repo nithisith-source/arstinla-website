@@ -1,0 +1,4771 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    ARSTINLA Design & Consult | Architecture, Design & Consultation
+  </title>
+
+  <meta
+    name="description"
+    content="ARSTINLA Design & Consult — ออกแบบบ้านและอาคาร แบบก่อสร้าง แบบสำหรับกระบวนการขออนุญาต และให้คำปรึกษาก่อนเริ่มสร้าง"
+  >
+
+  <meta name="theme-color" content="#171816">
+
+  <!-- OPEN GRAPH -->
+  <meta property="og:title"
+        content="ARSTINLA Design & Consult">
+
+  <meta property="og:description"
+        content="Design for Real Life. ออกแบบจากคน ที่ดิน และการใช้งานจริง">
+
+  <meta property="og:type" content="website">
+
+  <!-- MODERN FONT -->
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+<style>
+
+  /* =========================================================
+     ARSTINLA V2
+     Modern Architecture / Swiss Editorial
+  ========================================================= */
+
+  :root {
+
+    --black: #171816;
+    --dark: #222320;
+    --dark-soft: #2b2c29;
+
+    --cream: #f3f0e8;
+    --paper: #e9e5dc;
+
+    --white: #ffffff;
+    --gray: #a7a79f;
+    --line: rgba(23, 24, 22, 0.16);
+
+    --orange: #c36b48;
+    --orange-dark: #a65335;
+
+    --font-en: "Space Grotesk", sans-serif;
+    --font-th: "IBM Plex Sans Thai", sans-serif;
+
+    --max: 1320px;
+
+    --ease:
+      cubic-bezier(.2,.7,.2,1);
+  }
+
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+
+  body {
+
+    background: var(--cream);
+
+    color: var(--black);
+
+    font-family: var(--font-th);
+
+    font-weight: 300;
+
+    -webkit-font-smoothing: antialiased;
+
+    overflow-x: hidden;
+  }
+
+
+  body.modal-open {
+    overflow: hidden;
+  }
+
+
+  ::selection {
+    background: var(--orange);
+    color: white;
+  }
+
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+
+  img {
+    display: block;
+    width: 100%;
+  }
+
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+
+  button {
+    cursor: pointer;
+  }
+
+
+  .container {
+
+    width: min(
+      calc(100% - 64px),
+      var(--max)
+    );
+
+    margin: auto;
+  }
+
+
+  /* =========================================================
+     TYPOGRAPHY
+  ========================================================= */
+
+
+  .label {
+
+    font-family: var(--font-en);
+
+    font-size: .68rem;
+
+    font-weight: 500;
+
+    letter-spacing: .24em;
+
+    text-transform: uppercase;
+  }
+
+
+  .section-title {
+
+    font-family:
+      var(--font-en),
+      var(--font-th);
+
+    font-size:
+      clamp(
+        2.6rem,
+        5.7vw,
+        6rem
+      );
+
+    line-height: .98;
+
+    font-weight: 300;
+
+    letter-spacing: -.06em;
+  }
+
+
+  .section-title.th {
+
+    font-family: var(--font-th);
+
+    line-height: 1.18;
+
+    letter-spacing: -.045em;
+  }
+
+
+  .body-large {
+
+    font-size:
+      clamp(
+        1.05rem,
+        1.4vw,
+        1.25rem
+      );
+
+    line-height: 1.85;
+
+    font-weight: 300;
+
+    color: #545550;
+  }
+
+
+  /* =========================================================
+     BUTTONS
+  ========================================================= */
+
+
+  .btn {
+
+    min-height: 54px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 24px;
+
+    border: 1px solid transparent;
+
+    transition:
+      background .3s var(--ease),
+      color .3s var(--ease),
+      border .3s var(--ease),
+      transform .3s var(--ease);
+
+    font-size: .87rem;
+
+    font-weight: 400;
+  }
+
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+
+  .btn-primary {
+
+    background: var(--orange);
+
+    color: white;
+  }
+
+
+  .btn-primary:hover {
+    background: var(--orange-dark);
+  }
+
+
+  .btn-outline {
+
+    border-color:
+      rgba(255,255,255,.55);
+
+    color: white;
+  }
+
+
+  .btn-outline:hover {
+
+    background: white;
+
+    color: var(--black);
+  }
+
+
+  .btn-dark {
+
+    border-color: var(--black);
+
+    color: var(--black);
+  }
+
+
+  .btn-dark:hover {
+
+    background: var(--black);
+
+    color: white;
+  }
+
+
+  /* =========================================================
+     NAVIGATION
+  ========================================================= */
+
+
+  .nav {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 86px;
+
+    z-index: 1000;
+
+    color: white;
+
+    transition:
+      background .35s var(--ease),
+      color .35s var(--ease),
+      height .35s var(--ease);
+  }
+
+
+  .nav.scrolled {
+
+    height: 72px;
+
+    background:
+      rgba(243,240,232,.94);
+
+    backdrop-filter: blur(16px);
+
+    -webkit-backdrop-filter:
+      blur(16px);
+
+    color: var(--black);
+
+    border-bottom:
+      1px solid rgba(0,0,0,.08);
+  }
+
+
+  .nav-inner {
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+      space-between;
+  }
+
+
+  .logo {
+
+    font-family: var(--font-en);
+
+    font-weight: 600;
+
+    letter-spacing: .23em;
+
+    font-size: 1.2rem;
+
+    line-height: 1;
+  }
+
+
+  .logo-sub {
+
+    display: block;
+
+    font-size: .48rem;
+
+    letter-spacing: .28em;
+
+    font-weight: 400;
+
+    margin-top: 7px;
+
+    opacity: .72;
+  }
+
+
+  .nav-links {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 32px;
+
+    font-family: var(--font-en);
+
+    font-size: .72rem;
+
+    font-weight: 500;
+
+    letter-spacing: .08em;
+
+    text-transform: uppercase;
+  }
+
+
+  .nav-links a {
+    transition: opacity .25s;
+  }
+
+
+  .nav-links a:hover {
+    opacity: .55;
+  }
+
+
+  .nav-contact {
+
+    padding:
+      11px 17px;
+
+    border:
+      1px solid currentColor;
+  }
+
+
+  .mobile-menu-button {
+
+    display: none;
+
+    background: none;
+
+    color: inherit;
+
+    border: 0;
+
+    width: 40px;
+
+    height: 40px;
+
+    position: relative;
+  }
+
+
+  .mobile-menu-button span {
+
+    position: absolute;
+
+    width: 23px;
+
+    height: 1px;
+
+    background: currentColor;
+
+    left: 8px;
+
+    transition:
+      transform .25s,
+      top .25s;
+  }
+
+
+  .mobile-menu-button span:first-child {
+    top: 15px;
+  }
+
+
+  .mobile-menu-button span:last-child {
+    top: 23px;
+  }
+
+
+  .mobile-menu-button.active
+  span:first-child {
+
+    top: 19px;
+
+    transform: rotate(45deg);
+  }
+
+
+  .mobile-menu-button.active
+  span:last-child {
+
+    top: 19px;
+
+    transform: rotate(-45deg);
+  }
+
+
+  /* =========================================================
+     HERO
+  ========================================================= */
+
+
+  .hero {
+
+    min-height: 100svh;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    overflow: hidden;
+
+    color: white;
+
+    background:
+      #383936;
+  }
+
+
+  .hero-media {
+
+    position: absolute;
+
+    inset: -6%;
+
+    background-image:
+      linear-gradient(
+        90deg,
+        rgba(11,12,10,.84) 0%,
+        rgba(11,12,10,.46) 50%,
+        rgba(11,12,10,.15) 100%
+      ),
+      linear-gradient(
+        0deg,
+        rgba(0,0,0,.55),
+        transparent 55%
+      ),
+      url("assets/hero.jpg");
+
+    background-position: center;
+
+    background-size: cover;
+
+    transform: scale(1.04);
+
+    will-change: transform;
+  }
+
+
+  .hero-grain {
+
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .12;
+
+    pointer-events: none;
+
+    background-image:
+      radial-gradient(
+        rgba(255,255,255,.5)
+        .5px,
+        transparent .7px
+      );
+
+    background-size:
+      5px 5px;
+
+    mix-blend-mode:
+      soft-light;
+  }
+
+
+  .hero-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    padding:
+      170px 0 72px;
+  }
+
+
+  .hero-topline {
+
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    align-items: center;
+
+    border-top:
+      1px solid
+      rgba(255,255,255,.28);
+
+    padding-top: 18px;
+
+    margin-bottom:
+      clamp(
+        40px,
+        7vh,
+        90px
+      );
+  }
+
+
+  .hero-topline-right {
+
+    font-family:
+      var(--font-en);
+
+    font-size: .68rem;
+
+    letter-spacing: .13em;
+
+    text-transform: uppercase;
+
+    opacity: .75;
+  }
+
+
+  .hero h1 {
+
+    font-family: var(--font-en);
+
+    font-size:
+      clamp(
+        4.2rem,
+        10vw,
+        10rem
+      );
+
+    line-height: .82;
+
+    font-weight: 300;
+
+    letter-spacing: -.075em;
+
+    max-width: 1050px;
+  }
+
+
+  .hero h1 strong {
+
+    font-weight: 600;
+  }
+
+
+  .hero-bottom {
+
+    margin-top: 50px;
+
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 50px;
+
+    align-items: end;
+  }
+
+
+  .hero-description {
+
+    max-width: 640px;
+
+    font-size: 1.05rem;
+
+    font-weight: 300;
+
+    line-height: 1.85;
+
+    color:
+      rgba(255,255,255,.82);
+  }
+
+
+  .hero-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+  }
+
+
+  .scroll-indicator {
+
+    position: absolute;
+
+    right: 28px;
+
+    top: 50%;
+
+    transform:
+      translateY(-50%)
+      rotate(90deg);
+
+    transform-origin: center;
+
+    font-family: var(--font-en);
+
+    font-size: .6rem;
+
+    letter-spacing: .22em;
+
+    text-transform: uppercase;
+
+    opacity: .55;
+  }
+
+
+  /* =========================================================
+     MARQUEE
+  ========================================================= */
+
+
+  .marquee {
+
+    overflow: hidden;
+
+    background: var(--orange);
+
+    color: white;
+
+    padding: 17px 0;
+  }
+
+
+  .marquee-track {
+
+    display: flex;
+
+    width: max-content;
+
+    animation:
+      marquee 28s linear
+      infinite;
+  }
+
+
+  .marquee-item {
+
+    font-family: var(--font-en);
+
+    font-size: .73rem;
+
+    font-weight: 500;
+
+    letter-spacing: .17em;
+
+    text-transform: uppercase;
+
+    padding-right: 60px;
+  }
+
+
+  @keyframes marquee {
+
+    to {
+      transform:
+        translateX(-50%);
+    }
+
+  }
+
+
+  /* =========================================================
+     INTRO
+  ========================================================= */
+
+
+  .intro {
+
+    padding:
+      150px 0;
+  }
+
+
+  .intro-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      1.2fr .8fr;
+
+    gap:
+      clamp(
+        60px,
+        10vw,
+        160px
+      );
+
+    align-items: end;
+  }
+
+
+  .intro-headline {
+
+    font-family: var(--font-th);
+
+    font-size:
+      clamp(
+        2.6rem,
+        5vw,
+        5.6rem
+      );
+
+    line-height: 1.18;
+
+    letter-spacing: -.05em;
+
+    font-weight: 300;
+  }
+
+
+  .intro-headline span {
+    color: var(--orange);
+  }
+
+
+  .intro-copy {
+
+    max-width: 550px;
+  }
+
+
+  .intro-copy .label {
+
+    color: var(--orange);
+
+    margin-bottom: 26px;
+  }
+
+
+  /* =========================================================
+     SERVICES
+  ========================================================= */
+
+
+  .services {
+
+    padding:
+      140px 0;
+
+    background:
+      var(--black);
+
+    color: white;
+  }
+
+
+  .services-heading {
+
+    display: grid;
+
+    grid-template-columns:
+      1.3fr .7fr;
+
+    gap: 60px;
+
+    align-items: end;
+  }
+
+
+  .services .label {
+    color: var(--orange);
+  }
+
+
+  .services-note {
+
+    max-width: 430px;
+
+    color:
+      rgba(255,255,255,.57);
+
+    line-height: 1.8;
+  }
+
+
+  .services-list {
+
+    margin-top: 90px;
+
+    border-top:
+      1px solid
+      rgba(255,255,255,.18);
+  }
+
+
+  .service-row {
+
+    display: grid;
+
+    grid-template-columns:
+      80px
+      1fr
+      1fr
+      50px;
+
+    gap: 30px;
+
+    align-items: center;
+
+    min-height: 150px;
+
+    border-bottom:
+      1px solid
+      rgba(255,255,255,.18);
+
+    transition:
+      background .35s var(--ease),
+      padding .35s var(--ease);
+  }
+
+
+  .service-row:hover {
+
+    background:
+      rgba(255,255,255,.035);
+
+    padding:
+      0 18px;
+  }
+
+
+  .service-number {
+
+    font-family: var(--font-en);
+
+    font-size: .72rem;
+
+    color: var(--orange);
+  }
+
+
+  .service-title {
+
+    font-family: var(--font-en);
+
+    font-weight: 300;
+
+    font-size:
+      clamp(
+        2rem,
+        3.3vw,
+        4rem
+      );
+
+    letter-spacing: -.05em;
+  }
+
+
+  .service-desc {
+
+    max-width: 460px;
+
+    color:
+      rgba(255,255,255,.57);
+
+    line-height: 1.75;
+  }
+
+
+  .service-arrow {
+
+    font-family: var(--font-en);
+
+    font-size: 1.5rem;
+
+    transition:
+      transform .25s;
+  }
+
+
+  .service-row:hover
+  .service-arrow {
+
+    transform:
+      translateX(6px);
+  }
+
+
+  /* =========================================================
+     PROJECTS
+  ========================================================= */
+
+
+  .projects {
+
+    padding:
+      150px 0;
+  }
+
+
+  .projects-header {
+
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    align-items: end;
+
+    gap: 40px;
+
+    margin-bottom: 65px;
+  }
+
+
+  .projects-header .label {
+    color: var(--orange);
+  }
+
+
+  .projects-count {
+
+    font-family: var(--font-en);
+
+    color: #676862;
+
+    font-size: .76rem;
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+  }
+
+
+  .projects-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(12,1fr);
+
+    gap: 24px;
+  }
+
+
+  .project {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #757670;
+
+    cursor: pointer;
+  }
+
+
+  .project:nth-child(1) {
+
+    grid-column:
+      span 8;
+
+    aspect-ratio:
+      1.45 / 1;
+  }
+
+
+  .project:nth-child(2) {
+
+    grid-column:
+      span 4;
+
+    aspect-ratio:
+      .73 / 1;
+  }
+
+
+  .project:nth-child(3) {
+
+    grid-column:
+      span 5;
+
+    aspect-ratio:
+      1 / 1;
+  }
+
+
+  .project:nth-child(4) {
+
+    grid-column:
+      span 7;
+
+    aspect-ratio:
+      1.35 / 1;
+  }
+
+
+  .project:nth-child(5) {
+
+    grid-column:
+      span 7;
+
+    aspect-ratio:
+      1.35 / 1;
+  }
+
+
+  .project:nth-child(6) {
+
+    grid-column:
+      span 5;
+
+    aspect-ratio:
+      1 / 1;
+  }
+
+
+  .project-bg {
+
+    position: absolute;
+
+    inset: 0;
+
+    background-position:
+      center;
+
+    background-size:
+      cover;
+
+    transition:
+      transform .9s var(--ease);
+
+    transform: scale(1.01);
+  }
+
+
+  .project:hover
+  .project-bg {
+
+    transform:
+      scale(1.055);
+  }
+
+
+  .project-shade {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+      linear-gradient(
+        0deg,
+        rgba(0,0,0,.72),
+        rgba(0,0,0,.04)
+        65%
+      );
+  }
+
+
+  .project-info {
+
+    position: absolute;
+
+    left: 28px;
+
+    right: 28px;
+
+    bottom: 26px;
+
+    color: white;
+
+    z-index: 2;
+  }
+
+
+  .project-category {
+
+    font-family: var(--font-en);
+
+    text-transform: uppercase;
+
+    font-size: .61rem;
+
+    letter-spacing: .18em;
+
+    opacity: .7;
+  }
+
+
+  .project-title {
+
+    margin-top: 7px;
+
+    font-family: var(--font-en);
+
+    font-weight: 400;
+
+    letter-spacing: -.035em;
+
+    font-size:
+      clamp(
+        1.3rem,
+        2vw,
+        2rem
+      );
+  }
+
+
+  .project-meta {
+
+    margin-top: 7px;
+
+    font-size: .82rem;
+
+    opacity: .66;
+  }
+
+
+  /* PROJECT IMAGE FILES */
+
+
+  .p1 {
+    background-image:
+      linear-gradient(
+        135deg,
+        #777873,
+        #3d403e
+      ),
+      url("assets/project-01.jpg");
+  }
+
+
+  .p2 {
+    background-image:
+      linear-gradient(
+        135deg,
+        #9e978d,
+        #4f504b
+      ),
+      url("assets/project-02.jpg");
+  }
+
+
+  .p3 {
+    background-image:
+      linear-gradient(
+        135deg,
+        #72746f,
+        #292b29
+      ),
+      url("assets/project-03.jpg");
+  }
+
+
+  .p4 {
+    background-image:
+      linear-gradient(
+        135deg,
+        #aaa091,
+        #5b5b55
+      ),
+      url("assets/project-04.jpg");
+  }
+
+
+  .p5 {
+    background-image:
+      linear-gradient(
+        135deg,
+        #85847e,
+        #393a37
+      ),
+      url("assets/project-05.jpg");
+  }
+
+
+  .p6 {
+    background-image:
+      linear-gradient(
+        135deg,
+        #9f978a,
+        #555752
+      ),
+      url("assets/project-06.jpg");
+  }
+
+
+  /* =========================================================
+     PROJECT MODAL
+  ========================================================= */
+
+
+  .project-modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    background:
+      rgba(15,16,14,.97);
+
+    color: white;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+      opacity .35s var(--ease);
+
+    overflow-y: auto;
+  }
+
+
+  .project-modal.active {
+
+    opacity: 1;
+
+    pointer-events: all;
+  }
+
+
+  .modal-close {
+
+    position: fixed;
+
+    top: 25px;
+
+    right: 28px;
+
+    width: 52px;
+
+    height: 52px;
+
+    background: white;
+
+    color: var(--black);
+
+    border: 0;
+
+    border-radius: 50%;
+
+    font-size: 1.5rem;
+
+    z-index: 3;
+  }
+
+
+  .modal-content {
+
+    width:
+      min(
+        calc(100% - 60px),
+        1200px
+      );
+
+    margin:
+      110px auto 100px;
+  }
+
+
+  .modal-image {
+
+    aspect-ratio:
+      16 / 9;
+
+    background:
+      #555;
+
+    background-size: cover;
+
+    background-position: center;
+
+    margin-bottom: 55px;
+  }
+
+
+  .modal-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      1.3fr .7fr;
+
+    gap: 80px;
+  }
+
+
+  .modal-title {
+
+    font-family: var(--font-en);
+
+    font-size:
+      clamp(
+        3rem,
+        7vw,
+        7rem
+      );
+
+    font-weight: 300;
+
+    letter-spacing: -.065em;
+
+    line-height: .94;
+  }
+
+
+  .modal-description {
+
+    margin-top: 30px;
+
+    max-width: 650px;
+
+    font-size: 1rem;
+
+    line-height: 1.85;
+
+    color: #bdbdb7;
+  }
+
+
+  .modal-meta {
+
+    border-top:
+      1px solid
+      rgba(255,255,255,.2);
+  }
+
+
+  .modal-meta-row {
+
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    gap: 20px;
+
+    padding: 17px 0;
+
+    border-bottom:
+      1px solid
+      rgba(255,255,255,.2);
+
+    font-size: .85rem;
+  }
+
+
+  .modal-meta-row span:first-child {
+
+    font-family: var(--font-en);
+
+    color: #777973;
+
+    font-size: .69rem;
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+  }
+
+
+  /* =========================================================
+     PROCESS
+  ========================================================= */
+
+
+  .process {
+
+    background: var(--paper);
+
+    padding:
+      150px 0;
+  }
+
+
+  .process .label {
+    color: var(--orange);
+  }
+
+
+  .process-header {
+
+    display: grid;
+
+    grid-template-columns:
+      1.15fr .85fr;
+
+    gap: 80px;
+
+    align-items: end;
+  }
+
+
+  .process-intro {
+
+    max-width: 530px;
+
+    color: #64655f;
+
+    line-height: 1.8;
+  }
+
+
+  .process-list {
+
+    margin-top: 80px;
+
+    border-top:
+      1px solid
+      #aaa9a2;
+  }
+
+
+  .process-row {
+
+    display: grid;
+
+    grid-template-columns:
+      100px
+      1fr
+      1fr;
+
+    gap: 30px;
+
+    padding: 32px 0;
+
+    border-bottom:
+      1px solid
+      #aaa9a2;
+  }
+
+
+  .process-number {
+
+    font-family: var(--font-en);
+
+    color: var(--orange);
+
+    font-size: .75rem;
+  }
+
+
+  .process-name {
+
+    font-family: var(--font-en);
+
+    font-size: 1.65rem;
+
+    font-weight: 400;
+
+    letter-spacing: -.035em;
+  }
+
+
+  .process-copy {
+
+    color: #5f605b;
+
+    line-height: 1.7;
+
+    max-width: 460px;
+  }
+
+
+  /* =========================================================
+     PHILOSOPHY
+  ========================================================= */
+
+
+  .philosophy {
+
+    min-height: 90vh;
+
+    background:
+      var(--orange);
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+      130px 0;
+  }
+
+
+  .philosophy .label {
+
+    margin-bottom: 50px;
+  }
+
+
+  .quote {
+
+    font-family: var(--font-en);
+
+    font-size:
+      clamp(
+        3.3rem,
+        8vw,
+        9rem
+      );
+
+    max-width: 1150px;
+
+    font-weight: 300;
+
+    line-height: .88;
+
+    letter-spacing: -.075em;
+  }
+
+
+  .quote strong {
+    font-weight: 600;
+  }
+
+
+  .quote-th {
+
+    margin-top: 55px;
+
+    max-width: 600px;
+
+    font-size: 1rem;
+
+    line-height: 1.8;
+
+    opacity: .8;
+  }
+
+
+  /* =========================================================
+     KNOWLEDGE
+  ========================================================= */
+
+
+  .knowledge {
+
+    padding:
+      150px 0;
+  }
+
+
+  .knowledge .label {
+    color: var(--orange);
+  }
+
+
+  .knowledge-grid {
+
+    margin-top: 70px;
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(3,1fr);
+
+    gap: 30px;
+  }
+
+
+  .article {
+
+    padding-top: 22px;
+
+    border-top:
+      1px solid
+      #aaa9a2;
+  }
+
+
+  .article-number {
+
+    font-family: var(--font-en);
+
+    color: var(--orange);
+
+    font-size: .68rem;
+
+    letter-spacing: .14em;
+  }
+
+
+  .article-category {
+
+    margin-top: 55px;
+
+    font-family: var(--font-en);
+
+    font-size: .65rem;
+
+    letter-spacing: .16em;
+
+    text-transform: uppercase;
+
+    color: #7a7b75;
+  }
+
+
+  .article h3 {
+
+    margin-top: 15px;
+
+    font-family: var(--font-th);
+
+    font-weight: 400;
+
+    font-size:
+      clamp(
+        1.4rem,
+        2.2vw,
+        2rem
+      );
+
+    letter-spacing: -.035em;
+
+    line-height: 1.35;
+  }
+
+
+  .article p {
+
+    margin-top: 18px;
+
+    line-height: 1.75;
+
+    color: #62635d;
+
+    font-size: .92rem;
+  }
+
+
+  .read-more {
+
+    display: inline-flex;
+
+    margin-top: 25px;
+
+    font-family: var(--font-en);
+
+    text-transform: uppercase;
+
+    font-size: .65rem;
+
+    letter-spacing: .13em;
+
+    border-bottom:
+      1px solid
+      currentColor;
+
+    padding-bottom: 4px;
+  }
+
+
+  /* =========================================================
+     CTA STRIP
+  ========================================================= */
+
+
+  .pre-contact {
+
+    background: var(--black);
+
+    color: white;
+
+    padding:
+      110px 0;
+  }
+
+
+  .pre-contact-inner {
+
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    gap: 50px;
+
+    align-items: center;
+  }
+
+
+  .pre-contact h2 {
+
+    font-family: var(--font-th);
+
+    font-size:
+      clamp(
+        2.3rem,
+        4.6vw,
+        5rem
+      );
+
+    line-height: 1.15;
+
+    letter-spacing: -.045em;
+
+    font-weight: 300;
+
+    max-width: 850px;
+  }
+
+
+  /* =========================================================
+     CONTACT
+  ========================================================= */
+
+
+  .contact {
+
+    padding:
+      150px 0;
+
+    background: #121311;
+
+    color: white;
+  }
+
+
+  .contact-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      .8fr 1.2fr;
+
+    gap:
+      clamp(
+        60px,
+        10vw,
+        150px
+      );
+  }
+
+
+  .contact .label {
+    color: var(--orange);
+  }
+
+
+  .contact h2 {
+
+    font-family: var(--font-en);
+
+    font-weight: 300;
+
+    font-size:
+      clamp(
+        3.4rem,
+        7vw,
+        7rem
+      );
+
+    line-height: .9;
+
+    letter-spacing: -.075em;
+
+    margin-top: 25px;
+  }
+
+
+  .contact-description {
+
+    margin-top: 30px;
+
+    color: #979891;
+
+    line-height: 1.85;
+
+    max-width: 470px;
+  }
+
+
+  .contact-small {
+
+    margin-top: 50px;
+
+    font-size: .82rem;
+
+    color: #777872;
+  }
+
+
+  .form {
+
+    display: grid;
+
+    gap: 22px;
+  }
+
+
+  .form-row {
+
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 20px;
+  }
+
+
+  .form-group label {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #85867f;
+
+    font-size: .75rem;
+  }
+
+
+  .form input,
+  .form textarea,
+  .form select {
+
+    width: 100%;
+
+    background: transparent;
+
+    color: white;
+
+    border: 0;
+
+    border-bottom:
+      1px solid #4e504b;
+
+    padding: 13px 0;
+
+    outline: none;
+
+    font-weight: 300;
+
+    border-radius: 0;
+  }
+
+
+  .form textarea {
+
+    min-height: 110px;
+
+    resize: vertical;
+  }
+
+
+  .form input:focus,
+  .form select:focus,
+  .form textarea:focus {
+
+    border-color:
+      var(--orange);
+  }
+
+
+  .form select option {
+
+    background: #222;
+
+    color: white;
+  }
+
+
+  .form-submit {
+
+    margin-top: 15px;
+
+    display: flex;
+
+    justify-content:
+      space-between;
+
+    align-items: center;
+
+    gap: 20px;
+  }
+
+
+  .form-status {
+
+    color: #d79b82;
+
+    font-size: .8rem;
+
+    line-height: 1.5;
+
+    max-width: 380px;
+  }
+
+
+  /* =========================================================
+     FOOTER
+  ========================================================= */
+
+
+  footer {
+
+    padding:
+      55px 0;
+
+    background: #0d0e0c;
+
+    color: #74756f;
+  }
+
+
+  .footer-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr 1fr;
+
+    gap: 40px;
+
+    align-items: end;
+  }
+
+
+  .footer-logo {
+
+    color: white;
+
+    font-family: var(--font-en);
+
+    font-size: 1.2rem;
+
+    font-weight: 600;
+
+    letter-spacing: .23em;
+  }
+
+
+  .footer-logo small {
+
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: .52rem;
+
+    font-weight: 400;
+
+    letter-spacing: .22em;
+
+    opacity: .6;
+  }
+
+
+  .footer-social {
+
+    display: flex;
+
+    gap: 20px;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    font-family: var(--font-en);
+
+    font-size: .68rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: .1em;
+  }
+
+
+  .footer-social a:hover {
+    color: white;
+  }
+
+
+  .footer-copy {
+
+    text-align: right;
+
+    font-size: .72rem;
+  }
+
+
+  /* =========================================================
+     REVEAL ANIMATION
+  ========================================================= */
+
+
+  .reveal {
+
+    opacity: 0;
+
+    transform:
+      translateY(38px);
+
+    transition:
+      opacity .9s var(--ease),
+      transform .9s var(--ease);
+  }
+
+
+  .reveal.visible {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+
+
+  .reveal-delay-1 {
+    transition-delay: .08s;
+  }
+
+
+  .reveal-delay-2 {
+    transition-delay: .16s;
+  }
+
+
+  .reveal-delay-3 {
+    transition-delay: .24s;
+  }
+
+
+  /* =========================================================
+     TABLET
+  ========================================================= */
+
+
+  @media
+  (max-width: 980px) {
+
+
+    .container {
+
+      width:
+        min(
+          calc(100% - 40px),
+          var(--max)
+        );
+    }
+
+
+    .nav-links {
+
+      position: fixed;
+
+      inset: 0;
+
+      padding: 110px 30px 50px;
+
+      background:
+        var(--cream);
+
+      color: var(--black);
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: flex-start;
+
+      justify-content: flex-start;
+
+      gap: 25px;
+
+      font-size: 1.7rem;
+
+      opacity: 0;
+
+      visibility: hidden;
+
+      transition:
+        opacity .3s,
+        visibility .3s;
+
+      z-index: -1;
+    }
+
+
+    .nav-links.active {
+
+      opacity: 1;
+
+      visibility: visible;
+    }
+
+
+    .nav-contact {
+
+      margin-top: 15px;
+
+      font-size: .8rem;
+    }
+
+
+    .mobile-menu-button {
+
+      display: block;
+    }
+
+
+    .hero-bottom,
+    .intro-grid,
+    .services-heading,
+    .process-header,
+    .contact-grid,
+    .modal-grid {
+
+      grid-template-columns: 1fr;
+    }
+
+
+    .hero-buttons {
+      justify-content:
+        flex-start;
+    }
+
+
+    .services-note {
+      margin-top: 10px;
+    }
+
+
+    .service-row {
+
+      grid-template-columns:
+        60px 1fr;
+
+      padding:
+        30px 0;
+    }
+
+
+    .service-desc {
+
+      grid-column:
+        2;
+    }
+
+
+    .service-arrow {
+      display: none;
+    }
+
+
+    .process-row {
+
+      grid-template-columns:
+        70px 1fr;
+    }
+
+
+    .process-copy {
+
+      grid-column: 2;
+    }
+
+
+    .knowledge-grid {
+
+      grid-template-columns:
+        1fr;
+    }
+
+
+    .article-category {
+      margin-top: 30px;
+    }
+
+
+    .pre-contact-inner {
+
+      flex-direction: column;
+
+      align-items: flex-start;
+    }
+
+  }
+
+
+  /* =========================================================
+     MOBILE
+  ========================================================= */
+
+
+  @media
+  (max-width: 650px) {
+
+
+    .nav {
+      height: 70px;
+    }
+
+
+    .logo {
+      font-size: 1rem;
+    }
+
+
+    .logo-sub {
+      display: none;
+    }
+
+
+    .hero-content {
+
+      padding:
+        130px 0 45px;
+    }
+
+
+    .hero-topline-right {
+      display: none;
+    }
+
+
+    .hero h1 {
+
+      font-size:
+        clamp(
+          4rem,
+          20vw,
+          6rem
+        );
+
+      line-height: .86;
+    }
+
+
+    .hero-bottom {
+
+      margin-top: 40px;
+    }
+
+
+    .hero-buttons {
+
+      width: 100%;
+    }
+
+
+    .hero-buttons .btn {
+
+      flex:
+        1 1 auto;
+    }
+
+
+    .scroll-indicator {
+      display: none;
+    }
+
+
+    .intro,
+    .services,
+    .projects,
+    .process,
+    .knowledge,
+    .contact {
+
+      padding:
+        95px 0;
+    }
+
+
+    .philosophy {
+
+      min-height: auto;
+
+      padding:
+        100px 0;
+    }
+
+
+    .projects-grid {
+
+      display: block;
+    }
+
+
+    .project {
+
+      margin-bottom: 18px;
+
+      aspect-ratio:
+        1 / .95 !important;
+    }
+
+
+    .project-info {
+
+      left: 20px;
+
+      right: 20px;
+
+      bottom: 18px;
+    }
+
+
+    .process-row {
+
+      grid-template-columns:
+        45px 1fr;
+
+      gap: 15px;
+
+      padding:
+        25px 0;
+    }
+
+
+    .form-row {
+
+      grid-template-columns:
+        1fr;
+    }
+
+
+    .form-submit {
+
+      align-items:
+        flex-start;
+
+      flex-direction:
+        column;
+    }
+
+
+    .footer-grid {
+
+      grid-template-columns:
+        1fr;
+
+      gap: 30px;
+    }
+
+
+    .footer-social {
+
+      justify-content:
+        flex-start;
+    }
+
+
+    .footer-copy {
+      text-align: left;
+    }
+
+
+    .modal-content {
+
+      width:
+        calc(100% - 30px);
+
+      margin-top: 90px;
+    }
+
+
+    .modal-image {
+
+      aspect-ratio: 1 / 1;
+    }
+
+  }
+
+
+  /* =========================================================
+     ACCESSIBILITY
+  ========================================================= */
+
+
+  @media
+  (prefers-reduced-motion:
+   reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+      scroll-behavior:
+        auto !important;
+
+      animation-duration:
+        .01ms !important;
+
+      animation-iteration-count:
+        1 !important;
+
+      transition-duration:
+        .01ms !important;
+    }
+
+  }
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     NAVIGATION
+======================================================= -->
+
+
+<nav
+  class="nav"
+  id="nav"
+>
+
+  <div class="container nav-inner">
+
+
+    <a
+      href="#home"
+      class="logo"
+    >
+
+      ARSTINLA
+
+      <span class="logo-sub">
+        DESIGN & CONSULT
+      </span>
+
+    </a>
+
+
+    <div
+      class="nav-links"
+      id="navLinks"
+    >
+
+      <a href="#about">
+        About
+      </a>
+
+      <a href="#services">
+        Services
+      </a>
+
+      <a href="#projects">
+        Projects
+      </a>
+
+      <a href="#process">
+        Process
+      </a>
+
+      <a href="#knowledge">
+        Knowledge
+      </a>
+
+      <a
+        href="#contact"
+        class="nav-contact"
+      >
+        Start a Project
+      </a>
+
+    </div>
+
+
+    <button
+      class="mobile-menu-button"
+      id="menuButton"
+      aria-label="Open menu"
+    >
+
+      <span></span>
+      <span></span>
+
+    </button>
+
+
+  </div>
+
+</nav>
+
+
+
+<!-- =======================================================
+     HERO
+======================================================= -->
+
+
+<header
+  class="hero"
+  id="home"
+>
+
+  <div
+    class="hero-media"
+    id="heroMedia"
+  ></div>
+
+  <div class="hero-grain"></div>
+
+
+  <div class="container hero-content">
+
+
+    <div class="hero-topline">
+
+      <div class="label">
+
+        Architecture ·
+        Design ·
+        Consult
+
+      </div>
+
+      <div class="hero-topline-right">
+
+        Thailand /
+        Residential Design
+
+      </div>
+
+    </div>
+
+
+    <h1>
+
+      Design for<br>
+
+      <strong>
+        Real Life.
+      </strong>
+
+    </h1>
+
+
+    <div class="hero-bottom">
+
+
+      <p class="hero-description">
+
+        ARSTINLA Design & Consult
+        ออกแบบบ้านและอาคารจากความเข้าใจในคน
+        ที่ดิน งบประมาณ และวิธีการใช้งานจริง
+
+        ตั้งแต่การวิเคราะห์โครงการ
+        แนวคิดการออกแบบ
+        ไปจนถึงการพัฒนาแบบตามขอบเขตงาน
+
+      </p>
+
+
+      <div class="hero-buttons">
+
+        <a
+          href="#contact"
+          class="btn btn-primary"
+        >
+          ส่งข้อมูลโครงการ
+        </a>
+
+        <a
+          href="#projects"
+          class="btn btn-outline"
+        >
+          ดูผลงาน
+        </a>
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+  <div class="scroll-indicator">
+
+    Scroll to explore
+
+  </div>
+
+</header>
+
+
+
+<!-- =======================================================
+     MARQUEE
+======================================================= -->
+
+
+<div class="marquee">
+
+  <div class="marquee-track">
+
+    <div class="marquee-item">
+      Architecture · Design · Drawing · Permit · Consultation ·
+    </div>
+
+    <div class="marquee-item">
+      Architecture · Design · Drawing · Permit · Consultation ·
+    </div>
+
+    <div class="marquee-item">
+      Architecture · Design · Drawing · Permit · Consultation ·
+    </div>
+
+    <div class="marquee-item">
+      Architecture · Design · Drawing · Permit · Consultation ·
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =======================================================
+     INTRO
+======================================================= -->
+
+
+<section
+  class="intro"
+  id="about"
+>
+
+  <div class="container intro-grid">
+
+
+    <div class="reveal">
+
+      <h2 class="intro-headline">
+
+        บ้านที่ดี
+        ไม่ได้เริ่มจาก
+
+        <span>
+          หน้าตาที่สวยที่สุด
+        </span>
+
+      </h2>
+
+    </div>
+
+
+    <div
+      class="
+        intro-copy
+        reveal
+        reveal-delay-1
+      "
+    >
+
+      <div class="label">
+        Our Approach
+      </div>
+
+      <p class="body-large">
+
+        แต่เริ่มจากการเข้าใจว่า
+        ใครจะอยู่ในพื้นที่นั้น
+        ใช้ชีวิตอย่างไร
+        ที่ดินมีข้อดีและข้อจำกัดอะไร
+        และโครงการควรถูกวางแผนอย่างไร
+        ให้สัมพันธ์กับความต้องการจริง
+
+      </p>
+
+      <br>
+
+      <p class="body-large">
+
+        เราจึงไม่ได้เริ่มต้นจากการรีบวาด
+        แต่เริ่มจากการถาม
+        วิเคราะห์ และทำความเข้าใจ
+        ก่อนพัฒนาไปสู่การออกแบบ
+
+      </p>
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     SERVICES
+======================================================= -->
+
+
+<section
+  class="services"
+  id="services"
+>
+
+  <div class="container">
+
+
+    <div class="services-heading">
+
+
+      <div class="reveal">
+
+        <div class="label">
+          What We Do
+        </div>
+
+        <h2
+          class="section-title"
+          style="margin-top:25px"
+        >
+
+          From first idea<br>
+          to built reality.
+
+        </h2>
+
+      </div>
+
+
+      <div
+        class="
+          services-note
+          reveal
+          reveal-delay-1
+        "
+      >
+
+        ARSTINLA ให้ความสำคัญกับกระบวนการ
+        ตั้งแต่การวางโจทย์
+        วิเคราะห์พื้นที่
+        ออกแบบ
+        ไปจนถึงการพัฒนาแบบ
+        ตามขอบเขตของแต่ละโครงการ
+
+      </div>
+
+
+    </div>
+
+
+    <div class="services-list">
+
+
+      <div class="service-row reveal">
+
+        <div class="service-number">
+          01
+        </div>
+
+        <div class="service-title">
+          Design
+        </div>
+
+        <div class="service-desc">
+
+          Architectural Design
+          สำหรับบ้านพักอาศัย
+          อาคาร และงานปรับปรุง
+          โดยเริ่มจากการใช้งาน
+          บริบท และตัวตนของเจ้าของโครงการ
+
+        </div>
+
+        <div class="service-arrow">
+          →
+        </div>
+
+      </div>
+
+
+      <div class="service-row reveal">
+
+        <div class="service-number">
+          02
+        </div>
+
+        <div class="service-title">
+          Drawing
+        </div>
+
+        <div class="service-desc">
+
+          พัฒนาแนวคิดสู่ชุดแบบ
+          และรายละเอียดทางสถาปัตยกรรม
+          เพื่อให้ข้อมูลสามารถถูกส่งต่อ
+          ไปยังขั้นตอนถัดไปได้ชัดเจน
+
+        </div>
+
+        <div class="service-arrow">
+          →
+        </div>
+
+      </div>
+
+
+      <div class="service-row reveal">
+
+        <div class="service-number">
+          03
+        </div>
+
+        <div class="service-title">
+          Permit
+        </div>
+
+        <div class="service-desc">
+
+          จัดเตรียมและประสานข้อมูล
+          สำหรับชุดแบบที่เกี่ยวข้อง
+          กับกระบวนการขออนุญาตก่อสร้าง
+          ตามประเภทและขอบเขตของโครงการ
+
+        </div>
+
+        <div class="service-arrow">
+          →
+        </div>
+
+      </div>
+
+
+      <div class="service-row reveal">
+
+        <div class="service-number">
+          04
+        </div>
+
+        <div class="service-title">
+          Consult
+        </div>
+
+        <div class="service-desc">
+
+          ให้คำปรึกษาก่อนเริ่มออกแบบ
+          ตั้งแต่การอ่านที่ดิน
+          วางพื้นที่ใช้สอย
+          วิเคราะห์ความต้องการ
+          ไปจนถึงการกำหนดกรอบโครงการ
+
+        </div>
+
+        <div class="service-arrow">
+          →
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     PROJECTS
+======================================================= -->
+
+
+<section
+  class="projects"
+  id="projects"
+>
+
+  <div class="container">
+
+
+    <div class="projects-header">
+
+
+      <div class="reveal">
+
+        <div class="label">
+          Selected Projects
+        </div>
+
+        <h2
+          class="section-title"
+          style="margin-top:25px"
+        >
+
+          Architecture<br>
+          with purpose.
+
+        </h2>
+
+      </div>
+
+
+      <div class="projects-count">
+        Selected Works / 01—06
+      </div>
+
+
+    </div>
+
+
+    <div class="projects-grid">
+
+
+      <article
+        class="project reveal"
+        data-project="0"
+      >
+
+        <div class="project-bg p1"></div>
+
+        <div class="project-shade"></div>
+
+        <div class="project-info">
+
+          <div class="project-category">
+            Residential Architecture
+          </div>
+
+          <div class="project-title">
+            Courtyard House
+          </div>
+
+          <div class="project-meta">
+            Private Residence / Thailand
+          </div>
+
+        </div>
+
+      </article>
+
+
+
+      <article
+        class="
+          project
+          reveal
+          reveal-delay-1
+        "
+        data-project="1"
+      >
+
+        <div class="project-bg p2"></div>
+
+        <div class="project-shade"></div>
+
+        <div class="project-info">
+
+          <div class="project-category">
+            Private Residence
+          </div>
+
+          <div class="project-title">
+            Layer House
+          </div>
+
+          <div class="project-meta">
+            Residential
+          </div>
+
+        </div>
+
+      </article>
+
+
+
+      <article
+        class="project reveal"
+        data-project="2"
+      >
+
+        <div class="project-bg p3"></div>
+
+        <div class="project-shade"></div>
+
+        <div class="project-info">
+
+          <div class="project-category">
+            Residential Design
+          </div>
+
+          <div class="project-title">
+            Linear House
+          </div>
+
+          <div class="project-meta">
+            Private Residence
+          </div>
+
+        </div>
+
+      </article>
+
+
+
+      <article
+        class="
+          project
+          reveal
+          reveal-delay-1
+        "
+        data-project="3"
+      >
+
+        <div class="project-bg p4"></div>
+
+        <div class="project-shade"></div>
+
+        <div class="project-info">
+
+          <div class="project-category">
+            Architecture
+          </div>
+
+          <div class="project-title">
+            Garden Residence
+          </div>
+
+          <div class="project-meta">
+            House / Thailand
+          </div>
+
+        </div>
+
+      </article>
+
+
+
+      <article
+        class="project reveal"
+        data-project="4"
+      >
+
+        <div class="project-bg p5"></div>
+
+        <div class="project-shade"></div>
+
+        <div class="project-info">
+
+          <div class="project-category">
+            Architecture & Consult
+          </div>
+
+          <div class="project-title">
+            Frame House
+          </div>
+
+          <div class="project-meta">
+            Residential
+          </div>
+
+        </div>
+
+      </article>
+
+
+
+      <article
+        class="
+          project
+          reveal
+          reveal-delay-1
+        "
+        data-project="5"
+      >
+
+        <div class="project-bg p6"></div>
+
+        <div class="project-shade"></div>
+
+        <div class="project-info">
+
+          <div class="project-category">
+            Renovation
+          </div>
+
+          <div class="project-title">
+            House 06
+          </div>
+
+          <div class="project-meta">
+            Architecture
+          </div>
+
+        </div>
+
+      </article>
+
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     PROCESS
+======================================================= -->
+
+
+<section
+  class="process"
+  id="process"
+>
+
+  <div class="container">
+
+
+    <div class="process-header">
+
+
+      <div class="reveal">
+
+        <div class="label">
+          Our Process
+        </div>
+
+        <h2
+          class="
+            section-title
+            th
+          "
+          style="margin-top:25px"
+        >
+
+          เริ่มให้ถูก<br>
+          ก่อนสร้างจริง
+
+        </h2>
+
+      </div>
+
+
+      <p
+        class="
+          process-intro
+          reveal
+          reveal-delay-1
+        "
+      >
+
+        บ้านหนึ่งหลังมีการตัดสินใจ
+        มากกว่าหน้าตาของอาคาร
+
+        เราจึงวางกระบวนการให้เจ้าของโครงการ
+        เข้าใจสิ่งที่กำลังเกิดขึ้น
+        ตั้งแต่การตั้งโจทย์
+        ไปจนถึงการพัฒนาแบบ
+
+      </p>
+
+
+    </div>
+
+
+    <div class="process-list">
+
+
+      <div class="process-row reveal">
+
+        <div class="process-number">
+          01
+        </div>
+
+        <div class="process-name">
+          Brief
+        </div>
+
+        <div class="process-copy">
+
+          ทำความเข้าใจสมาชิก
+          การใช้ชีวิต
+          ความต้องการ
+          Reference และเป้าหมาย
+          ของเจ้าของโครงการ
+
+        </div>
+
+      </div>
+
+
+      <div class="process-row reveal">
+
+        <div class="process-number">
+          02
+        </div>
+
+        <div class="process-name">
+          Analyze
+        </div>
+
+        <div class="process-copy">
+
+          วิเคราะห์ที่ดิน
+          ทางเข้า ทิศ แดด
+          สภาพแวดล้อม
+          ข้อจำกัด และกรอบโครงการ
+
+        </div>
+
+      </div>
+
+
+      <div class="process-row reveal">
+
+        <div class="process-number">
+          03
+        </div>
+
+        <div class="process-name">
+          Design
+        </div>
+
+        <div class="process-copy">
+
+          พัฒนาแนวคิด
+          Zoning
+          Planning
+          รูปทรง
+          และประสบการณ์ของพื้นที่
+
+        </div>
+
+      </div>
+
+
+      <div class="process-row reveal">
+
+        <div class="process-number">
+          04
+        </div>
+
+        <div class="process-name">
+          Develop
+        </div>
+
+        <div class="process-copy">
+
+          พัฒนาแบบและรายละเอียด
+          รวมถึงการประสานข้อมูล
+          ตาม Scope
+          ของแต่ละโครงการ
+
+        </div>
+
+      </div>
+
+
+      <div class="process-row reveal">
+
+        <div class="process-number">
+          05
+        </div>
+
+        <div class="process-name">
+          Build
+        </div>
+
+        <div class="process-copy">
+
+          ส่งต่อข้อมูลเข้าสู่
+          ขั้นตอนที่เกี่ยวข้อง
+          กับการอนุญาต
+          การประสานงาน
+          และการก่อสร้าง
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     PHILOSOPHY
+======================================================= -->
+
+
+<section class="philosophy">
+
+  <div class="container">
+
+
+    <div class="label reveal">
+      ARSTINLA Philosophy
+    </div>
+
+
+    <div class="quote reveal">
+
+      We don't start<br>
+
+      with drawing.<br>
+
+      We start with<br>
+
+      <strong>
+        understanding.
+      </strong>
+
+    </div>
+
+
+    <p
+      class="
+        quote-th
+        reveal
+        reveal-delay-1
+      "
+    >
+
+      เราไม่ได้เริ่มจากการวาดบ้าน
+      แต่เริ่มจากการทำความเข้าใจคน
+      ที่ดิน งบประมาณ
+      และวิธีที่พื้นที่นั้น
+      จะถูกใช้งานจริงในแต่ละวัน
+
+    </p>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     KNOWLEDGE
+======================================================= -->
+
+
+<section
+  class="knowledge"
+  id="knowledge"
+>
+
+  <div class="container">
+
+
+    <div class="reveal">
+
+      <div class="label">
+        Knowledge
+      </div>
+
+      <h2
+        class="
+          section-title
+          th
+        "
+        style="margin-top:25px"
+      >
+
+        ก่อนสร้างบ้าน<br>
+        มีเรื่องที่ควรรู้
+
+      </h2>
+
+    </div>
+
+
+    <div class="knowledge-grid">
+
+
+      <article class="article reveal">
+
+        <div class="article-number">
+          01
+        </div>
+
+        <div class="article-category">
+          Before You Build
+        </div>
+
+        <h3>
+          มีที่ดินแล้ว
+          อย่าเพิ่งหาแบบบ้าน
+        </h3>
+
+        <p>
+
+          ก่อนเลือก Style
+          ควรเริ่มจากการอ่านพื้นที่
+          ทำความเข้าใจบริบท
+          และความต้องการของครอบครัวก่อน
+
+        </p>
+
+        <a
+          href="#contact"
+          class="read-more"
+        >
+          Read More →
+        </a>
+
+      </article>
+
+
+
+      <article
+        class="
+          article
+          reveal
+          reveal-delay-1
+        "
+      >
+
+        <div class="article-number">
+          02
+        </div>
+
+        <div class="article-category">
+          Drawing
+        </div>
+
+        <h3>
+          แบบขออนุญาต
+          กับแบบก่อสร้าง
+          ต่างกันอย่างไร
+        </h3>
+
+        <p>
+
+          ทำความเข้าใจหน้าที่
+          และระดับรายละเอียดของแบบ
+          ก่อนตัดสินใจว่าจ้าง
+          เพื่อให้ Scope ตรงกันตั้งแต่ต้น
+
+        </p>
+
+        <a
+          href="#contact"
+          class="read-more"
+        >
+          Read More →
+        </a>
+
+      </article>
+
+
+
+      <article
+        class="
+          article
+          reveal
+          reveal-delay-2
+        "
+      >
+
+        <div class="article-number">
+          03
+        </div>
+
+        <div class="article-category">
+          Design Thinking
+        </div>
+
+        <h3>
+          บ้าน 200 ตร.ม.
+          ไม่เหมือนกัน
+          ทุกครอบครัว
+        </h3>
+
+        <p>
+
+          ตัวเลขพื้นที่บอกเพียงขนาด
+          แต่ไม่ได้บอกว่า
+          ครอบครัวนั้นใช้ชีวิตอย่างไร
+          ซึ่งเป็นหัวใจสำคัญของการออกแบบ
+
+        </p>
+
+        <a
+          href="#contact"
+          class="read-more"
+        >
+          Read More →
+        </a>
+
+      </article>
+
+
+    </div>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     PRE CONTACT
+======================================================= -->
+
+
+<section class="pre-contact">
+
+  <div class="container pre-contact-inner">
+
+
+    <h2 class="reveal">
+
+      มีที่ดินแล้ว
+      แต่ยังไม่แน่ใจว่า
+      ควรเริ่มจากตรงไหน?
+
+    </h2>
+
+
+    <a
+      href="#contact"
+      class="
+        btn
+        btn-primary
+        reveal
+        reveal-delay-1
+      "
+    >
+
+      Start a Project
+
+    </a>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     CONTACT
+======================================================= -->
+
+
+<section
+  class="contact"
+  id="contact"
+>
+
+  <div class="container contact-grid">
+
+
+    <div class="reveal">
+
+
+      <div class="label">
+        Start a Project
+      </div>
+
+
+      <h2>
+
+        Let's<br>
+        talk.
+
+      </h2>
+
+
+      <p class="contact-description">
+
+        ส่งรายละเอียดเบื้องต้น
+        เพื่อให้ ARSTINLA
+        เข้าใจลักษณะโครงการของคุณ
+
+        ข้อมูลยิ่งชัด
+        การพูดคุยในขั้นแรก
+        จะยิ่งมีประสิทธิภาพมากขึ้น
+
+      </p>
+
+
+      <div class="contact-small">
+
+        Architecture ·
+        Residential ·
+        Design ·
+        Drawing ·
+        Consultation
+
+      </div>
+
+
+    </div>
+
+
+
+    <form
+      class="
+        form
+        reveal
+        reveal-delay-1
+      "
+      id="projectForm"
+    >
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label for="name">
+            ชื่อ
+          </label>
+
+          <input
+            id="name"
+            type="text"
+            placeholder="ชื่อของคุณ"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="contactInfo">
+            LINE / เบอร์โทรศัพท์
+          </label>
+
+          <input
+            id="contactInfo"
+            type="text"
+            placeholder="ช่องทางติดต่อ"
+            required
+          >
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label for="province">
+            จังหวัดที่ก่อสร้าง
+          </label>
+
+          <input
+            id="province"
+            type="text"
+            placeholder="เช่น เชียงใหม่"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="land">
+            สถานะที่ดิน
+          </label>
+
+          <select id="land">
+
+            <option>
+              มีที่ดินแล้ว
+            </option>
+
+            <option>
+              กำลังหาที่ดิน
+            </option>
+
+            <option>
+              ยังไม่มีที่ดิน
+            </option>
+
+          </select>
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label for="area">
+            พื้นที่บ้านโดยประมาณ
+          </label>
+
+          <input
+            id="area"
+            type="text"
+            placeholder="เช่น 200 ตร.ม."
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="budget">
+            งบก่อสร้างโดยประมาณ
+          </label>
+
+          <input
+            id="budget"
+            type="text"
+            placeholder="เช่น 4–5 ล้านบาท"
+          >
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="form-row">
+
+
+        <div class="form-group">
+
+          <label for="bedroom">
+            จำนวนห้องนอน
+          </label>
+
+          <input
+            id="bedroom"
+            type="text"
+            placeholder="เช่น 4 ห้องนอน"
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="timeline">
+            ต้องการเริ่มเมื่อไร
+          </label>
+
+          <select id="timeline">
+
+            <option>
+              ภายใน 1–3 เดือน
+            </option>
+
+            <option>
+              ภายใน 3–6 เดือน
+            </option>
+
+            <option>
+              ภายใน 6–12 เดือน
+            </option>
+
+            <option>
+              กำลังศึกษาข้อมูล
+            </option>
+
+          </select>
+
+        </div>
+
+
+      </div>
+
+
+
+      <div class="form-group">
+
+        <label for="detail">
+          เล่าเกี่ยวกับโครงการของคุณ
+        </label>
+
+        <textarea
+          id="detail"
+          placeholder="จำนวนสมาชิก รูปแบบบ้านที่ชอบ ขนาดที่ดิน ความต้องการพิเศษ หรือรายละเอียดอื่นๆ"
+        ></textarea>
+
+      </div>
+
+
+
+      <div class="form-submit">
+
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+
+          เตรียมข้อมูลโครงการ
+
+        </button>
+
+
+        <div
+          class="form-status"
+          id="formStatus"
+        ></div>
+
+
+      </div>
+
+
+    </form>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     FOOTER
+======================================================= -->
+
+
+<footer>
+
+  <div class="container footer-grid">
+
+
+    <div class="footer-logo">
+
+      ARSTINLA
+
+      <small>
+        DESIGN & CONSULT
+      </small>
+
+    </div>
+
+
+    <div class="footer-social">
+
+      <a
+        href="https://www.facebook.com/ARSTINLAdesign/"
+        target="_blank"
+      >
+        Facebook
+      </a>
+
+      <a href="#">
+        Instagram
+      </a>
+
+      <a href="#">
+        TikTok
+      </a>
+
+      <a href="#">
+        YouTube
+      </a>
+
+    </div>
+
+
+    <div class="footer-copy">
+
+      © 2026 ARSTINLA
+      Design & Consult
+
+    </div>
+
+
+  </div>
+
+</footer>
+
+
+
+<!-- =======================================================
+     PROJECT MODAL
+======================================================= -->
+
+
+<div
+  class="project-modal"
+  id="projectModal"
+>
+
+  <button
+    class="modal-close"
+    id="modalClose"
+    aria-label="Close project"
+  >
+    ×
+  </button>
+
+
+  <div class="modal-content">
+
+
+    <div
+      class="modal-image"
+      id="modalImage"
+    ></div>
+
+
+    <div class="modal-grid">
+
+
+      <div>
+
+
+        <div
+          class="label"
+          id="modalCategory"
+          style="color:#c36b48"
+        >
+          Residential
+        </div>
+
+
+        <h2
+          class="modal-title"
+          id="modalTitle"
+        >
+          Project
+        </h2>
+
+
+        <p
+          class="modal-description"
+          id="modalDescription"
+        ></p>
+
+
+      </div>
+
+
+      <div class="modal-meta">
+
+
+        <div class="modal-meta-row">
+
+          <span>
+            Type
+          </span>
+
+          <span id="modalType"></span>
+
+        </div>
+
+
+        <div class="modal-meta-row">
+
+          <span>
+            Location
+          </span>
+
+          <span id="modalLocation"></span>
+
+        </div>
+
+
+        <div class="modal-meta-row">
+
+          <span>
+            Area
+          </span>
+
+          <span id="modalArea"></span>
+
+        </div>
+
+
+        <div class="modal-meta-row">
+
+          <span>
+            Service
+          </span>
+
+          <span id="modalService"></span>
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+  /* ======================================================
+     ARSTINLA V2 JAVASCRIPT
+  ====================================================== */
+
+
+  const nav =
+    document.getElementById("nav");
+
+
+  const heroMedia =
+    document.getElementById("heroMedia");
+
+
+  const menuButton =
+    document.getElementById("menuButton");
+
+
+  const navLinks =
+    document.getElementById("navLinks");
+
+
+
+  /* NAV ON SCROLL
+  ====================================================== */
+
+
+  function updateNav() {
+
+    if (window.scrollY > 40) {
+
+      nav.classList.add(
+        "scrolled"
+      );
+
+    } else {
+
+      nav.classList.remove(
+        "scrolled"
+      );
+
+    }
+
+  }
+
+
+  updateNav();
+
+
+  window.addEventListener(
+    "scroll",
+    updateNav,
+    { passive: true }
+  );
+
+
+
+  /* HERO PARALLAX
+  ====================================================== */
+
+
+  const reduceMotion =
+    window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+  if (!reduceMotion) {
+
+    window.addEventListener(
+      "scroll",
+      () => {
+
+        const y =
+          Math.min(
+            window.scrollY * .12,
+            80
+          );
+
+        heroMedia.style.transform =
+          `scale(1.04) translateY(${y}px)`;
+
+      },
+      { passive: true }
+    );
+
+  }
+
+
+
+  /* MOBILE MENU
+  ====================================================== */
+
+
+  menuButton.addEventListener(
+    "click",
+    () => {
+
+      menuButton.classList.toggle(
+        "active"
+      );
+
+      navLinks.classList.toggle(
+        "active"
+      );
+
+    }
+  );
+
+
+  navLinks
+    .querySelectorAll("a")
+    .forEach(link => {
+
+      link.addEventListener(
+        "click",
+        () => {
+
+          navLinks.classList.remove(
+            "active"
+          );
+
+          menuButton.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+    });
+
+
+
+  /* REVEAL ON SCROLL
+  ====================================================== */
+
+
+  const revealItems =
+    document.querySelectorAll(
+      ".reveal"
+    );
+
+
+  const observer =
+    new IntersectionObserver(
+
+      entries => {
+
+        entries.forEach(
+          entry => {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              entry.target
+                .classList
+                .add("visible");
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          }
+        );
+
+      },
+
+      {
+        threshold: .12
+      }
+
+    );
+
+
+  revealItems.forEach(
+    item => observer.observe(item)
+  );
+
+
+
+  /* PROJECT DATA
+  ====================================================== */
+
+
+  const projects = [
+
+    {
+
+      title:
+        "Courtyard House",
+
+      category:
+        "Residential Architecture",
+
+      type:
+        "Private Residence",
+
+      location:
+        "Thailand",
+
+      area:
+        "Insert Project Area",
+
+      service:
+        "Architecture / Design",
+
+      image:
+        "assets/project-01.jpg",
+
+      description:
+        "แทนข้อความส่วนนี้ด้วยเรื่องราวของโครงการจริง เช่น โจทย์ของเจ้าของบ้าน ลักษณะที่ดิน สิ่งที่ต้องการแก้ และแนวคิดที่ ARSTINLA ใช้ในการพัฒนาพื้นที่ เพื่อให้ Project Page ไม่ได้แสดงเพียงภาพ แต่แสดงวิธีคิดของทีมออกแบบด้วย"
+
+    },
+
+
+    {
+
+      title:
+        "Layer House",
+
+      category:
+        "Private Residence",
+
+      type:
+        "Residential",
+
+      location:
+        "Thailand",
+
+      area:
+        "Insert Project Area",
+
+      service:
+        "Design & Drawing",
+
+      image:
+        "assets/project-02.jpg",
+
+      description:
+        "Project Case Study ควรอธิบายเหตุผลของงานออกแบบ เช่น Privacy การเปิดรับแสง ความสัมพันธ์ของพื้นที่ และความต้องการของครอบครัว"
+
+    },
+
+
+    {
+
+      title:
+        "Linear House",
+
+      category:
+        "Residential Design",
+
+      type:
+        "Private Residence",
+
+      location:
+        "Thailand",
+
+      area:
+        "Insert Project Area",
+
+      service:
+        "Architecture",
+
+      image:
+        "assets/project-03.jpg",
+
+      description:
+        "เล่า Constraint ของที่ดินและวิธีที่แนวคิดทางสถาปัตยกรรมตอบโจทย์พื้นที่จริง"
+
+    },
+
+
+    {
+
+      title:
+        "Garden Residence",
+
+      category:
+        "Architecture",
+
+      type:
+        "Private Residence",
+
+      location:
+        "Thailand",
+
+      area:
+        "Insert Project Area",
+
+      service:
+        "Design / Consult",
+
+      image:
+        "assets/project-04.jpg",
+
+      description:
+        "พื้นที่สวนและพื้นที่ครอบครัวสามารถถูกใช้เป็นแกนหลักในการวางผัง เพื่อสร้างความสัมพันธ์ระหว่างภายในและภายนอก"
+
+    },
+
+
+    {
+
+      title:
+        "Frame House",
+
+      category:
+        "Architecture & Consult",
+
+      type:
+        "Residential",
+
+      location:
+        "Thailand",
+
+      area:
+        "Insert Project Area",
+
+      service:
+        "Architecture",
+
+      image:
+        "assets/project-05.jpg",
+
+      description:
+        "แทนด้วย Project Story จริง เพื่อทำให้ผู้ชมเข้าใจว่างานของ ARSTINLA เริ่มจากโจทย์ ไม่ใช่เพียง Style"
+
+    },
+
+
+    {
+
+      title:
+        "House 06",
+
+      category:
+        "Renovation",
+
+      type:
+        "Renovation",
+
+      location:
+        "Thailand",
+
+      area:
+        "Insert Project Area",
+
+      service:
+        "Design & Consult",
+
+      image:
+        "assets/project-06.jpg",
+
+      description:
+        "สำหรับงาน Renovation สามารถเล่าสภาพเดิม ปัญหา แนวคิดการปรับปรุง และสิ่งที่เปลี่ยนหลังออกแบบได้"
+
+    }
+
+  ];
+
+
+
+  /* PROJECT MODAL
+  ====================================================== */
+
+
+  const modal =
+    document.getElementById(
+      "projectModal"
+    );
+
+
+  const modalClose =
+    document.getElementById(
+      "modalClose"
+    );
+
+
+  const modalImage =
+    document.getElementById(
+      "modalImage"
+    );
+
+
+  const modalTitle =
+    document.getElementById(
+      "modalTitle"
+    );
+
+
+  const modalCategory =
+    document.getElementById(
+      "modalCategory"
+    );
+
+
+  const modalDescription =
+    document.getElementById(
+      "modalDescription"
+    );
+
+
+  const modalType =
+    document.getElementById(
+      "modalType"
+    );
+
+
+  const modalLocation =
+    document.getElementById(
+      "modalLocation"
+    );
+
+
+  const modalArea =
+    document.getElementById(
+      "modalArea"
+    );
+
+
+  const modalService =
+    document.getElementById(
+      "modalService"
+    );
+
+
+
+  function openProject(index) {
+
+    const data =
+      projects[index];
+
+
+    modalTitle.textContent =
+      data.title;
+
+
+    modalCategory.textContent =
+      data.category;
+
+
+    modalDescription.textContent =
+      data.description;
+
+
+    modalType.textContent =
+      data.type;
+
+
+    modalLocation.textContent =
+      data.location;
+
+
+    modalArea.textContent =
+      data.area;
+
+
+    modalService.textContent =
+      data.service;
+
+
+    modalImage.style.backgroundImage =
+      `
+        linear-gradient(
+          rgba(0,0,0,.08),
+          rgba(0,0,0,.08)
+        ),
+        url("${data.image}")
+      `;
+
+
+    modal.classList.add(
+      "active"
+    );
+
+
+    document.body.classList.add(
+      "modal-open"
+    );
+
+  }
+
+
+
+  function closeProject() {
+
+    modal.classList.remove(
+      "active"
+    );
+
+
+    document.body.classList.remove(
+      "modal-open"
+    );
+
+  }
+
+
+
+  document
+    .querySelectorAll(
+      ".project"
+    )
+    .forEach(project => {
+
+      project.addEventListener(
+        "click",
+        () => {
+
+          openProject(
+            Number(
+              project.dataset.project
+            )
+          );
+
+        }
+      );
+
+    });
+
+
+
+  modalClose.addEventListener(
+    "click",
+    closeProject
+  );
+
+
+  modal.addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target === modal
+      ) {
+
+        closeProject();
+
+      }
+
+    }
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        closeProject();
+
+      }
+
+    }
+  );
+
+
+
+  /* CONTACT FORM
+  ====================================================== */
+
+
+  const projectForm =
+    document.getElementById(
+      "projectForm"
+    );
+
+
+  const formStatus =
+    document.getElementById(
+      "formStatus"
+    );
+
+
+
+  projectForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const projectData = `
+
+ARSTINLA PROJECT INQUIRY
+
+ชื่อ:
+${document.getElementById("name").value}
+
+ช่องทางติดต่อ:
+${document.getElementById("contactInfo").value}
+
+จังหวัด:
+${document.getElementById("province").value}
+
+สถานะที่ดิน:
+${document.getElementById("land").value}
+
+พื้นที่บ้าน:
+${document.getElementById("area").value}
+
+งบก่อสร้าง:
+${document.getElementById("budget").value}
+
+จำนวนห้องนอน:
+${document.getElementById("bedroom").value}
+
+ระยะเวลาเริ่มโครงการ:
+${document.getElementById("timeline").value}
+
+รายละเอียด:
+${document.getElementById("detail").value}
+
+      `.trim();
+
+
+      try {
+
+        await navigator.clipboard
+          .writeText(projectData);
+
+
+        formStatus.innerHTML =
+          "✓ คัดลอกข้อมูลโครงการแล้ว<br>สามารถนำไปส่งให้ ARSTINLA ทาง LINE หรือ Messenger ได้ทันที";
+
+
+      } catch (error) {
+
+        formStatus.textContent =
+          "ข้อมูลพร้อมแล้ว กรุณาส่งรายละเอียดให้ ARSTINLA ทาง LINE หรือ Messenger";
+
+      }
+
+    }
+  );
+
+</script>
+
+
+</body>
+</html>
