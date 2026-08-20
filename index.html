@@ -624,100 +624,59 @@
 
 
   .hero h1 {
+  font-family: var(--font-en);
 
-    font-family: var(--font-en);
+  font-size: clamp(
+    3.8rem,
+    7.4vw,
+    8.2rem
+  );
 
-    font-size:
-      clamp(
-        4.2rem,
-        10vw,
-        10rem
-      );
+  line-height: 0.86;
+  font-weight: 300;
+  letter-spacing: -0.07em;
 
-    line-height: .82;
+  max-width: 920px;
+}
 
-    font-weight: 300;
+.hero-content {
+  position: relative;
+  z-index: 2;
 
-    letter-spacing: -.075em;
+  width: 100%;
 
-    max-width: 1050px;
-  }
+  padding:
+    160px 0 60px;
+}
 
+.hero-description {
+  max-width: 560px;
 
-  .hero h1 strong {
+  font-size: 1rem;
+  line-height: 1.85;
 
-    font-weight: 600;
-  }
+  color: rgba(255,255,255,.82);
+}
 
+.hero-bottom {
+  margin-top: 42px;
 
-  .hero-bottom {
+  display: grid;
+  grid-template-columns:
+    1.15fr .85fr;
 
-    margin-top: 50px;
+  gap: 40px;
+  align-items: end;
+}
 
-    display: grid;
+.hero-buttons {
+  display: flex;
+  justify-content: flex-end;
 
-    grid-template-columns:
-      1fr 1fr;
-
-    gap: 50px;
-
-    align-items: end;
-  }
-
-
-  .hero-description {
-
-    max-width: 640px;
-
-    font-size: 1.05rem;
-
-    font-weight: 300;
-
-    line-height: 1.85;
-
-    color:
-      rgba(255,255,255,.82);
-  }
-
-
-  .hero-buttons {
-
-    display: flex;
-
-    gap: 10px;
-
-    justify-content: flex-end;
-
-    flex-wrap: wrap;
-  }
-
-
-  .scroll-indicator {
-
-    position: absolute;
-
-    right: 28px;
-
-    top: 50%;
-
-    transform:
-      translateY(-50%)
-      rotate(90deg);
-
-    transform-origin: center;
-
-    font-family: var(--font-en);
-
-    font-size: .6rem;
-
-    letter-spacing: .22em;
-
-    text-transform: uppercase;
-
-    opacity: .55;
-  }
-
-
+  gap: 10px;
+  flex-wrap: wrap;
+}
+  
   /* =========================================================
      MARQUEE
   ========================================================= */
