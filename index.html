@@ -2593,7 +2593,7 @@
         Knowledge
       </a>
 
-     <a
+    <a
   href="/"
   data-contact-link
   class="nav-contact"
@@ -2692,13 +2692,13 @@
 
       <div class="hero-buttons">
 
-        <a
-          href="/"
+  <a
+  href="/"
   data-contact-link
   class="btn btn-primary"
 >
   ส่งข้อมูลโครงการ
-        </a>
+</a>
 
         <a
           href="#projects"
@@ -4906,75 +4906,35 @@ projectForm.addEventListener(
 <script>
 (() => {
 
-  function cleanContactUrl() {
-    if (window.location.hash === "#contact") {
+  document.addEventListener(
+    "click",
+    event => {
+
+      const link =
+        event.target.closest("[data-contact-link]");
+
+      if (!link) return;
+
+      event.preventDefault();
+
+      const contact =
+        document.getElementById("contact");
+
+      if (!contact) return;
+
+      contact.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
       history.replaceState(
         null,
         "",
         window.location.pathname + window.location.search
       );
-    }
-  }
 
-  document.addEventListener("click", event => {
-
-    const link = event.target.closest("a");
-
-    if (!link) return;
-
-    const url = new URL(
-      link.getAttribute("href") || "",
-      window.location.href
-    );
-
-    if (url.hash !== "#contact") return;
-
-    event.preventDefault();
-
-    const contact =
-      document.getElementById("contact");
-
-    if (!contact) return;
-
-    contact.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-    history.replaceState(
-      null,
-      "",
-      window.location.pathname + window.location.search
-    );
-
-  }, true);
-
-
-  window.addEventListener(
-    "hashchange",
-    cleanContactUrl
-  );
-
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      if (window.location.hash === "#contact") {
-
-        const contact =
-          document.getElementById("contact");
-
-        if (contact) {
-          contact.scrollIntoView({
-            block: "start"
-          });
-        }
-
-        cleanContactUrl();
-      }
-
-    }
+    },
+    true
   );
 
 })();
