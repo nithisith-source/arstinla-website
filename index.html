@@ -4299,40 +4299,37 @@
 
     {
 
-      title:
-        "Courtyard House",
+{
+  title:
+    "Romnalin Residence",
 
-      category:
-        "Residential Architecture",
+  category:
+    "Private Residence",
 
-      type:
-        "Private Residence",
+  type:
+    "Residential Architecture",
 
-      location:
-        "Thailand",
+  location:
+    "Chonburi, Thailand",
 
-      area:
-        "Insert Project Area",
+  area:
+    "650 sq.m.",
 
-      service:
-        "Architecture / Design",
+  service:
+    "Architecture / Design / Drawing / Coordination",
 
-      url:
-  "/projects/romnalin-residence/",
+  url:
+    "/projects/romnalin-residence/",
 
-image:
-  "assets/project-01.jpg",
+  image:
+    "assets/project-01.jpg",
 
-      description:
-        "แทนข้อความส่วนนี้ด้วยเรื่องราวของโครงการจริง เช่น โจทย์ของเจ้าของบ้าน ลักษณะที่ดิน สิ่งที่ต้องการแก้ และแนวคิดที่ ARSTINLA ใช้ในการพัฒนาพื้นที่ เพื่อให้ Project Page ไม่ได้แสดงเพียงภาพ แต่แสดงวิธีคิดของทีมออกแบบด้วย"
-
-    },
-
-
-    {
+  description:
+    "บ้านพักอาศัยสำหรับการใช้ชีวิตและพักผ่อนในระยะยาว ภายใต้แนวคิด Resort-like Living เชื่อมพื้นที่ภายใน สวน แสงธรรมชาติ และการระบายอากาศเข้าด้วยกัน"
+},
 
       title:
-        "Layer House",
+        "K'Ben House",
 
       category:
         "Private Residence",
@@ -4344,7 +4341,7 @@ image:
         "Thailand",
 
       area:
-        "Insert Project Area",
+        "320 sq.m.",
 
       service:
         "Design & Drawing",
@@ -4353,7 +4350,7 @@ image:
         "assets/project-02.jpg",
 
       description:
-        "Project Case Study ควรอธิบายเหตุผลของงานออกแบบ เช่น Privacy การเปิดรับแสง ความสัมพันธ์ของพื้นที่ และความต้องการของครอบครัว"
+        "เป็นบ้านในหมู่บ้านเดียวกันบ้านพ่อแม่ สร้างบ้านหลังนี้เพื่อเริ่มต้นครอบครัวใหม่"
 
     },
 
@@ -4361,7 +4358,7 @@ image:
     {
 
       title:
-        "Linear House",
+        "K'Ple House",
 
       category:
         "Residential Design",
@@ -4390,7 +4387,7 @@ image:
     {
 
       title:
-        "Garden Residence",
+        "A+ House",
 
       category:
         "Architecture",
@@ -4419,7 +4416,7 @@ image:
     {
 
       title:
-        "Frame House",
+        "K'Karn Residence",
 
       category:
         "Architecture & Consult",
@@ -4616,20 +4613,17 @@ image:
 
 document
   .querySelectorAll(".project")
-  .forEach(project => {
+  .forEach((project, cardIndex) => {
 
     project.addEventListener(
       "click",
       () => {
 
-        const index =
-          Number(project.dataset.project);
-
+        // จับข้อมูลตามลำดับการ์ดจริงบนหน้า
         const data =
-          projects[index];
+          projects[cardIndex];
 
-        // ถ้า Project มีหน้า Case Study จริง
-        // ให้เข้า Project Page โดยตรง
+        // Project ที่มี Case Study
         if (data && data.url) {
 
           window.location.href =
@@ -4638,9 +4632,11 @@ document
           return;
         }
 
-        // Project อื่นที่ยังไม่มี Case Study
-        // ให้เปิด Modal แบบเดิม
-        openProject(index);
+        // Project อื่นยังเปิด Modal แบบเดิม
+        const modalIndex =
+          Number(project.dataset.project);
+
+        openProject(modalIndex);
 
       }
     );
