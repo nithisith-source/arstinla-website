@@ -2491,7 +2491,48 @@
     }
 
   }
+/* =========================
+   FINAL HOME HERO FIX
+========================= */
 
+#home {
+  position: relative;
+  overflow: hidden;
+}
+
+#heroMedia {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(15, 16, 15, 0.68) 0%,
+      rgba(15, 16, 15, 0.36) 55%,
+      rgba(15, 16, 15, 0.12) 100%
+    ),
+    url("/assets/hero.jpg")
+    center center / cover
+    no-repeat !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+
+  z-index: 0;
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
 </style>
 
 </head>
