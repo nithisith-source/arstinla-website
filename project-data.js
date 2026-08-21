@@ -1,54 +1,46 @@
-"01": {
+window.ARSTINLA_PROJECTS = {
 
-  number: "01",
+  "01": {
 
-  slug: "romnalin-residence",
+    number: "01",
 
-  url: "/projects/romnalin-residence/",
+    slug: "romnalin-residence",
 
-  title: "Romnalin Residence",
+    url: "/projects/romnalin-residence/",
 
-  officialTitle:
-    "บ้านพักอาศัย คสล. 2 ชั้น คุณรมญ์นลิน",
+    title: "Romnalin Residence",
 
-  category:
-    "Private Residence",
+    officialTitle:
+      "บ้านพักอาศัย คสล. 2 ชั้น คุณรมญ์นลิน",
 
-  location:
-    "Chonburi, Thailand",
+    category:
+      "Private Residence",
 
-  year:
-    "2021",
+    location:
+      "Chonburi, Thailand",
 
-  completion:
-    "2025",
+    year:
+      "2021",
 
-  area:
-    "650 sq.m.",
+    completion:
+      "2025",
 
-  status:
-    "Under Construction",
+    area:
+      "650 sq.m.",
 
-  service:
-    "Architecture / Design / Drawing / Coordination",
+    status:
+      "Under Construction",
 
+    service:
+      "Architecture / Design / Drawing / Coordination",
 
-  /* =========================
-     HERO
-  ========================= */
+    hero:
+      "/assets/project-01/render-lakeside.jpg",
 
-  hero:
-    "/assets/project-01.jpg",
+    briefTitle:
+      "A Home for the Next Chapter",
 
-
-  /* =========================
-     CLIENT BRIEF
-  ========================= */
-
-  briefTitle:
-    "A Home for the Next Chapter",
-
-  brief: `
+    brief: `
 บ้านหลังนี้เริ่มต้นจากความตั้งใจของเจ้าของบ้าน
 ที่ต้องการสร้างบ้านหลังที่สอง
 สำหรับการใช้ชีวิตและพักผ่อนในระยะยาว
@@ -69,17 +61,12 @@
 มีทั้งพื้นที่สำหรับครอบครัว
 พื้นที่สงบส่วนตัว
 และพื้นที่ที่เปิดรับบรรยากาศรอบบ้านได้ตลอดวัน
-  `,
+    `,
 
+    conceptTitle:
+      "Resort-like Living",
 
-  /* =========================
-     CONCEPT
-  ========================= */
-
-  conceptTitle:
-    "Resort-like Living",
-
-  concept: `
+    concept: `
 แนวคิดหลักของโครงการคือการสร้าง
 Resort-like Living ภายในบ้านพักอาศัย
 
@@ -107,96 +94,34 @@ Resort-like Living ภายในบ้านพักอาศัย
 ยังคงให้ความรู้สึกสงบ
 ผ่อนคลาย
 และเหมาะกับการใช้ชีวิตระยะยาวของเจ้าของบ้าน
-  `,
+    `,
 
+    planImages: [
+      "/assets/project-01/plan-ground-floor.jpg",
+      "/assets/project-01/plan-upper-floor.jpg"
+    ],
 
-  /* =========================
-     FLOOR PLANS
-  ========================= */
+    siteImages: [
+      "/assets/project-01/site-01.jpg",
+      "/assets/project-01/site-02.jpg",
+      "/assets/project-01/site-03.jpg"
+    ],
 
-  planImages: [
+    renderImages: [
+      "/assets/project-01/render-front.jpg",
+      "/assets/project-01/render-lakeside.jpg"
+    ],
 
-    "/assets/project-01/plan-ground-floor.jpg",
+    constructionImages: [
+      "/assets/project-01/construction-01.jpg",
+      "/assets/project-01/construction-02.jpg",
+      "/assets/project-01/construction-03.jpg",
+      "/assets/project-01/construction-04.jpg",
+      "/assets/project-01/construction-05.jpg",
+      "/assets/project-01/construction-06.jpg"
+    ],
 
-    "/assets/project-01/plan-upper-floor.jpg"
+    next: "02"
+  }
 
-  ],
-
-
-  /* =========================
-     SITE / EXISTING
-  ========================= */
-
-  siteImages: [
-
-    "/assets/project-01/site-01.jpg",
-
-    "/assets/project-01/site-02.jpg",
-
-    "/assets/project-01/site-03.jpg"
-
-  ],
-
-
-  /* =========================
-     RENDER
-  ========================= */
-
-  renderImages: [
-
-    "/assets/project-01/render-front.jpg",
-
-    "/assets/project-01/render-lakeside.jpg"
-
-  ],
-
-
-  /* =========================
-     CONSTRUCTION
-  ========================= */
-
-  constructionImages: [
-
-    "/assets/project-01/construction-01.jpg",
-
-    "/assets/project-01/construction-02.jpg",
-
-    "/assets/project-01/construction-03.jpg",
-
-    "/assets/project-01/construction-04.jpg",
-
-    "/assets/project-01/construction-05.jpg",
-
-    "/assets/project-01/construction-06.jpg"
-
-  ],
-
-
-  /* =========================
-     SEO
-  ========================= */
-
-  seo: {
-
-    title:
-      "Romnalin Residence | บ้านพักอาศัย 650 ตร.ม. ชลบุรี | ARSTINLA",
-
-    description:
-      "Romnalin Residence บ้านพักอาศัย 2 ชั้น พื้นที่ประมาณ 650 ตร.ม. จังหวัดชลบุรี ออกแบบโดย ARSTINLA Design & Consult ภายใต้แนวคิด Resort-like Living เชื่อมพื้นที่พักผ่อน สวน แสง และการระบายอากาศธรรมชาติ",
-
-    canonical:
-      "https://arstinla.com/projects/romnalin-residence/",
-
-    image:
-      "https://arstinla.com/assets/project-01/render-lakeside.jpg"
-
-  },
-
-
-  /* =========================
-     NEXT PROJECT
-  ========================= */
-
-  next: "02"
-
-},
+};
