@@ -4317,8 +4317,11 @@
       service:
         "Architecture / Design",
 
-      image:
-        "assets/project-01.jpg",
+      url:
+  "/projects/romnalin-residence/",
+
+image:
+  "assets/project-01.jpg",
 
       description:
         "แทนข้อความส่วนนี้ด้วยเรื่องราวของโครงการจริง เช่น โจทย์ของเจ้าของบ้าน ลักษณะที่ดิน สิ่งที่ต้องการแก้ และแนวคิดที่ ARSTINLA ใช้ในการพัฒนาพื้นที่ เพื่อให้ Project Page ไม่ได้แสดงเพียงภาพ แต่แสดงวิธีคิดของทีมออกแบบด้วย"
@@ -4611,26 +4614,38 @@
 
 
 
-  document
-    .querySelectorAll(
-      ".project"
-    )
-    .forEach(project => {
+document
+  .querySelectorAll(".project")
+  .forEach(project => {
 
-      project.addEventListener(
-        "click",
-        () => {
+    project.addEventListener(
+      "click",
+      () => {
 
-          openProject(
-            Number(
-              project.dataset.project
-            )
-          );
+        const index =
+          Number(project.dataset.project);
 
+        const data =
+          projects[index];
+
+        // ถ้า Project มีหน้า Case Study จริง
+        // ให้เข้า Project Page โดยตรง
+        if (data && data.url) {
+
+          window.location.href =
+            data.url;
+
+          return;
         }
-      );
 
-    });
+        // Project อื่นที่ยังไม่มี Case Study
+        // ให้เปิด Modal แบบเดิม
+        openProject(index);
+
+      }
+    );
+
+  });
 
 
 
