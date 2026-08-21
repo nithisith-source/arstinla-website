@@ -4898,36 +4898,67 @@ projectForm.addEventListener(
 </script>
 
 <script>
-document
-  .querySelectorAll('a[href="#contact"]')
-  .forEach(link => {
+<script>
+(() => {
 
-    link.addEventListener(
-      "click",
-      event => {
+  const cleanContactHash = () => {
+    if (window.location.hash === "#contact") {
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search
+      );
+    }
+  };
 
-        event.preventDefault();
+  document.addEventListener(
+    "click",
+    event => {
 
-        const contact =
-          document.getElementById("contact");
-
-        if (!contact) return;
-
-        contact.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-        history.replaceState(
-          null,
-          "",
-          window.location.pathname
+      const link =
+        event.target.closest(
+          'a[href="#contact"]'
         );
 
-      }
-    );
+      if (!link) return;
 
-  });
+      event.preventDefault();
+
+      const contact =
+        document.getElementById("contact");
+
+      if (!contact) return;
+
+      contact.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search
+      );
+
+    },
+    true
+  );
+
+  /* กรณีเปิดเว็บมาด้วย /#contact อยู่แล้ว */
+  if (window.location.hash === "#contact") {
+    requestAnimationFrame(
+      cleanContactHash
+    );
+  }
+
+  /* ป้องกัน script อื่นใส่ #contact กลับมา */
+  window.addEventListener(
+    "hashchange",
+    cleanContactHash
+  );
+
+})();
+</script>
 </script>
 
 </body>
