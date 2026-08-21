@@ -1,6 +1,31 @@
+/* =========================================================
+   ARSTINLA DESIGN & CONSULT
+   PROJECT DATA
+   =========================================================
+
+   Main project database for:
+   https://arstinla.com
+
+   IMPORTANT:
+   - Keep this file encoded as UTF-8
+   - Image paths use absolute paths starting with /
+   - File names are case-sensitive on Cloudflare
+   ========================================================= */
+
+
 window.ARSTINLA_PROJECTS = {
 
+
+  /* =======================================================
+     PROJECT 01
+     ROMNALIN RESIDENCE
+     ======================================================= */
+
   "01": {
+
+    /* -----------------------------------------------------
+       BASIC INFORMATION
+       ----------------------------------------------------- */
 
     number: "01",
 
@@ -19,6 +44,12 @@ window.ARSTINLA_PROJECTS = {
     location:
       "Chonburi, Thailand",
 
+    province:
+      "Chonburi",
+
+    country:
+      "Thailand",
+
     year:
       "2021",
 
@@ -28,14 +59,38 @@ window.ARSTINLA_PROJECTS = {
     area:
       "650 sq.m.",
 
+    areaNumber:
+      650,
+
     status:
       "Under Construction",
 
     service:
       "Architecture / Design / Drawing / Coordination",
 
+
+    /* -----------------------------------------------------
+       HOMEPAGE / THUMBNAIL
+       ----------------------------------------------------- */
+
+    thumbnail:
+      "/assets/project-01.jpg",
+
+
+    /* -----------------------------------------------------
+       HERO IMAGE
+       ----------------------------------------------------- */
+
     hero:
       "/assets/project-01/render-lakeside.jpg",
+
+    heroAlt:
+      "Romnalin Residence บ้านพักอาศัยริมสวนและริมน้ำ จังหวัดชลบุรี",
+
+
+    /* -----------------------------------------------------
+       CLIENT BRIEF
+       ----------------------------------------------------- */
 
     briefTitle:
       "A Home for the Next Chapter",
@@ -62,6 +117,11 @@ window.ARSTINLA_PROJECTS = {
 พื้นที่สงบส่วนตัว
 และพื้นที่ที่เปิดรับบรรยากาศรอบบ้านได้ตลอดวัน
     `,
+
+
+    /* -----------------------------------------------------
+       DESIGN CONCEPT
+       ----------------------------------------------------- */
 
     conceptTitle:
       "Resort-like Living",
@@ -96,32 +156,227 @@ Resort-like Living ภายในบ้านพักอาศัย
 และเหมาะกับการใช้ชีวิตระยะยาวของเจ้าของบ้าน
     `,
 
-    planImages: [
-      "/assets/project-01/plan-ground-floor.jpg",
-      "/assets/project-01/plan-upper-floor.jpg"
-    ],
+
+    /* -----------------------------------------------------
+       SITE / EXISTING CONDITIONS
+       ----------------------------------------------------- */
+
+    siteTitle:
+      "The Existing Landscape",
+
+    siteDescription:
+      "บริบทเดิมของพื้นที่มีต้นไม้ขนาดใหญ่ พื้นที่สีเขียว และบ่อน้ำ ซึ่งกลายเป็นองค์ประกอบสำคัญในการกำหนดทิศทางการวางบ้านและพื้นที่พักผ่อน",
 
     siteImages: [
+
       "/assets/project-01/site-01.jpg",
+
       "/assets/project-01/site-02.jpg",
+
       "/assets/project-01/site-03.jpg"
+
     ],
+
+
+    /* -----------------------------------------------------
+       FLOOR PLANS
+       ----------------------------------------------------- */
+
+    planTitle:
+      "Floor Plans",
+
+    planImages: [
+
+      "/assets/project-01/plan-ground-floor.jpg",
+
+      "/assets/project-01/plan-upper-floor.jpg"
+
+    ],
+
+    planAlt: [
+
+      "แปลนพื้นชั้น 1 Romnalin Residence จังหวัดชลบุรี",
+
+      "แปลนพื้นชั้น 2 Romnalin Residence จังหวัดชลบุรี"
+
+    ],
+
+
+    /* -----------------------------------------------------
+       ARCHITECTURAL RENDERS
+       ----------------------------------------------------- */
+
+    renderTitle:
+      "Resort-like Living",
 
     renderImages: [
+
       "/assets/project-01/render-front.jpg",
+
       "/assets/project-01/render-lakeside.jpg"
+
     ],
+
+    renderAlt: [
+
+      "ภาพออกแบบด้านหน้า Romnalin Residence",
+
+      "ภาพออกแบบ Romnalin Residence มุมริมน้ำ"
+
+    ],
+
+
+    /* -----------------------------------------------------
+       CONSTRUCTION PROGRESS
+       ----------------------------------------------------- */
+
+    constructionTitle:
+      "From Drawing to Site",
+
+    constructionDescription:
+      "เมื่อแนวคิดถูกพัฒนาเข้าสู่แบบก่อสร้าง บ้านเริ่มเปลี่ยนจากเส้นบนกระดาษเป็นพื้นที่จริง กระบวนการก่อสร้างคือช่วงที่แนวคิด รายละเอียด โครงสร้าง และสภาพจริงของพื้นที่ต้องทำงานร่วมกัน",
 
     constructionImages: [
+
       "/assets/project-01/construction-01.jpg",
+
       "/assets/project-01/construction-02.jpg",
+
       "/assets/project-01/construction-03.jpg",
+
       "/assets/project-01/construction-04.jpg",
+
       "/assets/project-01/construction-05.jpg",
+
       "/assets/project-01/construction-06.jpg"
+
     ],
 
-    next: "02"
+
+    /* -----------------------------------------------------
+       SEO
+       ----------------------------------------------------- */
+
+    seo: {
+
+      title:
+        "Romnalin Residence | บ้านพักอาศัย 650 ตร.ม. ชลบุรี | ARSTINLA",
+
+      description:
+        "Romnalin Residence บ้านพักอาศัย 2 ชั้น พื้นที่ประมาณ 650 ตร.ม. จังหวัดชลบุรี ออกแบบโดย ARSTINLA Design & Consult ภายใต้แนวคิด Resort-like Living เชื่อมพื้นที่พักผ่อน สวน แสงธรรมชาติ และการระบายอากาศเข้ากับการใช้ชีวิตจริง",
+
+      canonical:
+        "https://arstinla.com/projects/romnalin-residence/",
+
+      ogTitle:
+        "Romnalin Residence | ARSTINLA Design & Consult",
+
+      ogDescription:
+        "บ้านพักอาศัย 650 ตร.ม. จังหวัดชลบุรี กับแนวคิด Resort-like Living เชื่อมบ้าน สวน แสง และพื้นที่พักผ่อนเข้าด้วยกัน",
+
+      ogImage:
+        "https://arstinla.com/assets/project-01/render-lakeside.jpg",
+
+      ogUrl:
+        "https://arstinla.com/projects/romnalin-residence/",
+
+      keywords: [
+        "ออกแบบบ้าน",
+        "สถาปนิก",
+        "ออกแบบบ้านชลบุรี",
+        "บ้านพักอาศัย 2 ชั้น",
+        "บ้านสไตล์รีสอร์ท",
+        "แบบบ้าน",
+        "แบบก่อสร้าง",
+        "ARSTINLA",
+        "Romnalin Residence"
+      ]
+
+    },
+
+
+    /* -----------------------------------------------------
+       PROJECT NAVIGATION
+       ----------------------------------------------------- */
+
+    previous:
+      null,
+
+    next:
+      "02"
+
   }
 
 };
+
+
+/* =========================================================
+   PROJECT HELPER FUNCTIONS
+   ========================================================= */
+
+
+/*
+   Get project by project number
+
+   Example:
+   const project = ARSTINLA_getProject("01");
+*/
+
+window.ARSTINLA_getProject = function(projectNumber) {
+
+  return (
+    window.ARSTINLA_PROJECTS[
+      projectNumber
+    ] || null
+  );
+
+};
+
+
+/*
+   Get project by slug
+
+   Example:
+   const project =
+     ARSTINLA_getProjectBySlug(
+       "romnalin-residence"
+     );
+*/
+
+window.ARSTINLA_getProjectBySlug = function(slug) {
+
+  const projects =
+    Object.values(
+      window.ARSTINLA_PROJECTS
+    );
+
+  return (
+    projects.find(
+      project =>
+        project.slug === slug
+    ) || null
+  );
+
+};
+
+
+/*
+   Get all projects
+
+   Useful later for
+   automatically generating
+   project cards.
+*/
+
+window.ARSTINLA_getAllProjects = function() {
+
+  return Object.values(
+    window.ARSTINLA_PROJECTS
+  );
+
+};
+
+
+/* =========================================================
+   END OF PROJECT DATA
+   ========================================================= */
