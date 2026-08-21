@@ -3707,6 +3707,29 @@
       "
       id="projectForm"
     >
+      <div
+  style="
+    position:absolute;
+    left:-9999px;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+  "
+  aria-hidden="true"
+>
+  <label for="website">
+    Website
+  </label>
+
+  <input
+    id="website"
+    name="website"
+    type="text"
+    tabindex="-1"
+    autocomplete="off"
+  >
+</div>
+      
 
 
       <div class="form-row">
@@ -3906,7 +3929,7 @@
           class="btn btn-primary"
         >
 
-          เตรียมข้อมูลโครงการ
+          ส่งข้อมูลโครงการ
 
         </button>
 
@@ -4700,66 +4723,136 @@ document
 
 
 
-  projectForm.addEventListener(
-    "submit",
-    async event => {
+projectForm.addEventListener(
+  "submit",
+  async event => {
 
-      event.preventDefault();
-
-
-      const projectData = `
-
-ARSTINLA PROJECT INQUIRY
-
-ชื่อ:
-${document.getElementById("name").value}
-
-ช่องทางติดต่อ:
-${document.getElementById("contactInfo").value}
-
-จังหวัด:
-${document.getElementById("province").value}
-
-สถานะที่ดิน:
-${document.getElementById("land").value}
-
-พื้นที่บ้าน:
-${document.getElementById("area").value}
-
-งบก่อสร้าง:
-${document.getElementById("budget").value}
-
-จำนวนห้องนอน:
-${document.getElementById("bedroom").value}
-
-ระยะเวลาเริ่มโครงการ:
-${document.getElementById("timeline").value}
-
-รายละเอียด:
-${document.getElementById("detail").value}
-
-      `.trim();
+    event.preventDefault();
 
 
-      try {
-
-        await navigator.clipboard
-          .writeText(projectData);
-
-
-        formStatus.innerHTML =
-          "✓ คัดลอกข้อมูลโครงการแล้ว<br>สามารถนำไปส่งให้ ARSTINLA ทาง LINE หรือ Messenger ได้ทันที";
+    const submitButton =
+      projectForm.querySelector(
+        'button[type="submit"]'
+      );
 
 
-      } catch (error) {
+    const payload = {
 
-        formStatus.textContent =
-          "ข้อมูลพร้อมแล้ว กรุณาส่งรายละเอียดให้ ARSTINLA ทาง LINE หรือ Messenger";
+      name:
+        document
+          .getElementById("name")
+          .value,
+
+      contactInfo:
+        document
+          .getElementById("contactInfo")
+          .value,
+
+      province:
+        document
+          .getElementById("province")
+          .value,
+
+      land:
+        document
+          .getElementById("land")
+          .value,
+
+      area:
+        document
+          .getElementById("area")
+          .value,
+
+      budget:
+        document
+          .getElementById("budget")
+          .value,
+
+      bedroom:
+        document
+          .getElementById("bedroom")
+          .value,
+
+      timeline:
+        document
+          .getElementById("timeline")
+          .value,
+
+      detail:
+        document
+          .getElementById("detail")
+          .value,
+
+      website:
+        document
+          .getElementById("website")
+          .value
+    };
+
+
+    submitButton.disabled = true;
+
+    formStatus.textContent =
+      "กำลังส่งข้อมูลโครงการ...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/contact",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(payload)
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          "ส่งข้อมูลไม่สำเร็จ"
+        );
 
       }
 
+
+      formStatus.innerHTML =
+        "✓ ส่งข้อมูลโครงการเรียบร้อยแล้ว<br>ARSTINLA จะติดต่อกลับโดยเร็วที่สุด";
+
+      projectForm.reset();
+
+
+    } catch (error) {
+
+      console.error(
+        "Contact form error:",
+        error
+      );
+
+      formStatus.textContent =
+        "ไม่สามารถส่งข้อมูลได้ในขณะนี้ กรุณาลองอีกครั้ง หรือติดต่อ ARSTINLA ทาง LINE";
+
+    } finally {
+
+      submitButton.disabled = false;
+
     }
-  );
+
+  }
+);
 
 </script>
 
