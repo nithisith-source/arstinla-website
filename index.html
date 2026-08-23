@@ -2565,13 +2565,121 @@
 .line-add-arrow {
   font-size: 16px;
 }
+  /* PROJECT FILTERS */
+
+.project-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+  margin: 32px 0 54px;
+}
+
+.project-filter {
+  position: relative;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+
+  color: rgba(23, 24, 22, .42);
+
+  font-family: var(--font-en);
+  font-size: .68rem;
+  letter-spacing: .12em;
+
+  cursor: pointer;
+  transition: color .25s ease;
+}
+
+.project-filter::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+
+  width: 0;
+  height: 1px;
+
+  background: #c47752;
+  transition: width .25s ease;
+}
+
+.project-filter:hover,
+.project-filter.active {
+  color: #171816;
+}
+
+.project-filter.active::after {
+  width: 100%;
+}
+
+.project.project-hidden {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .project-filters {
+    gap: 8px 16px;
+    margin-bottom: 36px;
+  }
+
+  .project-filter {
+    font-size: .62rem;
+  }
+}
 </style>
 
 </head>
 
+(() => {
+
+  const filters =
+    document.querySelectorAll(".project-filter");
+
+  const projects =
+    document.querySelectorAll(
+      ".project[data-project-category]"
+    );
+
+  filters.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const filter =
+        button.dataset.filter;
+
+      filters.forEach(item => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      projects.forEach(project => {
+
+        const categories =
+          (project.dataset.projectCategory || "")
+            .split(/\s+/);
+
+        const shouldShow =
+          filter === "all" ||
+          categories.includes(filter);
+
+        project.classList.toggle(
+          "project-hidden",
+          !shouldShow
+        );
+
+      });
+
+    });
+
+  });
+
+})();
+</script>
 
 <body>
-
+</html>
 
 <!-- =======================================================
      NAVIGATION
@@ -3075,15 +3183,76 @@
 
 
     </div>
+<div class="projects-count">
+  Selected Works / 01—06
+</div>
+
+</div>
 
 
-    <div class="projects-grid">
+<!-- PROJECT FILTERS -->
+<div class="project-filters">
+
+  <button
+    class="project-filter active"
+    data-filter="all"
+    type="button"
+  >
+    ALL
+  </button>
+
+  <button
+    class="project-filter"
+    data-filter="residential"
+    type="button"
+  >
+    RESIDENTIAL
+  </button>
+
+  <button
+    class="project-filter"
+    data-filter="commercial"
+    type="button"
+  >
+    COMMERCIAL
+  </button>
+
+  <button
+    class="project-filter"
+    data-filter="public"
+    type="button"
+  >
+    PUBLIC &amp; INSTITUTIONAL
+  </button>
+
+  <button
+    class="project-filter"
+    data-filter="urban"
+    type="button"
+  >
+    URBAN
+  </button>
+
+  <button
+    class="project-filter"
+    data-filter="interior"
+    type="button"
+  >
+    INTERIOR
+  </button>
+
+</div>
 
 
-      <article
-        class="project reveal"
-        data-project="0"
-      >
+<div class="projects-grid">
+
+
+
+     <article
+  class="project reveal"
+  data-project="0"
+  data-project-category="residential"
+>   
 
         <div class="project-bg p1"></div>
 
@@ -3116,6 +3285,7 @@
           reveal-delay-1
         "
         data-project="1"
+        data-project-category="residential"
       >
 
         <div class="project-bg p2"></div>
@@ -3142,11 +3312,11 @@
 
 
 
-      <article
-        class="project reveal"
-        data-project="2"
-      >
-
+<article
+  class="project reveal"
+  data-project="2"
+  data-project-category="commercial"
+>
         <div class="project-bg p3"></div>
 
         <div class="project-shade"></div>
@@ -3171,14 +3341,11 @@
 
 
 
-      <article
-        class="
-          project
-          reveal
-          reveal-delay-1
-        "
-        data-project="3"
-      >
+<article
+  class="project reveal"
+  data-project="3"
+  data-project-category="public"
+>
 
         <div class="project-bg p4"></div>
 
@@ -3204,10 +3371,11 @@
 
 
 
-      <article
-        class="project reveal"
-        data-project="4"
-      >
+<article
+  class="project reveal"
+  data-project="4"
+  data-project-category="urban"
+>
 
         <div class="project-bg p5"></div>
 
@@ -3233,14 +3401,11 @@
 
 
 
-      <article
-        class="
-          project
-          reveal
-          reveal-delay-1
-        "
-        data-project="5"
-      >
+<article
+  class="project reveal"
+  data-project="5"
+  data-project-category="interior"
+>
 
         <div class="project-bg p6"></div>
 
@@ -5025,6 +5190,53 @@ projectForm.addEventListener(
     },
     true
   );
+
+})();
+</script>
+<!-- PROJECT FILTER SCRIPT -->
+<script>
+(() => {
+
+  const filters =
+    document.querySelectorAll(".project-filter");
+
+  const projects =
+    document.querySelectorAll(
+      ".project[data-project-category]"
+    );
+
+  filters.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      const filter = button.dataset.filter;
+
+      filters.forEach(item => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      projects.forEach(project => {
+
+        const categories =
+          (project.dataset.projectCategory || "")
+            .split(/\s+/);
+
+        const shouldShow =
+          filter === "all" ||
+          categories.includes(filter);
+
+        project.classList.toggle(
+          "project-hidden",
+          !shouldShow
+        );
+
+      });
+
+    });
+
+  });
 
 })();
 </script>
