@@ -2632,6 +2632,50 @@
     font-size: .62rem;
   }
 }
+  /* CONTACT ACTIONS */
+
+.contact-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.contact-actions .line-add-button {
+  margin-top: 0;
+}
+
+.contact-submit-button {
+  min-height: 58px;
+  padding: 0 22px;
+
+  border: 1px solid #c47752;
+  background: #c47752;
+  color: #fff;
+
+  font-family: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+
+  cursor: pointer;
+}
+
+.contact-submit-button:hover {
+  background: #ad6848;
+  border-color: #ad6848;
+}
+
+@media (max-width: 768px) {
+  .contact-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact-actions .line-add-button,
+  .contact-submit-button {
+    width: 100%;
+  }
+}
 </style>
 
 </head>
