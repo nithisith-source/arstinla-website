@@ -2359,11 +2359,12 @@
     .projects,
     .process,
     .knowledge,
-    .contact {
+   .contact {
+  padding:
+    95px 0;
 
-      padding:
-        95px 0;
-    }
+  overflow: visible;
+}
 
 
     .philosophy {
@@ -2673,27 +2674,31 @@
 @media (min-width: 769px) {
 
   .contact-grid {
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: clamp(70px, 8vw, 120px) !important;
+    display: grid !important;
+    grid-template-columns: 38% 1fr !important;
+    gap: 80px !important;
+    align-items: start !important;
   }
 
-.contact-grid > div.reveal {
-    flex: 0 0 38%;
-    width: 38%;
-    min-width: 0;
+  .contact-grid > div.reveal {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
   }
 
-  .contact-grid > #projectForm {
-    flex: 1 1 0;
-    width: auto !important;
-    min-width: 0;
+  .contact-grid > form#projectForm {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+
+    display: grid !important;
+    width: 100% !important;
     margin: 0 !important;
-    padding: 0 !important;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
   }
 
 }
-
 </style>
 
 </head>
