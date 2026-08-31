@@ -3923,20 +3923,28 @@ data-contact-link
   </div>
 
 
+ <div class="contact-actions">
+
   <a
     class="line-add-button"
     href="https://line.me/R/ti/p/%40arstinla"
     target="_blank"
     rel="noopener"
   >
-    <span>
-      เพิ่มเพื่อน ARSTINLA Design
-    </span>
-
-    <span class="line-add-arrow">
-      ↗
-    </span>
+    <span>เพิ่มเพื่อน ARSTINLA Design</span>
+    <span class="line-add-arrow">↗</span>
   </a>
+
+  <button
+    id="contactSubmitButton"
+    class="contact-submit-button"
+    type="submit"
+    form="projectForm"
+  >
+    ส่งข้อมูลโครงการ
+  </button>
+
+</div
 
 </div>
 
@@ -4168,15 +4176,6 @@ data-contact-link
 
       <div class="form-submit">
 
-
-        <button
-          type="submit"
-          class="btn btn-primary"
-        >
-
-          ส่งข้อมูลโครงการ
-
-        </button>
 
 
         <div
@@ -4987,10 +4986,10 @@ projectForm.addEventListener(
     event.preventDefault();
 
 
-    const submitButton =
-      projectForm.querySelector(
-        'button[type="submit"]'
-      );
+const submitButton =
+  document.getElementById(
+    "contactSubmitButton"
+  );
 
 
     const payload = {
