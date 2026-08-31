@@ -2668,39 +2668,31 @@
   border-color: #ad6848;
 }
 
-/* FORCE CONTACT DESKTOP 2 COLUMNS */
-
-/* FORCE CONTACT DESKTOP 2 COLUMNS */
+/* CONTACT DESKTOP — FIXED TWO COLUMNS */
 
 @media (min-width: 769px) {
 
   .contact-grid {
-    display: grid !important;
-    grid-template-columns:
-      minmax(0, .8fr)
-      minmax(0, 1.2fr) !important;
-
-    gap: clamp(60px, 8vw, 120px) !important;
-    align-items: start !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: clamp(70px, 8vw, 120px) !important;
   }
 
   .contact-grid > .reveal {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
+    flex: 0 0 38%;
+    width: 38%;
     min-width: 0;
   }
 
   .contact-grid > #projectForm {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-
-    width: 100% !important;
-    max-width: none !important;
+    flex: 1 1 0;
+    width: auto !important;
     min-width: 0;
-    align-self: start !important;
-margin-top: 0 !important;
-padding-top: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
+
+}
 
 </style>
 
