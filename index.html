@@ -2670,17 +2670,35 @@
 
 /* FORCE CONTACT DESKTOP 2 COLUMNS */
 
+/* FORCE CONTACT DESKTOP 2 COLUMNS */
+
 @media (min-width: 769px) {
+
   .contact-grid {
     display: grid !important;
-    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) !important;
-    gap: clamp(60px, 10vw, 150px) !important;
+    grid-template-columns:
+      minmax(0, .8fr)
+      minmax(0, 1.2fr) !important;
+
+    gap: clamp(60px, 8vw, 120px) !important;
+    align-items: start !important;
   }
 
-  .contact-grid > .reveal,
-  .contact-grid > #projectForm {
+  .contact-grid > .reveal {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
     min-width: 0;
   }
+
+  .contact-grid > #projectForm {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0;
+  }
+
 }
 </style>
 
