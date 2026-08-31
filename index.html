@@ -2185,12 +2185,15 @@
     .intro-grid,
     .services-heading,
     .process-header,
-    .contact-grid,
     .modal-grid {
 
       grid-template-columns: 1fr;
     }
-
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
     .hero-buttons {
       justify-content:
