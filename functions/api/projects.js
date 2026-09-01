@@ -492,23 +492,23 @@ if (existingCoverResponse.ok) {
               "application/json"
           },
 
-body: JSON.stringify({
-  message:
-    `Add Project ${nextNumber} cover image`,
+      body: JSON.stringify({
+        message:
+          `Add Project ${nextNumber} cover image`,
 
-  content:
-    bytesToBase64(
-      coverBytes
-    ),
+        content:
+          bytesToBase64(
+            coverBytes
+          ),
 
-  branch,
+        branch,
 
-  ...(existingCoverSha
-    ? { sha: existingCoverSha }
-    : {})
-})
-}
-);
+        ...(existingCoverSha
+          ? { sha: existingCoverSha }
+          : {})
+      })
+    }
+  );
     if (!coverUpload.ok) {
 
       const details =
