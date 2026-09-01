@@ -99,7 +99,86 @@
       gap: 24px;
       align-items: center;
     }
+  }
 
+  /* ADD PROJECT UI */
+
+  .add-project-button {
+    border: 1px solid #c47752;
+    background: #c47752;
+    color: #fff;
+    padding: 13px 18px;
+    cursor: pointer;
+  }
+
+  .project-dialog {
+    border: 1px solid rgba(255,255,255,.15);
+    background: #121311;
+    color: #fff;
+    width: min(620px, calc(100% - 32px));
+    padding: 0;
+  }
+
+  .project-dialog::backdrop {
+    background: rgba(0,0,0,.75);
+  }
+
+  .project-dialog-inner {
+    padding: 32px;
+  }
+
+  .project-dialog-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+
+  .project-dialog-head h2 {
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .dialog-close {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .admin-form {
+    display: grid;
+    gap: 20px;
+  }
+
+  .admin-field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .admin-field label {
+    color: #85867f;
+    font-size: 12px;
+  }
+
+  .admin-field input,
+  .admin-field select {
+    width: 100%;
+    padding: 13px 12px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: #191a17;
+    color: #fff;
+  }
+
+  .admin-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .project-cover {
     .project-cover {
       width: 160px;
       aspect-ratio: 4 / 3;
@@ -213,6 +292,13 @@
           Project Manager
         </h1>
       </div>
+      <button
+  class="add-project-button"
+  id="addProjectButton"
+  type="button"
+>
+  + ADD PROJECT
+</button>
     </header>
 
 
@@ -267,7 +353,137 @@
       class="projects"
       id="projects"
     ></section>
+<dialog
+  class="project-dialog"
+  id="projectDialog"
+>
+  <div class="project-dialog-inner">
 
+    <div class="project-dialog-head">
+      <h2>Add Project</h2>
+
+      <button
+        class="dialog-close"
+        id="closeProjectDialog"
+        type="button"
+      >
+        ×
+      </button>
+    </div>
+
+    <form
+      class="admin-form"
+      id="addProjectForm"
+    >
+
+      <div class="admin-field">
+        <label for="projectTitle">
+          PROJECT TITLE
+        </label>
+
+        <input
+          id="projectTitle"
+          name="title"
+          type="text"
+          required
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="projectCategory">
+          CATEGORY
+        </label>
+
+        <select
+          id="projectCategory"
+          name="category"
+          required
+        >
+          <option value="residential">
+            Residential
+          </option>
+
+          <option value="commercial">
+            Commercial
+          </option>
+
+          <option value="public">
+            Public & Institutional
+          </option>
+
+          <option value="urban">
+            Urban
+          </option>
+
+          <option value="interior">
+            Interior
+          </option>
+        </select>
+      </div>
+
+      <div class="admin-field">
+        <label for="projectLocation">
+          LOCATION
+        </label>
+
+        <input
+          id="projectLocation"
+          name="location"
+          type="text"
+          placeholder="Bangkok, Thailand"
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="projectSlug">
+          SLUG
+        </label>
+
+        <input
+          id="projectSlug"
+          name="slug"
+          type="text"
+          placeholder="new-project"
+          required
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="projectCover">
+          COVER IMAGE
+        </label>
+
+        <input
+          id="projectCover"
+          name="cover"
+          type="file"
+          accept="image/*"
+        >
+      </div>
+
+      <div class="admin-form-actions">
+
+        <button
+          class="browse-button"
+          id="cancelProject"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="add-project-button"
+          type="submit"
+        >
+          Create Project
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</dialog>
   </main>
 
 
@@ -484,7 +700,77 @@
         );
 
       });
+const addProjectButton =
+  document.getElementById(
+    "addProjectButton"
+  );
 
+const projectDialog =
+  document.getElementById(
+    "projectDialog"
+  );
+
+const closeProjectDialog =
+  document.getElementById(
+    "closeProjectDialog"
+  );
+
+const cancelProject =
+  document.getElementById(
+    "cancelProject"
+  );
+
+const addProjectForm =
+  document.getElementById(
+    "addProjectForm"
+  );
+
+
+addProjectButton.addEventListener(
+  "click",
+  () => {
+    projectDialog.showModal();
+  }
+);
+
+
+function closeAddProject() {
+  projectDialog.close();
+}
+
+
+closeProjectDialog.addEventListener(
+  "click",
+  closeAddProject
+);
+
+cancelProject.addEventListener(
+  "click",
+  closeAddProject
+);
+
+
+addProjectForm.addEventListener(
+  "submit",
+  event => {
+
+    event.preventDefault();
+
+    const formData =
+      new FormData(addProjectForm);
+
+    console.log(
+      Object.fromEntries(
+        formData.entries()
+      )
+    );
+
+    alert(
+      "Project form ready — ขั้นต่อไปจะเชื่อม GitHub"
+    );
+
+  }
+);
 
     renderProjects();
   </script>
