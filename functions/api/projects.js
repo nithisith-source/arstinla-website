@@ -246,6 +246,8 @@ if (!dataResponse.ok) {
     500
   );
 }
+    const dataFile =
+  await dataResponse.json();
 const source =
   decodeBase64(
     dataFile.content
