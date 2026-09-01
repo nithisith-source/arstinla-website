@@ -229,26 +229,23 @@ export async function onRequestPost({
       );
 
 
-    if (!dataResponse.ok) {
-      return json(
-        {
-          ok: false,
-          error:
-            "Cannot read project-data.js"
-        },
-        500
-      );
-    }
+if (!dataResponse.ok) {
 
+  const details =
+    await dataResponse.text();
 
-    const dataFile =
-      await dataResponse.json();
-
-    const source =
-      decodeBase64(
-        dataFile.content
-      );
-
+  return json(
+    {
+      ok: false,
+      error:
+        "Cannot read project-data.js",
+      status:
+        dataResponse.status,
+      details
+    },
+    500
+  );
+}
 
     /* ------------------------------
        NEXT PROJECT NUMBER
