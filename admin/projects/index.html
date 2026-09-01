@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>ARSTINLA Project Manager</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #121311;
+      color: #f3f1eb;
+
+      font-family:
+        Arial,
+        sans-serif;
+    }
+
+    .admin {
+      width: min(
+        calc(100% - 48px),
+        1500px
+      );
+
+      margin: 0 auto;
+      padding: 50px 0 100px;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      padding-bottom: 28px;
+
+      border-bottom:
+        1px solid rgba(255,255,255,.15);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 72px);
+      font-weight: 300;
+    }
+
+    .admin-label {
+      color: #c47752;
+      font-size: 12px;
+      letter-spacing: .18em;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 24px;
+
+      margin: 32px 0 40px;
+    }
+
+    .filter {
+      padding: 8px 0;
+      border: 0;
+      background: none;
+      color: #777970;
+
+      cursor: pointer;
+    }
+
+    .filter.active {
+      color: #fff;
+    }
+
+    .projects {
+      display: grid;
+      gap: 24px;
+    }
+
+    .project-card {
+      border:
+        1px solid rgba(255,255,255,.14);
+
+      padding: 24px;
+    }
+
+    .project-head {
+      display: grid;
+      grid-template-columns:
+        160px 1fr auto;
+
+      gap: 24px;
+      align-items: center;
+    }
+
+    .project-cover {
+      width: 160px;
+      aspect-ratio: 4 / 3;
+
+      object-fit: cover;
+
+      background: #252622;
+    }
+
+    .project-number {
+      color: #c47752;
+      font-size: 12px;
+      letter-spacing: .15em;
+    }
+
+    .project-title {
+      margin: 6px 0;
+      font-size: 24px;
+    }
+
+    .project-meta {
+      color: #85867f;
+      font-size: 14px;
+    }
+
+    .browse-button {
+      border:
+        1px solid rgba(255,255,255,.22);
+
+      background: transparent;
+      color: #fff;
+
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+
+    .project-files {
+      display: none;
+
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(180px, 1fr)
+        );
+
+      gap: 16px;
+
+      margin-top: 24px;
+      padding-top: 24px;
+
+      border-top:
+        1px solid rgba(255,255,255,.1);
+    }
+
+    .project-files.open {
+      display: grid;
+    }
+
+    .file {
+      background: #191a17;
+      padding: 10px;
+    }
+
+    .file img {
+      display: block;
+
+      width: 100%;
+      aspect-ratio: 4 / 3;
+
+      object-fit: cover;
+
+      margin-bottom: 10px;
+    }
+
+    .file-name {
+      font-size: 11px;
+      color: #aaa;
+      word-break: break-all;
+    }
+
+    @media (max-width: 700px) {
+      .admin {
+        width: min(
+          calc(100% - 28px),
+          1500px
+        );
+      }
+
+      .project-head {
+        grid-template-columns: 1fr;
+      }
+
+      .project-cover {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="admin">
+
+    <header class="admin-header">
+      <div>
+        <div class="admin-label">
+          ARSTINLA ADMIN
+        </div>
+
+        <h1>
+          Project Manager
+        </h1>
+      </div>
+    </header>
+
+
+    <div class="filters">
+
+      <button
+        class="filter active"
+        data-filter="all"
+      >
+        ALL
+      </button>
+
+      <button
+        class="filter"
+        data-filter="residential"
+      >
+        RESIDENTIAL
+      </button>
+
+      <button
+        class="filter"
+        data-filter="commercial"
+      >
+        COMMERCIAL
+      </button>
+
+      <button
+        class="filter"
+        data-filter="public"
+      >
+        PUBLIC
+      </button>
+
+      <button
+        class="filter"
+        data-filter="urban"
+      >
+        URBAN
+      </button>
+
+      <button
+        class="filter"
+        data-filter="interior"
+      >
+        INTERIOR
+      </button>
+
+    </div>
+
+
+    <section
+      class="projects"
+      id="projects"
+    ></section>
+
+  </main>
+
+
+  <script src="/project-data.js"></script>
+
+  <script>
+    const projectsContainer =
+      document.getElementById(
+        "projects"
+      );
+
+    const projects =
+      Object.values(
+        window.ARSTINLA_PROJECTS || {}
+      );
+
+
+    function collectImages(value) {
+
+      const result = [];
+
+      function walk(item) {
+
+        if (
+          typeof item === "string" &&
+          /^\/assets\/.+\.(jpg|jpeg|png|webp)$/i
+            .test(item)
+        ) {
+          result.push(item);
+          return;
+        }
+
+        if (Array.isArray(item)) {
+          item.forEach(walk);
+          return;
+        }
+
+        if (
+          item &&
+          typeof item === "object"
+        ) {
+          Object.values(item)
+            .forEach(walk);
+        }
+
+      }
+
+      walk(value);
+
+      return [...new Set(result)];
+
+    }
+
+
+    function renderProjects(
+      filter = "all"
+    ) {
+
+      projectsContainer.innerHTML = "";
+
+      projects.forEach(project => {
+
+        const category =
+          project.filterCategory ||
+          "";
+
+        if (
+          filter !== "all" &&
+          category !== filter
+        ) {
+          return;
+        }
+
+
+        const images =
+          collectImages(project);
+
+
+        const article =
+          document.createElement(
+            "article"
+          );
+
+        article.className =
+          "project-card";
+
+
+        article.innerHTML = `
+          <div class="project-head">
+
+            <img
+              class="project-cover"
+              src="${project.thumbnail || project.hero || ""}"
+              alt="${project.title || ""}"
+            >
+
+            <div>
+
+              <div class="project-number">
+                PROJECT ${project.number || ""}
+              </div>
+
+              <div class="project-title">
+                ${project.title || "Untitled"}
+              </div>
+
+              <div class="project-meta">
+                ${project.category || ""}
+                ·
+                ${project.location || ""}
+              </div>
+
+              <div class="project-meta">
+                ${project.assetFolder || ""}
+              </div>
+
+            </div>
+
+            <button
+              class="browse-button"
+              type="button"
+            >
+              Browse Files
+            </button>
+
+          </div>
+
+          <div class="project-files">
+
+            ${images.map(path => `
+              <div class="file">
+
+                <img
+                  src="${path}"
+                  alt=""
+                  loading="lazy"
+                >
+
+                <div class="file-name">
+                  ${path}
+                </div>
+
+              </div>
+            `).join("")}
+
+          </div>
+        `;
+
+
+        const browseButton =
+          article.querySelector(
+            ".browse-button"
+          );
+
+        const files =
+          article.querySelector(
+            ".project-files"
+          );
+
+
+        browseButton.addEventListener(
+          "click",
+          () => {
+
+            files.classList.toggle(
+              "open"
+            );
+
+            browseButton.textContent =
+              files.classList.contains(
+                "open"
+              )
+                ? "Close Files"
+                : "Browse Files";
+
+          }
+        );
+
+
+        projectsContainer.appendChild(
+          article
+        );
+
+      });
+
+    }
+
+
+    document
+      .querySelectorAll(".filter")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            document
+              .querySelectorAll(".filter")
+              .forEach(item => {
+                item.classList.remove(
+                  "active"
+                );
+              });
+
+            button.classList.add(
+              "active"
+            );
+
+            renderProjects(
+              button.dataset.filter
+            );
+
+          }
+        );
+
+      });
+
+
+    renderProjects();
+  </script>
+
+</body>
+</html>
