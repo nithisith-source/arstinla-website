@@ -310,6 +310,74 @@ Resort-like Living ภายในบ้านพักอาศัย
     next:
       "02"
 
+  },
+
+
+  "02": {
+
+    number: "02",
+
+    slug: "test-project",
+
+    url:
+      "/projects/test-project/",
+
+    title:
+      "TT",
+
+    officialTitle:
+      "TT",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Bangkok Thailand",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-02.jpg",
+
+    hero:
+      "/assets/project-02.jpg",
+
+    heroAlt:
+      "TT",
+
+    assetFolder:
+      "/assets/project-02/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
