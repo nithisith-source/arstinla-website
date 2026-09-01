@@ -497,7 +497,7 @@ if (existingCoverSha) {
     existingCoverSha;
 }
 
-const coverUpload =
+const coverUpload = 
   await fetch(
     coverUploadUrl,
     {
