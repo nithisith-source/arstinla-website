@@ -246,7 +246,10 @@ if (!dataResponse.ok) {
     500
   );
 }
-
+const source =
+  decodeBase64(
+    dataFile.content
+  );
     /* ------------------------------
        NEXT PROJECT NUMBER
     ------------------------------ */
