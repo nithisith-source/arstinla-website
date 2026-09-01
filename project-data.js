@@ -41,6 +41,9 @@ window.ARSTINLA_PROJECTS = {
     category:
       "Private Residence",
 
+     filterCategory:
+  "residential",
+     
     location:
       "Chonburi, Thailand",
 
@@ -87,6 +90,8 @@ window.ARSTINLA_PROJECTS = {
     heroAlt:
       "Romnalin Residence บ้านพักอาศัยริมสวนและริมน้ำ จังหวัดชลบุรี",
 
+     assetFolder:
+  "/assets/project-01/",
 
     /* -----------------------------------------------------
        CLIENT BRIEF
