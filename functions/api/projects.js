@@ -462,7 +462,23 @@ const source =
       `https://api.github.com/repos/` +
       `${owner}/${repo}/contents/` +
       `${coverGithubPath}`;
+let existingCoverSha = null;
 
+const existingCoverResponse =
+  await fetch(
+    `${coverUploadUrl}?ref=${encodeURIComponent(branch)}`,
+    {
+      headers: githubHeaders
+    }
+  );
+
+if (existingCoverResponse.ok) {
+  const existingCover =
+    await existingCoverResponse.json();
+
+  existingCoverSha =
+    existingCover.sha;
+}
 
     const coverUpload =
       await fetch(
@@ -476,19 +492,21 @@ const source =
               "application/json"
           },
 
-          body: JSON.stringify({
-            message:
-              `Add Project ${nextNumber} cover image`,
+body: JSON.stringify({
+  message:
+    `Add Project ${nextNumber} cover image`,
 
-            content:
-              bytesToBase64(
-                coverBytes
-              ),
+  content:
+    bytesToBase64(
+      coverBytes
+    ),
 
-            branch
-          })
-        }
-      );
+  branch,
+
+  ...(existingCoverSha
+    ? { sha: existingCoverSha }
+    : {})
+})
 
 
     if (!coverUpload.ok) {
