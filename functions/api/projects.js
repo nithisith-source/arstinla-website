@@ -507,8 +507,8 @@ body: JSON.stringify({
     ? { sha: existingCoverSha }
     : {})
 })
-
-
+}
+);
     if (!coverUpload.ok) {
 
       const details =
