@@ -827,9 +827,16 @@ addProjectForm.addEventListener(
 
       if (!response.ok) {
         throw new Error(
-          result.error ||
-          "Create Project failed"
-        );
+  [
+    result.error,
+    result.status
+      ? `GitHub status: ${result.status}`
+      : "",
+    result.details || ""
+  ]
+    .filter(Boolean)
+    .join("\n")
+);
       }
 
       alert(
