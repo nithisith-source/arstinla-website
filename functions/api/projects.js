@@ -480,33 +480,39 @@ if (existingCoverResponse.ok) {
     existingCover.sha;
 }
 
-    const coverUpload =
-      await fetch(
-        coverUploadUrl,
-        {
-          method: "PUT",
+const coverPayload = {
+  message:
+    `Add Project ${nextNumber} cover image`,
 
-          headers: {
-            ...githubHeaders,
-            "content-type":
-              "application/json"
-          },
+  content:
+    bytesToBase64(
+      coverBytes
+    ),
 
-      body: JSON.stringify({
-        message:
-          `Add Project ${nextNumber} cover image`,
+  branch
+};
 
-        content:
-          bytesToBase64(
-            coverBytes
-          ),
+if (existingCoverSha) {
+  coverPayload.sha =
+    existingCoverSha;
+}
 
-        branch,
+const coverUpload =
+  await fetch(
+    coverUploadUrl,
+    {
+      method: "PUT",
 
-        ...(existingCoverSha
-          ? { sha: existingCoverSha }
-          : {})
-      })
+      headers: {
+        ...githubHeaders,
+        "content-type":
+          "application/json"
+      },
+
+      body:
+        JSON.stringify(
+          coverPayload
+        )
     }
   );
     if (!coverUpload.ok) {
