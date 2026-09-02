@@ -378,6 +378,74 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     next: null
 
+  },
+
+
+  "03": {
+
+    number: "03",
+
+    slug: "residence",
+
+    url:
+      "/projects/residence/",
+
+    title:
+      "Baan K,BEN",
+
+    officialTitle:
+      "Baan K,BEN",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Bangbon, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-03.jpg",
+
+    hero:
+      "/assets/project-03.jpg",
+
+    heroAlt:
+      "Baan K,BEN",
+
+    assetFolder:
+      "/assets/project-03/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
