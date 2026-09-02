@@ -667,7 +667,24 @@
           );
 
 
-        browseButton.addEventListener(
+browseButton.addEventListener(
+  "click",
+  () => {
+
+    files.classList.toggle(
+      "open"
+    );
+
+    browseButton.textContent =
+      files.classList.contains(
+        "open"
+      )
+        ? "Close Files"
+        : "Browse Files";
+  }
+);
+
+
 const uploadInput =
   article.querySelector(
     ".project-upload-input"
@@ -682,20 +699,8 @@ const uploadStatus =
   article.querySelector(
     ".project-upload-status"
   );
-const uploadInput =
-  article.querySelector(
-    ".project-upload-input"
-  );
 
-const uploadButton =
-  article.querySelector(
-    ".project-upload-button"
-  );
 
-const uploadStatus =
-  article.querySelector(
-    ".project-upload-status"
-  );
 
 uploadButton.addEventListener(
   "click",
