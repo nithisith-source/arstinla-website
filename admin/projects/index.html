@@ -636,23 +636,26 @@
 
   <div class="project-upload-status"></div>
 </div>
-            ${images.map(path => `
-              <div class="file">
+         
+          <div class="project-file-grid">
 
-                <img
-                  src="${path}"
-                  alt=""
-                  loading="lazy"
-                >
+  ${images.map(path => `
+    <div class="file">
 
-                <div class="file-name">
-                  ${path}
-                </div>
+      <img
+        src="${path}"
+        alt=""
+        loading="lazy"
+      >
 
-              </div>
-            `).join("")}
+      <div class="file-name">
+        ${path}
+      </div>
 
-          </div>
+    </div>
+  `).join("")}
+
+</div>
         `;
 
 
@@ -669,7 +672,118 @@
 
 browseButton.addEventListener(
   "click",
-  () => {
+  async () => {
+
+    const isOpening =
+      !files.classList.contains(
+        "open"
+      );
+
+    files.classList.toggle(
+      "open"
+    );
+
+    browseButton.textContent =
+      files.classList.contains(
+        "open"
+      )
+        ? "Close Files"
+        : "Browse Files";
+
+
+    if (!isOpening) {
+      return;
+    }
+
+
+    let adminKey =
+      sessionStorage.getItem(
+        "ARSTINLA_ADMIN_KEY"
+      );
+
+    if (!adminKey) {
+
+      adminKey =
+        prompt(
+          "Enter ARSTINLA Admin Key"
+        );
+
+      if (!adminKey) {
+        return;
+      }
+
+      sessionStorage.setItem(
+        "ARSTINLA_ADMIN_KEY",
+        adminKey
+      );
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/project-files?projectNumber=${encodeURIComponent(project.number)}`,
+          {
+            headers: {
+              "x-admin-key":
+                adminKey
+            }
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+          "Cannot load project files"
+        );
+      }
+
+
+      const fileGrid =
+        files.querySelector(
+          ".project-file-grid"
+        );
+
+
+      if (fileGrid) {
+
+        fileGrid.innerHTML =
+          result.files
+            .map(
+              file => `
+                <div class="file">
+
+                  <img
+                    src="${file.path}?v=${Date.now()}"
+                    alt=""
+                    loading="lazy"
+                  >
+
+                  <div class="file-name">
+                    ${file.path}
+                  </div>
+
+                </div>
+              `
+            )
+            .join("");
+      }
+
+    }
+    catch (error) {
+
+      alert(
+        error.message
+      );
+    }
+  }
+);
 
     files.classList.toggle(
       "open"
