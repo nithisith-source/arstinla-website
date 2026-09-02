@@ -625,7 +625,23 @@
           </div>
 
           <div class="project-files">
+<div class="project-upload">
+  <input
+    class="project-upload-input"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+  >
 
+  <button
+    class="project-upload-button"
+    type="button"
+  >
+    Upload Images
+  </button>
+
+  <div class="project-upload-status"></div>
+</div>
             ${images.map(path => `
               <div class="file">
 
