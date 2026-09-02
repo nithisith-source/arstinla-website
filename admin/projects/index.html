@@ -780,8 +780,119 @@ fileGrid.innerHTML =
         </div>
       `
     )
-    .join("");
-      }
+.join("");
+
+fileGrid
+  .querySelectorAll(
+    ".delete-project-file"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          const fileName =
+            button.dataset.name;
+
+          const sha =
+            button.dataset.sha;
+
+          const confirmed =
+            confirm(
+              `Delete ${fileName}?`
+            );
+
+          if (!confirmed) {
+            return;
+          }
+
+          let adminKey =
+            sessionStorage.getItem(
+              "ARSTINLA_ADMIN_KEY"
+            );
+
+          if (!adminKey) {
+
+            adminKey =
+              prompt(
+                "Enter ARSTINLA Admin Key"
+              );
+
+            if (!adminKey) {
+              return;
+            }
+
+            sessionStorage.setItem(
+              "ARSTINLA_ADMIN_KEY",
+              adminKey
+            );
+          }
+
+          button.disabled = true;
+          button.textContent =
+            "Deleting...";
+
+          try {
+
+            const response =
+              await fetch(
+                "/api/project-files",
+                {
+                  method: "DELETE",
+
+                  headers: {
+                    "content-type":
+                      "application/json",
+
+                    "x-admin-key":
+                      adminKey
+                  },
+
+                  body:
+                    JSON.stringify({
+                      projectNumber:
+                        project.number,
+
+                      fileName,
+
+                      sha
+                    })
+                }
+              );
+
+            const result =
+              await response.json();
+
+            if (!response.ok) {
+              throw new Error(
+                result.error ||
+                "Delete failed"
+              );
+            }
+
+            button
+              .closest(".file")
+              ?.remove();
+
+          }
+          catch (error) {
+
+            alert(
+              error.message
+            );
+
+            button.disabled = false;
+            button.textContent =
+              "Delete";
+          }
+        }
+      );
+    }
+  );
+
+}
 
     }
     catch (error) {
