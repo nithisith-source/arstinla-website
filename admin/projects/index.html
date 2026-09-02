@@ -753,26 +753,34 @@ browseButton.addEventListener(
 
       if (fileGrid) {
 
-        fileGrid.innerHTML =
-          result.files
-            .map(
-              file => `
-                <div class="file">
+fileGrid.innerHTML =
+  result.files
+    .map(
+      file => `
+        <div class="file">
 
-                  <img
-                    src="${file.path}?v=${Date.now()}"
-                    alt=""
-                    loading="lazy"
-                  >
+          <img
+            src="${file.path}?v=${Date.now()}"
+            alt=""
+            loading="lazy"
+          >
 
-                  <div class="file-name">
-                    ${file.path}
-                  </div>
+          <div class="file-name">
+            ${file.path}
+          </div>
 
-                </div>
-              `
-            )
-            .join("");
+          <button
+            type="button"
+            class="delete-project-file"
+            data-path="${file.path}"
+          >
+            Delete
+          </button>
+
+        </div>
+      `
+    )
+    .join("");
       }
 
     }
