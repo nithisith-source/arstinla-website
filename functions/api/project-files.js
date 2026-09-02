@@ -272,3 +272,177 @@ export async function onRequestPost({
     );
   }
 }
+export async function onRequestGet({
+  request,
+  env
+}) {
+
+  try {
+
+    const adminKey =
+      request.headers.get(
+        "x-admin-key"
+      );
+
+    if (
+      !env.ADMIN_KEY ||
+      adminKey !== env.ADMIN_KEY
+    ) {
+      return json(
+        {
+          ok: false,
+          error: "Unauthorized"
+        },
+        401
+      );
+    }
+
+    const url =
+      new URL(request.url);
+
+    const projectNumber =
+      String(
+        url.searchParams.get(
+          "projectNumber"
+        ) || ""
+      ).trim();
+
+    if (!/^\d{2}$/.test(projectNumber)) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Invalid project number"
+        },
+        400
+      );
+    }
+
+    const owner =
+      env.GITHUB_OWNER;
+
+    const repo =
+      env.GITHUB_REPO;
+
+    const branch =
+      env.GITHUB_BRANCH || "main";
+
+    const token =
+      env.GITHUB_TOKEN;
+
+    if (!owner || !repo || !token) {
+      return json(
+        {
+          ok: false,
+          error:
+            "GitHub environment variables missing"
+        },
+        500
+      );
+    }
+
+    const githubHeaders = {
+      Authorization:
+        `Bearer ${token}`,
+
+      Accept:
+        "application/vnd.github+json",
+
+      "X-GitHub-Api-Version":
+        "2022-11-28",
+
+      "User-Agent":
+        "ARSTINLA-Project-Manager"
+    };
+
+    const folderPath =
+      `assets/project-${projectNumber}`;
+
+    const apiUrl =
+      `https://api.github.com/repos/` +
+      `${owner}/${repo}/contents/` +
+      `${folderPath}` +
+      `?ref=${encodeURIComponent(branch)}`;
+
+    const response =
+      await fetch(
+        apiUrl,
+        {
+          headers:
+            githubHeaders
+        }
+      );
+
+    if (response.status === 404) {
+      return json({
+        ok: true,
+        projectNumber,
+        files: []
+      });
+    }
+
+    if (!response.ok) {
+
+      const details =
+        await response.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "Cannot read project folder",
+          details
+        },
+        500
+      );
+    }
+
+    const items =
+      await response.json();
+
+    const files =
+      Array.isArray(items)
+        ? items
+            .filter(
+              item =>
+                item.type === "file"
+            )
+            .filter(
+              item =>
+                /\.(jpe?g|png|webp|gif)$/i
+                  .test(item.name)
+            )
+            .map(
+              item => ({
+                name:
+                  item.name,
+
+                path:
+                  `/assets/project-${projectNumber}/${item.name}`,
+
+                sha:
+                  item.sha
+              })
+            )
+        : [];
+
+    return json({
+      ok: true,
+      projectNumber,
+      files
+    });
+
+  }
+  catch (error) {
+
+    return json(
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
+  }
+}
