@@ -674,22 +674,144 @@
 
 
         browseButton.addEventListener(
-          "click",
-          () => {
+const uploadInput =
+  article.querySelector(
+    ".project-upload-input"
+  );
 
-            files.classList.toggle(
-              "open"
-            );
+const uploadButton =
+  article.querySelector(
+    ".project-upload-button"
+  );
 
-            browseButton.textContent =
-              files.classList.contains(
-                "open"
-              )
-                ? "Close Files"
-                : "Browse Files";
+const uploadStatus =
+  article.querySelector(
+    ".project-upload-status"
+  );
 
+
+uploadButton.addEventListener(
+  "click",
+  async () => {
+
+    const selectedFiles =
+      Array.from(
+        uploadInput.files || []
+      );
+
+    if (!selectedFiles.length) {
+      alert(
+        "กรุณาเลือกรูปก่อน"
+      );
+      return;
+    }
+
+
+    let adminKey =
+      sessionStorage.getItem(
+        "ARSTINLA_ADMIN_KEY"
+      );
+
+    if (!adminKey) {
+
+      adminKey =
+        prompt(
+          "Enter ARSTINLA Admin Key"
+        );
+
+      if (!adminKey) {
+        return;
+      }
+
+      sessionStorage.setItem(
+        "ARSTINLA_ADMIN_KEY",
+        adminKey
+      );
+    }
+
+
+    uploadButton.disabled = true;
+
+    uploadStatus.textContent =
+      "Uploading...";
+
+
+    try {
+
+      const formData =
+        new FormData();
+
+      formData.append(
+        "projectNumber",
+        project.number
+      );
+
+
+      selectedFiles.forEach(
+        file => {
+          formData.append(
+            "files",
+            file
+          );
+        }
+      );
+
+
+      const response =
+        await fetch(
+          "/api/project-files",
+          {
+            method: "POST",
+
+            headers: {
+              "x-admin-key":
+                adminKey
+            },
+
+            body:
+              formData
           }
         );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          "Upload failed"
+        );
+      }
+
+
+      uploadStatus.textContent =
+        `Uploaded ${result.uploaded.length} file(s)`;
+
+      alert(
+        `อัปโหลดรูป Project ${project.number} เรียบร้อย`
+      );
+
+    }
+    catch (error) {
+
+      uploadStatus.textContent =
+        "Upload failed";
+
+      alert(
+        error.message
+      );
+
+    }
+    finally {
+
+      uploadButton.disabled =
+        false;
+    }
+  }
+);
 
 
         projectsContainer.appendChild(
