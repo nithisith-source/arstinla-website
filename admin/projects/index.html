@@ -586,8 +586,11 @@
 
             <img
               class="project-cover"
-              src="${project.thumbnail || project.hero || ""}"
-              alt="${project.title || ""}"
+              src="${
+  (project.thumbnail || project.hero)
+    ? `${project.thumbnail || project.hero}?v=${Date.now()}`
+    : ""
+}"
             >
 
             <div>
