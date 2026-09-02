@@ -446,3 +446,201 @@ export async function onRequestGet({
     );
   }
 }
+export async function onRequestDelete({
+  request,
+  env
+}) {
+
+  try {
+
+    const adminKey =
+      request.headers.get(
+        "x-admin-key"
+      );
+
+    if (
+      !env.ADMIN_KEY ||
+      adminKey !== env.ADMIN_KEY
+    ) {
+      return json(
+        {
+          ok: false,
+          error: "Unauthorized"
+        },
+        401
+      );
+    }
+
+
+    const owner =
+      env.GITHUB_OWNER;
+
+    const repo =
+      env.GITHUB_REPO;
+
+    const branch =
+      env.GITHUB_BRANCH || "main";
+
+    const token =
+      env.GITHUB_TOKEN;
+
+
+    if (!owner || !repo || !token) {
+      return json(
+        {
+          ok: false,
+          error:
+            "GitHub environment variables missing"
+        },
+        500
+      );
+    }
+
+
+    const body =
+      await request.json();
+
+    const projectNumber =
+      String(
+        body.projectNumber || ""
+      ).trim();
+
+    const fileName =
+      String(
+        body.fileName || ""
+      ).trim();
+
+    const sha =
+      String(
+        body.sha || ""
+      ).trim();
+
+
+    if (!/^\d{2}$/.test(projectNumber)) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Invalid project number"
+        },
+        400
+      );
+    }
+
+
+    if (
+      !fileName ||
+      fileName.includes("/") ||
+      fileName.includes("\\") ||
+      fileName === "." ||
+      fileName === ".."
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Invalid file name"
+        },
+        400
+      );
+    }
+
+
+    if (!sha) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Missing file sha"
+        },
+        400
+      );
+    }
+
+
+    const githubHeaders = {
+      Authorization:
+        `Bearer ${token}`,
+
+      Accept:
+        "application/vnd.github+json",
+
+      "X-GitHub-Api-Version":
+        "2022-11-28",
+
+      "User-Agent":
+        "ARSTINLA-Project-Manager"
+    };
+
+
+    const githubPath =
+      `assets/project-${projectNumber}/${fileName}`;
+
+    const apiUrl =
+      `https://api.github.com/repos/` +
+      `${owner}/${repo}/contents/` +
+      `${githubPath}`;
+
+
+    const response =
+      await fetch(
+        apiUrl,
+        {
+          method: "DELETE",
+
+          headers: {
+            ...githubHeaders,
+            "content-type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              message:
+                `Delete Project ${projectNumber} image: ${fileName}`,
+
+              sha,
+
+              branch
+            })
+        }
+      );
+
+
+    if (!response.ok) {
+
+      const details =
+        await response.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "Delete failed",
+          details
+        },
+        500
+      );
+    }
+
+
+    return json({
+      ok: true,
+      projectNumber,
+      fileName
+    });
+
+  }
+  catch (error) {
+
+    return json(
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
+  }
+}
