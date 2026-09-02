@@ -491,7 +491,13 @@
   </main>
 
 
-  <script src="/project-data.js?v=20260902"></script>
+ <script>
+  document.write(
+    '<script src="/project-data.js?v=' +
+    Date.now() +
+    '"><\/script>'
+  );
+</script>
 
   <script>
     const projectsContainer =
