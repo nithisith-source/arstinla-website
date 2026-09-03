@@ -514,6 +514,74 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     next: null
 
+  },
+
+
+  "05": {
+
+    number: "05",
+
+    slug: "private-residence",
+
+    url:
+      "/projects/private-residence/",
+
+    title:
+      "Supan Residence",
+
+    officialTitle:
+      "Supan Residence",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Tahmakar,Kanchanaburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-05.jpg",
+
+    hero:
+      "/assets/project-05.jpg",
+
+    heroAlt:
+      "Supan Residence",
+
+    assetFolder:
+      "/assets/project-05/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
