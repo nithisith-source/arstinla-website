@@ -446,6 +446,74 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     next: null
 
+  },
+
+
+  "04": {
+
+    number: "04",
+
+    slug: "private-residence",
+
+    url:
+      "/projects/private-residence/",
+
+    title:
+      "K'Ple Residence@Bangbon,BKK",
+
+    officialTitle:
+      "K'Ple Residence@Bangbon,BKK",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Bangbon, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-04.jpg",
+
+    hero:
+      "/assets/project-04.jpg",
+
+    heroAlt:
+      "K'Ple Residence@Bangbon,BKK",
+
+    assetFolder:
+      "/assets/project-04/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
