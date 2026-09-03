@@ -769,13 +769,14 @@ fileGrid.innerHTML =
             ${file.path}
           </div>
 
-          <button
-            type="button"
-            class="delete-project-file"
-            data-path="${file.path}"
-          >
-            Delete
-          </button>
+<button
+  type="button"
+  class="delete-project-file"
+  data-name="${file.name}"
+  data-sha="${file.sha}"
+>
+  Delete
+</button>
 
         </div>
       `
