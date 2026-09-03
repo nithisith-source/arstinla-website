@@ -450,69 +450,131 @@ Resort-like Living ภายในบ้านพักอาศัย
 
 
   "04": {
+    introTitle:
+  "A Home for Three Generations",
 
-    number: "04",
+introDescription:
+  "บ้านพักอาศัยสำหรับครอบครัวสามวัย ที่ต้องรองรับทั้งการใช้ชีวิตประจำวันของคุณเปิ้ล ห้องนอนของลูกชายที่มีพื้นที่สำหรับอัดเสียงและซ้อมดนตรี รวมถึงห้องพักของคุณพ่อคุณแม่สูงวัยซึ่งจัดไว้ชั้นล่างเพื่อให้ใช้งานได้สะดวกและรองรับรถเข็น โจทย์หลักของโครงการจึงไม่ใช่เพียงการจัดพื้นที่ให้เพียงพอ แต่คือการทำให้สมาชิกแต่ละวัยสามารถใช้ชีวิตร่วมกันได้อย่างเป็นอิสระ มีความเป็นส่วนตัว และยังเชื่อมถึงกันได้ในจังหวะที่เหมาะสม",
 
-    slug: "private-residence",
+briefTitle:
+  "Living Together, Differently",
 
-    url:
-      "/projects/private-residence/",
+briefDescription:
+  "เจ้าของบ้านต้องการบ้านที่มีบรรยากาศขาว สะอาด เรียบ และให้ความรู้สึกสงบแบบบ้านญี่ปุ่น โดยมีพื้นที่สีเขียวกระจายอยู่ตลอดทั้งบ้าน ตั้งแต่สวนหน้าบ้าน สวนกลางบ้าน ไปจนถึงสวนหลังบ้าน ขณะเดียวกัน บ้านต้องแบ่งการใช้งานออกเป็นสามกลุ่มอย่างชัดเจน ได้แก่ พื้นที่ของคุณพ่อคุณแม่สูงวัย พื้นที่ของเจ้าของบ้าน และพื้นที่ของลูกชายที่มีห้องอัดเสียงและห้องซ้อมดนตรี เพื่อให้กิจกรรมของแต่ละคนไม่รบกวนกัน",
 
-    title:
-      "K'Ple Residence@Bangbon,BKK",
+conceptTitle:
+  "Courtyards as Separation and Connection",
 
-    officialTitle:
-      "K'Ple Residence@Bangbon,BKK",
+conceptDescription:
+  "แนวคิดหลักของบ้านคือการใช้ Courtyard เป็นทั้งตัวแบ่งพื้นที่และตัวเชื่อมสมาชิกในครอบครัว แทนที่จะรวมทุกกิจกรรมไว้ในก้อนอาคารเดียว พื้นที่ถูกจัดเป็นลำดับของโซนที่ค่อย ๆ เชื่อมต่อกันผ่านสวนและช่องเปิด ทำให้แต่ละส่วนมีความเป็นส่วนตัวโดยไม่รู้สึกแยกขาดจากกัน Courtyard ยังช่วยนำแสงธรรมชาติ พื้นที่สีเขียว และการระบายอากาศเข้าสู่ภายในบ้าน พร้อมทำหน้าที่เป็น buffer ระหว่างโซนของคุณพ่อคุณแม่ โซนเจ้าของบ้าน และโซนลูกชายที่มีพื้นที่ซ้อมดนตรี",
 
-    category:
-      "Residential",
+siteTitle:
+  "Living with the Existing Neighborhood",
 
-    filterCategory:
-      "residential",
+siteDescription:
+  "ที่ดินตั้งอยู่ในหมู่บ้านเก่าในย่านบางบอน กรุงเทพมหานคร ด้านหลังติดคลอง ด้านขวาติดบ้านเพื่อนบ้าน และด้านซ้ายติดบ้านชั้นเดียวของน้องสาวเจ้าของบ้าน ซึ่งมีความตั้งใจให้สองบ้านสามารถเปิดเชื่อมถึงกันจากรั้วด้านข้างได้ เงื่อนไขเหล่านี้ทำให้การวางอาคารต้องคำนึงถึงทั้งความเป็นส่วนตัว มุมมอง การรับแสง การระบายอากาศ และความสัมพันธ์กับบ้านข้างเคียงในเวลาเดียวกัน พื้นที่เปิดจึงไม่ได้ถูกจัดไว้เพียงรอบอาคาร แต่ถูกดึงเข้ามาอยู่กลางบ้านเพื่อสร้างระยะห่างที่พอดีระหว่างแต่ละโซน",
 
-    location:
-      "Bangbon, Bangkok",
+planningTitle:
+  "Clear Zones, Comfortable Living",
 
-    province: "",
+planningDescription:
+  "ชั้นล่างถูกออกแบบให้รองรับคุณพ่อคุณแม่สูงวัย โดยลดความจำเป็นในการใช้บันไดและให้เส้นทางสัญจรสะดวกต่อรถเข็น พื้นที่ของเจ้าของบ้านถูกวางในตำแหน่งที่เชื่อมกับส่วนกลางของบ้านได้โดยตรง ขณะที่พื้นที่ของลูกชายถูกแยกออกอย่างชัดเจนเพื่อควบคุมเสียงจากห้องอัดเสียงและห้องซ้อมดนตรีไม่ให้รบกวนพื้นที่อื่น การวางสวนทั้งด้านหน้า กลาง และด้านหลัง ช่วยให้บ้านมีมุมมองสีเขียวในหลายทิศทาง และทำให้แต่ละโซนมีพื้นที่หายใจของตัวเอง",
 
-    country:
-      "Thailand",
+materialsTitle:
+  "Light, Calm, and Durable",
 
-    year: "",
+materialsDescription:
+  "ภาษาสถาปัตยกรรมของบ้านเน้นความเรียบ สะอาด และมีน้ำหนักเบา โดยใช้โครงสร้างคอนกรีตเสริมเหล็กเป็นระบบหลักของอาคาร ระแนงอลูมิเนียมถูกใช้เพื่อช่วยกรองแสงและเพิ่มความเป็นส่วนตัว กระจกถูกนำมาใช้ทั้งในช่องเปิดขนาดใหญ่ ราวบันได และ skylight เพื่อให้แสงธรรมชาติเข้าสู่ภายในบ้านได้มากขึ้น ขณะที่พื้นไม้ช่วยเพิ่มความอบอุ่นและทำให้วัสดุแข็งอย่างคอนกรีต กระจก และอลูมิเนียมมีบรรยากาศที่นุ่มนวลขึ้น",
 
-    completion: "",
+summaryTitle:
+  "Privacy within a Shared Home",
 
-    area: "",
+summaryDescription:
+  "K'Ple Residence เป็นบ้านที่ออกแบบจากความแตกต่างของสมาชิกในครอบครัว โดยไม่ได้พยายามทำให้ทุกคนใช้พื้นที่แบบเดียวกัน แต่สร้างสภาพแวดล้อมที่แต่ละคนสามารถใช้ชีวิตในแบบของตัวเองได้อย่างสบาย การแบ่งโซนที่ชัดเจน การใช้ courtyard เป็นพื้นที่คั่นกลาง และการเชื่อมต่อกับสวนในหลายตำแหน่ง ทำให้บ้านมีทั้งความเป็นส่วนตัว ความสงบ และความสัมพันธ์ระหว่างสมาชิกในครอบครัวอยู่พร้อมกัน", 
 
-    areaNumber: 0,
+number: "04",
 
-    status:
-      "Draft",
+slug: "kple-residence",
 
-    service:
-      "Architecture / Design",
+url:
+  "/projects/kple-residence/",
 
-    thumbnail:
-      "/assets/project-04.jpg",
+title:
+  "K'Ple Residence",
 
-    hero:
-      "/assets/project-04.jpg",
+officialTitle:
+  "K'Ple Residence",
 
-    heroAlt:
-      "K'Ple Residence@Bangbon,BKK",
+category:
+  "Residential",
 
-    assetFolder:
-      "/assets/project-04/",
+filterCategory:
+  "residential",
+
+location:
+  "Bangbon, Bangkok",
+
+country:
+  "Thailand",
+
+year:
+  "2023",
+
+area:
+  "380 sq.m.",
+
+areaNumber:
+  380,
+
+status:
+  "Completed",
+
+service:
+  "Architecture / Design",
+
+thumbnail:
+  "/assets/project-04.jpg",
+
+hero:
+  "/assets/project-04.jpg",
+
+heroAlt:
+  "K'Ple Residence, Bangbon, Bangkok",
+
+assetFolder:
+  "/assets/project-04/",
 
     siteImages: [],
 
     planImages: [],
 
     constructionImages: [],
+seo: {
 
-    previous: null,
+  title:
+    "K'Ple Residence | Multi-Generation House in Bangbon | ARSTINLA",
 
-    next: null
+  description:
+    "K'Ple Residence is a 380 sq.m. multi-generation home in Bangbon, Bangkok, designed around courtyards, clear zoning, elderly accessibility, and a private music studio.",
+
+  canonical:
+    "https://arstinla.com/projects/kple-residence/",
+
+  ogTitle:
+    "K'Ple Residence | ARSTINLA Design & Consult",
+
+  ogDescription:
+    "A multi-generation residence in Bangbon designed around courtyards, privacy, accessibility, and flexible family living.",
+
+  ogImage:
+    "https://arstinla.com/assets/project-04.jpg",
+
+  ogUrl:
+    "https://arstinla.com/projects/kple-residence/"
+},
+previous: "03",
+
+next: "05"
 
   },
 
