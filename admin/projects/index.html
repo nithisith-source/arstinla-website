@@ -71,7 +71,7 @@
       border: 0;
       background: none;
       color: #777970;
-
+      font-size: 14px;
       cursor: pointer;
     }
 
@@ -81,7 +81,49 @@
 
     .projects {
       display: grid;
+      gap: 48px;
+    }
+
+    .project-category-group {
+      display: grid;
+      gap: 20px;
+    }
+
+    .project-category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
       gap: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+
+    .project-category-title {
+      margin: 0;
+      color: #f3f1eb;
+      font-size: clamp(20px, 2.4vw, 30px);
+      font-weight: 400;
+      letter-spacing: -.02em;
+    }
+
+    .project-category-count {
+      color: #c47752;
+      font-size: 12px;
+      letter-spacing: .14em;
+      white-space: nowrap;
+    }
+
+    .project-category-list {
+      display: grid;
+      gap: 24px;
+    }
+
+    .project-category-empty {
+      margin: 0;
+      padding: 26px 24px;
+      border: 1px dashed rgba(255,255,255,.14);
+      color: #777970;
+      font-size: 14px;
     }
 
     .project-card {
@@ -97,7 +139,6 @@
   gap: 24px;
   align-items: center;
 }
-  }
 
   /* ADD PROJECT UI */
 
@@ -258,24 +299,33 @@
       word-break: break-all;
     }
 
-  @media (max-width: 700px) {
-  .project-head {
-    grid-template-columns: 1fr;
-  }
+    @media (max-width: 700px) {
+      .admin {
+        width: min(calc(100% - 32px), 1500px);
+        padding-top: 32px;
+      }
 
-  .project-cover {
-    width: 100% !important;
-    max-width: none !important;
-    height: auto !important;
-    aspect-ratio: 4 / 3 !important;
-  }
-}
+      .admin-header {
+        align-items: flex-start;
+        gap: 24px;
+      }
+
+      .filters {
+        gap: 8px 18px;
+      }
 
       .project-head {
         grid-template-columns: 1fr;
       }
 
       .project-cover {
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        aspect-ratio: 4 / 3 !important;
+      }
+
+      .browse-button {
         width: 100%;
       }
     }
@@ -311,6 +361,8 @@
       <button
         class="filter active"
         data-filter="all"
+        type="button"
+        aria-pressed="true"
       >
         ALL
       </button>
@@ -318,6 +370,8 @@
       <button
         class="filter"
         data-filter="residential"
+        type="button"
+        aria-pressed="false"
       >
         RESIDENTIAL
       </button>
@@ -325,6 +379,8 @@
       <button
         class="filter"
         data-filter="commercial"
+        type="button"
+        aria-pressed="false"
       >
         COMMERCIAL
       </button>
@@ -332,13 +388,17 @@
       <button
         class="filter"
         data-filter="public"
+        type="button"
+        aria-pressed="false"
       >
-        PUBLIC
+        PUBLIC &amp; INSTITUTIONAL
       </button>
 
       <button
         class="filter"
         data-filter="urban"
+        type="button"
+        aria-pressed="false"
       >
         URBAN
       </button>
@@ -346,6 +406,8 @@
       <button
         class="filter"
         data-filter="interior"
+        type="button"
+        aria-pressed="false"
       >
         INTERIOR
       </button>
@@ -499,10 +561,41 @@
         "projects"
       );
 
+    const projectCategories = [
+      {
+        id: "residential",
+        label: "RESIDENTIAL"
+      },
+      {
+        id: "commercial",
+        label: "COMMERCIAL"
+      },
+      {
+        id: "public",
+        label: "PUBLIC & INSTITUTIONAL"
+      },
+      {
+        id: "urban",
+        label: "URBAN"
+      },
+      {
+        id: "interior",
+        label: "INTERIOR"
+      }
+    ];
+
     const projects =
       Object.values(
         window.ARSTINLA_PROJECTS || {}
-      );
+      )
+        .sort((a, b) =>
+          String(a.number || "")
+            .localeCompare(
+              String(b.number || ""),
+              undefined,
+              { numeric: true }
+            )
+        );
 
 
     function collectImages(value) {
@@ -548,6 +641,93 @@
 
       projectsContainer.innerHTML = "";
 
+      const categoriesToRender =
+        filter === "all"
+          ? projectCategories
+          : projectCategories.filter(
+              category =>
+                category.id === filter
+            );
+
+      const categoryLists =
+        new Map();
+
+      categoriesToRender.forEach(
+        category => {
+          const categoryProjects =
+            projects.filter(
+              project =>
+                project.filterCategory ===
+                  category.id
+            );
+
+          const group =
+            document.createElement(
+              "section"
+            );
+
+          group.className =
+            "project-category-group";
+
+          group.dataset.category =
+            category.id;
+
+          const header =
+            document.createElement(
+              "div"
+            );
+
+          header.className =
+            "project-category-header";
+
+          const title =
+            document.createElement("h2");
+
+          title.className =
+            "project-category-title";
+
+          title.textContent =
+            category.label;
+
+          const count =
+            document.createElement("span");
+
+          count.className =
+            "project-category-count";
+
+          count.textContent =
+            `${String(categoryProjects.length).padStart(2, "0")} PROJECTS`;
+
+          const list =
+            document.createElement("div");
+
+          list.className =
+            "project-category-list";
+
+          header.append(title, count);
+          group.append(header, list);
+          projectsContainer.appendChild(group);
+
+          categoryLists.set(
+            category.id,
+            list
+          );
+
+          if (!categoryProjects.length) {
+            const empty =
+              document.createElement("p");
+
+            empty.className =
+              "project-category-empty";
+
+            empty.textContent =
+              "ยังไม่มีโครงการในหมวดนี้";
+
+            list.appendChild(empty);
+          }
+        }
+      );
+
       projects.forEach(project => {
 
         const category =
@@ -558,6 +738,13 @@
           filter !== "all" &&
           category !== filter
         ) {
+          return;
+        }
+
+        const categoryList =
+          categoryLists.get(category);
+
+        if (!categoryList) {
           return;
         }
 
@@ -1046,7 +1233,7 @@ uploadButton.addEventListener(
 );
 
 
-        projectsContainer.appendChild(
+        categoryList.appendChild(
           article
         );
 
@@ -1069,10 +1256,20 @@ uploadButton.addEventListener(
                 item.classList.remove(
                   "active"
                 );
+
+                item.setAttribute(
+                  "aria-pressed",
+                  "false"
+                );
               });
 
             button.classList.add(
               "active"
+            );
+
+            button.setAttribute(
+              "aria-pressed",
+              "true"
             );
 
             renderProjects(
