@@ -378,6 +378,15 @@
 
       <button
         class="filter"
+        data-filter="tiny-house"
+        type="button"
+        aria-pressed="false"
+      >
+        TINY HOUSE
+      </button>
+
+      <button
+        class="filter"
         data-filter="commercial"
         type="button"
         aria-pressed="false"
@@ -476,6 +485,10 @@
         >
           <option value="residential">
             Residential
+          </option>
+
+          <option value="tiny-house">
+            Tiny House
           </option>
 
           <option value="commercial">
@@ -578,6 +591,10 @@
       {
         id: "residential",
         label: "RESIDENTIAL"
+      },
+      {
+        id: "tiny-house",
+        label: "TINY HOUSE"
       },
       {
         id: "commercial",
