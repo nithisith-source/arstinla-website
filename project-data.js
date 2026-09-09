@@ -323,10 +323,10 @@ Resort-like Living ภายในบ้านพักอาศัย
       "/projects/test-project/",
 
     title:
-      "TT",
+      "Aer+ Residence@BKK",
 
     officialTitle:
-      "TT",
+      "Aer+ Residence@BKK",
 
     category:
       "Residential",
@@ -357,13 +357,13 @@ Resort-like Living ภายในบ้านพักอาศัย
       "Architecture / Design",
 
     thumbnail:
-      "/assets/project-02.jpg",
+      "/assets/project-02.png",
 
     hero:
-      "/assets/project-02.jpg",
+      "/assets/project-02.png",
 
     heroAlt:
-      "TT",
+      "Aer+ Residence@BKK",
 
     assetFolder:
       "/assets/project-02/",
