@@ -801,7 +801,11 @@
   </main>
 
 
-<script src="/project-data.js?v=20260902-1427"></script>
+<script>
+  document.write(
+    `<script src="/project-data.js?v=${Date.now()}"><\/script>`
+  );
+</script>
 
   <script>
     const projectsContainer =
