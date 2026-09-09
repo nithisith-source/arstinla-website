@@ -1306,7 +1306,7 @@ const coverUpload =
         .encode(updatedSource);
 
 
-    const updateResponse =
+    let updateResponse =
       await fetch(
         `https://api.github.com/repos/` +
         `${owner}/${repo}/contents/` +
@@ -1336,6 +1336,108 @@ const coverUpload =
           })
         }
       );
+
+
+    if (
+      !updateResponse.ok &&
+      [409, 422].includes(
+        updateResponse.status
+      )
+    ) {
+      const latestDataResponse =
+        await fetch(
+          `https://api.github.com/repos/` +
+          `${owner}/${repo}/contents/` +
+          `project-data.js` +
+          `?ref=${encodeURIComponent(branch)}`,
+          {
+            headers: githubHeaders
+          }
+        );
+
+      if (latestDataResponse.ok) {
+        const latestDataFile =
+          await latestDataResponse.json();
+
+        const latestSource =
+          decodeBase64(
+            latestDataFile.content
+          );
+
+        const latestHelperIndex =
+          latestSource.indexOf(
+            "PROJECT HELPER FUNCTIONS"
+          );
+
+        const latestObjectCloseIndex =
+          latestSource.lastIndexOf(
+            "\n};",
+            latestHelperIndex
+          );
+
+        const projectAlreadyExists =
+          new RegExp(
+            `^\\s*"${nextNumber}"\\s*:\\s*\\{`,
+            "m"
+          ).test(latestSource);
+
+        if (
+          latestHelperIndex !== -1 &&
+          latestObjectCloseIndex !== -1 &&
+          !projectAlreadyExists
+        ) {
+          const latestBefore =
+            latestSource
+              .slice(
+                0,
+                latestObjectCloseIndex
+              )
+              .replace(/\s*$/, "");
+
+          const latestAfter =
+            latestSource.slice(
+              latestObjectCloseIndex
+            );
+
+          const retrySource =
+            `${latestBefore},\n\n` +
+            `${projectBlock}\n` +
+            `${latestAfter}`;
+
+          updateResponse =
+            await fetch(
+              `https://api.github.com/repos/` +
+              `${owner}/${repo}/contents/` +
+              `project-data.js`,
+              {
+                method: "PUT",
+
+                headers: {
+                  ...githubHeaders,
+                  "content-type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  message:
+                    `Add Project ${nextNumber}: ${title}`,
+
+                  content:
+                    bytesToBase64(
+                      new TextEncoder()
+                        .encode(retrySource)
+                    ),
+
+                  sha:
+                    latestDataFile.sha,
+
+                  branch
+                })
+              }
+            );
+        }
+      }
+    }
 
 
     if (!updateResponse.ok) {
