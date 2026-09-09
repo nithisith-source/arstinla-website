@@ -57,6 +57,139 @@ function safeString(value) {
 }
 
 
+function findProjectBlock(
+  source,
+  projectNumber
+) {
+  const startPattern =
+    new RegExp(
+      `^\\s*"${projectNumber}"\\s*:\\s*\\{`,
+      "m"
+    );
+
+  const startMatch =
+    startPattern.exec(source);
+
+  if (!startMatch) {
+    return null;
+  }
+
+  const start = startMatch.index;
+  const afterStart =
+    start + startMatch[0].length;
+
+  const nextMatch =
+    /^\s*"\d{2}"\s*:\s*\{/m.exec(
+      source.slice(afterStart)
+    );
+
+  let end;
+
+  if (nextMatch) {
+    end = afterStart + nextMatch.index;
+  }
+  else {
+    const helperIndex =
+      source.indexOf(
+        "PROJECT HELPER FUNCTIONS",
+        afterStart
+      );
+
+    end = source.lastIndexOf(
+      "\n};",
+      helperIndex === -1
+        ? source.length
+        : helperIndex
+    );
+  }
+
+  if (end <= start) {
+    return null;
+  }
+
+  return {
+    start,
+    end,
+    block: source.slice(start, end)
+  };
+}
+
+
+function readProjectString(
+  block,
+  fieldName
+) {
+  const pattern =
+    new RegExp(
+      `\\n\\s*${fieldName}\\s*:\\s*` +
+      `("(?:\\\\.|[^"\\\\])*")`
+    );
+
+  const match = pattern.exec(block);
+
+  if (!match) {
+    return "";
+  }
+
+  try {
+    return JSON.parse(match[1]);
+  }
+  catch {
+    return "";
+  }
+}
+
+
+function replaceProjectString(
+  block,
+  fieldName,
+  value
+) {
+  const pattern =
+    new RegExp(
+      `(\\n\\s*${fieldName}\\s*:\\s*)` +
+      `"(?:\\\\.|[^"\\\\])*"`
+    );
+
+  if (!pattern.test(block)) {
+    throw new Error(
+      `Project field not found: ${fieldName}`
+    );
+  }
+
+  return block.replace(
+    pattern,
+    (match, prefix) =>
+      prefix + safeString(value)
+  );
+}
+
+
+function replaceProjectNumber(
+  block,
+  fieldName,
+  value
+) {
+  const pattern =
+    new RegExp(
+      `(\\n\\s*${fieldName}\\s*:\\s*)` +
+      `-?\\d+(?:\\.\\d+)?`
+    );
+
+  if (!pattern.test(block)) {
+    throw new Error(
+      `Project field not found: ${fieldName}`
+    );
+  }
+
+  return block.replace(
+    pattern,
+    (match, prefix) =>
+      prefix + String(value)
+  );
+}
+
+
 export async function onRequestPost({
   request,
   env
@@ -246,6 +379,632 @@ if (!dataResponse.ok) {
     500
   );
 }
+
+    return completeProjectCreation({
+      dataResponse,
+      title,
+      category,
+      location,
+      slug,
+      cover,
+      owner,
+      repo,
+      branch,
+      githubHeaders
+    });
+  }
+  catch (error) {
+    return json(
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
+  }
+}
+
+
+export async function onRequestPut({
+  request,
+  env
+}) {
+
+  try {
+    const adminKey =
+      request.headers.get(
+        "x-admin-key"
+      );
+
+    if (
+      !env.ADMIN_KEY ||
+      adminKey !== env.ADMIN_KEY
+    ) {
+      return json(
+        {
+          ok: false,
+          error: "Unauthorized"
+        },
+        401
+      );
+    }
+
+    const formData =
+      await request.formData();
+
+    const projectNumber =
+      String(
+        formData.get(
+          "projectNumber"
+        ) || ""
+      ).trim();
+
+    const title =
+      String(
+        formData.get("title") || ""
+      ).trim();
+
+    const category =
+      String(
+        formData.get("category") || ""
+      ).trim();
+
+    const location =
+      String(
+        formData.get("location") || ""
+      ).trim();
+
+    const area =
+      String(
+        formData.get("area") || ""
+      ).trim();
+
+    const year =
+      String(
+        formData.get("year") || ""
+      ).trim();
+
+    const completion =
+      String(
+        formData.get("completion") || ""
+      ).trim();
+
+    const service =
+      String(
+        formData.get("service") || ""
+      ).trim();
+
+    const cover =
+      formData.get("cover");
+
+    const removeOldCover =
+      formData.get("removeOldCover") ===
+        "yes";
+
+    const categoryLabels = {
+      residential: "Residential",
+      "tiny-house": "Tiny House",
+      commercial: "Commercial",
+      public: "Public & Institutional",
+      urban: "Urban",
+      interior: "Interior",
+      consult: "Consult"
+    };
+
+    if (
+      !/^\d{2}$/.test(projectNumber) ||
+      !title ||
+      !categoryLabels[category]
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Invalid project information"
+        },
+        400
+      );
+    }
+
+    if (
+      (year && !/^\d{4}$/.test(year)) ||
+      (
+        completion &&
+        !/^\d{4}$/.test(completion)
+      )
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Year must contain 4 digits"
+        },
+        400
+      );
+    }
+
+    const hasNewCover =
+      cover &&
+      typeof cover.arrayBuffer ===
+        "function" &&
+      cover.size > 0;
+
+    const allowedCoverTypes =
+      new Set([
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ]);
+
+    if (
+      hasNewCover &&
+      !allowedCoverTypes.has(cover.type)
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Cover must be JPG, PNG or WEBP"
+        },
+        400
+      );
+    }
+
+    if (
+      hasNewCover &&
+      cover.size > 15 * 1024 * 1024
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Cover image is larger than 15 MB"
+        },
+        400
+      );
+    }
+
+    const owner = env.GITHUB_OWNER;
+    const repo = env.GITHUB_REPO;
+    const branch =
+      env.GITHUB_BRANCH || "main";
+    const token = env.GITHUB_TOKEN;
+
+    if (!owner || !repo || !token) {
+      return json(
+        {
+          ok: false,
+          error:
+            "GitHub environment variables missing"
+        },
+        500
+      );
+    }
+
+    const githubHeaders = {
+      Authorization: `Bearer ${token}`,
+      Accept:
+        "application/vnd.github+json",
+      "X-GitHub-Api-Version":
+        "2022-11-28",
+      "User-Agent":
+        "ARSTINLA-Project-Manager"
+    };
+
+    const dataUrl =
+      `https://api.github.com/repos/` +
+      `${owner}/${repo}/contents/` +
+      `project-data.js` +
+      `?ref=${encodeURIComponent(branch)}`;
+
+    const dataResponse =
+      await fetch(
+        dataUrl,
+        { headers: githubHeaders }
+      );
+
+    if (!dataResponse.ok) {
+      const details =
+        await dataResponse.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "Cannot read project-data.js",
+          status: dataResponse.status,
+          details
+        },
+        500
+      );
+    }
+
+    const dataFile =
+      await dataResponse.json();
+
+    const source =
+      decodeBase64(dataFile.content);
+
+    const projectRange =
+      findProjectBlock(
+        source,
+        projectNumber
+      );
+
+    if (!projectRange) {
+      return json(
+        {
+          ok: false,
+          error:
+            `Project ${projectNumber} not found`
+        },
+        404
+      );
+    }
+
+    const oldFilterCategory =
+      readProjectString(
+        projectRange.block,
+        "filterCategory"
+      );
+
+    const oldThumbnail =
+      readProjectString(
+        projectRange.block,
+        "thumbnail"
+      );
+
+    const oldHero =
+      readProjectString(
+        projectRange.block,
+        "hero"
+      );
+
+    let updatedBlock =
+      projectRange.block;
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "title",
+      title
+    );
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "filterCategory",
+      category
+    );
+
+    if (oldFilterCategory !== category) {
+      updatedBlock = replaceProjectString(
+        updatedBlock,
+        "category",
+        categoryLabels[category]
+      );
+    }
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "location",
+      location
+    );
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "area",
+      area
+    );
+
+    const areaNumberMatch =
+      area
+        .replace(/,/g, "")
+        .match(/\d+(?:\.\d+)?/);
+
+    updatedBlock = replaceProjectNumber(
+      updatedBlock,
+      "areaNumber",
+      areaNumberMatch
+        ? Number(areaNumberMatch[0])
+        : 0
+    );
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "year",
+      year
+    );
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "completion",
+      completion
+    );
+
+    updatedBlock = replaceProjectString(
+      updatedBlock,
+      "service",
+      service
+    );
+
+    let coverWebPath = "";
+
+    if (hasNewCover) {
+      const extensionByType = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp"
+      };
+
+      const extension =
+        extensionByType[cover.type];
+
+      coverWebPath =
+        `/assets/project-${projectNumber}.${extension}`;
+
+      updatedBlock = replaceProjectString(
+        updatedBlock,
+        "thumbnail",
+        coverWebPath
+      );
+
+      if (
+        !oldHero ||
+        oldHero === oldThumbnail
+      ) {
+        updatedBlock = replaceProjectString(
+          updatedBlock,
+          "hero",
+          coverWebPath
+        );
+
+        updatedBlock = replaceProjectString(
+          updatedBlock,
+          "heroAlt",
+          title
+        );
+      }
+
+      const coverGithubPath =
+        coverWebPath.replace(/^\//, "");
+
+      const coverUploadUrl =
+        `https://api.github.com/repos/` +
+        `${owner}/${repo}/contents/` +
+        `${coverGithubPath}`;
+
+      const existingCoverResponse =
+        await fetch(
+          `${coverUploadUrl}?ref=${encodeURIComponent(branch)}`,
+          { headers: githubHeaders }
+        );
+
+      let existingCoverSha = null;
+
+      if (existingCoverResponse.ok) {
+        const existingCover =
+          await existingCoverResponse.json();
+
+        existingCoverSha =
+          existingCover.sha;
+      }
+
+      const coverBytes =
+        new Uint8Array(
+          await cover.arrayBuffer()
+        );
+
+      const coverPayload = {
+        message:
+          `Update Project ${projectNumber} cover`,
+        content:
+          bytesToBase64(coverBytes),
+        branch
+      };
+
+      if (existingCoverSha) {
+        coverPayload.sha =
+          existingCoverSha;
+      }
+
+      const coverUpload =
+        await fetch(
+          coverUploadUrl,
+          {
+            method: "PUT",
+            headers: {
+              ...githubHeaders,
+              "content-type":
+                "application/json"
+            },
+            body:
+              JSON.stringify(
+                coverPayload
+              )
+          }
+        );
+
+      if (!coverUpload.ok) {
+        const details =
+          await coverUpload.text();
+
+        return json(
+          {
+            ok: false,
+            error:
+              "Cover upload failed",
+            details
+          },
+          500
+        );
+      }
+    }
+
+    const updatedSource =
+      source.slice(0, projectRange.start) +
+      updatedBlock +
+      source.slice(projectRange.end);
+
+    const updatedBytes =
+      new TextEncoder()
+        .encode(updatedSource);
+
+    const updateResponse =
+      await fetch(
+        `https://api.github.com/repos/` +
+        `${owner}/${repo}/contents/` +
+        `project-data.js`,
+        {
+          method: "PUT",
+          headers: {
+            ...githubHeaders,
+            "content-type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            message:
+              `Edit Project ${projectNumber}: ${title}`,
+            content:
+              bytesToBase64(updatedBytes),
+            sha: dataFile.sha,
+            branch
+          })
+        }
+      );
+
+    if (!updateResponse.ok) {
+      const details =
+        await updateResponse.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "project-data.js update failed",
+          details
+        },
+        500
+      );
+    }
+
+    let oldCoverDeleted = false;
+    let warning = "";
+
+    const oldCoverStillUsed =
+      oldThumbnail &&
+      updatedBlock.includes(
+        safeString(oldThumbnail)
+      );
+
+    if (
+      hasNewCover &&
+      removeOldCover &&
+      oldThumbnail &&
+      oldThumbnail !== coverWebPath &&
+      !oldCoverStillUsed &&
+      /^\/assets\/project-[^/]+\.(?:jpg|jpeg|png|webp)$/i
+        .test(oldThumbnail)
+    ) {
+      const oldCoverGithubPath =
+        oldThumbnail.replace(/^\//, "");
+
+      const oldCoverUrl =
+        `https://api.github.com/repos/` +
+        `${owner}/${repo}/contents/` +
+        `${oldCoverGithubPath}`;
+
+      const oldCoverResponse =
+        await fetch(
+          `${oldCoverUrl}?ref=${encodeURIComponent(branch)}`,
+          { headers: githubHeaders }
+        );
+
+      if (oldCoverResponse.ok) {
+        const oldCoverFile =
+          await oldCoverResponse.json();
+
+        const deleteResponse =
+          await fetch(
+            oldCoverUrl,
+            {
+              method: "DELETE",
+              headers: {
+                ...githubHeaders,
+                "content-type":
+                  "application/json"
+              },
+              body: JSON.stringify({
+                message:
+                  `Remove old Project ${projectNumber} cover`,
+                sha: oldCoverFile.sha,
+                branch
+              })
+            }
+          );
+
+        oldCoverDeleted =
+          deleteResponse.ok;
+
+        if (!deleteResponse.ok) {
+          warning =
+            "บันทึกข้อมูลแล้ว แต่ลบรูปปกเดิมไม่สำเร็จ";
+        }
+      }
+      else if (
+        oldCoverResponse.status !== 404
+      ) {
+        warning =
+          "บันทึกข้อมูลแล้ว แต่ตรวจสอบรูปปกเดิมไม่สำเร็จ";
+      }
+    }
+    else if (
+      hasNewCover &&
+      removeOldCover &&
+      oldCoverStillUsed
+    ) {
+      warning =
+        "เก็บรูปเดิมไว้ เพราะยังถูกใช้เป็นภาพหลักของหน้าโครงการ";
+    }
+
+    return json({
+      ok: true,
+      number: projectNumber,
+      title,
+      category,
+      cover:
+        coverWebPath || oldThumbnail,
+      oldCoverDeleted,
+      warning
+    });
+  }
+  catch (error) {
+    return json(
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
+  }
+}
+
+
+async function completeProjectCreation({
+  dataResponse,
+  title,
+  category,
+  location,
+  slug,
+  cover,
+  owner,
+  repo,
+  branch,
+  githubHeaders
+}) {
+  try {
     const dataFile =
   await dataResponse.json();
 const source =
