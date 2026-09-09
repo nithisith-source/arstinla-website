@@ -287,6 +287,9 @@ const source =
       residential:
         "Residential",
 
+      "tiny-house":
+        "Tiny House",
+
       commercial:
         "Commercial",
 
