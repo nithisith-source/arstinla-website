@@ -331,14 +331,8 @@
   flex: 0 0 160px;
 }
 
-    .project-number {
-      color: #c47752;
-      font-size: 12px;
-      letter-spacing: .15em;
-    }
-
     .project-title {
-      margin: 6px 0;
+      margin: 0 0 6px;
       font-size: 24px;
     }
 
@@ -1220,10 +1214,6 @@
 
             <div>
 
-              <div class="project-number">
-                PROJECT ${project.number || ""}
-              </div>
-
               <div class="project-title">
                 ${project.title || "Untitled"}
               </div>
@@ -1232,10 +1222,6 @@
                 ${project.category || ""}
                 ·
                 ${project.location || ""}
-              </div>
-
-              <div class="project-meta">
-                ${project.assetFolder || ""}
               </div>
 
             </div>
@@ -1782,8 +1768,8 @@ uploadButton.addEventListener(
 
       alert(
         shouldSetFirstAsCover
-          ? `อัปโหลดรูป Project ${project.number} เรียบร้อย และใช้ภาพแรกเป็นภาพปกแล้ว`
-          : `อัปโหลดรูป Project ${project.number} เรียบร้อย`
+          ? "อัปโหลดรูปโครงการเรียบร้อย และใช้ภาพแรกเป็นภาพปกแล้ว"
+          : "อัปโหลดรูปโครงการเรียบร้อย"
       );
 
     }
@@ -2432,12 +2418,12 @@ addProjectForm.addEventListener(
       }
 
       setAddProjectStatus(
-        `สร้าง Project ${result.number} เรียบร้อย`,
+        "สร้างโครงการเรียบร้อย",
         "success"
       );
 
       alert(
-        `สร้าง Project ${result.number} เรียบร้อย`
+        "สร้างโครงการเรียบร้อย"
       );
 
       addProjectForm.reset();
@@ -2593,7 +2579,7 @@ editProjectForm.addEventListener(
           : "";
 
       alert(
-        `บันทึก Project ${result.number} เรียบร้อย${warning}`
+        `บันทึกโครงการเรียบร้อย${warning}`
       );
 
       setEditProjectStatus(
