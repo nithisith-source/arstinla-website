@@ -4518,8 +4518,13 @@ data-contact-link
           "";
 
         if (imagePath) {
+          const imageSeparator =
+            imagePath.includes("?")
+              ? "&"
+              : "?";
+
           background.style.backgroundImage =
-            `url("${imagePath}")`;
+            `url("${imagePath}${imageSeparator}v=${Date.now()}")`;
         }
 
 
