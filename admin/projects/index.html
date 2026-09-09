@@ -202,12 +202,40 @@
   }
 
   .admin-field input,
-  .admin-field select {
+  .admin-field select,
+  .admin-field textarea {
     width: 100%;
     padding: 13px 12px;
     border: 1px solid rgba(255,255,255,.18);
     background: #191a17;
     color: #fff;
+  }
+
+  .admin-field textarea {
+    min-height: 92px;
+    resize: vertical;
+    font: inherit;
+  }
+
+  .admin-field-hint {
+    margin: 0;
+    color: #777970;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .admin-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .admin-check input {
+    width: auto;
+    margin-top: 2px;
   }
 
   .admin-form-actions {
@@ -251,6 +279,20 @@
       background: transparent;
       color: #fff;
 
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+
+    .project-actions {
+      display: grid;
+      gap: 10px;
+      min-width: 142px;
+    }
+
+    .edit-project-button {
+      border: 1px solid #c47752;
+      background: transparent;
+      color: #d88a63;
       padding: 12px 16px;
       cursor: pointer;
     }
@@ -325,7 +367,12 @@
         aspect-ratio: 4 / 3 !important;
       }
 
-      .browse-button {
+      .browse-button,
+      .edit-project-button {
+        width: 100%;
+      }
+
+      .project-actions {
         width: 100%;
       }
     }
@@ -574,6 +621,181 @@
 
     </form>
 
+  </div>
+</dialog>
+
+<dialog
+  class="project-dialog"
+  id="editProjectDialog"
+>
+  <div class="project-dialog-inner">
+
+    <div class="project-dialog-head">
+      <h2>Edit Project</h2>
+
+      <button
+        class="dialog-close"
+        id="closeEditProjectDialog"
+        type="button"
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+
+    <form
+      class="admin-form"
+      id="editProjectForm"
+    >
+      <input
+        id="editProjectNumber"
+        name="projectNumber"
+        type="hidden"
+      >
+
+      <div class="admin-field">
+        <label for="editProjectTitle">
+          PROJECT TITLE
+        </label>
+
+        <input
+          id="editProjectTitle"
+          name="title"
+          type="text"
+          required
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectCategory">
+          CATEGORY
+        </label>
+
+        <select
+          id="editProjectCategory"
+          name="category"
+          required
+        >
+          <option value="residential">Residential</option>
+          <option value="tiny-house">Tiny House</option>
+          <option value="commercial">Commercial</option>
+          <option value="public">Public &amp; Institutional</option>
+          <option value="urban">Urban</option>
+          <option value="interior">Interior</option>
+          <option value="consult">Consult</option>
+        </select>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectLocation">
+          LOCATION
+        </label>
+
+        <input
+          id="editProjectLocation"
+          name="location"
+          type="text"
+          placeholder="Bangkok, Thailand"
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectArea">
+          AREA
+        </label>
+
+        <input
+          id="editProjectArea"
+          name="area"
+          type="text"
+          placeholder="650 sq.m."
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectYear">
+          DESIGN YEAR
+        </label>
+
+        <input
+          id="editProjectYear"
+          name="year"
+          type="text"
+          inputmode="numeric"
+          maxlength="4"
+          placeholder="2026"
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectCompletion">
+          CONSTRUCTION / COMPLETION YEAR
+        </label>
+
+        <input
+          id="editProjectCompletion"
+          name="completion"
+          type="text"
+          inputmode="numeric"
+          maxlength="4"
+          placeholder="2027"
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectService">
+          SERVICE
+        </label>
+
+        <textarea
+          id="editProjectService"
+          name="service"
+          placeholder="Architecture / Design / Drawing"
+        ></textarea>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectCover">
+          NEW COVER IMAGE (OPTIONAL)
+        </label>
+
+        <input
+          id="editProjectCover"
+          name="cover"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+        >
+
+        <p class="admin-field-hint" id="editProjectCoverHint"></p>
+
+        <label class="admin-check">
+          <input
+            id="removeOldCover"
+            name="removeOldCover"
+            type="checkbox"
+            value="yes"
+          >
+          <span>Delete the old cover file after replacing it</span>
+        </label>
+      </div>
+
+      <div class="admin-form-actions">
+        <button
+          class="browse-button"
+          id="cancelEditProject"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="add-project-button"
+          type="submit"
+        >
+          Save Changes
+        </button>
+      </div>
+    </form>
   </div>
 </dialog>
   </main>
@@ -830,12 +1052,21 @@
 
             </div>
 
-            <button
-              class="browse-button"
-              type="button"
-            >
-              Browse Files
-            </button>
+            <div class="project-actions">
+              <button
+                class="edit-project-button"
+                type="button"
+              >
+                Edit Project
+              </button>
+
+              <button
+                class="browse-button"
+                type="button"
+              >
+                Browse Files
+              </button>
+            </div>
 
           </div>
 
@@ -885,10 +1116,23 @@
             ".browse-button"
           );
 
+        const editButton =
+          article.querySelector(
+            ".edit-project-button"
+          );
+
         const files =
           article.querySelector(
             ".project-files"
           );
+
+
+editButton.addEventListener(
+  "click",
+  () => {
+    openEditProject(project);
+  }
+);
 
 
 browseButton.addEventListener(
@@ -1339,6 +1583,122 @@ const addProjectForm =
     "addProjectForm"
   );
 
+const editProjectDialog =
+  document.getElementById(
+    "editProjectDialog"
+  );
+
+const editProjectForm =
+  document.getElementById(
+    "editProjectForm"
+  );
+
+const closeEditProjectDialog =
+  document.getElementById(
+    "closeEditProjectDialog"
+  );
+
+const cancelEditProject =
+  document.getElementById(
+    "cancelEditProject"
+  );
+
+const editProjectCover =
+  document.getElementById(
+    "editProjectCover"
+  );
+
+const removeOldCover =
+  document.getElementById(
+    "removeOldCover"
+  );
+
+
+function openEditProject(project) {
+
+  editProjectForm.reset();
+
+  document.getElementById(
+    "editProjectNumber"
+  ).value = project.number || "";
+
+  document.getElementById(
+    "editProjectTitle"
+  ).value = project.title || "";
+
+  document.getElementById(
+    "editProjectCategory"
+  ).value =
+    project.filterCategory ||
+    "residential";
+
+  document.getElementById(
+    "editProjectLocation"
+  ).value = project.location || "";
+
+  document.getElementById(
+    "editProjectArea"
+  ).value = project.area || "";
+
+  document.getElementById(
+    "editProjectYear"
+  ).value = project.year || "";
+
+  document.getElementById(
+    "editProjectCompletion"
+  ).value = project.completion || "";
+
+  document.getElementById(
+    "editProjectService"
+  ).value = project.service || "";
+
+  const currentCover =
+    project.thumbnail ||
+    project.hero ||
+    "No cover image";
+
+  document.getElementById(
+    "editProjectCoverHint"
+  ).textContent =
+    `Current cover: ${currentCover}`;
+
+  removeOldCover.disabled = true;
+  removeOldCover.checked = false;
+
+  editProjectDialog.showModal();
+}
+
+
+function closeEditProject() {
+  editProjectDialog.close();
+}
+
+
+closeEditProjectDialog.addEventListener(
+  "click",
+  closeEditProject
+);
+
+cancelEditProject.addEventListener(
+  "click",
+  closeEditProject
+);
+
+editProjectCover.addEventListener(
+  "change",
+  () => {
+    const hasNewCover =
+      Boolean(editProjectCover.files?.length);
+
+    removeOldCover.disabled =
+      !hasNewCover;
+
+    if (!hasNewCover) {
+      removeOldCover.checked = false;
+    }
+  }
+);
+
 
 addProjectButton.addEventListener(
   "click",
@@ -1475,6 +1835,117 @@ addProjectForm.addEventListener(
 
     }
 
+  }
+);
+
+
+editProjectForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    const submitButton =
+      editProjectForm.querySelector(
+        'button[type="submit"]'
+      );
+
+    let adminKey =
+      sessionStorage.getItem(
+        "ARSTINLA_ADMIN_KEY"
+      );
+
+    if (!adminKey) {
+      adminKey = prompt(
+        "Enter ARSTINLA Admin Key"
+      );
+
+      if (!adminKey) {
+        return;
+      }
+
+      sessionStorage.setItem(
+        "ARSTINLA_ADMIN_KEY",
+        adminKey
+      );
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent =
+      "Saving...";
+
+    try {
+      const formData =
+        new FormData(
+          editProjectForm
+        );
+
+      const response =
+        await fetch(
+          "/api/projects",
+          {
+            method: "PUT",
+
+            headers: {
+              "x-admin-key":
+                adminKey
+            },
+
+            body: formData
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (response.status === 401) {
+        sessionStorage.removeItem(
+          "ARSTINLA_ADMIN_KEY"
+        );
+
+        throw new Error(
+          "Admin Key ไม่ถูกต้อง"
+        );
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          [
+            result.error,
+            result.status
+              ? `GitHub status: ${result.status}`
+              : "",
+            result.details || ""
+          ]
+            .filter(Boolean)
+            .join("\n")
+        );
+      }
+
+      const warning =
+        result.warning
+          ? `\n\nหมายเหตุ: ${result.warning}`
+          : "";
+
+      alert(
+        `บันทึก Project ${result.number} เรียบร้อย${warning}`
+      );
+
+      editProjectDialog.close();
+
+      window.location.reload();
+    }
+    catch (error) {
+      alert(
+        error.message ||
+        "เกิดข้อผิดพลาด"
+      );
+    }
+    finally {
+      submitButton.disabled = false;
+      submitButton.textContent =
+        "Save Changes";
+    }
   }
 );
     renderProjects();
