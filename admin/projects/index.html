@@ -245,6 +245,22 @@
     margin-top: 10px;
   }
 
+  .admin-form-status {
+    min-height: 22px;
+    margin: -4px 0 0;
+    color: #aaa;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .admin-form-status[data-state="error"] {
+    color: #e79a77;
+  }
+
+  .admin-form-status[data-state="success"] {
+    color: #91b58a;
+  }
+
   .project-cover {
   width: 160px !important;
   max-width: 160px !important;
@@ -778,6 +794,29 @@
           <span>Delete the old cover file after replacing it</span>
         </label>
       </div>
+
+      <div class="admin-field">
+        <label for="editAdminKey">
+          ADMIN KEY
+        </label>
+
+        <input
+          id="editAdminKey"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter Admin Key"
+        >
+
+        <p class="admin-field-hint">
+          ใช้ยืนยันสิทธิ์ก่อนบันทึก และเก็บไว้เฉพาะในแท็บนี้
+        </p>
+      </div>
+
+      <p
+        class="admin-form-status"
+        id="editProjectStatus"
+        aria-live="polite"
+      ></p>
 
       <div class="admin-form-actions">
         <button
@@ -1617,6 +1656,33 @@ const removeOldCover =
     "removeOldCover"
   );
 
+const editAdminKey =
+  document.getElementById(
+    "editAdminKey"
+  );
+
+const editProjectStatus =
+  document.getElementById(
+    "editProjectStatus"
+  );
+
+
+function setEditProjectStatus(
+  message = "",
+  state = ""
+) {
+  editProjectStatus.textContent =
+    message;
+
+  if (state) {
+    editProjectStatus.dataset.state =
+      state;
+  }
+  else {
+    delete editProjectStatus.dataset.state;
+  }
+}
+
 
 function openEditProject(project) {
 
@@ -1668,6 +1734,17 @@ function openEditProject(project) {
 
   removeOldCover.disabled = true;
   removeOldCover.checked = false;
+
+  editAdminKey.value = "";
+
+  editAdminKey.placeholder =
+    sessionStorage.getItem(
+      "ARSTINLA_ADMIN_KEY"
+    )
+      ? "Admin Key พร้อมใช้งานในแท็บนี้"
+      : "Enter Admin Key";
+
+  setEditProjectStatus();
 
   editProjectDialog.showModal();
 }
@@ -1855,28 +1932,48 @@ editProjectForm.addEventListener(
       );
 
     let adminKey =
+      editAdminKey.value.trim() ||
       sessionStorage.getItem(
         "ARSTINLA_ADMIN_KEY"
       );
 
     if (!adminKey) {
-      adminKey = prompt(
-        "Enter ARSTINLA Admin Key"
+      setEditProjectStatus(
+        "กรุณาใส่ Admin Key ก่อนกด Save Changes",
+        "error"
       );
 
-      if (!adminKey) {
-        return;
-      }
+      editAdminKey.focus();
+      return;
+    }
 
-      sessionStorage.setItem(
-        "ARSTINLA_ADMIN_KEY",
-        adminKey
+    sessionStorage.setItem(
+      "ARSTINLA_ADMIN_KEY",
+      adminKey
+    );
+
+    const selectedCover =
+      editProjectCover.files?.[0];
+
+    if (
+      selectedCover &&
+      selectedCover.size >
+        15 * 1024 * 1024
+    ) {
+      setEditProjectStatus(
+        "รูปปกต้องมีขนาดไม่เกิน 15 MB",
+        "error"
       );
+      return;
     }
 
     submitButton.disabled = true;
     submitButton.textContent =
       "Saving...";
+
+    setEditProjectStatus(
+      "กำลังบันทึกข้อมูลและอัปโหลดรูป กรุณารอสักครู่..."
+    );
 
     try {
       const formData =
@@ -1899,16 +1996,34 @@ editProjectForm.addEventListener(
           }
         );
 
-      const result =
-        await response.json();
+      const responseText =
+        await response.text();
+
+      let result = {};
+
+      try {
+        result = responseText
+          ? JSON.parse(responseText)
+          : {};
+      }
+      catch {
+        result = {
+          error:
+            "ระบบตอบกลับไม่สมบูรณ์ กรุณาลองใหม่อีกครั้ง"
+        };
+      }
 
       if (response.status === 401) {
         sessionStorage.removeItem(
           "ARSTINLA_ADMIN_KEY"
         );
 
+        editAdminKey.value = "";
+
+        editAdminKey.focus();
+
         throw new Error(
-          "Admin Key ไม่ถูกต้อง"
+          "Admin Key ไม่ถูกต้อง กรุณาใส่ใหม่"
         );
       }
 
@@ -1935,11 +2050,22 @@ editProjectForm.addEventListener(
         `บันทึก Project ${result.number} เรียบร้อย${warning}`
       );
 
+      setEditProjectStatus(
+        "บันทึกเรียบร้อย",
+        "success"
+      );
+
       editProjectDialog.close();
 
       window.location.reload();
     }
     catch (error) {
+      setEditProjectStatus(
+        error.message ||
+        "เกิดข้อผิดพลาด",
+        "error"
+      );
+
       alert(
         error.message ||
         "เกิดข้อผิดพลาด"
