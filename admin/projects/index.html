@@ -738,6 +738,29 @@
         </p>
       </div>
 
+      <div class="admin-field">
+        <label for="addAdminKey">
+          ADMIN KEY
+        </label>
+
+        <input
+          id="addAdminKey"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter Admin Key"
+        >
+
+        <p class="admin-field-hint">
+          ใช้ยืนยันสิทธิ์ก่อนสร้างโครงการ และเก็บไว้เฉพาะในแท็บนี้
+        </p>
+      </div>
+
+      <p
+        class="admin-form-status"
+        id="addProjectStatus"
+        aria-live="polite"
+      ></p>
+
       <div class="admin-form-actions">
 
         <button
@@ -2030,6 +2053,26 @@ const addProjectForm =
     "addProjectForm"
   );
 
+const addProjectCover =
+  document.getElementById(
+    "projectCover"
+  );
+
+const addProjectSlug =
+  document.getElementById(
+    "projectSlug"
+  );
+
+const addAdminKey =
+  document.getElementById(
+    "addAdminKey"
+  );
+
+const addProjectStatus =
+  document.getElementById(
+    "addProjectStatus"
+  );
+
 const editProjectDialog =
   document.getElementById(
     "editProjectDialog"
@@ -2084,6 +2127,23 @@ function setEditProjectStatus(
   }
   else {
     delete editProjectStatus.dataset.state;
+  }
+}
+
+
+function setAddProjectStatus(
+  message = "",
+  state = ""
+) {
+  addProjectStatus.textContent =
+    message;
+
+  if (state) {
+    addProjectStatus.dataset.state =
+      state;
+  }
+  else {
+    delete addProjectStatus.dataset.state;
   }
 }
 
@@ -2188,6 +2248,16 @@ editProjectCover.addEventListener(
 addProjectButton.addEventListener(
   "click",
   () => {
+    addAdminKey.value = "";
+
+    addAdminKey.placeholder =
+      sessionStorage.getItem(
+        "ARSTINLA_ADMIN_KEY"
+      )
+        ? "Admin Key พร้อมใช้งานในแท็บนี้"
+        : "Enter Admin Key";
+
+    setAddProjectStatus();
     projectDialog.showModal();
   }
 );
@@ -2220,29 +2290,78 @@ addProjectForm.addEventListener(
         'button[type="submit"]'
       );
 
+    const normalizedSlug =
+      addProjectSlug.value
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    addProjectSlug.value =
+      normalizedSlug;
+
     let adminKey =
+      addAdminKey.value.trim() ||
       sessionStorage.getItem(
         "ARSTINLA_ADMIN_KEY"
       );
 
     if (!adminKey) {
-      adminKey = prompt(
-        "Enter ARSTINLA Admin Key"
+      setAddProjectStatus(
+        "กรุณาใส่ Admin Key ก่อนกด Create Project",
+        "error"
       );
 
-      if (!adminKey) {
-        return;
-      }
-
-      sessionStorage.setItem(
-        "ARSTINLA_ADMIN_KEY",
-        adminKey
-      );
+      addAdminKey.focus();
+      return;
     }
+
+    if (!normalizedSlug) {
+      setAddProjectStatus(
+        "กรุณาใส่ Slug เป็นภาษาอังกฤษ เช่น knockdown",
+        "error"
+      );
+
+      addProjectSlug.focus();
+      return;
+    }
+
+    const selectedCover =
+      addProjectCover.files?.[0];
+
+    if (!selectedCover) {
+      setAddProjectStatus(
+        "กรุณาเลือกภาพปกก่อนสร้างโครงการ",
+        "error"
+      );
+
+      addProjectCover.focus();
+      return;
+    }
+
+    if (
+      selectedCover.size >
+        15 * 1024 * 1024
+    ) {
+      setAddProjectStatus(
+        "รูปปกต้องมีขนาดไม่เกิน 15 MB",
+        "error"
+      );
+      return;
+    }
+
+    sessionStorage.setItem(
+      "ARSTINLA_ADMIN_KEY",
+      adminKey
+    );
 
     submitButton.disabled = true;
     submitButton.textContent =
       "Creating...";
+
+    setAddProjectStatus(
+      "กำลังสร้างโครงการและอัปโหลดภาพปก กรุณารอสักครู่..."
+    );
 
     try {
 
@@ -2266,8 +2385,22 @@ addProjectForm.addEventListener(
           }
         );
 
-      const result =
-        await response.json();
+      const responseText =
+        await response.text();
+
+      let result = {};
+
+      try {
+        result = responseText
+          ? JSON.parse(responseText)
+          : {};
+      }
+      catch {
+        result = {
+          error:
+            "ระบบตอบกลับไม่สมบูรณ์ กรุณาลองใหม่อีกครั้ง"
+        };
+      }
 
       if (response.status === 401) {
 
@@ -2275,24 +2408,33 @@ addProjectForm.addEventListener(
           "ARSTINLA_ADMIN_KEY"
         );
 
+        addAdminKey.value = "";
+
+        addAdminKey.focus();
+
         throw new Error(
-          "Admin Key ไม่ถูกต้อง"
+          "Admin Key ไม่ถูกต้อง กรุณาใส่ใหม่"
         );
       }
 
       if (!response.ok) {
         throw new Error(
-  [
-    result.error,
-    result.status
-      ? `GitHub status: ${result.status}`
-      : "",
-    result.details || ""
-  ]
-    .filter(Boolean)
-    .join("\n")
-);
+          [
+            result.error,
+            result.status
+              ? `GitHub status: ${result.status}`
+              : "",
+            result.details || ""
+          ]
+            .filter(Boolean)
+            .join("\n")
+        );
       }
+
+      setAddProjectStatus(
+        `สร้าง Project ${result.number} เรียบร้อย`,
+        "success"
+      );
 
       alert(
         `สร้าง Project ${result.number} เรียบร้อย`
@@ -2305,10 +2447,10 @@ addProjectForm.addEventListener(
 
     }
     catch (error) {
-
-      alert(
+      setAddProjectStatus(
         error.message ||
-        "เกิดข้อผิดพลาด"
+          "สร้างโครงการไม่สำเร็จ",
+        "error"
       );
 
     }
