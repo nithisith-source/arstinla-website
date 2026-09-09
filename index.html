@@ -4435,10 +4435,181 @@ data-contact-link
 
 
 <script>
+  document.write(
+    `<script src="/project-data.js?v=${Date.now()}"><\/script>`
+  );
+</script>
+
+<script>
 
   /* ======================================================
      ARSTINLA V2 JAVASCRIPT
   ====================================================== */
+
+
+  /* HOMEPAGE PROJECT CARDS
+  ====================================================== */
+
+
+  const homeProjectData =
+    Object.values(
+      window.ARSTINLA_PROJECTS || {}
+    )
+      .filter(Boolean)
+      .sort((left, right) =>
+        String(left.number || "")
+          .localeCompare(
+            String(right.number || ""),
+            undefined,
+            { numeric: true }
+          )
+      );
+
+
+  const homeProjectsGrid =
+    document.querySelector(
+      ".projects-grid"
+    );
+
+
+  if (
+    homeProjectsGrid &&
+    homeProjectData.length
+  ) {
+
+    const projectCards =
+      document.createDocumentFragment();
+
+
+    homeProjectData.forEach(
+      (project, index) => {
+
+        const card =
+          document.createElement("article");
+
+        card.className =
+          `project reveal${
+            index % 2
+              ? " reveal-delay-1"
+              : ""
+          }`;
+
+        card.dataset.project =
+          String(index);
+
+        card.dataset.projectCategory =
+          String(
+            project.filterCategory ||
+            "residential"
+          )
+            .trim()
+            .toLowerCase();
+
+
+        const background =
+          document.createElement("div");
+
+        background.className =
+          "project-bg";
+
+        const imagePath =
+          project.thumbnail ||
+          project.hero ||
+          "";
+
+        if (imagePath) {
+          background.style.backgroundImage =
+            `url("${imagePath}")`;
+        }
+
+
+        const shade =
+          document.createElement("div");
+
+        shade.className =
+          "project-shade";
+
+
+        const information =
+          document.createElement("div");
+
+        information.className =
+          "project-info";
+
+
+        const category =
+          document.createElement("div");
+
+        category.className =
+          "project-category";
+
+        category.textContent =
+          project.category || "Project";
+
+
+        const title =
+          document.createElement("div");
+
+        title.className =
+          "project-title";
+
+        title.textContent =
+          project.title ||
+          `Project ${project.number || ""}`;
+
+
+        const meta =
+          document.createElement("div");
+
+        meta.className =
+          "project-meta";
+
+        meta.textContent =
+          [
+            project.location,
+            project.area
+          ]
+            .filter(Boolean)
+            .join(" / ");
+
+
+        information.append(
+          category,
+          title,
+          meta
+        );
+
+        card.append(
+          background,
+          shade,
+          information
+        );
+
+        projectCards.appendChild(card);
+
+      }
+    );
+
+
+    homeProjectsGrid.replaceChildren(
+      projectCards
+    );
+
+
+    const projectsCount =
+      document.querySelector(
+        ".projects-count"
+      );
+
+    if (projectsCount) {
+      projectsCount.textContent =
+        `Selected Works / 01—${
+          String(homeProjectData.length)
+            .padStart(2, "0")
+        }`;
+    }
+
+  }
 
 
   const nav =
@@ -4622,181 +4793,43 @@ data-contact-link
   ====================================================== */
 
 
- const projects = [
+ const projects =
+   homeProjectData.map(project => ({
 
-  {
-    title:
-      "Romnalin Residence",
+     title:
+       project.title || "",
 
-    category:
-      "Private Residence",
+     category:
+       project.category || "",
 
-    type:
-      "Residential Architecture",
+     type:
+       project.category || "",
 
-    location:
-      "Chonburi, Thailand",
+     location:
+       project.location || "",
 
-    area:
-      "650 sq.m.",
+     area:
+       project.area || "",
 
-    service:
-      "Architecture / Design / Drawing / Coordination",
+     service:
+       project.service || "",
 
-    url:
-      "/projects/romnalin-residence/",
+     url:
+       project.url || "",
 
-    image:
-      "assets/project-01.jpg",
+     image:
+       project.thumbnail ||
+       project.hero ||
+       "",
 
-    description:
-      "บ้านพักอาศัยสำหรับการใช้ชีวิตและพักผ่อนในระยะยาว ภายใต้แนวคิด Resort-like Living เชื่อมพื้นที่ภายใน สวน แสงธรรมชาติ และการระบายอากาศเข้าด้วยกัน"
-  },
+     description:
+       project.introDescription ||
+       project.briefDescription ||
+       project.brief ||
+       project.description ||
+       ""
 
-  {
-      title:
-        "Aer+ Residence@BKK",
-
-      category:
-        "Private Residence",
-
-      type:
-        "Residential",
-
-      location:
-        "Thailand",
-
-      area:
-        "320 sq.m.",
-
-      service:
-        "Design & Drawing",
-
-      image:
-        "assets/project-02.png",
-
-      description:
-        "เป็นบ้านในหมู่บ้านเดียวกันบ้านพ่อแม่ สร้างบ้านหลังนี้เพื่อเริ่มต้นครอบครัวใหม่"
-
-    },
-
-
-    {
-
-      title:
-        "K'Ple House",
-
-      category:
-        "Residential Design",
-
-      type:
-        "Private Residence",
-
-      location:
-        "Thailand",
-
-      area:
-        "Insert Project Area",
-
-      service:
-        "Architecture",
-
-      image:
-        "assets/project-03.jpg",
-
-      description:
-        "เล่า Constraint ของที่ดินและวิธีที่แนวคิดทางสถาปัตยกรรมตอบโจทย์พื้นที่จริง"
-
-    },
-
-
-    {
-
-      title:
-        "A+ House",
-
-      category:
-        "Architecture",
-
-      type:
-        "Private Residence",
-
-      location:
-        "Thailand",
-
-      area:
-        "Insert Project Area",
-
-      service:
-        "Design / Consult",
-
-      image:
-        "assets/project-04.jpg",
-
-      description:
-        "พื้นที่สวนและพื้นที่ครอบครัวสามารถถูกใช้เป็นแกนหลักในการวางผัง เพื่อสร้างความสัมพันธ์ระหว่างภายในและภายนอก"
-
-    },
-
-
-    {
-
-      title:
-        "K'Karn Residence",
-
-      category:
-        "Architecture & Consult",
-
-      type:
-        "Residential",
-
-      location:
-        "Thailand",
-
-      area:
-        "Insert Project Area",
-
-      service:
-        "Architecture",
-
-      image:
-        "assets/project-05.jpg",
-
-      description:
-        "แทนด้วย Project Story จริง เพื่อทำให้ผู้ชมเข้าใจว่างานของ ARSTINLA เริ่มจากโจทย์ ไม่ใช่เพียง Style"
-
-    },
-
-
-    {
-
-      title:
-        "House 06",
-
-      category:
-        "Renovation",
-
-      type:
-        "Renovation",
-
-      location:
-        "Thailand",
-
-      area:
-        "Insert Project Area",
-
-      service:
-        "Design & Consult",
-
-      image:
-        "assets/project-06.jpg",
-
-      description:
-        "สำหรับงาน Renovation สามารถเล่าสภาพเดิม ปัญหา แนวคิดการปรับปรุง และสิ่งที่เปลี่ยนหลังออกแบบได้"
-
-    }
-
-  ];
+   }));
 
 
 
@@ -4869,6 +4902,11 @@ data-contact-link
 
     const data =
       projects[index];
+
+
+    if (!data) {
+      return;
+    }
 
 
     modalTitle.textContent =
