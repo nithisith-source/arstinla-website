@@ -140,6 +140,65 @@
   align-items: center;
 }
 
+.home-hero-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  margin: 0 0 36px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: #111210;
+}
+
+.home-hero-preview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.home-hero-content {
+  display: grid;
+  gap: 14px;
+}
+
+.home-hero-label {
+  color: #c47752;
+  font-size: 12px;
+  letter-spacing: .16em;
+}
+
+.home-hero-content h2 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 38px);
+  font-weight: 400;
+}
+
+.home-hero-content p {
+  margin: 0;
+  color: #8f9188;
+  line-height: 1.6;
+}
+
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.home-hero-input {
+  max-width: 360px;
+  color: #d8d8d2;
+}
+
+.project-upload-note {
+  margin: 8px 0 0;
+  color: #8f9188;
+  font-size: 12px;
+}
+
   /* ADD PROJECT UI */
 
   .add-project-button {
@@ -372,6 +431,21 @@
         gap: 8px 18px;
       }
 
+      .home-hero-panel {
+        grid-template-columns: 1fr;
+        padding: 18px;
+      }
+
+      .home-hero-actions {
+        align-items: stretch;
+      }
+
+      .home-hero-input,
+      #updateHomeHeroButton {
+        width: 100%;
+        max-width: none;
+      }
+
       .project-head {
         grid-template-columns: 1fr;
       }
@@ -417,6 +491,50 @@
   + ADD PROJECT
 </button>
     </header>
+
+    <section class="home-hero-panel">
+      <img
+        class="home-hero-preview"
+        id="homeHeroPreview"
+        src="/assets/hero.jpg"
+        alt="Current home hero"
+      >
+
+      <div class="home-hero-content">
+        <div class="home-hero-label">
+          HOME PAGE
+        </div>
+
+        <h2>Home Hero Image</h2>
+
+        <p>
+          เปลี่ยนภาพหลักหน้า Home ได้จากที่นี่ แนะนำไฟล์ JPG แนวนอน อัตราส่วนประมาณ 16:9 และขนาดไม่เกิน 15 MB
+        </p>
+
+        <div class="home-hero-actions">
+          <input
+            class="home-hero-input"
+            id="homeHeroInput"
+            type="file"
+            accept="image/jpeg"
+          >
+
+          <button
+            class="add-project-button"
+            id="updateHomeHeroButton"
+            type="button"
+          >
+            UPDATE HOME HERO
+          </button>
+        </div>
+
+        <p
+          class="admin-form-status"
+          id="homeHeroStatus"
+          aria-live="polite"
+        ></p>
+      </div>
+    </section>
 
 
     <div class="filters">
@@ -605,7 +723,7 @@
 
       <div class="admin-field">
         <label for="projectCover">
-          COVER IMAGE
+          FIRST IMAGE / COVER IMAGE
         </label>
 
         <input
@@ -614,6 +732,10 @@
           type="file"
           accept="image/*"
         >
+
+        <p class="admin-field-hint">
+          ภาพแรกจะใช้เป็นภาพปกของโครงการ
+        </p>
       </div>
 
       <div class="admin-form-actions">
@@ -1129,6 +1251,10 @@
     Upload Images
   </button>
 
+  <p class="project-upload-note">
+    ภาพแรกที่เลือกจะใช้เป็นภาพปกอัตโนมัติ
+  </p>
+
   <div class="project-upload-status"></div>
 </div>
          
@@ -1257,6 +1383,11 @@ browseButton.addEventListener(
         files.querySelector(
           ".project-file-grid"
         );
+
+      files.dataset.hasProjectImages =
+        result.files.length
+          ? "true"
+          : "false";
 
 
       if (fileGrid) {
@@ -1475,6 +1606,12 @@ uploadButton.addEventListener(
     uploadStatus.textContent =
       "Uploading...";
 
+    let imagesUploaded = false;
+
+    const shouldSetFirstAsCover =
+      files.dataset.hasProjectImages !==
+        "true";
+
 
     try {
 
@@ -1526,19 +1663,113 @@ uploadButton.addEventListener(
         );
       }
 
+      imagesUploaded = true;
+
+      files.dataset.hasProjectImages =
+        "true";
+
+      if (shouldSetFirstAsCover) {
+      const coverFormData =
+        new FormData();
+
+      coverFormData.append(
+        "projectNumber",
+        project.number || ""
+      );
+
+      coverFormData.append(
+        "title",
+        project.title || ""
+      );
+
+      coverFormData.append(
+        "category",
+        project.filterCategory ||
+          "residential"
+      );
+
+      coverFormData.append(
+        "location",
+        project.location || ""
+      );
+
+      coverFormData.append(
+        "area",
+        project.area || ""
+      );
+
+      coverFormData.append(
+        "year",
+        project.year || ""
+      );
+
+      coverFormData.append(
+        "completion",
+        project.completion || ""
+      );
+
+      coverFormData.append(
+        "service",
+        project.service || ""
+      );
+
+      coverFormData.append(
+        "cover",
+        selectedFiles[0]
+      );
+
+      coverFormData.append(
+        "removeOldCover",
+        "yes"
+      );
+
+      const coverResponse =
+        await fetch(
+          "/api/projects",
+          {
+            method: "PUT",
+            headers: {
+              "x-admin-key":
+                adminKey
+            },
+            body:
+              coverFormData
+          }
+        );
+
+      const coverResult =
+        await coverResponse.json();
+
+      if (!coverResponse.ok) {
+        throw new Error(
+          "อัปโหลดภาพภายในสำเร็จ แต่ตั้งภาพแรกเป็นภาพปกไม่สำเร็จ: " +
+          (
+            coverResult.error ||
+            "Cover update failed"
+          )
+        );
+      }
+      }
+
 
       uploadStatus.textContent =
-        `Uploaded ${result.uploaded.length} file(s)`;
+        shouldSetFirstAsCover
+          ? `Uploaded ${result.uploaded.length} file(s) · First image set as cover`
+          : `Uploaded ${result.uploaded.length} file(s)`;
 
       alert(
-        `อัปโหลดรูป Project ${project.number} เรียบร้อย`
+        shouldSetFirstAsCover
+          ? `อัปโหลดรูป Project ${project.number} เรียบร้อย และใช้ภาพแรกเป็นภาพปกแล้ว`
+          : `อัปโหลดรูป Project ${project.number} เรียบร้อย`
       );
 
     }
     catch (error) {
 
       uploadStatus.textContent =
-        "Upload failed";
+        imagesUploaded
+          ? "Images uploaded · Cover update failed"
+          : "Upload failed";
 
       alert(
         error.message
@@ -1601,6 +1832,179 @@ uploadButton.addEventListener(
         );
 
       });
+
+const homeHeroPreview =
+  document.getElementById(
+    "homeHeroPreview"
+  );
+
+const homeHeroInput =
+  document.getElementById(
+    "homeHeroInput"
+  );
+
+const updateHomeHeroButton =
+  document.getElementById(
+    "updateHomeHeroButton"
+  );
+
+const homeHeroStatus =
+  document.getElementById(
+    "homeHeroStatus"
+  );
+
+homeHeroPreview.src =
+  `/assets/hero.jpg?v=${Date.now()}`;
+
+function setHomeHeroStatus(
+  message = "",
+  state = ""
+) {
+  homeHeroStatus.textContent =
+    message;
+
+  if (state) {
+    homeHeroStatus.dataset.state =
+      state;
+  }
+  else {
+    delete homeHeroStatus.dataset.state;
+  }
+}
+
+updateHomeHeroButton.addEventListener(
+  "click",
+  async () => {
+    const heroFile =
+      homeHeroInput.files?.[0];
+
+    if (!heroFile) {
+      setHomeHeroStatus(
+        "กรุณาเลือกรูป Hero ก่อน",
+        "error"
+      );
+      return;
+    }
+
+    if (heroFile.type !== "image/jpeg") {
+      setHomeHeroStatus(
+        "กรุณาใช้ไฟล์ JPG เท่านั้น",
+        "error"
+      );
+      return;
+    }
+
+    if (
+      heroFile.size >
+        15 * 1024 * 1024
+    ) {
+      setHomeHeroStatus(
+        "รูป Hero ต้องมีขนาดไม่เกิน 15 MB",
+        "error"
+      );
+      return;
+    }
+
+    let adminKey =
+      sessionStorage.getItem(
+        "ARSTINLA_ADMIN_KEY"
+      );
+
+    if (!adminKey) {
+      adminKey = prompt(
+        "Enter ARSTINLA Admin Key"
+      );
+
+      if (!adminKey) {
+        return;
+      }
+
+      sessionStorage.setItem(
+        "ARSTINLA_ADMIN_KEY",
+        adminKey
+      );
+    }
+
+    updateHomeHeroButton.disabled =
+      true;
+
+    updateHomeHeroButton.textContent =
+      "UPLOADING...";
+
+    setHomeHeroStatus(
+      "กำลังอัปโหลดภาพ Hero..."
+    );
+
+    try {
+      const formData =
+        new FormData();
+
+      formData.append(
+        "hero",
+        heroFile
+      );
+
+      const response =
+        await fetch(
+          "/api/site-assets",
+          {
+            method: "POST",
+            headers: {
+              "x-admin-key":
+                adminKey
+            },
+            body: formData
+          }
+        );
+
+      const result =
+        await response.json();
+
+      if (response.status === 401) {
+        sessionStorage.removeItem(
+          "ARSTINLA_ADMIN_KEY"
+        );
+
+        throw new Error(
+          "Admin Key ไม่ถูกต้อง กรุณาใส่ใหม่"
+        );
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+          "อัปโหลดภาพ Hero ไม่สำเร็จ"
+        );
+      }
+
+      homeHeroInput.value = "";
+
+      setHomeHeroStatus(
+        "อัปโหลดเรียบร้อย เว็บไซต์จะอัปเดตภายในประมาณ 1–2 นาที",
+        "success"
+      );
+
+      alert(
+        "เปลี่ยนภาพ Home Hero เรียบร้อย"
+      );
+    }
+    catch (error) {
+      setHomeHeroStatus(
+        error.message ||
+          "อัปโหลดภาพ Hero ไม่สำเร็จ",
+        "error"
+      );
+    }
+    finally {
+      updateHomeHeroButton.disabled =
+        false;
+
+      updateHomeHeroButton.textContent =
+        "UPDATE HOME HERO";
+    }
+  }
+);
+
 const addProjectButton =
   document.getElementById(
     "addProjectButton"
