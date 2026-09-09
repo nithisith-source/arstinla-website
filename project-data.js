@@ -712,6 +712,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "07": {
+
+    number: "07",
+
+    slug: "knockdown-project",
+
+    url:
+      "/projects/knockdown-project/",
+
+    title:
+      "KN-02",
+
+    officialTitle:
+      "KN-02",
+
+    category:
+      "Tiny House",
+
+    filterCategory:
+      "tiny-house",
+
+    location:
+      "Bangkok,Thailand",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-07.jpg",
+
+    hero:
+      "/assets/project-07.jpg",
+
+    heroAlt:
+      "KN-02",
+
+    assetFolder:
+      "/assets/project-07/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
