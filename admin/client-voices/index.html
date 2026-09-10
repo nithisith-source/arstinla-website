@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ARSTINLA Client Voices Manager</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #121311;
+      --panel: #171816;
+      --panel-soft: #1d1e1b;
+      --text: #f3f1eb;
+      --muted: #8d8f86;
+      --line: rgba(255, 255, 255, .14);
+      --orange: #c47752;
+      --danger: #d06d62;
+      --success: #83b18a;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .admin {
+      width: min(calc(100% - 48px), 1500px);
+      margin: 0 auto;
+      padding: 50px 0 100px;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .admin-label {
+      color: var(--orange);
+      font-size: 12px;
+      letter-spacing: .18em;
+    }
+
+    h1 {
+      margin: 12px 0 0;
+      font-size: clamp(38px, 5vw, 72px);
+      font-weight: 300;
+      letter-spacing: -.04em;
+    }
+
+    .header-actions,
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .button,
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: .04em;
+    }
+
+    .button.primary { background: var(--orange); border-color: var(--orange); color: #fff; }
+    .button.danger { border-color: rgba(208, 109, 98, .55); color: #efa79f; }
+    .button:hover, .button-link:hover { border-color: var(--orange); }
+    .button:disabled { cursor: wait; opacity: .5; }
+
+    .login-panel,
+    .invite-panel,
+    .manager-panel {
+      margin-top: 34px;
+      padding: clamp(22px, 3vw, 34px);
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 26px;
+    }
+
+    h2, h3 { margin: 0; font-weight: 400; }
+    h2 { font-size: clamp(24px, 3vw, 38px); }
+    h3 { font-size: 21px; }
+
+    .panel-copy {
+      max-width: 700px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field { display: grid; gap: 8px; }
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: .03em;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: var(--panel-soft);
+      color: var(--text);
+      padding: 13px 14px;
+    }
+
+    textarea { min-height: 130px; resize: vertical; line-height: 1.6; }
+    input:focus, textarea:focus, select:focus { outline: 1px solid var(--orange); border-color: var(--orange); }
+
+    .invite-output {
+      display: none;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .invite-output.active { display: grid; }
+
+    .status {
+      min-height: 22px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .status[data-state="error"] { color: var(--danger); }
+    .status[data-state="success"] { color: var(--success); }
+
+    .manager-shell[hidden] { display: none; }
+
+    .section-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      margin: 34px 0 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tab {
+      padding: 12px 0;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .tab.active { color: var(--text); border-color: var(--orange); }
+
+    .list {
+      display: grid;
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .voice-card {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 24px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .voice-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #242521;
+    }
+
+    .voice-photo-placeholder {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #242521;
+      color: #686a62;
+      font-size: 12px;
+      letter-spacing: .12em;
+    }
+
+    .voice-content { min-width: 0; }
+
+    .voice-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-bottom: 18px;
+      color: var(--orange);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .edit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .edit-grid .comment-field { grid-column: 1 / -1; }
+
+    .voice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .visibility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .visibility-badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .visibility-badge.hidden::before { background: var(--muted); }
+
+    .empty {
+      padding: 34px 24px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .admin { width: min(calc(100% - 28px), 1500px); padding-top: 28px; }
+      .admin-header, .panel-heading { align-items: flex-start; flex-direction: column; }
+      .form-grid, .edit-grid, .voice-card { grid-template-columns: 1fr; }
+      .edit-grid .comment-field { grid-column: auto; }
+      .voice-photo, .voice-photo-placeholder { max-width: 280px; }
+      .invite-output { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="admin">
+    <header class="admin-header">
+      <div>
+        <div class="admin-label">ARSTINLA ADMIN</div>
+        <h1>Client Voices Manager</h1>
+      </div>
+
+      <div class="header-actions">
+        <a class="button-link" href="/admin/projects/">PROJECT MANAGER</a>
+        <a class="button-link" href="/">VIEW WEBSITE</a>
+      </div>
+    </header>
+
+    <section class="login-panel" id="loginPanel">
+      <div class="panel-heading">
+        <div>
+          <h2>เข้าสู่ระบบจัดการ</h2>
+          <p class="panel-copy">ใช้ Admin Key เดียวกับ Project Manager ข้อมูลจะจำไว้เฉพาะแท็บนี้</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label for="adminKey">ADMIN KEY</label>
+          <input id="adminKey" type="password" autocomplete="current-password" placeholder="Enter Admin Key">
+        </div>
+      </div>
+
+      <div class="button-row" style="margin-top:18px">
+        <button class="button primary" id="loadButton" type="button">OPEN MANAGER</button>
+      </div>
+      <p class="status" id="loginStatus" aria-live="polite"></p>
+    </section>
+
+    <div class="manager-shell" id="managerShell" hidden>
+      <section class="invite-panel">
+        <div class="panel-heading">
+          <div>
+            <div class="admin-label">INVITATION LINK</div>
+            <h2 style="margin-top:10px">สร้างลิงก์ส่งให้ลูกค้า</h2>
+            <p class="panel-copy">แต่ละลิงก์ใช้ส่งความคิดเห็นได้หนึ่งครั้ง และมีอายุ 90 วัน</p>
+          </div>
+        </div>
+
+        <form id="inviteForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="inviteClientName">ชื่อลูกค้า (ใส่หรือเว้นไว้ให้ลูกค้ากรอกเอง)</label>
+              <input id="inviteClientName" maxlength="100">
+            </div>
+            <div class="field">
+              <label for="inviteProjectName">ชื่อโครงการ *</label>
+              <input id="inviteProjectName" maxlength="140" required>
+            </div>
+          </div>
+
+          <div class="button-row" style="margin-top:18px">
+            <button class="button primary" id="generateButton" type="submit">GENERATE INVITE LINK</button>
+          </div>
+        </form>
+
+        <div class="invite-output" id="inviteOutput">
+          <input id="inviteUrl" readonly aria-label="Client invitation URL">
+          <button class="button" id="copyButton" type="button">COPY LINK</button>
+        </div>
+        <p class="status" id="inviteStatus" aria-live="polite"></p>
+      </section>
+
+      <nav class="section-tabs" aria-label="Client Voice status">
+        <button class="tab active" type="button" data-tab="pending">WAITING <span id="pendingCount">0</span></button>
+        <button class="tab" type="button" data-tab="approved">PUBLISHED <span id="approvedCount">0</span></button>
+        <button class="button" id="refreshButton" type="button" style="margin-left:auto;margin-bottom:8px">REFRESH</button>
+      </nav>
+
+      <section class="manager-panel" id="pendingPanel">
+        <div class="panel-heading">
+          <div>
+            <h2>รอตรวจสอบ</h2>
+            <p class="panel-copy">ตรวจข้อความและข้อมูลให้เรียบร้อยก่อนกด Approve</p>
+          </div>
+        </div>
+        <div class="list" id="pendingList"></div>
+      </section>
+
+      <section class="manager-panel" id="approvedPanel" hidden>
+        <div class="panel-heading">
+          <div>
+            <h2>เผยแพร่แล้ว</h2>
+            <p class="panel-copy">รายการที่เปิดแสดงจะปรากฏในส่วน Client Voices บนหน้า Home</p>
+          </div>
+        </div>
+        <div class="list" id="approvedList"></div>
+      </section>
+
+      <p class="status" id="managerStatus" aria-live="polite"></p>
+    </div>
+  </main>
+
+  <script>
+    const KEY_NAME = "ARSTINLA_ADMIN_KEY";
+    const adminKeyInput = document.getElementById("adminKey");
+    const managerShell = document.getElementById("managerShell");
+    const loginStatus = document.getElementById("loginStatus");
+    const managerStatus = document.getElementById("managerStatus");
+    const inviteStatus = document.getElementById("inviteStatus");
+    let currentData = { pending: [], approved: [] };
+
+    function setStatus(element, message = "", state = "") {
+      element.textContent = message;
+      state ? element.dataset.state = state : delete element.dataset.state;
+    }
+
+    function getAdminKey() {
+      return adminKeyInput.value.trim() || sessionStorage.getItem(KEY_NAME) || "";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? "" : new Intl.DateTimeFormat("th-TH", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      }).format(date);
+    }
+
+    async function api(pathOptions = {}) {
+      const key = getAdminKey();
+      if (!key) throw new Error("กรุณาใส่ Admin Key");
+
+      const response = await fetch("/api/client-voices", {
+        ...pathOptions,
+        headers: {
+          ...(pathOptions.headers || {}),
+          "x-admin-key": key
+        }
+      });
+
+      const text = await response.text();
+      let result = {};
+      try { result = text ? JSON.parse(text) : {}; }
+      catch { result = {}; }
+
+      if (response.status === 401) {
+        sessionStorage.removeItem(KEY_NAME);
+        adminKeyInput.value = "";
+        managerShell.hidden = true;
+        throw new Error("Admin Key ไม่ถูกต้อง กรุณาใส่ใหม่");
+      }
+
+      if (!response.ok) throw new Error(result.error || "ดำเนินการไม่สำเร็จ กรุณาลองใหม่");
+      return result;
+    }
+
+    function photoMarkup(item, pending) {
+      const source = pending ? item.photoDataUrl : item.photo;
+      const safe = pending
+        ? /^data:image\/(jpeg|png|webp);base64,/i.test(source || "")
+        : /^\/assets\/client-voices\//.test(source || "");
+
+      return safe
+        ? `<img class="voice-photo" src="${escapeHtml(source)}" alt="Client Voice image">`
+        : `<div class="voice-photo-placeholder">NO IMAGE</div>`;
+    }
+
+    function editorMarkup(item) {
+      return `
+        <div class="edit-grid">
+          <div class="field">
+            <label>ชื่อที่แสดง</label>
+            <input data-field="clientName" maxlength="100" value="${escapeHtml(item.clientName)}">
+          </div>
+          <div class="field">
+            <label>ชื่อโครงการ</label>
+            <input data-field="projectName" maxlength="140" value="${escapeHtml(item.projectName)}">
+          </div>
+          <div class="field">
+            <label>บริการ</label>
+            <input data-field="service" maxlength="140" value="${escapeHtml(item.service)}">
+          </div>
+          <div class="field">
+            <label>คะแนน</label>
+            <select data-field="rating">
+              ${[5,4,3,2,1].map(value => `<option value="${value}" ${Number(item.rating) === value ? "selected" : ""}>${value} ดาว</option>`).join("")}
+            </select>
+          </div>
+          <div class="field full">
+            <label>ลิงก์ Facebook / Instagram</label>
+            <input data-field="socialUrl" maxlength="400" value="${escapeHtml(item.socialUrl)}">
+          </div>
+          <div class="field comment-field">
+            <label>ความคิดเห็น</label>
+            <textarea data-field="comment" maxlength="1500">${escapeHtml(item.comment)}</textarea>
+          </div>
+        </div>`;
+    }
+
+    function renderPending() {
+      const list = document.getElementById("pendingList");
+      document.getElementById("pendingCount").textContent = String(currentData.pending.length);
+
+      if (!currentData.pending.length) {
+        list.innerHTML = `<div class="empty">ยังไม่มีความคิดเห็นที่รอตรวจสอบ</div>`;
+        return;
+      }
+
+      list.innerHTML = currentData.pending.map(item => {
+        if (item.unreadable) {
+          return `<article class="voice-card" data-id="${escapeHtml(item.id)}" data-kind="pending">
+            <div class="voice-photo-placeholder">UNAVAILABLE</div>
+            <div class="voice-content">
+              <div class="voice-meta">ข้อมูลเข้ารหัสอ่านไม่สำเร็จ · ${escapeHtml(formatDate(item.submittedAt))}</div>
+              <div class="voice-actions"><button class="button danger" data-action="delete" type="button">DELETE</button></div>
+            </div>
+          </article>`;
+        }
+
+        return `<article class="voice-card" data-id="${escapeHtml(item.id)}" data-kind="pending">
+          <div>${photoMarkup(item, true)}</div>
+          <div class="voice-content">
+            <div class="voice-meta">WAITING · ${escapeHtml(formatDate(item.submittedAt))}</div>
+            ${editorMarkup(item)}
+            <div class="voice-actions">
+              <button class="button primary" data-action="approve" type="button">APPROVE &amp; PUBLISH</button>
+              <button class="button danger" data-action="delete" type="button">REJECT</button>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    function renderApproved() {
+      const list = document.getElementById("approvedList");
+      document.getElementById("approvedCount").textContent = String(currentData.approved.length);
+
+      if (!currentData.approved.length) {
+        list.innerHTML = `<div class="empty">ยังไม่มี Client Voice ที่เผยแพร่</div>`;
+        return;
+      }
+
+      list.innerHTML = currentData.approved.map(item => `
+        <article class="voice-card" data-id="${escapeHtml(item.id)}" data-kind="approved">
+          <div>${photoMarkup(item, false)}</div>
+          <div class="voice-content">
+            <div class="voice-meta">
+              <span class="visibility-badge ${item.published === false ? "hidden" : ""}">${item.published === false ? "HIDDEN" : "VISIBLE"}</span>
+              <span>${escapeHtml(formatDate(item.approvedAt))}</span>
+            </div>
+            ${editorMarkup(item)}
+            <div class="voice-actions">
+              <button class="button primary" data-action="save" type="button">SAVE CHANGES</button>
+              <button class="button" data-action="visibility" data-published="${item.published === false ? "true" : "false"}" type="button">${item.published === false ? "SHOW ON HOME" : "HIDE FROM HOME"}</button>
+              <button class="button danger" data-action="delete" type="button">DELETE</button>
+            </div>
+          </div>
+        </article>`).join("");
+    }
+
+    function renderAll() {
+      renderPending();
+      renderApproved();
+    }
+
+    async function loadManager() {
+      const button = document.getElementById("loadButton");
+      const key = getAdminKey();
+
+      if (!key) {
+        setStatus(loginStatus, "กรุณาใส่ Admin Key", "error");
+        adminKeyInput.focus();
+        return;
+      }
+
+      sessionStorage.setItem(KEY_NAME, key);
+      button.disabled = true;
+      setStatus(loginStatus, "กำลังเปิดข้อมูล...");
+
+      try {
+        const result = await api();
+        currentData = { pending: result.pending || [], approved: result.approved || [] };
+        managerShell.hidden = false;
+        setStatus(loginStatus, "เปิดระบบจัดการแล้ว", "success");
+        renderAll();
+      }
+      catch (error) {
+        setStatus(loginStatus, error.message, "error");
+      }
+      finally {
+        button.disabled = false;
+      }
+    }
+
+    function readCardEdits(card) {
+      const value = name => card.querySelector(`[data-field="${name}"]`)?.value || "";
+      return {
+        clientName: value("clientName"),
+        projectName: value("projectName"),
+        service: value("service"),
+        rating: Number(value("rating")),
+        socialUrl: value("socialUrl"),
+        comment: value("comment")
+      };
+    }
+
+    async function refreshData(message = "อัปเดตข้อมูลแล้ว") {
+      const result = await api();
+      currentData = { pending: result.pending || [], approved: result.approved || [] };
+      renderAll();
+      setStatus(managerStatus, message, "success");
+    }
+
+    document.getElementById("loadButton").addEventListener("click", loadManager);
+    adminKeyInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") loadManager();
+    });
+
+    document.getElementById("inviteForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = document.getElementById("generateButton");
+      button.disabled = true;
+      setStatus(inviteStatus, "กำลังสร้างลิงก์...");
+
+      try {
+        const result = await api({
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            action: "invite",
+            clientName: document.getElementById("inviteClientName").value,
+            projectName: document.getElementById("inviteProjectName").value
+          })
+        });
+
+        document.getElementById("inviteUrl").value = result.inviteUrl;
+        document.getElementById("inviteOutput").classList.add("active");
+        setStatus(inviteStatus, "สร้างลิงก์เรียบร้อย ส่งลิงก์นี้ให้ลูกค้าได้เลย", "success");
+      }
+      catch (error) {
+        setStatus(inviteStatus, error.message, "error");
+      }
+      finally {
+        button.disabled = false;
+      }
+    });
+
+    document.getElementById("copyButton").addEventListener("click", async () => {
+      const input = document.getElementById("inviteUrl");
+      try {
+        await navigator.clipboard.writeText(input.value);
+        setStatus(inviteStatus, "คัดลอกลิงก์แล้ว", "success");
+      }
+      catch {
+        input.select();
+        setStatus(inviteStatus, "เลือกลิงก์ไว้แล้ว กด Ctrl+C เพื่อคัดลอก", "success");
+      }
+    });
+
+    document.getElementById("refreshButton").addEventListener("click", async event => {
+      event.currentTarget.disabled = true;
+      setStatus(managerStatus, "กำลังอัปเดตข้อมูล...");
+      try { await refreshData(); }
+      catch (error) { setStatus(managerStatus, error.message, "error"); }
+      finally { event.currentTarget.disabled = false; }
+    });
+
+    document.querySelectorAll("[data-tab]").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll("[data-tab]").forEach(item => item.classList.toggle("active", item === tab));
+        const pending = tab.dataset.tab === "pending";
+        document.getElementById("pendingPanel").hidden = !pending;
+        document.getElementById("approvedPanel").hidden = pending;
+      });
+    });
+
+    managerShell.addEventListener("click", async event => {
+      const button = event.target.closest("[data-action]");
+      if (!button) return;
+
+      const card = button.closest(".voice-card");
+      const id = card?.dataset.id;
+      const kind = card?.dataset.kind;
+      if (!id || !kind) return;
+
+      const action = button.dataset.action;
+
+      if (action === "delete") {
+        const wording = kind === "pending" ? "ปฏิเสธและนำความคิดเห็นนี้ออก" : "ลบ Client Voice นี้ออกจากหน้าเว็บ";
+        if (!window.confirm(`${wording} ใช่หรือไม่?\n\nไฟล์รูปเดิมจะยังเก็บไว้เพื่อกู้คืน`)) return;
+      }
+
+      button.disabled = true;
+      setStatus(managerStatus, "กำลังบันทึก กรุณารอสักครู่...");
+
+      try {
+        if (action === "approve") {
+          await api({
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ action: "approve", id, edits: readCardEdits(card) })
+          });
+          await refreshData("อนุมัติและเผยแพร่ Client Voice แล้ว");
+        }
+        else if (action === "save") {
+          await api({
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ action: "update", id, edits: readCardEdits(card) })
+          });
+          await refreshData("บันทึกการแก้ไขแล้ว");
+        }
+        else if (action === "visibility") {
+          await api({
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ action: "visibility", id, published: button.dataset.published === "true" })
+          });
+          await refreshData("อัปเดตการแสดงผลบนหน้า Home แล้ว");
+        }
+        else if (action === "delete") {
+          await api({
+            method: "DELETE",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ id, kind })
+          });
+          await refreshData(kind === "pending" ? "ปฏิเสธความคิดเห็นแล้ว" : "ลบ Client Voice แล้ว โดยยังเก็บไฟล์รูปไว้");
+        }
+      }
+      catch (error) {
+        setStatus(managerStatus, error.message, "error");
+        button.disabled = false;
+      }
+    });
+
+    const savedKey = sessionStorage.getItem(KEY_NAME);
+    if (savedKey) {
+      adminKeyInput.placeholder = "Admin Key พร้อมใช้งานในแท็บนี้";
+      loadManager();
+    }
+  </script>
+</body>
+</html>
