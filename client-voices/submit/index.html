@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Client Voices | ARSTINLA Design &amp; Consult</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #171816;
+      --cream: #f3f0e8;
+      --paper: #e9e5dc;
+      --muted: #686a64;
+      --line: rgba(23, 24, 22, .18);
+      --orange: #c36b48;
+      --font-en: "Space Grotesk", sans-serif;
+      --font-th: "IBM Plex Sans Thai", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--cream);
+      color: var(--black);
+      font-family: var(--font-th);
+      font-size: 16px;
+      font-weight: 300;
+    }
+
+    a { color: inherit; }
+
+    .topbar {
+      background: var(--black);
+      color: #fff;
+      padding: 24px clamp(24px, 5vw, 72px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 14px;
+      font-family: var(--font-en);
+      letter-spacing: .22em;
+      text-decoration: none;
+    }
+
+    .brand small {
+      color: #9a9b94;
+      font-size: .62rem;
+      letter-spacing: .16em;
+    }
+
+    main {
+      width: min(calc(100% - 40px), 1120px);
+      margin: 0 auto;
+      padding: clamp(54px, 8vw, 110px) 0 90px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, .8fr) minmax(420px, 1.2fr);
+      gap: clamp(42px, 8vw, 110px);
+      align-items: start;
+    }
+
+    .eyebrow {
+      color: var(--orange);
+      font-family: var(--font-en);
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 24px 0 28px;
+      font-family: var(--font-en), var(--font-th);
+      font-size: clamp(3rem, 7vw, 6.6rem);
+      font-weight: 300;
+      letter-spacing: -.065em;
+      line-height: .92;
+    }
+
+    .intro {
+      max-width: 500px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.85;
+    }
+
+    .invite-card {
+      margin-top: 34px;
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .invite-label {
+      color: var(--muted);
+      font-family: var(--font-en);
+      font-size: .72rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .invite-project {
+      margin-top: 8px;
+      font-size: 1.15rem;
+      font-weight: 500;
+    }
+
+    form {
+      display: grid;
+      gap: 24px;
+      padding: clamp(26px, 4vw, 48px);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .field { display: grid; gap: 9px; }
+
+    label,
+    legend {
+      font-size: .86rem;
+      font-weight: 500;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #bbb9b1;
+      border-radius: 0;
+      background: transparent;
+      color: var(--black);
+      font: inherit;
+      font-size: 1rem;
+      padding: 12px 0;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 0;
+      border-color: var(--orange);
+      box-shadow: 0 1px 0 var(--orange);
+    }
+
+    input[readonly] { color: var(--muted); }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    .rating {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .rating-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .rating-options label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 66px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      cursor: pointer;
+    }
+
+    .rating-options input { width: auto; }
+
+    .hint {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.6;
+    }
+
+    .consent {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+      padding-top: 4px;
+      color: #4d4e49;
+      font-size: .85rem;
+      line-height: 1.65;
+    }
+
+    .consent input {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+    }
+
+    .submit-button {
+      min-height: 54px;
+      border: 1px solid var(--black);
+      background: var(--black);
+      color: #fff;
+      font: 500 .78rem var(--font-en);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .submit-button:hover { background: var(--orange); border-color: var(--orange); }
+    .submit-button:disabled { cursor: wait; opacity: .55; }
+
+    .status {
+      min-height: 24px;
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+
+    .status[data-state="error"] { color: #a0392b; }
+    .status[data-state="success"] { color: #36633d; }
+
+    .success-panel {
+      display: none;
+      padding: clamp(34px, 6vw, 64px);
+      background: var(--black);
+      color: #fff;
+    }
+
+    .success-panel.active { display: block; }
+    .success-panel h2 { margin: 18px 0; font-size: clamp(2rem, 5vw, 4rem); font-weight: 300; }
+    .success-panel p { color: #b9bab4; line-height: 1.8; }
+
+    .honeypot { position: absolute; left: -9999px; }
+
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      form { padding: 28px 22px; }
+      .brand small { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">
+      ARSTINLA
+      <small>DESIGN &amp; CONSULT</small>
+    </a>
+  </header>
+
+  <main>
+    <div class="layout">
+      <section>
+        <div class="eyebrow">Client Voices</div>
+        <h1>เล่าประสบการณ์<br>ของคุณ</h1>
+        <p class="intro">
+          ขอบคุณที่ไว้วางใจให้ ARSTINLA ร่วมดูแลโครงการของคุณ
+          ความคิดเห็นนี้ช่วยให้ทีมงานพัฒนาการทำงาน และช่วยให้เจ้าของโครงการรายต่อไปตัดสินใจได้ดีขึ้น
+        </p>
+
+        <div class="invite-card" id="inviteCard" hidden>
+          <div class="invite-label">Invitation for</div>
+          <div class="invite-project" id="inviteProject"></div>
+        </div>
+      </section>
+
+      <section>
+        <form id="voiceForm">
+          <input type="hidden" id="inviteToken" name="inviteToken">
+          <input type="hidden" id="openedAt" name="openedAt">
+
+          <div class="honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="clientName">ชื่อที่อนุญาตให้แสดง *</label>
+            <input id="clientName" name="clientName" maxlength="100" required autocomplete="name">
+          </div>
+
+          <div class="field">
+            <label for="projectName">ชื่อโครงการ *</label>
+            <input id="projectName" name="projectName" maxlength="140" required readonly>
+          </div>
+
+          <div class="field">
+            <label for="service">บริการที่ได้รับ</label>
+            <select id="service" name="service">
+              <option value="">เลือกบริการ</option>
+              <option>Architecture &amp; Design</option>
+              <option>Interior Design</option>
+              <option>Consult</option>
+              <option>Drawing &amp; Coordination</option>
+              <option>Construction Consultation</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <fieldset class="rating">
+            <legend>ความพึงพอใจ *</legend>
+            <div class="rating-options">
+              <label><input type="radio" name="rating" value="5" checked> 5 ★</label>
+              <label><input type="radio" name="rating" value="4"> 4 ★</label>
+              <label><input type="radio" name="rating" value="3"> 3 ★</label>
+              <label><input type="radio" name="rating" value="2"> 2 ★</label>
+              <label><input type="radio" name="rating" value="1"> 1 ★</label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="comment">ความคิดเห็นเกี่ยวกับทีมงาน *</label>
+            <textarea id="comment" name="comment" maxlength="1500" required placeholder="เล่าถึงการสื่อสาร กระบวนการออกแบบ หรือสิ่งที่ประทับใจ"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="socialUrl">ลิงก์ Facebook หรือ Instagram</label>
+            <input id="socialUrl" name="socialUrl" type="url" maxlength="400" placeholder="https://facebook.com/... หรือ https://instagram.com/...">
+            <div class="hint">ใส่เฉพาะลิงก์สาธารณะที่คุณยินยอมให้แสดง ไม่จำเป็นต้องเข้าสู่ระบบผ่านเว็บไซต์นี้</div>
+          </div>
+
+          <div class="field">
+            <label for="photo">รูปภาพลูกค้าหรือรูปโครงการ</label>
+            <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+            <div class="hint">ไม่บังคับ รองรับ JPG, PNG หรือ WebP ขนาดไม่เกิน 2 MB</div>
+          </div>
+
+          <label class="consent">
+            <input id="consent" name="consent" type="checkbox" required>
+            <span>ฉันยินยอมให้ ARSTINLA จัดเก็บ ตรวจสอบ และนำชื่อที่ระบุ ความคิดเห็น ชื่อโครงการ ลิงก์โซเชียล และรูปที่แนบไปเผยแพร่บนเว็บไซต์หรือช่องทางสื่อสารของ ARSTINLA หลังจากทีมงานอนุมัติแล้ว</span>
+          </label>
+
+          <button class="submit-button" id="submitButton" type="submit">Send Client Voice</button>
+          <p class="status" id="formStatus" aria-live="polite"></p>
+        </form>
+
+        <div class="success-panel" id="successPanel" role="status">
+          <div class="eyebrow">Thank you</div>
+          <h2>ได้รับความคิดเห็นแล้ว</h2>
+          <p>ทีมงานจะตรวจสอบข้อมูลก่อนเผยแพร่ ขอบคุณที่สละเวลาแบ่งปันประสบการณ์กับ ARSTINLA ค่ะ</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById("voiceForm");
+    const statusElement = document.getElementById("formStatus");
+    const submitButton = document.getElementById("submitButton");
+    const photoInput = document.getElementById("photo");
+    const token = new URLSearchParams(window.location.search).get("invite") || "";
+
+    document.getElementById("inviteToken").value = token;
+    document.getElementById("openedAt").value = String(Date.now());
+
+    function setStatus(message = "", state = "") {
+      statusElement.textContent = message;
+      state ? statusElement.dataset.state = state : delete statusElement.dataset.state;
+    }
+
+    function decodeInvite(value) {
+      try {
+        const encoded = value.split(".")[0];
+        const normalized = encoded.replace(/-/g, "+").replace(/_/g, "/");
+        const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+        const bytes = Uint8Array.from(atob(padded), character => character.charCodeAt(0));
+        return JSON.parse(new TextDecoder().decode(bytes));
+      }
+      catch {
+        return null;
+      }
+    }
+
+    const invitation = decodeInvite(token);
+
+    if (!token || !invitation || Number(invitation.exp || 0) < Date.now()) {
+      setStatus("ลิงก์เชิญนี้ไม่ถูกต้องหรือหมดอายุ กรุณาขอลิงก์ใหม่จากทีมงาน ARSTINLA", "error");
+      submitButton.disabled = true;
+    }
+    else {
+      const clientName = String(invitation.clientName || "");
+      const projectName = String(invitation.projectName || "");
+      document.getElementById("clientName").value = clientName;
+      document.getElementById("projectName").value = projectName;
+      document.getElementById("inviteProject").textContent = projectName;
+      document.getElementById("inviteCard").hidden = false;
+    }
+
+    function readPhoto(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = String(reader.result || "");
+          resolve({
+            name: file.name,
+            type: file.type,
+            data: result.includes(",") ? result.split(",")[1] : ""
+          });
+        };
+        reader.onerror = () => reject(new Error("อ่านไฟล์รูปภาพไม่สำเร็จ"));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      setStatus();
+
+      const photoFile = photoInput.files?.[0];
+
+      if (photoFile && photoFile.size > 2 * 1024 * 1024) {
+        setStatus("รูปภาพต้องมีขนาดไม่เกิน 2 MB", "error");
+        photoInput.focus();
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending...";
+      setStatus("กำลังส่งความคิดเห็น กรุณารอสักครู่...");
+
+      try {
+        const formData = new FormData(form);
+        const photo = photoFile ? await readPhoto(photoFile) : null;
+        const response = await fetch("/api/client-voices", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            action: "submit",
+            inviteToken: token,
+            openedAt: Number(formData.get("openedAt")),
+            website: formData.get("website"),
+            clientName: formData.get("clientName"),
+            projectName: formData.get("projectName"),
+            service: formData.get("service"),
+            rating: Number(formData.get("rating")),
+            comment: formData.get("comment"),
+            socialUrl: formData.get("socialUrl"),
+            consent: formData.get("consent") === "on",
+            photo
+          })
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || "ส่งความคิดเห็นไม่สำเร็จ กรุณาลองใหม่");
+
+        form.style.display = "none";
+        document.getElementById("successPanel").classList.add("active");
+      }
+      catch (error) {
+        setStatus(error.message || "ส่งความคิดเห็นไม่สำเร็จ กรุณาลองใหม่", "error");
+        submitButton.disabled = false;
+        submitButton.textContent = "Send Client Voice";
+      }
+    });
+  </script>
+</body>
+</html>
