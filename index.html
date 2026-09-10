@@ -1262,6 +1262,12 @@ background-size: cover;
     gap: 22px;
   }
 
+  .client-voices-action {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 42px;
+  }
+
   .client-voice-card {
     display: flex;
     flex-direction: column;
@@ -2871,7 +2877,7 @@ background-repeat:
   data-contact-link
   class="nav-contact"
 >
-  Start a Project
+  Discuss a Project
 </a>
 
     </div>
@@ -2970,7 +2976,7 @@ background-repeat:
   data-contact-link
   class="btn btn-primary"
 >
-  ส่งข้อมูลโครงการ
+  นัดคุยโครงการ
 </a>
 
         <a
@@ -3623,6 +3629,16 @@ background-repeat:
       class="client-voices-grid"
       id="clientVoicesGrid"
     ></div>
+
+    <div class="client-voices-action">
+      <a
+        href="#contact"
+        data-contact-link
+        class="btn btn-primary"
+      >
+        นัดคุยโครงการ
+      </a>
+    </div>
   </div>
 </section>
 
@@ -4064,7 +4080,7 @@ data-contact-link
       "
     >
 
-      Start a Project
+      นัดคุยโครงการ
 
     </a>
 
@@ -4555,6 +4571,15 @@ data-contact-link
           class="modal-description"
           id="modalDescription"
         ></p>
+
+        <a
+          href="#contact"
+          data-contact-link
+          class="btn btn-primary"
+          style="margin-top:32px"
+        >
+          นัดคุยโครงการ
+        </a>
 
 
       </div>
@@ -5623,6 +5648,21 @@ const submitButton =
         document.getElementById("contact");
 
       if (!contact) return;
+
+      const activeModal =
+        document.querySelector(
+          ".project-modal.active"
+        );
+
+      if (activeModal) {
+        activeModal.classList.remove(
+          "active"
+        );
+
+        document.body.classList.remove(
+          "modal-open"
+        );
+      }
 
       contact.scrollIntoView({
         behavior: "smooth",
