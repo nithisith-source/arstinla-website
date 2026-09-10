@@ -202,11 +202,27 @@
   /* ADD PROJECT UI */
 
   .add-project-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid #c47752;
     background: #c47752;
     color: #fff;
     padding: 13px 18px;
     cursor: pointer;
+    text-decoration: none;
+  }
+
+  .admin-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .client-voices-link {
+    border-color: rgba(255,255,255,.24);
+    background: transparent;
   }
 
   .project-dialog {
@@ -488,6 +504,11 @@
       .project-actions {
         width: 100%;
       }
+
+      .admin-header-actions,
+      .admin-header-actions .add-project-button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -506,13 +527,22 @@
           Project Manager
         </h1>
       </div>
-      <button
-  class="add-project-button"
-  id="addProjectButton"
-  type="button"
->
-  + ADD PROJECT
-</button>
+      <div class="admin-header-actions">
+        <a
+          class="add-project-button client-voices-link"
+          href="/admin/client-voices/"
+        >
+          CLIENT VOICES
+        </a>
+
+        <button
+          class="add-project-button"
+          id="addProjectButton"
+          type="button"
+        >
+          + ADD PROJECT
+        </button>
+      </div>
     </header>
 
     <section class="home-hero-panel">
