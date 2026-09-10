@@ -992,6 +992,310 @@ export async function onRequestPut({
 }
 
 
+export async function onRequestDelete({
+  request,
+  env
+}) {
+  try {
+    const adminKey =
+      request.headers.get(
+        "x-admin-key"
+      );
+
+    if (
+      !env.ADMIN_KEY ||
+      adminKey !== env.ADMIN_KEY
+    ) {
+      return json(
+        {
+          ok: false,
+          error: "Unauthorized"
+        },
+        401
+      );
+    }
+
+    const body =
+      await request.json();
+
+    const projectNumber =
+      String(
+        body?.projectNumber || ""
+      ).trim();
+
+    const confirmTitle =
+      String(
+        body?.confirmTitle || ""
+      ).trim();
+
+    if (
+      !/^\d{2}$/.test(projectNumber) ||
+      !confirmTitle
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "ข้อมูลยืนยันการลบไม่ครบถ้วน"
+        },
+        400
+      );
+    }
+
+    const owner =
+      env.GITHUB_OWNER;
+
+    const repo =
+      env.GITHUB_REPO;
+
+    const branch =
+      env.GITHUB_BRANCH || "main";
+
+    const token =
+      env.GITHUB_TOKEN;
+
+    if (
+      !owner ||
+      !repo ||
+      !token
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "GitHub environment variables missing"
+        },
+        500
+      );
+    }
+
+    const githubHeaders = {
+      Authorization:
+        `Bearer ${token}`,
+
+      Accept:
+        "application/vnd.github+json",
+
+      "X-GitHub-Api-Version":
+        "2022-11-28",
+
+      "User-Agent":
+        "ARSTINLA-Project-Manager"
+    };
+
+    const dataUrl =
+      `https://api.github.com/repos/` +
+      `${owner}/${repo}/contents/` +
+      `project-data.js`;
+
+    const readProjectData = async () => {
+      const response =
+        await fetch(
+          `${dataUrl}?ref=${encodeURIComponent(branch)}`,
+          {
+            headers: githubHeaders
+          }
+        );
+
+      if (!response.ok) {
+        return {
+          response,
+          dataFile: null,
+          source: ""
+        };
+      }
+
+      const dataFile =
+        await response.json();
+
+      return {
+        response,
+        dataFile,
+        source:
+          decodeBase64(
+            dataFile.content
+          )
+      };
+    };
+
+    const removeProject = source => {
+      const projectRange =
+        findProjectBlock(
+          source,
+          projectNumber
+        );
+
+      if (!projectRange) {
+        return null;
+      }
+
+      const title =
+        readProjectString(
+          projectRange.block,
+          "title"
+        );
+
+      return {
+        title,
+        source:
+          source.slice(
+            0,
+            projectRange.start
+          ) +
+          source.slice(
+            projectRange.end
+          )
+      };
+    };
+
+    let current =
+      await readProjectData();
+
+    if (!current.response.ok) {
+      const details =
+        await current.response.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "Cannot read project-data.js",
+          status:
+            current.response.status,
+          details
+        },
+        500
+      );
+    }
+
+    let removal =
+      removeProject(current.source);
+
+    if (!removal) {
+      return json(
+        {
+          ok: false,
+          error:
+            "ไม่พบโครงการที่ต้องการลบ"
+        },
+        404
+      );
+    }
+
+    if (removal.title !== confirmTitle) {
+      return json(
+        {
+          ok: false,
+          error:
+            "ชื่อโครงการไม่ตรงกับข้อมูลล่าสุด กรุณารีเฟรชหน้าแล้วลองใหม่"
+        },
+        409
+      );
+    }
+
+    const updateProjectData = async (
+      dataFile,
+      updatedSource
+    ) =>
+      fetch(
+        dataUrl,
+        {
+          method: "PUT",
+
+          headers: {
+            ...githubHeaders,
+            "content-type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            message:
+              `Delete Project: ${confirmTitle}`,
+
+            content:
+              bytesToBase64(
+                new TextEncoder()
+                  .encode(updatedSource)
+              ),
+
+            sha:
+              dataFile.sha,
+
+            branch
+          })
+        }
+      );
+
+    let updateResponse =
+      await updateProjectData(
+        current.dataFile,
+        removal.source
+      );
+
+    if (
+      !updateResponse.ok &&
+      [409, 422].includes(
+        updateResponse.status
+      )
+    ) {
+      current =
+        await readProjectData();
+
+      if (current.response.ok) {
+        removal =
+          removeProject(current.source);
+
+        if (
+          removal &&
+          removal.title === confirmTitle
+        ) {
+          updateResponse =
+            await updateProjectData(
+              current.dataFile,
+              removal.source
+            );
+        }
+      }
+    }
+
+    if (!updateResponse.ok) {
+      const details =
+        await updateResponse.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "ลบโครงการไม่สำเร็จ",
+          status:
+            updateResponse.status,
+          details
+        },
+        500
+      );
+    }
+
+    return json({
+      ok: true,
+      number: projectNumber,
+      title: confirmTitle,
+      assetsPreserved: true
+    });
+  }
+  catch (error) {
+    return json(
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
+  }
+}
+
+
 async function completeProjectCreation({
   dataResponse,
   title,
@@ -1262,7 +1566,7 @@ if (existingCoverSha) {
     existingCoverSha;
 }
 
-const coverUpload = 
+const coverUpload =
   await fetch(
     coverUploadUrl,
     {
