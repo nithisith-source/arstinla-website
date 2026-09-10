@@ -1218,6 +1218,117 @@ background-size: cover;
 
 
   /* =========================================================
+     CLIENT VOICES
+  ========================================================= */
+
+
+  .client-voices {
+    padding: 150px 0;
+    background: var(--black);
+    color: var(--cream);
+  }
+
+  .client-voices[hidden] { display: none; }
+
+  .client-voices-header {
+    display: grid;
+    grid-template-columns: 1fr minmax(260px, .55fr);
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 70px;
+  }
+
+  .client-voices .label { color: var(--orange); }
+
+  .client-voices-intro {
+    color: #a9aaa4;
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .client-voices-count {
+    display: block;
+    margin-top: 18px;
+    color: #777972;
+    font-family: var(--font-en);
+    font-size: .72rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .client-voices-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .client-voice-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 360px;
+    padding: 30px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-top-color: var(--orange);
+    background: rgba(255,255,255,.025);
+  }
+
+  .client-voice-rating {
+    color: var(--orange);
+    font-family: var(--font-en);
+    font-size: .9rem;
+    letter-spacing: .13em;
+  }
+
+  .client-voice-quote {
+    margin: 30px 0 40px;
+    font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .client-voice-person {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+
+  .client-voice-photo {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    filter: saturate(.8);
+  }
+
+  .client-voice-name {
+    font-family: var(--font-en), var(--font-th);
+    font-weight: 500;
+  }
+
+  .client-voice-project {
+    margin-top: 5px;
+    color: #8f918b;
+    font-size: .78rem;
+    line-height: 1.5;
+  }
+
+  .client-voice-social {
+    display: inline-block;
+    margin-top: 12px;
+    color: #b7b8b2;
+    font-family: var(--font-en);
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .client-voice-social:hover { color: var(--orange); }
+
+
+  /* =========================================================
      PROJECT MODAL
   ========================================================= */
 
@@ -2315,6 +2426,7 @@ background-size: cover;
     .intro,
     .services,
     .projects,
+    .client-voices,
     .process,
     .knowledge,
    .contact {
@@ -2356,6 +2468,23 @@ background-size: cover;
       right: 20px;
 
       bottom: 18px;
+    }
+
+
+    .client-voices-header,
+    .client-voices-grid {
+      grid-template-columns: 1fr;
+    }
+
+
+    .client-voices-header {
+      gap: 34px;
+      margin-bottom: 46px;
+    }
+
+
+    .client-voice-card {
+      min-height: 0;
     }
 
 
@@ -2719,6 +2848,14 @@ background-repeat:
 
       <a href="#projects">
         Projects
+      </a>
+
+      <a
+        href="#client-voices"
+        id="clientVoicesNavLink"
+        hidden
+      >
+        Voices
       </a>
 
       <a href="#process">
@@ -3442,6 +3579,51 @@ background-repeat:
 
   </div>
 
+</section>
+
+
+
+<!-- =======================================================
+     CLIENT VOICES
+======================================================= -->
+
+
+<section
+  class="client-voices"
+  id="client-voices"
+  hidden
+>
+  <div class="container">
+    <div class="client-voices-header">
+      <div>
+        <div class="label">
+          Client Voices
+        </div>
+
+        <h2
+          class="section-title"
+          style="margin-top:25px"
+        >
+          Built on<br>
+          trust.
+        </h2>
+      </div>
+
+      <p class="client-voices-intro">
+        ประสบการณ์จริงจากเจ้าของโครงการ
+        ที่ร่วมวางโจทย์ ออกแบบ และพัฒนาโครงการไปกับทีม ARSTINLA
+        <span
+          class="client-voices-count"
+          id="clientVoicesCount"
+        ></span>
+      </p>
+    </div>
+
+    <div
+      class="client-voices-grid"
+      id="clientVoicesGrid"
+    ></div>
+  </div>
 </section>
 
 
@@ -4618,6 +4800,218 @@ data-contact-link
     }
 
   }
+
+
+  /* CLIENT VOICES
+  ====================================================== */
+
+
+  async function loadClientVoices() {
+    const section =
+      document.getElementById(
+        "client-voices"
+      );
+
+    const grid =
+      document.getElementById(
+        "clientVoicesGrid"
+      );
+
+    if (!section || !grid) return;
+
+    try {
+      const response =
+        await fetch(
+          `/api/client-voices?view=public&v=${Date.now()}`,
+          { cache: "no-store" }
+        );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+      const voices = Array.isArray(data?.approved)
+        ? data.approved.filter(
+            voice =>
+              voice &&
+              voice.published !== false &&
+              voice.comment &&
+              voice.clientName
+          )
+        : [];
+
+      if (!voices.length) return;
+
+      const fragment =
+        document.createDocumentFragment();
+
+      voices.forEach(voice => {
+        const card =
+          document.createElement("article");
+
+        card.className =
+          "client-voice-card";
+
+        const rating =
+          document.createElement("div");
+
+        const score = Math.max(
+          1,
+          Math.min(5, Number(voice.rating) || 5)
+        );
+
+        rating.className =
+          "client-voice-rating";
+
+        rating.textContent =
+          `${"★".repeat(score)}${"☆".repeat(5 - score)}`;
+
+        rating.setAttribute(
+          "aria-label",
+          `${score} out of 5 stars`
+        );
+
+        const quote =
+          document.createElement("blockquote");
+
+        quote.className =
+          "client-voice-quote";
+
+        quote.textContent =
+          `“${String(voice.comment)}”`;
+
+        const person =
+          document.createElement("div");
+
+        person.className =
+          "client-voice-person";
+
+        const imagePath =
+          String(voice.photo || "");
+
+        if (
+          imagePath.startsWith(
+            "/assets/client-voices/"
+          )
+        ) {
+          const photo =
+            document.createElement("img");
+
+          photo.className =
+            "client-voice-photo";
+
+          photo.src = imagePath;
+          photo.alt = "";
+          photo.loading = "lazy";
+          person.appendChild(photo);
+        }
+
+        const details =
+          document.createElement("div");
+
+        const name =
+          document.createElement("div");
+
+        name.className =
+          "client-voice-name";
+
+        name.textContent =
+          String(voice.clientName);
+
+        const project =
+          document.createElement("div");
+
+        project.className =
+          "client-voice-project";
+
+        project.textContent =
+          [
+            voice.projectName,
+            voice.service
+          ]
+            .filter(Boolean)
+            .join(" / ");
+
+        details.append(
+          name,
+          project
+        );
+
+        const socialUrl =
+          String(voice.socialUrl || "");
+
+        if (
+          /^https:\/\/(www\.)?(facebook|instagram)\.com\//i.test(
+            socialUrl
+          ) ||
+          /^https:\/\/(www\.)?fb\.com\//i.test(
+            socialUrl
+          )
+        ) {
+          const social =
+            document.createElement("a");
+
+          social.className =
+            "client-voice-social";
+
+          social.href = socialUrl;
+          social.target = "_blank";
+          social.rel = "noopener noreferrer";
+          social.textContent = socialUrl.includes(
+            "instagram.com"
+          )
+            ? "View on Instagram →"
+            : "View on Facebook →";
+
+          details.appendChild(social);
+        }
+
+        person.appendChild(details);
+        card.append(
+          rating,
+          quote,
+          person
+        );
+
+        fragment.appendChild(card);
+      });
+
+      grid.replaceChildren(fragment);
+
+      const count =
+        document.getElementById(
+          "clientVoicesCount"
+        );
+
+      if (count) {
+        count.textContent =
+          `${voices.length} Client ${
+            voices.length === 1
+              ? "Story"
+              : "Stories"
+          }`;
+      }
+
+      section.hidden = false;
+
+      const navLink =
+        document.getElementById(
+          "clientVoicesNavLink"
+        );
+
+      if (navLink) {
+        navLink.hidden = false;
+      }
+    }
+    catch (error) {
+      console.warn(
+        "Client Voices unavailable",
+        error
+      );
+    }
+  }
+
+
+  loadClientVoices();
 
 
   const nav =
