@@ -1473,7 +1473,7 @@ next: "05"
       "/projects/knockdown-project/",
 
     title:
-      "KN-15",
+      "KN-13",
 
     officialTitle:
       "KN-15",
