@@ -1405,7 +1405,7 @@ next: "05"
       "/projects/knockdown-project/",
 
     title:
-      "KN-14",
+      "KN-12",
 
     officialTitle:
       "KN-14",
