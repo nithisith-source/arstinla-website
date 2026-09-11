@@ -2,20 +2,6 @@
   "version": 1,
   "approved": [
     {
-      "id": "2c24df1c-c181-4b89-90bf-b73e740c4e16",
-      "inviteHash": "YN4kUmj0c7ws3cizXAWDXkLk1Mz0II4Jvm2B1mpnygQ",
-      "clientName": "เอม",
-      "projectName": "บ้านพักอาศัย คสล. 2 ชั้น",
-      "service": "Consult",
-      "comment": "ดี",
-      "rating": 5,
-      "socialUrl": "",
-      "photo": "",
-      "submittedAt": "2026-09-10T14:42:49.651Z",
-      "approvedAt": "2026-09-10T14:44:39.538Z",
-      "published": true
-    },
-    {
       "id": "33918207-70e8-418b-a359-d282c57ac990",
       "inviteHash": "c6eQE3pHWBIeq0I8BBiFyW2vdRwjgbZW8VW3_dn390E",
       "clientName": "คุณแอร์",
