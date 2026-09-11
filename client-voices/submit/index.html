@@ -185,6 +185,30 @@
 
     .rating-options input { width: auto; }
 
+    .service-field {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .service-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .service-options label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      cursor: pointer;
+    }
+
+    .service-options input { width: auto; }
+
     .hint {
       color: var(--muted);
       font-size: .78rem;
@@ -297,18 +321,19 @@
             <input id="projectName" name="projectName" maxlength="140" required readonly>
           </div>
 
-          <div class="field">
-            <label for="service">บริการที่ได้รับ</label>
-            <select id="service" name="service">
-              <option value="">เลือกบริการ</option>
-              <option>Architecture &amp; Design</option>
-              <option>Interior Design</option>
-              <option>Consult</option>
-              <option>Drawing &amp; Coordination</option>
-              <option>Construction Consultation</option>
-              <option>Other</option>
-            </select>
-          </div>
+          <fieldset class="service-field">
+            <legend>บริการที่ได้รับ (เลือกได้มากกว่า 1 ข้อ)</legend>
+            <div class="service-options">
+              <label><input type="checkbox" name="service" value="Design"> Design</label>
+              <label><input type="checkbox" name="service" value="Draft / Drawing"> Draft / Drawing</label>
+              <label><input type="checkbox" name="service" value="Permit"> Permit</label>
+              <label><input type="checkbox" name="service" value="Consult"> Consult</label>
+              <label><input type="checkbox" name="service" value="Interior Design"> Interior Design</label>
+              <label><input type="checkbox" name="service" value="Coordination"> Coordination</label>
+              <label><input type="checkbox" name="service" value="Construction Consultation"> Construction Consultation</label>
+              <label><input type="checkbox" name="service" value="Other"> Other</label>
+            </div>
+          </fieldset>
 
           <fieldset class="rating">
             <legend>ความพึงพอใจ *</legend>
@@ -444,7 +469,7 @@
             website: formData.get("website"),
             clientName: formData.get("clientName"),
             projectName: formData.get("projectName"),
-            service: formData.get("service"),
+            service: formData.getAll("service").join(" / "),
             rating: Number(formData.get("rating")),
             comment: formData.get("comment"),
             socialUrl: formData.get("socialUrl"),
