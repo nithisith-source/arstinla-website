@@ -1799,6 +1799,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "26": {
+
+    number: "26",
+
+    slug: "new-shop",
+
+    url:
+      "/projects/new-shop/",
+
+    title:
+      "Deluxe Dimond",
+
+    officialTitle:
+      "Deluxe Dimond",
+
+    category:
+      "Interior",
+
+    filterCategory:
+      "interior",
+
+    location:
+      "Bangkok Thailand",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-26.jpg",
+
+    hero:
+      "/assets/project-26.jpg",
+
+    heroAlt:
+      "Deluxe Dimond",
+
+    assetFolder:
+      "/assets/project-26/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
