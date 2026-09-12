@@ -657,6 +657,15 @@
 
       <button
         class="filter"
+        data-filter="renovation"
+        type="button"
+        aria-pressed="false"
+      >
+        RENOVATION
+      </button>
+
+      <button
+        class="filter"
         data-filter="consult"
         type="button"
         aria-pressed="false"
@@ -739,6 +748,10 @@
 
           <option value="interior">
             Interior
+          </option>
+
+          <option value="renovation">
+            Renovation
           </option>
 
           <option value="consult">
@@ -896,6 +909,7 @@
           <option value="public">Public &amp; Institutional</option>
           <option value="urban">Urban</option>
           <option value="interior">Interior</option>
+          <option value="renovation">Renovation</option>
           <option value="consult">Consult</option>
         </select>
       </div>
@@ -1178,6 +1192,10 @@
       {
         id: "interior",
         label: "INTERIOR"
+      },
+      {
+        id: "renovation",
+        label: "RENOVATION"
       },
       {
         id: "consult",
