@@ -428,6 +428,34 @@
   }
 
 
+  .admin-manager-link {
+
+    padding:
+      11px 17px;
+
+    border:
+      1px solid var(--black);
+
+    background:
+      var(--black);
+
+    color:
+      var(--cream);
+  }
+
+
+  .admin-manager-link:hover {
+    background: var(--orange);
+    border-color: var(--orange);
+    opacity: 1 !important;
+  }
+
+
+  .admin-manager-link[hidden] {
+    display: none !important;
+  }
+
+
   .mobile-menu-button {
 
     display: none;
@@ -2870,6 +2898,15 @@ background-repeat:
 
       <a href="#knowledge">
         Knowledge
+      </a>
+
+      <a
+        href="/admin/projects/"
+        class="admin-manager-link"
+        id="adminManagerLink"
+        hidden
+      >
+        Manager
       </a>
 
     <a
@@ -5628,6 +5665,46 @@ const submitButton =
   }
 );
 
+</script>
+
+<script>
+(() => {
+
+  const adminManagerLink =
+    document.getElementById(
+      "adminManagerLink"
+    );
+
+  if (!adminManagerLink) return;
+
+  try {
+    const hasAdminSession =
+      Boolean(
+        sessionStorage.getItem(
+          "ARSTINLA_ADMIN_KEY"
+        )
+      );
+
+    const hasAdminBrowserHint =
+      localStorage.getItem(
+        "ARSTINLA_ADMIN_BROWSER"
+      ) === "verified";
+
+    if (hasAdminSession) {
+      localStorage.setItem(
+        "ARSTINLA_ADMIN_BROWSER",
+        "verified"
+      );
+    }
+
+    adminManagerLink.hidden =
+      !(hasAdminSession || hasAdminBrowserHint);
+  }
+  catch (error) {
+    adminManagerLink.hidden = true;
+  }
+
+})();
 </script>
 
 <script>
