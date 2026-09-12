@@ -1731,6 +1731,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "25": {
+
+    number: "25",
+
+    slug: "future-project",
+
+    url:
+      "/projects/future-project/",
+
+    title:
+      "K'Tim MASTERPLAN",
+
+    officialTitle:
+      "K'Tim MASTERPLAN",
+
+    category:
+      "Urban",
+
+    filterCategory:
+      "urban",
+
+    location:
+      "BURIRAM",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-25.jpg",
+
+    hero:
+      "/assets/project-25.jpg",
+
+    heroAlt:
+      "K'Tim MASTERPLAN",
+
+    assetFolder:
+      "/assets/project-25/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
