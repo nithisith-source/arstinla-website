@@ -1552,16 +1552,16 @@ next: "05"
       "renovation",
 
     location:
-      "Ramkumhaeng, Bankok",
+      "Ramkumhaeng, Bangkok",
 
     province: "",
 
     country:
       "Thailand",
 
-    year: "",
+    year: "2023",
 
-    completion: "",
+    completion: "2025",
 
     area: "",
 
