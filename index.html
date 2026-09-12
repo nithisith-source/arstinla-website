@@ -1037,6 +1037,86 @@ background-size: cover;
   }
 
 
+  .projects-grid.projects-grid--preview {
+
+    display: block;
+  }
+
+
+  .project-category-preview {
+
+    margin-bottom: 52px;
+  }
+
+
+  .project-category-preview:last-child {
+
+    margin-bottom: 0;
+  }
+
+
+  .project-category-preview-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+
+    margin-bottom: 18px;
+
+    padding-bottom: 14px;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+
+  .project-category-preview-title,
+  .project-category-preview-count {
+
+    font-family: var(--font-en);
+
+    text-transform: uppercase;
+  }
+
+
+  .project-category-preview-title {
+
+    margin: 0;
+
+    color: var(--black);
+
+    font-size: .76rem;
+
+    font-weight: 500;
+
+    letter-spacing: .16em;
+  }
+
+
+  .project-category-preview-count {
+
+    color: #777870;
+
+    font-size: .66rem;
+
+    letter-spacing: .12em;
+  }
+
+
+  .project-category-row {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(3,minmax(0,1fr));
+
+    gap: 18px;
+  }
+
+
   .project {
 
     position: relative;
@@ -2233,6 +2313,12 @@ background-size: cover;
     }
 
 
+    .project-category-row {
+      grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    }
+
+
     .hero-bottom,
     .intro-grid,
     .services-heading,
@@ -2430,6 +2516,24 @@ background-size: cover;
 
 
     .projects-grid {
+
+      display: block;
+    }
+
+
+    .project-category-preview {
+
+      margin-bottom: 42px;
+    }
+
+
+    .project-category-preview-header {
+
+      align-items: flex-end;
+    }
+
+
+    .project-category-row {
 
       display: block;
     }
@@ -3303,7 +3407,7 @@ background-repeat:
 
 
       <div class="projects-count">
-        Selected Works / 01—06
+        All Projects / 01—06
       </div>
 
 
@@ -4676,148 +4780,261 @@ data-contact-link
     );
 
 
-  if (
-    homeProjectsGrid &&
-    homeProjectData.length
-  ) {
+  const homeProjectCategories = [
+    { id: "residential", label: "Residential" },
+    { id: "renovation", label: "Renovate" },
+    { id: "tiny-house", label: "Tiny House" },
+    { id: "commercial", label: "Commercial" },
+    { id: "public", label: "Public & Institutional" },
+    { id: "urban", label: "Urban" },
+    { id: "interior", label: "Interior" },
+    { id: "consult", label: "Consult" }
+  ];
+
+
+  const indexedHomeProjects =
+    homeProjectData.map((project, index) => ({
+      project,
+      index,
+      categories:
+        String(
+          project.filterCategory ||
+          "residential"
+        )
+          .trim()
+          .toLowerCase()
+          .split(/\s+/)
+          .filter(Boolean)
+    }));
+
+
+  function createHomeProjectCard(entry) {
+
+    const { project, index, categories } = entry;
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "project reveal visible";
+
+    card.dataset.project =
+      String(index);
+
+    card.dataset.projectCategory =
+      categories.join(" ");
+
+
+    const background =
+      document.createElement("div");
+
+    background.className =
+      "project-bg";
+
+    const imagePath =
+      project.thumbnail ||
+      project.hero ||
+      "";
+
+    if (imagePath) {
+      const imageSeparator =
+        imagePath.includes("?")
+          ? "&"
+          : "?";
+
+      background.style.backgroundImage =
+        `url("${imagePath}${imageSeparator}v=${Date.now()}")`;
+    }
+
+
+    const shade =
+      document.createElement("div");
+
+    shade.className =
+      "project-shade";
+
+
+    const information =
+      document.createElement("div");
+
+    information.className =
+      "project-info";
+
+
+    const category =
+      document.createElement("div");
+
+    category.className =
+      "project-category";
+
+    category.textContent =
+      project.category || "Project";
+
+
+    const title =
+      document.createElement("div");
+
+    title.className =
+      "project-title";
+
+    title.textContent =
+      project.title ||
+      "Untitled Project";
+
+
+    const meta =
+      document.createElement("div");
+
+    meta.className =
+      "project-meta";
+
+    meta.textContent =
+      [
+        project.location,
+        project.area
+      ]
+        .filter(Boolean)
+        .join(" / ");
+
+
+    information.append(
+      category,
+      title,
+      meta
+    );
+
+    card.append(
+      background,
+      shade,
+      information
+    );
+
+    return card;
+  }
+
+
+  function renderHomeProjects(filter = "all") {
+
+    if (!homeProjectsGrid) {
+      return;
+    }
 
     const projectCards =
       document.createDocumentFragment();
 
+    if (filter === "all") {
 
-    homeProjectData.forEach(
-      (project, index) => {
+      homeProjectsGrid.classList.add(
+        "projects-grid--preview"
+      );
 
-        const card =
-          document.createElement("article");
+      homeProjectCategories.forEach(category => {
 
-        card.className =
-          `project reveal${
-            index % 2
-              ? " reveal-delay-1"
-              : ""
-          }`;
+        const categoryProjects =
+          indexedHomeProjects.filter(entry =>
+            entry.categories.includes(category.id)
+          );
 
-        card.dataset.project =
-          String(index);
-
-        card.dataset.projectCategory =
-          String(
-            project.filterCategory ||
-            "residential"
-          )
-            .trim()
-            .toLowerCase();
-
-
-        const background =
-          document.createElement("div");
-
-        background.className =
-          "project-bg";
-
-        const imagePath =
-          project.thumbnail ||
-          project.hero ||
-          "";
-
-        if (imagePath) {
-          const imageSeparator =
-            imagePath.includes("?")
-              ? "&"
-              : "?";
-
-          background.style.backgroundImage =
-            `url("${imagePath}${imageSeparator}v=${Date.now()}")`;
+        if (!categoryProjects.length) {
+          return;
         }
 
+        const section =
+          document.createElement("section");
 
-        const shade =
+        section.className =
+          "project-category-preview";
+
+
+        const header =
           document.createElement("div");
 
-        shade.className =
-          "project-shade";
+        header.className =
+          "project-category-preview-header";
 
 
-        const information =
+        const heading =
+          document.createElement("h3");
+
+        heading.className =
+          "project-category-preview-title";
+
+        heading.textContent =
+          category.label;
+
+
+        const count =
           document.createElement("div");
 
-        information.className =
-          "project-info";
+        count.className =
+          "project-category-preview-count";
+
+        count.textContent =
+          `${Math.min(3, categoryProjects.length)} of ${categoryProjects.length}`;
 
 
-        const category =
+        const row =
           document.createElement("div");
 
-        category.className =
-          "project-category";
+        row.className =
+          "project-category-row";
 
-        category.textContent =
-          project.category || "Project";
+        categoryProjects
+          .slice(0, 3)
+          .forEach(entry => {
+            row.appendChild(
+              createHomeProjectCard(entry)
+            );
+          });
 
+        header.append(heading, count);
+        section.append(header, row);
+        projectCards.appendChild(section);
 
-        const title =
-          document.createElement("div");
+      });
 
-        title.className =
-          "project-title";
+    }
+    else {
 
-        title.textContent =
-          project.title ||
-          "Untitled Project";
+      homeProjectsGrid.classList.remove(
+        "projects-grid--preview"
+      );
 
-
-        const meta =
-          document.createElement("div");
-
-        meta.className =
-          "project-meta";
-
-        meta.textContent =
-          [
-            project.location,
-            project.area
-          ]
-            .filter(Boolean)
-            .join(" / ");
-
-
-        information.append(
-          category,
-          title,
-          meta
-        );
-
-        card.append(
-          background,
-          shade,
-          information
-        );
-
-        projectCards.appendChild(card);
-
-      }
-    );
-
+      indexedHomeProjects
+        .filter(entry =>
+          entry.categories.includes(filter)
+        )
+        .forEach(entry => {
+          projectCards.appendChild(
+            createHomeProjectCard(entry)
+          );
+        });
+    }
 
     homeProjectsGrid.replaceChildren(
       projectCards
     );
+  }
 
 
-    const projectsCount =
-      document.querySelector(
-        ".projects-count"
-      );
+  window.ARSTINLA_renderProjects =
+    renderHomeProjects;
 
-    if (projectsCount) {
-      projectsCount.textContent =
-        `Selected Works / 01—${
-          String(homeProjectData.length)
-            .padStart(2, "0")
-        }`;
-    }
 
+  renderHomeProjects("all");
+
+
+  const projectsCount =
+    document.querySelector(
+      ".projects-count"
+    );
+
+  if (projectsCount) {
+    projectsCount.textContent =
+      `All Projects / 01—${
+        String(homeProjectData.length)
+          .padStart(2, "0")
+      }`;
   }
 
 
@@ -5401,17 +5618,28 @@ data-contact-link
 
 
 
-document
-  .querySelectorAll(".project")
-  .forEach((project, cardIndex) => {
+if (homeProjectsGrid) {
 
-    project.addEventListener(
-      "click",
-      () => {
+  homeProjectsGrid.addEventListener(
+    "click",
+    event => {
+
+        const project =
+          event.target.closest(".project");
+
+        if (
+          !project ||
+          !homeProjectsGrid.contains(project)
+        ) {
+          return;
+        }
+
+        const projectIndex =
+          Number(project.dataset.project);
 
         // จับข้อมูลตามลำดับการ์ดจริงบนหน้า
         const data =
-          projects[cardIndex];
+          projects[projectIndex];
 
         // Only navigate when a published detail page exists.
         // Other projects stay on the homepage and open the detail modal.
@@ -5457,12 +5685,11 @@ document
           return;
         }
 
-        openProject(cardIndex);
+        openProject(projectIndex);
 
-      }
-    );
-
-  });
+    }
+  );
+}
 
 
 
@@ -5753,11 +5980,6 @@ const submitButton =
   const filters =
     document.querySelectorAll(".project-filter");
 
-  const projects =
-    document.querySelectorAll(
-      ".project[data-project-category]"
-    );
-
   filters.forEach(button => {
 
     button.addEventListener("click", () => {
@@ -5770,22 +5992,14 @@ const submitButton =
 
       button.classList.add("active");
 
-      projects.forEach(project => {
-
-        const categories =
-          (project.dataset.projectCategory || "")
-            .split(/\s+/);
-
-        const shouldShow =
-          filter === "all" ||
-          categories.includes(filter);
-
-        project.classList.toggle(
-          "project-hidden",
-          !shouldShow
+      if (
+        typeof window.ARSTINLA_renderProjects ===
+        "function"
+      ) {
+        window.ARSTINLA_renderProjects(
+          filter
         );
-
-      });
+      }
 
     });
 
