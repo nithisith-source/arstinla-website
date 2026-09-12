@@ -612,6 +612,15 @@
 
       <button
         class="filter"
+        data-filter="renovation"
+        type="button"
+        aria-pressed="false"
+      >
+        RENOVATE
+      </button>
+
+      <button
+        class="filter"
         data-filter="tiny-house"
         type="button"
         aria-pressed="false"
@@ -653,15 +662,6 @@
         aria-pressed="false"
       >
         INTERIOR
-      </button>
-
-      <button
-        class="filter"
-        data-filter="renovation"
-        type="button"
-        aria-pressed="false"
-      >
-        RENOVATION
       </button>
 
       <button
@@ -730,6 +730,10 @@
             Residential
           </option>
 
+          <option value="renovation">
+            Renovate
+          </option>
+
           <option value="tiny-house">
             Tiny House
           </option>
@@ -748,10 +752,6 @@
 
           <option value="interior">
             Interior
-          </option>
-
-          <option value="renovation">
-            Renovation
           </option>
 
           <option value="consult">
@@ -904,12 +904,12 @@
           required
         >
           <option value="residential">Residential</option>
+          <option value="renovation">Renovate</option>
           <option value="tiny-house">Tiny House</option>
           <option value="commercial">Commercial</option>
           <option value="public">Public &amp; Institutional</option>
           <option value="urban">Urban</option>
           <option value="interior">Interior</option>
-          <option value="renovation">Renovation</option>
           <option value="consult">Consult</option>
         </select>
       </div>
@@ -1174,6 +1174,10 @@
         label: "RESIDENTIAL"
       },
       {
+        id: "renovation",
+        label: "RENOVATE"
+      },
+      {
         id: "tiny-house",
         label: "TINY HOUSE"
       },
@@ -1192,10 +1196,6 @@
       {
         id: "interior",
         label: "INTERIOR"
-      },
-      {
-        id: "renovation",
-        label: "RENOVATION"
       },
       {
         id: "consult",
