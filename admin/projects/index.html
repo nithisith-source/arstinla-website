@@ -1121,6 +1121,34 @@
 </script>
 
   <script>
+    const ADMIN_BROWSER_HINT =
+      "ARSTINLA_ADMIN_BROWSER";
+
+    function rememberAdminBrowser() {
+      try {
+        localStorage.setItem(
+          ADMIN_BROWSER_HINT,
+          "verified"
+        );
+      }
+      catch (error) {
+        // The manager still works if browser storage is unavailable.
+      }
+    }
+
+    try {
+      if (
+        sessionStorage.getItem(
+          "ARSTINLA_ADMIN_KEY"
+        )
+      ) {
+        rememberAdminBrowser();
+      }
+    }
+    catch (error) {
+      // Keep the manager usable when browser storage is unavailable.
+    }
+
     const projectsContainer =
       document.getElementById(
         "projects"
