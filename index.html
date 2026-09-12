@@ -3331,6 +3331,14 @@ background-repeat:
 
   <button
     class="project-filter"
+    data-filter="renovation"
+    type="button"
+  >
+    RENOVATE
+  </button>
+
+  <button
+    class="project-filter"
     data-filter="tiny-house"
     type="button"
   >
@@ -3367,14 +3375,6 @@ background-repeat:
     type="button"
   >
     INTERIOR
-  </button>
-
-  <button
-    class="project-filter"
-    data-filter="renovation"
-    type="button"
-  >
-    RENOVATION
   </button>
 
   <button
@@ -5413,20 +5413,51 @@ document
         const data =
           projects[cardIndex];
 
-        // Project ที่มี Case Study
-        if (data && data.url) {
+        // Only navigate when a published detail page exists.
+        // Other projects stay on the homepage and open the detail modal.
+        const publishedProjectPages =
+          new Set([
+            "/projects/romnalin-residence/"
+          ]);
+
+        const projectUrl =
+          String(data?.url || "").trim();
+
+        let publishedUrl = "";
+
+        if (projectUrl) {
+          try {
+            const parsedUrl =
+              new URL(
+                projectUrl,
+                window.location.origin
+              );
+
+            const normalizedPath =
+              `${parsedUrl.pathname.replace(/\/+$/, "")}/`;
+
+            if (
+              publishedProjectPages.has(
+                normalizedPath
+              )
+            ) {
+              publishedUrl = parsedUrl.href;
+            }
+          }
+          catch (error) {
+            publishedUrl = "";
+          }
+        }
+
+        if (publishedUrl) {
 
           window.location.href =
-            data.url;
+            publishedUrl;
 
           return;
         }
 
-        // Project อื่นยังเปิด Modal แบบเดิม
-        const modalIndex =
-          Number(project.dataset.project);
-
-        openProject(modalIndex);
+        openProject(cardIndex);
 
       }
     );
