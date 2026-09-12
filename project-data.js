@@ -1756,26 +1756,26 @@ next: "05"
       "urban",
 
     location:
-      "BURIRAM",
+      "SURIN",
 
     province: "",
 
     country:
       "Thailand",
 
-    year: "",
+    year: "2022",
 
-    completion: "",
+    completion: "2023",
 
-    area: "",
+    area: "10 rai",
 
-    areaNumber: 0,
+    areaNumber: 10,
 
     status:
       "Draft",
 
     service:
-      "Architecture / Design",
+      "Urban Design",
 
     thumbnail:
       "/assets/project-25.jpg",
