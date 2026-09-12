@@ -1614,10 +1614,10 @@ next: "05"
       "K'Karn Residence",
 
     category:
-      "Residential",
+      "Renovation",
 
     filterCategory:
-      "residential",
+      "renovation",
 
     location:
       "Ramkumhaeng, Bankok",
