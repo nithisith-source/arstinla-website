@@ -1663,6 +1663,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "24": {
+
+    number: "24",
+
+    slug: "consult-design",
+
+    url:
+      "/projects/consult-design/",
+
+    title:
+      "K'Air Residence",
+
+    officialTitle:
+      "K'Air Residence",
+
+    category:
+      "Consult",
+
+    filterCategory:
+      "consult",
+
+    location:
+      "Banglen, Nakhonpathom",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-24.jpg",
+
+    hero:
+      "/assets/project-24.jpg",
+
+    heroAlt:
+      "K'Air Residence",
+
+    assetFolder:
+      "/assets/project-24/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
