@@ -1664,6 +1664,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "22": {
+
+    number: "22",
+
+    slug: "renovate-new-project",
+
+    url:
+      "/projects/renovate-new-project/",
+
+    title:
+      "K'Karn Residence",
+
+    officialTitle:
+      "K'Karn Residence",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Ramkumhaeng, Bankok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-22.jpg",
+
+    hero:
+      "/assets/project-22.jpg",
+
+    heroAlt:
+      "K'Karn Residence",
+
+    assetFolder:
+      "/assets/project-22/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
