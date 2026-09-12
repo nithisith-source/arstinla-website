@@ -490,6 +490,7 @@ export async function onRequestPut({
       public: "Public & Institutional",
       urban: "Urban",
       interior: "Interior",
+      renovation: "Renovation",
       consult: "Consult"
     };
 
@@ -1364,6 +1365,9 @@ const source =
 
       interior:
         "Interior",
+
+      renovation:
+        "Renovation",
 
       consult:
         "Consult"
