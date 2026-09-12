@@ -1663,6 +1663,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "23": {
+
+    number: "23",
+
+    slug: "new-cafe",
+
+    url:
+      "/projects/new-cafe/",
+
+    title:
+      "ULOK 40000 COFFEE",
+
+    officialTitle:
+      "ULOK 40000 COFFEE",
+
+    category:
+      "Commercial",
+
+    filterCategory:
+      "commercial",
+
+    location:
+      "Tahmaka, Kanchanaburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-23.jpg",
+
+    hero:
+      "/assets/project-23.jpg",
+
+    heroAlt:
+      "ULOK 40000 COFFEE",
+
+    assetFolder:
+      "/assets/project-23/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
