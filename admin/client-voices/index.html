@@ -377,6 +377,7 @@
 
   <script>
     const KEY_NAME = "ARSTINLA_ADMIN_KEY";
+    const ADMIN_BROWSER_HINT = "ARSTINLA_ADMIN_BROWSER";
     const adminKeyInput = document.getElementById("adminKey");
     const managerShell = document.getElementById("managerShell");
     const loginStatus = document.getElementById("loginStatus");
@@ -391,6 +392,11 @@
 
     function getAdminKey() {
       return adminKeyInput.value.trim() || sessionStorage.getItem(KEY_NAME) || "";
+    }
+
+    function rememberAdminBrowser() {
+      try { localStorage.setItem(ADMIN_BROWSER_HINT, "verified"); }
+      catch { /* The manager remains usable without browser storage. */ }
     }
 
     function escapeHtml(value) {
@@ -564,6 +570,7 @@
 
       try {
         const result = await api();
+        rememberAdminBrowser();
         currentData = { pending: result.pending || [], approved: result.approved || [] };
         managerShell.hidden = false;
         setStatus(loginStatus, "เปิดระบบจัดการแล้ว", "success");
