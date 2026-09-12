@@ -1763,19 +1763,19 @@ next: "05"
     country:
       "Thailand",
 
-    year: "2022",
+    year: "",
 
-    completion: "2023",
+    completion: "",
 
-    area: "10 rai",
+    area: "",
 
-    areaNumber: 10,
+    areaNumber: 0,
 
     status:
       "Draft",
 
     service:
-      "Urban Design",
+      "Architecture / Design",
 
     thumbnail:
       "/assets/project-25.jpg",
