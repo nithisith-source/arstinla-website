@@ -1867,6 +1867,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "27": {
+
+    number: "27",
+
+    slug: "public-project",
+
+    url:
+      "/projects/public-project/",
+
+    title:
+      "Nine Gemes Musuem",
+
+    officialTitle:
+      "Nine Gemes Musuem",
+
+    category:
+      "Public & Institutional",
+
+    filterCategory:
+      "public",
+
+    location:
+      "Klaeng, Rayong",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-27.jpg",
+
+    hero:
+      "/assets/project-27.jpg",
+
+    heroAlt:
+      "Nine Gemes Musuem",
+
+    assetFolder:
+      "/assets/project-27/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
