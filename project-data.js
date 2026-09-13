@@ -2430,10 +2430,10 @@ next: "05"
       "K'Mameaw Residence",
 
     category:
-      "Residential",
+      "Consult",
 
     filterCategory:
-      "residential",
+      "consult",
 
     location:
       "Bangna, Bangkok",
@@ -2443,9 +2443,9 @@ next: "05"
     country:
       "Thailand",
 
-    year: "",
+    year: "2025",
 
-    completion: "",
+    completion: "2026",
 
     area: "",
 
@@ -2455,7 +2455,7 @@ next: "05"
       "Draft",
 
     service:
-      "Architecture / Design",
+      "Consult",
 
     thumbnail:
       "/assets/project-35.jpg",
