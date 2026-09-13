@@ -2003,6 +2003,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "29": {
+
+    number: "29",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "Light House",
+
+    officialTitle:
+      "Light House",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Bangpakong, Chachoengsao",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-29.jpg",
+
+    hero:
+      "/assets/project-29.jpg",
+
+    heroAlt:
+      "Light House",
+
+    assetFolder:
+      "/assets/project-29/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
