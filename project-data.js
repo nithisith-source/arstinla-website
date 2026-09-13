@@ -2343,6 +2343,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "34": {
+
+    number: "34",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "K'Tim Residence",
+
+    officialTitle:
+      "K'Tim Residence",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Sriracha, Chonburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-34.jpg",
+
+    hero:
+      "/assets/project-34.jpg",
+
+    heroAlt:
+      "K'Tim Residence",
+
+    assetFolder:
+      "/assets/project-34/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
