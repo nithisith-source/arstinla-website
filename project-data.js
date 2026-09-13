@@ -2071,6 +2071,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "30": {
+
+    number: "30",
+
+    slug: "renovate-project",
+
+    url:
+      "/projects/renovate-project/",
+
+    title:
+      "Renovate House",
+
+    officialTitle:
+      "Renovate House",
+
+    category:
+      "Renovation",
+
+    filterCategory:
+      "renovation",
+
+    location:
+      "Mahachai, Samutsakorn",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-30.jpg",
+
+    hero:
+      "/assets/project-30.jpg",
+
+    heroAlt:
+      "Renovate House",
+
+    assetFolder:
+      "/assets/project-30/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
