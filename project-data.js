@@ -2275,6 +2275,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "33": {
+
+    number: "33",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "K Office Building",
+
+    officialTitle:
+      "K Office Building",
+
+    category:
+      "Public & Institutional",
+
+    filterCategory:
+      "public",
+
+    location:
+      "Klaeng, Rayong",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-33.jpg",
+
+    hero:
+      "/assets/project-33.jpg",
+
+    heroAlt:
+      "K Office Building",
+
+    assetFolder:
+      "/assets/project-33/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
