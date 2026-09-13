@@ -323,7 +323,7 @@ Resort-like Living ภายในบ้านพักอาศัย
       "/projects/test-project/",
 
     title:
-      "Aer+ Residence@BKK",
+      "Aer+ Residence",
 
     officialTitle:
       "Aer+ Residence@BKK",
@@ -335,20 +335,20 @@ Resort-like Living ภายในบ้านพักอาศัย
       "residential",
 
     location:
-      "Bangkok Thailand",
+      "Buengkum, Bangkok",
 
     province: "",
 
     country:
       "Thailand",
 
-    year: "",
+    year: "2025",
 
-    completion: "",
+    completion: "2027",
 
-    area: "",
+    area: "220",
 
-    areaNumber: 0,
+    areaNumber: 220,
 
     status:
       "Draft",
