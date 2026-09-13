@@ -2207,6 +2207,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "32": {
+
+    number: "32",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "K'J Residence",
+
+    officialTitle:
+      "K'J Residence",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Baansuan, Chonburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-32.jpg",
+
+    hero:
+      "/assets/project-32.jpg",
+
+    heroAlt:
+      "K'J Residence",
+
+    assetFolder:
+      "/assets/project-32/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
