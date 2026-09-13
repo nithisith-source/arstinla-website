@@ -2139,6 +2139,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "31": {
+
+    number: "31",
+
+    slug: "cafe",
+
+    url:
+      "/projects/cafe/",
+
+    title:
+      "U Forest",
+
+    officialTitle:
+      "U Forest",
+
+    category:
+      "Commercial",
+
+    filterCategory:
+      "commercial",
+
+    location:
+      "Klaeng, Rayong",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-31.jpg",
+
+    hero:
+      "/assets/project-31.jpg",
+
+    heroAlt:
+      "U Forest",
+
+    assetFolder:
+      "/assets/project-31/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
