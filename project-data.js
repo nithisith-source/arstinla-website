@@ -1824,26 +1824,26 @@ next: "05"
       "interior",
 
     location:
-      "Bangkok Thailand",
+      "Aree,Bangkok",
 
     province: "",
 
     country:
       "Thailand",
 
-    year: "",
+    year: "2018",
 
-    completion: "",
+    completion: "2019",
 
-    area: "",
+    area: "120",
 
-    areaNumber: 0,
+    areaNumber: 120,
 
     status:
       "Draft",
 
     service:
-      "Architecture / Design",
+      "Interior / Design",
 
     thumbnail:
       "/assets/project-26.jpg",
