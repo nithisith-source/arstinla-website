@@ -1935,6 +1935,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "28": {
+
+    number: "28",
+
+    slug: "renovate-project",
+
+    url:
+      "/projects/renovate-project/",
+
+    title:
+      "Mantana lake house",
+
+    officialTitle:
+      "Mantana lake house",
+
+    category:
+      "Renovation",
+
+    filterCategory:
+      "renovation",
+
+    location:
+      "Saimai, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-28.jpg",
+
+    hero:
+      "/assets/project-28.jpg",
+
+    heroAlt:
+      "Mantana lake house",
+
+    assetFolder:
+      "/assets/project-28/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
