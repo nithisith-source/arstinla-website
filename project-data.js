@@ -2411,6 +2411,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "35": {
+
+    number: "35",
+
+    slug: "consult",
+
+    url:
+      "/projects/consult/",
+
+    title:
+      "K'Mameaw Residence",
+
+    officialTitle:
+      "K'Mameaw Residence",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Bangna, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-35.jpg",
+
+    hero:
+      "/assets/project-35.jpg",
+
+    heroAlt:
+      "K'Mameaw Residence",
+
+    assetFolder:
+      "/assets/project-35/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
