@@ -2551,6 +2551,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "37": {
+
+    number: "37",
+
+    slug: "badminton-court-studio",
+
+    url:
+      "/projects/badminton-court-studio/",
+
+    title:
+      "Silver Fox Bd.",
+
+    officialTitle:
+      "Silver Fox Bd.",
+
+    category:
+      "Public & Institutional",
+
+    filterCategory:
+      "public",
+
+    location:
+      "Bangkaen, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-37.jpg",
+
+    hero:
+      "/assets/project-37.jpg",
+
+    heroAlt:
+      "Silver Fox Bd.",
+
+    assetFolder:
+      "/assets/project-37/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
