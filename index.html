@@ -1509,7 +1509,7 @@ background-size: cover;
 
   .modal-description {
 
-    margin-top: 30px;
+    margin-top: 18px;
 
     max-width: 650px;
 
@@ -1518,6 +1518,32 @@ background-size: cover;
     line-height: 1.85;
 
     color: #bdbdb7;
+
+    white-space: pre-line;
+  }
+
+
+  .modal-story-title {
+
+    margin-top: 30px;
+
+    max-width: 650px;
+
+    color: #f1f0ea;
+
+    font-family: var(--font-en);
+
+    font-size: clamp(1.35rem, 2.2vw, 2rem);
+
+    font-weight: 400;
+
+    line-height: 1.25;
+  }
+
+
+  .modal-story-title:empty,
+  .modal-description:empty {
+    display: none;
   }
 
 
@@ -4665,6 +4691,12 @@ data-contact-link
         </h2>
 
 
+        <h3
+          class="modal-story-title"
+          id="modalStoryTitle"
+        ></h3>
+
+
         <p
           class="modal-description"
           id="modalDescription"
@@ -5465,10 +5497,16 @@ data-contact-link
        project.hero ||
        "",
 
+     storyTitle:
+       project.briefTitle ||
+       project.introTitle ||
+       project.conceptTitle ||
+       "",
+
      description:
-       project.introDescription ||
-       project.briefDescription ||
        project.brief ||
+       project.briefDescription ||
+       project.introDescription ||
        project.description ||
        ""
 
@@ -5516,6 +5554,12 @@ data-contact-link
     );
 
 
+  const modalStoryTitle =
+    document.getElementById(
+      "modalStoryTitle"
+    );
+
+
   const modalType =
     document.getElementById(
       "modalType"
@@ -5558,6 +5602,10 @@ data-contact-link
 
     modalCategory.textContent =
       data.category;
+
+
+    modalStoryTitle.textContent =
+      data.storyTitle;
 
 
     modalDescription.textContent =
