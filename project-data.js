@@ -2479,6 +2479,74 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "36": {
+
+    number: "36",
+
+    slug: "private-residence",
+
+    url:
+      "/projects/private-residence/",
+
+    title:
+      "K'Romnatin Residence",
+
+    officialTitle:
+      "K'Romnatin Residence",
+
+    category:
+      "Consult",
+
+    filterCategory:
+      "consult",
+
+    location:
+      "Bangpra, Chonburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    thumbnail:
+      "/assets/project-36.jpg",
+
+    hero:
+      "/assets/project-36.jpg",
+
+    heroAlt:
+      "K'Romnatin Residence",
+
+    assetFolder:
+      "/assets/project-36/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
