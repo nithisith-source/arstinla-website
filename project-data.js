@@ -2492,7 +2492,7 @@ next: "05"
       "/projects/private-residence/",
 
     title:
-      "K'Romnatin Residence",
+      "K'Romnalin Residence",
 
     officialTitle:
       "K'Romnatin Residence",
@@ -2521,6 +2521,10 @@ next: "05"
 
     status:
       "Draft",
+
+    briefTitle: "",
+
+    brief: "",
 
     service:
       "Architecture / Design",
