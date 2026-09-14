@@ -2911,6 +2911,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "42": {
+
+    number: "42",
+
+    slug: "renoavate-interior-building",
+
+    url:
+      "/projects/renoavate-interior-building/",
+
+    title:
+      "Gallery Bd.",
+
+    officialTitle:
+      "Gallery Bd.",
+
+    category:
+      "Interior",
+
+    filterCategory:
+      "interior",
+
+    location:
+      "Chareunkrung, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-42.jpg",
+
+    hero:
+      "/assets/project-42.jpg",
+
+    heroAlt:
+      "Gallery Bd.",
+
+    assetFolder:
+      "/assets/project-42/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
