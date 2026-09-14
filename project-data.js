@@ -3034,10 +3034,10 @@ next: "05"
     brief: "",
 
     thumbnail:
-      "/assets/project-43.jpg",
+      "/assets/project-43.png",
 
     hero:
-      "/assets/project-43.jpg",
+      "/assets/project-43.png",
 
     heroAlt:
       "AO TUNT RESORT",
