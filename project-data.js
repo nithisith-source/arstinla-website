@@ -2623,6 +2623,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "38": {
+
+    number: "38",
+
+    slug: "new-resort",
+
+    url:
+      "/projects/new-resort/",
+
+    title:
+      "ATTRA RESORT",
+
+    officialTitle:
+      "ATTRA RESORT",
+
+    category:
+      "Commercial",
+
+    filterCategory:
+      "commercial",
+
+    location:
+      "Bangkachoa, Samutprakarn",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-38.jpg",
+
+    hero:
+      "/assets/project-38.jpg",
+
+    heroAlt:
+      "ATTRA RESORT",
+
+    assetFolder:
+      "/assets/project-38/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
