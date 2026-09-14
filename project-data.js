@@ -1774,6 +1774,10 @@ next: "05"
     status:
       "Draft",
 
+    briefTitle: "",
+
+    brief: "",
+
     service:
       "Architecture / Design",
 
