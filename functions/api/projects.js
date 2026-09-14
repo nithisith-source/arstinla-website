@@ -165,6 +165,51 @@ function replaceProjectString(
 }
 
 
+function upsertProjectText(
+  block,
+  fieldName,
+  value,
+  insertBeforeField = "service"
+) {
+  const stringValuePattern =
+    '"(?:\\\\.|[^"\\\\])*"|' +
+    '`(?:\\\\.|[^`\\\\])*`';
+
+  const fieldPattern =
+    new RegExp(
+      `(\\n\\s*${fieldName}\\s*:\\s*)` +
+      `(?:${stringValuePattern})`
+    );
+
+  if (fieldPattern.test(block)) {
+    return block.replace(
+      fieldPattern,
+      (match, prefix) =>
+        prefix + safeString(value)
+    );
+  }
+
+  const anchorPattern =
+    new RegExp(
+      `(\\n)(\\s*)${insertBeforeField}\\s*:`
+    );
+
+  if (!anchorPattern.test(block)) {
+    throw new Error(
+      `Project field not found: ${insertBeforeField}`
+    );
+  }
+
+  return block.replace(
+    anchorPattern,
+    (match, lineBreak, indentation) =>
+      `${lineBreak}${indentation}${fieldName}: ` +
+      `${safeString(value)},` +
+      `${lineBreak}${indentation}${insertBeforeField}:`
+  );
+}
+
+
 function replaceProjectNumber(
   block,
   fieldName,
@@ -476,6 +521,22 @@ export async function onRequestPut({
         formData.get("service") || ""
       ).trim();
 
+    const hasBriefTitle =
+      formData.has("briefTitle");
+
+    const briefTitle =
+      String(
+        formData.get("briefTitle") || ""
+      ).trim();
+
+    const hasBrief =
+      formData.has("brief");
+
+    const brief =
+      String(
+        formData.get("brief") || ""
+      ).trim();
+
     const cover =
       formData.get("cover");
 
@@ -521,6 +582,20 @@ export async function onRequestPut({
           ok: false,
           error:
             "Year must contain 4 digits"
+        },
+        400
+      );
+    }
+
+    if (
+      briefTitle.length > 180 ||
+      brief.length > 12000
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Project article is too long"
         },
         400
       );
@@ -728,6 +803,22 @@ export async function onRequestPut({
       "service",
       service
     );
+
+    if (hasBriefTitle) {
+      updatedBlock = upsertProjectText(
+        updatedBlock,
+        "briefTitle",
+        briefTitle
+      );
+    }
+
+    if (hasBrief) {
+      updatedBlock = upsertProjectText(
+        updatedBlock,
+        "brief",
+        brief
+      );
+    }
 
     let coverWebPath = "";
 
@@ -1426,6 +1517,10 @@ const source =
 
     service:
       "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
 
     thumbnail:
       ${safeString(coverWebPath)},
