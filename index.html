@@ -1588,6 +1588,82 @@ background-size: cover;
   }
 
 
+  .modal-gallery {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-top: 72px;
+
+    padding-top: 26px;
+
+    border-top:
+      1px solid
+      rgba(255,255,255,.2);
+  }
+
+
+  .modal-gallery[hidden] {
+    display: none;
+  }
+
+
+  .modal-gallery-heading,
+  .modal-gallery-status {
+    grid-column: 1 / -1;
+  }
+
+
+  .modal-gallery-heading {
+
+    margin-bottom: 8px;
+
+    color: var(--orange);
+
+    font-family: var(--font-en);
+
+    font-size: .68rem;
+
+    font-weight: 500;
+
+    letter-spacing: .2em;
+
+    text-transform: uppercase;
+  }
+
+
+  .modal-gallery-status {
+
+    color: #888a84;
+
+    font-size: .82rem;
+  }
+
+
+  .modal-gallery-image {
+
+    width: 100%;
+
+    aspect-ratio: 4 / 3;
+
+    object-fit: cover;
+
+    background: #242522;
+  }
+
+
+  .modal-gallery-image:first-of-type {
+
+    grid-column: 1 / -1;
+
+    aspect-ratio: 16 / 9;
+  }
+
+
   /* =========================================================
      PROCESS
   ========================================================= */
@@ -2663,6 +2739,24 @@ background-size: cover;
     .modal-image {
 
       aspect-ratio: 1 / 1;
+    }
+
+
+    .modal-gallery {
+
+      grid-template-columns: 1fr;
+
+      gap: 14px;
+
+      margin-top: 48px;
+    }
+
+
+    .modal-gallery-image:first-of-type {
+
+      grid-column: auto;
+
+      aspect-ratio: 4 / 3;
     }
 
   }
@@ -4768,6 +4862,13 @@ data-contact-link
     </div>
 
 
+    <div
+      class="modal-gallery"
+      id="modalGallery"
+      hidden
+    ></div>
+
+
   </div>
 
 </div>
@@ -5471,6 +5572,9 @@ data-contact-link
  const projects =
    homeProjectData.map(project => ({
 
+     number:
+       project.number || "",
+
      title:
        project.title || "",
 
@@ -5584,6 +5688,161 @@ data-contact-link
     );
 
 
+  const modalGallery =
+    document.getElementById(
+      "modalGallery"
+    );
+
+
+  let modalGalleryRequestId = 0;
+
+
+  function setModalGalleryStatus(
+    message
+  ) {
+
+    modalGallery.hidden = false;
+
+    modalGallery.replaceChildren();
+
+    const heading =
+      document.createElement("div");
+
+    heading.className =
+      "modal-gallery-heading";
+
+    heading.textContent =
+      "Project Gallery";
+
+    const status =
+      document.createElement("div");
+
+    status.className =
+      "modal-gallery-status";
+
+    status.textContent = message;
+
+    modalGallery.append(
+      heading,
+      status
+    );
+  }
+
+
+  async function loadProjectGallery(
+    data,
+    requestId
+  ) {
+
+    if (!/^\d{2}$/.test(data.number)) {
+      modalGallery.hidden = true;
+      return;
+    }
+
+    setModalGalleryStatus(
+      "Loading project images..."
+    );
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/project-gallery?projectNumber=${encodeURIComponent(data.number)}&v=${Date.now()}`,
+          { cache: "no-store" }
+        );
+
+      const result =
+        await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.error ||
+          "Cannot load project images"
+        );
+      }
+
+      if (
+        requestId !==
+        modalGalleryRequestId
+      ) {
+        return;
+      }
+
+      const galleryFiles =
+        Array.isArray(result.files)
+          ? result.files.filter(
+              file =>
+                file &&
+                typeof file.path ===
+                  "string" &&
+                file.path !== data.image
+            )
+          : [];
+
+      if (!galleryFiles.length) {
+        modalGallery.hidden = true;
+        modalGallery.replaceChildren();
+        return;
+      }
+
+      const fragment =
+        document.createDocumentFragment();
+
+      const heading =
+        document.createElement("div");
+
+      heading.className =
+        "modal-gallery-heading";
+
+      heading.textContent =
+        `Project Gallery / ${String(galleryFiles.length).padStart(2, "0")}`;
+
+      fragment.appendChild(heading);
+
+      galleryFiles.forEach(
+        (file, imageIndex) => {
+
+          const image =
+            document.createElement("img");
+
+          image.className =
+            "modal-gallery-image";
+
+          image.src =
+            `${file.path}?v=${Date.now()}`;
+
+          image.alt =
+            `${data.title} — Project image ${imageIndex + 1}`;
+
+          image.loading = "lazy";
+
+          fragment.appendChild(image);
+        }
+      );
+
+      modalGallery.replaceChildren(
+        fragment
+      );
+
+      modalGallery.hidden = false;
+
+    }
+    catch (error) {
+
+      if (
+        requestId !==
+        modalGalleryRequestId
+      ) {
+        return;
+      }
+
+      setModalGalleryStatus(
+        "Project images are temporarily unavailable."
+      );
+    }
+  }
+
+
 
   function openProject(index) {
 
@@ -5638,6 +5897,15 @@ data-contact-link
       `;
 
 
+    const galleryRequestId =
+      ++modalGalleryRequestId;
+
+    loadProjectGallery(
+      data,
+      galleryRequestId
+    );
+
+
     modal.classList.add(
       "active"
     );
@@ -5652,6 +5920,12 @@ data-contact-link
 
 
   function closeProject() {
+
+    modalGalleryRequestId += 1;
+
+    modalGallery.hidden = true;
+
+    modalGallery.replaceChildren();
 
     modal.classList.remove(
       "active"
