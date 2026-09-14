@@ -2767,6 +2767,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "40": {
+
+    number: "40",
+
+    slug: "private-residence",
+
+    url:
+      "/projects/private-residence/",
+
+    title:
+      "CUBE CONDO",
+
+    officialTitle:
+      "CUBE CONDO",
+
+    category:
+      "Commercial",
+
+    filterCategory:
+      "commercial",
+
+    location:
+      "LADPRAW 93, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-40.jpg",
+
+    hero:
+      "/assets/project-40.jpg",
+
+    heroAlt:
+      "CUBE CONDO",
+
+    assetFolder:
+      "/assets/project-40/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
