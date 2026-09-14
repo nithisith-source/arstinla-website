@@ -2839,6 +2839,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "41": {
+
+    number: "41",
+
+    slug: "renovate-interior",
+
+    url:
+      "/projects/renovate-interior/",
+
+    title:
+      "Office Nonglalog",
+
+    officialTitle:
+      "Office Nonglalog",
+
+    category:
+      "Interior",
+
+    filterCategory:
+      "interior",
+
+    location:
+      "Bankaiy, Rayong",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-41.jpg",
+
+    hero:
+      "/assets/project-41.jpg",
+
+    heroAlt:
+      "Office Nonglalog",
+
+    assetFolder:
+      "/assets/project-41/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
