@@ -292,6 +292,11 @@
     font: inherit;
   }
 
+  .admin-field textarea.admin-article-input {
+    min-height: 220px;
+    line-height: 1.7;
+  }
+
   .admin-field-hint {
     margin: 0;
     color: #777970;
@@ -980,6 +985,42 @@
           name="service"
           placeholder="Architecture / Design / Drawing"
         ></textarea>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectBriefTitle">
+          PROJECT STATEMENT / ARTICLE TITLE
+        </label>
+
+        <input
+          id="editProjectBriefTitle"
+          name="briefTitle"
+          type="text"
+          maxlength="180"
+          placeholder="A Home for the Next Chapter"
+        >
+
+        <p class="admin-field-hint">
+          หัวข้อหรือนิยามสั้น ๆ ของแนวคิดโครงการ
+        </p>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectBrief">
+          PROJECT STORY / ARTICLE
+        </label>
+
+        <textarea
+          class="admin-article-input"
+          id="editProjectBrief"
+          name="brief"
+          maxlength="12000"
+          placeholder="Write the project story, client brief, design idea or concept here..."
+        ></textarea>
+
+        <p class="admin-field-hint">
+          เขียนได้หลายย่อหน้า ระบบจะรักษาการขึ้นบรรทัดใหม่ไว้
+        </p>
       </div>
 
       <div class="admin-field">
@@ -2455,6 +2496,23 @@ function openEditProject(project) {
   document.getElementById(
     "editProjectService"
   ).value = project.service || "";
+
+  document.getElementById(
+    "editProjectBriefTitle"
+  ).value =
+    project.briefTitle ||
+    project.introTitle ||
+    project.conceptTitle ||
+    "";
+
+  document.getElementById(
+    "editProjectBrief"
+  ).value =
+    project.brief ||
+    project.briefDescription ||
+    project.introDescription ||
+    project.description ||
+    "";
 
   const currentCover =
     project.thumbnail ||
