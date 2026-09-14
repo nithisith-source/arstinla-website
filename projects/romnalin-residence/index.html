@@ -901,6 +901,37 @@ nav.scrolled {
 
 
 
+<section
+  class="gallery-section"
+  id="uploadedGallerySection"
+  hidden
+>
+
+  <div class="container">
+
+    <div class="gallery-header reveal">
+
+      <div class="section-label">
+        07 / Project Gallery
+      </div>
+
+      <h2 class="section-title">
+        Additional Images.
+      </h2>
+
+    </div>
+
+    <div
+      class="render-grid"
+      id="uploadedGallery"
+    ></div>
+
+  </div>
+
+</section>
+
+
+
 <section class="project-end">
 
   <div class="container reveal">
@@ -1148,6 +1179,91 @@ project.constructionImages.forEach(
 
   }
 );
+
+
+/* PROJECT MANAGER UPLOADS */
+
+async function loadUploadedGallery() {
+
+  const section =
+    document.getElementById(
+      "uploadedGallerySection"
+    );
+
+  const gallery =
+    document.getElementById(
+      "uploadedGallery"
+    );
+
+  const declaredImages =
+    new Set(
+      [
+        project.thumbnail,
+        project.hero,
+        ...(project.siteImages || []),
+        ...(project.planImages || []),
+        ...(project.renderImages || []),
+        ...(project.constructionImages || [])
+      ]
+        .filter(Boolean)
+    );
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/project-gallery?projectNumber=${encodeURIComponent(project.number)}&v=${Date.now()}`,
+        { cache: "no-store" }
+      );
+
+    const result =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.error ||
+        "Cannot load project images"
+      );
+    }
+
+    const uploadedImages =
+      Array.isArray(result.files)
+        ? result.files
+            .map(file => file?.path)
+            .filter(
+              path =>
+                typeof path === "string" &&
+                !declaredImages.has(path)
+            )
+        : [];
+
+    if (!uploadedImages.length) {
+      return;
+    }
+
+    uploadedImages.forEach(
+      (src, index) => {
+
+        gallery.appendChild(
+          createImage(
+            `${src}?v=${Date.now()}`,
+            `Romnalin Residence project image ${index + 1}`
+          )
+        );
+      }
+    );
+
+    section.hidden = false;
+    observeItems();
+
+  }
+  catch (error) {
+    section.hidden = true;
+  }
+}
+
+
+loadUploadedGallery();
 
 
 
