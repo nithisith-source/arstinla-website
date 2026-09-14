@@ -794,7 +794,7 @@
 
       <div class="admin-field">
         <label for="projectCover">
-          FIRST IMAGE / COVER IMAGE
+          PROJECT COVER IMAGE
         </label>
 
         <input
@@ -805,7 +805,7 @@
         >
 
         <p class="admin-field-hint">
-          ภาพแรกจะใช้เป็นภาพปกของโครงการ
+          ภาพนี้จะเป็นหน้าปกเริ่มต้นของโครงการ และจะคงเดิมจนกว่าจะเปลี่ยนใน Edit Project
         </p>
       </div>
 
@@ -1046,6 +1046,23 @@
           >
           <span>Delete the old cover file after replacing it</span>
         </label>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectGalleryImages">
+          PROJECT GALLERY IMAGES (OPTIONAL)
+        </label>
+
+        <input
+          id="editProjectGalleryImages"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+        >
+
+        <p class="admin-field-hint">
+          เลือกได้หลายรูป ภาพเหล่านี้จะเพิ่มภายในโครงการและจะไม่เปลี่ยนภาพปก
+        </p>
       </div>
 
       <div class="admin-field">
@@ -1490,7 +1507,7 @@
   </button>
 
   <p class="project-upload-note">
-    ภาพแรกที่เลือกจะใช้เป็นภาพปกอัตโนมัติ
+    ภาพที่อัปโหลดจะเพิ่มในแกลเลอรีเท่านั้น และจะไม่เปลี่ยนภาพปกของโครงการ
   </p>
 
   <div class="project-upload-status"></div>
@@ -1634,12 +1651,6 @@ browseButton.addEventListener(
         files.querySelector(
           ".project-file-grid"
         );
-
-      files.dataset.hasProjectImages =
-        result.files.length
-          ? "true"
-          : "false";
-
 
       if (fileGrid) {
 
@@ -1857,13 +1868,6 @@ uploadButton.addEventListener(
     uploadStatus.textContent =
       "Uploading...";
 
-    let imagesUploaded = false;
-
-    const shouldSetFirstAsCover =
-      files.dataset.hasProjectImages !==
-        "true";
-
-
     try {
 
       const formData =
@@ -1914,113 +1918,18 @@ uploadButton.addEventListener(
         );
       }
 
-      imagesUploaded = true;
-
-      files.dataset.hasProjectImages =
-        "true";
-
-      if (shouldSetFirstAsCover) {
-      const coverFormData =
-        new FormData();
-
-      coverFormData.append(
-        "projectNumber",
-        project.number || ""
-      );
-
-      coverFormData.append(
-        "title",
-        project.title || ""
-      );
-
-      coverFormData.append(
-        "category",
-        project.filterCategory ||
-          "residential"
-      );
-
-      coverFormData.append(
-        "location",
-        project.location || ""
-      );
-
-      coverFormData.append(
-        "area",
-        project.area || ""
-      );
-
-      coverFormData.append(
-        "year",
-        project.year || ""
-      );
-
-      coverFormData.append(
-        "completion",
-        project.completion || ""
-      );
-
-      coverFormData.append(
-        "service",
-        project.service || ""
-      );
-
-      coverFormData.append(
-        "cover",
-        selectedFiles[0]
-      );
-
-      coverFormData.append(
-        "removeOldCover",
-        "yes"
-      );
-
-      const coverResponse =
-        await fetch(
-          "/api/projects",
-          {
-            method: "PUT",
-            headers: {
-              "x-admin-key":
-                adminKey
-            },
-            body:
-              coverFormData
-          }
-        );
-
-      const coverResult =
-        await coverResponse.json();
-
-      if (!coverResponse.ok) {
-        throw new Error(
-          "อัปโหลดภาพภายในสำเร็จ แต่ตั้งภาพแรกเป็นภาพปกไม่สำเร็จ: " +
-          (
-            coverResult.error ||
-            "Cover update failed"
-          )
-        );
-      }
-      }
-
-
       uploadStatus.textContent =
-        shouldSetFirstAsCover
-          ? `Uploaded ${result.uploaded.length} file(s) · First image set as cover`
-          : `Uploaded ${result.uploaded.length} file(s)`;
+        `Uploaded ${result.uploaded.length} file(s) · Cover unchanged`;
 
       alert(
-        shouldSetFirstAsCover
-          ? "อัปโหลดรูปโครงการเรียบร้อย และใช้ภาพแรกเป็นภาพปกแล้ว"
-          : "อัปโหลดรูปโครงการเรียบร้อย"
+        "อัปโหลดรูปเข้าแกลเลอรีเรียบร้อย ภาพปกยังคงเดิม"
       );
 
     }
     catch (error) {
 
       uploadStatus.textContent =
-        imagesUploaded
-          ? "Images uploaded · Cover update failed"
-          : "Upload failed";
+        "Upload failed";
 
       alert(
         error.message
@@ -2324,6 +2233,11 @@ const cancelEditProject =
 const editProjectCover =
   document.getElementById(
     "editProjectCover"
+  );
+
+const editProjectGalleryImages =
+  document.getElementById(
+    "editProjectGalleryImages"
   );
 
 const removeOldCover =
@@ -2976,6 +2890,11 @@ editProjectForm.addEventListener(
     const selectedCover =
       editProjectCover.files?.[0];
 
+    const selectedGalleryImages =
+      Array.from(
+        editProjectGalleryImages.files || []
+      );
+
     if (
       selectedCover &&
       selectedCover.size >
@@ -2988,12 +2907,46 @@ editProjectForm.addEventListener(
       return;
     }
 
+    const invalidGalleryImage =
+      selectedGalleryImages.find(
+        file =>
+          ![
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+          ].includes(file.type)
+      );
+
+    if (invalidGalleryImage) {
+      setEditProjectStatus(
+        `รองรับเฉพาะไฟล์ JPG, PNG และ WEBP: ${invalidGalleryImage.name}`,
+        "error"
+      );
+      return;
+    }
+
+    const oversizedGalleryImage =
+      selectedGalleryImages.find(
+        file =>
+          file.size > 15 * 1024 * 1024
+      );
+
+    if (oversizedGalleryImage) {
+      setEditProjectStatus(
+        `รูปภายในแต่ละไฟล์ต้องมีขนาดไม่เกิน 15 MB: ${oversizedGalleryImage.name}`,
+        "error"
+      );
+      return;
+    }
+
     submitButton.disabled = true;
     submitButton.textContent =
       "Saving...";
 
     setEditProjectStatus(
-      "กำลังบันทึกข้อมูลและอัปโหลดรูป กรุณารอสักครู่..."
+      selectedGalleryImages.length
+        ? "กำลังบันทึกข้อมูลและอัปโหลดรูปภายในโครงการ กรุณารอสักครู่..."
+        : "กำลังบันทึกข้อมูลและรูปปก กรุณารอสักครู่..."
     );
 
     try {
@@ -3062,13 +3015,96 @@ editProjectForm.addEventListener(
         );
       }
 
+      let uploadedGalleryCount = 0;
+
+      if (selectedGalleryImages.length) {
+        const galleryFormData =
+          new FormData();
+
+        galleryFormData.append(
+          "projectNumber",
+          document.getElementById(
+            "editProjectNumber"
+          ).value
+        );
+
+        selectedGalleryImages.forEach(
+          file => {
+            galleryFormData.append(
+              "files",
+              file
+            );
+          }
+        );
+
+        const galleryResponse =
+          await fetch(
+            "/api/project-files",
+            {
+              method: "POST",
+
+              headers: {
+                "x-admin-key":
+                  adminKey
+              },
+
+              body:
+                galleryFormData
+            }
+          );
+
+        const galleryResponseText =
+          await galleryResponse.text();
+
+        let galleryResult = {};
+
+        try {
+          galleryResult = galleryResponseText
+            ? JSON.parse(galleryResponseText)
+            : {};
+        }
+        catch {
+          galleryResult = {
+            error:
+              "ระบบอัปโหลดรูปภายในตอบกลับไม่สมบูรณ์"
+          };
+        }
+
+        if (galleryResponse.status === 401) {
+          sessionStorage.removeItem(
+            "ARSTINLA_ADMIN_KEY"
+          );
+
+          throw new Error(
+            "บันทึกข้อมูลโครงการแล้ว แต่ Admin Key หมดอายุก่อนอัปโหลดรูปภายใน กรุณาใส่ Admin Key แล้วลองอัปโหลดรูปอีกครั้ง"
+          );
+        }
+
+        if (!galleryResponse.ok) {
+          throw new Error(
+            "บันทึกข้อมูลโครงการแล้ว แต่อัปโหลดรูปภายในไม่สำเร็จ: " +
+            (
+              galleryResult.error ||
+              "Gallery upload failed"
+            )
+          );
+        }
+
+        uploadedGalleryCount =
+          Array.isArray(galleryResult.uploaded)
+            ? galleryResult.uploaded.length
+            : selectedGalleryImages.length;
+      }
+
       const warning =
         result.warning
           ? `\n\nหมายเหตุ: ${result.warning}`
           : "";
 
       alert(
-        `บันทึกโครงการเรียบร้อย${warning}`
+        uploadedGalleryCount
+          ? `บันทึกโครงการและเพิ่มรูปภายใน ${uploadedGalleryCount} รูปเรียบร้อย ภาพปกยังคงเดิม${warning}`
+          : `บันทึกโครงการเรียบร้อย${warning}`
       );
 
       setEditProjectStatus(
