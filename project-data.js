@@ -2983,6 +2983,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "43": {
+
+    number: "43",
+
+    slug: "new-resort",
+
+    url:
+      "/projects/new-resort/",
+
+    title:
+      "AO TUNT RESORT",
+
+    officialTitle:
+      "AO TUNT RESORT",
+
+    category:
+      "Urban",
+
+    filterCategory:
+      "urban",
+
+    location:
+      "Kohmaak, Trat",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-43.jpg",
+
+    hero:
+      "/assets/project-43.jpg",
+
+    heroAlt:
+      "AO TUNT RESORT",
+
+    assetFolder:
+      "/assets/project-43/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
