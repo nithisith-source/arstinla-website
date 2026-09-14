@@ -2695,6 +2695,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "39": {
+
+    number: "39",
+
+    slug: "private-residence",
+
+    url:
+      "/projects/private-residence/",
+
+    title:
+      "์Baan Con",
+
+    officialTitle:
+      "์Baan Con",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Banpong,Ratchaburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-39.jpg",
+
+    hero:
+      "/assets/project-39.jpg",
+
+    heroAlt:
+      "์Baan Con",
+
+    assetFolder:
+      "/assets/project-39/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
