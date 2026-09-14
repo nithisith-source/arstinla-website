@@ -2708,7 +2708,7 @@ next: "05"
       "/projects/private-residence/",
 
     title:
-      "์Baan Con",
+      "BAAN CON",
 
     officialTitle:
       "์Baan Con",
