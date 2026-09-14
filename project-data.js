@@ -3055,6 +3055,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "44": {
+
+    number: "44",
+
+    slug: "public-project",
+
+    url:
+      "/projects/public-project/",
+
+    title:
+      "WEDDING STUDIO",
+
+    officialTitle:
+      "WEDDING STUDIO",
+
+    category:
+      "Urban",
+
+    filterCategory:
+      "urban",
+
+    location:
+      "Sainoi, Nonthaburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-44.jpg",
+
+    hero:
+      "/assets/project-44.jpg",
+
+    heroAlt:
+      "WEDDING STUDIO",
+
+    assetFolder:
+      "/assets/project-44/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
