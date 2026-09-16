@@ -1985,13 +1985,15 @@ background-size: cover;
 
     display: flex;
 
-    align-items: flex-end;
+    flex-direction: column;
 
-    justify-content: space-between;
+    align-items: stretch;
+
+    justify-content: flex-start;
 
     gap: 34px;
 
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 
     transition:
       background .3s var(--ease),
@@ -2007,6 +2009,7 @@ background-size: cover;
 
   .knowledge-tool-copy {
     max-width: 720px;
+    width: 100%;
   }
 
 
@@ -2041,6 +2044,10 @@ background-size: cover;
 
 
   .knowledge-tool-cta {
+
+    align-self: flex-start;
+
+    margin-top: auto;
 
     font-family: var(--font-en);
 
