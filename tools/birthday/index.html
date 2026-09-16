@@ -183,7 +183,7 @@ input[type="date"]{
 }
 
 .reading{min-width:0;background:var(--panel)}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
 .metric{padding:20px clamp(18px,3vw,38px);border-right:1px solid var(--line)}
 .metric:last-child{border-right:0}
 .metric-value{
@@ -195,14 +195,52 @@ input[type="date"]{
 .metric-label{margin-top:7px;color:var(--muted);font-family:"Instrument Sans",sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase}
 
 .article{padding:clamp(40px,7vw,104px) clamp(22px,8vw,120px)}
-.article-head{display:grid;grid-template-columns:auto 1fr;gap:clamp(22px,4vw,60px);align-items:start}
-.day-number{
-  font-family:"Instrument Serif",serif;
-  color:var(--orange);
-  font-size:clamp(72px,10vw,146px);
-  line-height:.7;
-  letter-spacing:-.07em;
+.article-head{display:grid;grid-template-columns:minmax(170px,280px) 1fr;gap:clamp(28px,5vw,74px);align-items:center}
+.visual-stage{
+  position:relative;
+  width:100%;
+  height:clamp(280px,35vw,440px);
+  overflow:hidden;
+  isolation:isolate;
+  background:#11120f;
+  border:1px solid #34352f;
 }
+.visual-stage::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(180deg,rgba(23,24,22,.05) 25%,rgba(23,24,22,.72) 100%),
+    linear-gradient(90deg,rgba(23,24,22,.18),transparent 52%);
+  pointer-events:none;
+}
+.day-art{
+  position:absolute;
+  inset:0;
+  background-image:url("assets/birthday-atlas-01-08.webp");
+  background-repeat:no-repeat;
+  background-size:400% 200%;
+  background-position:0 0;
+  transform:scale(1.025);
+  filter:saturate(.9) contrast(1.03);
+  transition:opacity .28s var(--ease),transform .55s var(--ease);
+}
+.visual-stage:hover .day-art{transform:scale(1.06)}
+.day-number{
+  position:absolute;
+  left:clamp(16px,3vw,34px);
+  bottom:clamp(10px,2vw,24px);
+  z-index:2;
+  font-family:"Instrument Serif",serif;
+  color:var(--cream);
+  font-size:clamp(92px,12vw,172px);
+  line-height:.68;
+  letter-spacing:-.07em;
+  text-shadow:0 8px 34px rgba(0,0,0,.55);
+}
+.reading-heading{padding:32px 0}
+.reading-heading .eyebrow{margin-bottom:18px}
 .article h2{
   max-width:760px;
   font-size:clamp(28px,5vw,66px);
@@ -225,6 +263,15 @@ input[type="date"]{
 .article-body p{margin-top:24px;color:#b9b8af;font-size:clamp(14px,1.45vw,17px);line-height:1.95}
 .article-body p:first-child{margin-top:0}
 .article-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:52px;padding-top:28px;border-top:1px solid var(--line)}
+.wallpaper-intro{
+  margin-top:48px;
+  padding:24px clamp(20px,3vw,32px);
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,#292720,#1d1e1b);
+}
+.wallpaper-intro .section-label{color:var(--orange)}
+.wallpaper-intro p{margin-top:9px;color:#b9b8af;line-height:1.8}
+.wallpaper-intro small{display:block;margin-top:10px;color:var(--muted);font-size:10px}
 .action{
   border:1px solid var(--line);
   background:transparent;
@@ -238,6 +285,7 @@ input[type="date"]{
 .action:hover{border-color:var(--sand);color:var(--sand)}
 .action.primary{border-color:var(--sand);background:var(--sand);color:var(--ink)}
 .action.primary:hover{background:var(--cream);border-color:var(--cream)}
+.action:disabled{opacity:.55;cursor:wait}
 .article-nav{display:grid;grid-template-columns:1fr 1fr;margin-top:56px;border:1px solid var(--line)}
 .nav-day{padding:20px;border:0;background:transparent;text-align:left;cursor:pointer}
 .nav-day+ .nav-day{border-left:1px solid var(--line);text-align:right}
@@ -280,8 +328,9 @@ footer a:hover{color:var(--sand)}
   .selector{border-right:0;border-bottom:1px solid var(--line)}
   .selector-inner{position:static}
   .days{grid-template-columns:repeat(8,1fr)}
-  .article-head{grid-template-columns:1fr;gap:28px}
-  .day-number{font-size:88px}
+  .article-head{grid-template-columns:minmax(150px,220px) 1fr;gap:28px}
+  .visual-stage{height:320px}
+  .day-number{font-size:108px}
 }
 @media(max-width:560px){
   .site-header{align-items:flex-start}
@@ -290,8 +339,11 @@ footer a:hover{color:var(--sand)}
   .hero::after{opacity:.55}
   .days{grid-template-columns:repeat(7,1fr)}
   .metrics{grid-template-columns:1fr 1fr}
-  .metric:nth-child(2){border-right:0}
-  .metric:last-child{grid-column:1/-1;border-top:1px solid var(--line)}
+  .metric:nth-child(2n){border-right:0}
+  .metric:nth-child(n+3){border-top:1px solid var(--line)}
+  .article-head{grid-template-columns:1fr;gap:22px}
+  .visual-stage{height:340px}
+  .reading-heading{padding:8px 0 0}
   .article-nav{grid-template-columns:1fr}
   .nav-day+ .nav-day{border-left:0;border-top:1px solid var(--line);text-align:left}
 }
@@ -352,12 +404,19 @@ footer a:hover{color:var(--sand)}
           <div class="metric-value" id="readTime">4 min</div>
           <div class="metric-label">Reading time</div>
         </div>
+        <div class="metric">
+          <div class="metric-value" id="downloadCount">—</div>
+          <div class="metric-label" id="downloadLabel">Wallpaper downloads</div>
+        </div>
       </div>
 
       <article class="article">
         <div class="article-head">
-          <div class="day-number" id="dayNumber">01</div>
-          <div>
+          <div class="visual-stage" aria-hidden="true">
+            <div class="day-art" id="dayArt"></div>
+            <div class="day-number" id="dayNumber">01</div>
+          </div>
+          <div class="reading-heading">
             <div class="eyebrow">Born on day <span id="dayLabel">01</span></div>
             <h2 id="readingTitle"></h2>
           </div>
@@ -365,8 +424,15 @@ footer a:hover{color:var(--sand)}
         <p class="lead" id="readingLead"></p>
         <div class="article-body" id="readingBody"></div>
 
+        <div class="wallpaper-intro">
+          <div class="section-label">Your daily talisman</div>
+          <p>ดาวน์โหลดภาพประจำวันเกิดไว้เป็น Wallpaper เพื่อเตือนใจถึงพลัง จุดเด่น และตัวตนในแบบของคุณ</p>
+          <small>การเสริมดวงเป็นความเชื่อส่วนบุคคล ภาพนี้ใช้เพื่อความบันเทิงและสร้างกำลังใจเท่านั้น</small>
+        </div>
+
         <div class="article-actions">
-          <button class="action primary" id="shareBtn" type="button">Share reading</button>
+          <button class="action primary" id="downloadBtn" type="button">Download Wallpaper</button>
+          <button class="action" id="shareBtn" type="button">Share reading</button>
           <button class="action" id="copyBtn" type="button">Copy text</button>
         </div>
 
@@ -434,6 +500,13 @@ const $ = id => document.getElementById(id);
 const readings = new Map();
 let selectedDay = 1;
 let toastTimer;
+const atlasFiles = [
+  "assets/birthday-atlas-01-08.webp",
+  "assets/birthday-atlas-09-16.webp",
+  "assets/birthday-atlas-17-24.webp",
+  "assets/birthday-atlas-25-31.webp"
+];
+const wallpaperAtlases = new Map();
 
 function cleanParagraph(text){
   return text.replace(/\s*\n\s*/g," ").replace(/[ \t]+/g," ").trim();
@@ -507,6 +580,12 @@ function selectDay(day,scroll=false){
   $("readingTitle").textContent=item.title;
   $("readingLead").textContent=lead || "";
   $("readTime").textContent=`${readMinutes(item.paragraphs)} min`;
+  const atlasIndex=Math.floor((day-1)/8);
+  const artIndex=(day-1)%8;
+  const artColumn=artIndex%4;
+  const artRow=Math.floor(artIndex/4);
+  $("dayArt").style.backgroundImage=`url("${atlasFiles[atlasIndex]}")`;
+  $("dayArt").style.backgroundPosition=`${(artColumn/3)*100}% ${artRow*100}%`;
   $("readingBody").replaceChildren(...rest.map(text=>{
     const p=document.createElement("p");
     p.textContent=text;
@@ -528,12 +607,166 @@ function selectDay(day,scroll=false){
   url.searchParams.set("day",day);
   history.replaceState(null,"",url);
   document.title=`คนเกิดวันที่ ${day}: ${item.title} | ARSTINLA`;
+  refreshDownloadCount(day);
   if(scroll && window.innerWidth<901){document.querySelector(".reading").scrollIntoView({behavior:"smooth"});}
 }
 
 function readingText(){
   const item=readings.get(selectedDay);
   return `คนเกิดวันที่ ${selectedDay}: ${item.title}\n\n${item.paragraphs.join("\n\n")}\n\nอ่านเพิ่มเติม: ${location.href}`;
+}
+
+function localDownloadCount(day){
+  try{return Number(localStorage.getItem(`birthday-wallpaper-${day}`)) || 0;}
+  catch{return 0;}
+}
+
+function showDownloadCount(count,isGlobal){
+  $("downloadCount").textContent=Number(count).toLocaleString("th-TH");
+  $("downloadLabel").textContent=isGlobal ? "Wallpaper downloads" : "Downloads on this device";
+}
+
+async function refreshDownloadCount(day){
+  $("downloadCount").textContent="…";
+  try{
+    const response=await fetch(`/api/birthday-downloads?day=${day}`,{headers:{accept:"application/json"}});
+    if(!response.ok)throw new Error("Counter unavailable");
+    const data=await response.json();
+    if(data.ok && selectedDay===day)showDownloadCount(data.count,true);
+  }
+  catch{
+    if(selectedDay===day)showDownloadCount(localDownloadCount(day),false);
+  }
+}
+
+async function recordDownload(day){
+  const localCount=localDownloadCount(day)+1;
+  try{localStorage.setItem(`birthday-wallpaper-${day}`,String(localCount));}catch{}
+  if(selectedDay===day)showDownloadCount(localCount,false);
+
+  try{
+    const response=await fetch("/api/birthday-downloads",{
+      method:"POST",
+      headers:{"content-type":"application/json","accept":"application/json"},
+      body:JSON.stringify({day})
+    });
+    if(!response.ok)throw new Error("Counter unavailable");
+    const data=await response.json();
+    if(data.ok && selectedDay===day)showDownloadCount(data.count,true);
+  }
+  catch{}
+}
+
+function waitForWallpaperAtlas(day){
+  const atlasIndex=Math.floor((day-1)/8);
+  if(!wallpaperAtlases.has(atlasIndex)){
+    const image=new Image();
+    image.src=atlasFiles[atlasIndex];
+    wallpaperAtlases.set(atlasIndex,image);
+  }
+  const image=wallpaperAtlases.get(atlasIndex);
+  if(image.complete && image.naturalWidth)return Promise.resolve(image);
+  return new Promise((resolve,reject)=>{
+    image.addEventListener("load",()=>resolve(image),{once:true});
+    image.addEventListener("error",reject,{once:true});
+  });
+}
+
+function drawWallpaperArtwork(context,image,day,width,height){
+  const cellWidth=image.naturalWidth/4;
+  const cellHeight=image.naturalHeight/2;
+  const index=(day-1)%8;
+  const column=index%4;
+  const row=Math.floor(index/4);
+  const sourceRatio=cellWidth/cellHeight;
+  const targetRatio=width/height;
+  let sourceX=column*cellWidth;
+  let sourceY=row*cellHeight;
+  let sourceWidth=cellWidth;
+  let sourceHeight=cellHeight;
+
+  if(sourceRatio<targetRatio){
+    sourceHeight=cellWidth/targetRatio;
+    sourceY+=Math.max(0,(cellHeight-sourceHeight)/2);
+  }
+  else{
+    sourceWidth=cellHeight*targetRatio;
+    sourceX+=Math.max(0,(cellWidth-sourceWidth)/2);
+  }
+
+  context.imageSmoothingEnabled=true;
+  context.imageSmoothingQuality="high";
+  context.drawImage(image,sourceX,sourceY,sourceWidth,sourceHeight,0,0,width,height);
+}
+
+function wrapWallpaperTitle(context,text,maxWidth){
+  const segments=typeof Intl.Segmenter==="function"
+    ? [...new Intl.Segmenter("th",{granularity:"word"}).segment(text)].map(part=>part.segment)
+    : [...text];
+  const lines=[];
+  let line="";
+  segments.forEach(segment=>{
+    const next=line+segment;
+    if(line && context.measureText(next).width>maxWidth){lines.push(line.trim());line=segment.trimStart();}
+    else{line=next;}
+  });
+  if(line.trim())lines.push(line.trim());
+  return lines.slice(0,3);
+}
+
+async function createWallpaper(day){
+  const [atlas]=await Promise.all([waitForWallpaperAtlas(day),document.fonts?.ready || Promise.resolve()]);
+  const item=readings.get(day);
+  const width=1080;
+  const height=1920;
+  const canvas=document.createElement("canvas");
+  canvas.width=width;
+  canvas.height=height;
+  const context=canvas.getContext("2d");
+  drawWallpaperArtwork(context,atlas,day,width,height);
+
+  const wash=context.createLinearGradient(0,0,0,height);
+  wash.addColorStop(0,"rgba(10,11,9,.18)");
+  wash.addColorStop(.46,"rgba(10,11,9,.05)");
+  wash.addColorStop(.72,"rgba(10,11,9,.66)");
+  wash.addColorStop(1,"rgba(10,11,9,.96)");
+  context.fillStyle=wash;
+  context.fillRect(0,0,width,height);
+
+  context.strokeStyle="rgba(241,238,229,.42)";
+  context.lineWidth=2;
+  context.strokeRect(46,46,width-92,height-92);
+
+  context.fillStyle="#f1eee5";
+  context.font='600 24px "Instrument Sans", sans-serif';
+  context.fillText("ARSTINLA  /  BIRTHDAY INSIGHT",72,96);
+
+  context.fillStyle="#f1eee5";
+  context.font='400 405px "Instrument Serif", Georgia, serif';
+  context.fillText(String(day).padStart(2,"0"),60,1388);
+
+  context.fillStyle="#c37855";
+  context.font='600 20px "Instrument Sans", sans-serif';
+  context.fillText(`BORN ON DAY ${String(day).padStart(2,"0")}`,72,1478);
+
+  context.fillStyle="#f1eee5";
+  context.font='300 54px "Noto Sans Thai", sans-serif';
+  const lines=wrapWallpaperTitle(context,item.title,width-144);
+  lines.forEach((line,index)=>context.fillText(line,72,1558+(index*72)));
+
+  context.strokeStyle="rgba(241,238,229,.32)";
+  context.beginPath();
+  context.moveTo(72,1778);
+  context.lineTo(width-72,1778);
+  context.stroke();
+  context.fillStyle="rgba(241,238,229,.78)";
+  context.font='400 19px "Noto Sans Thai", sans-serif';
+  context.fillText("ภาพประจำวันเกิด • เพื่อเตือนใจถึงพลังและตัวตนของคุณ",72,1824);
+  context.fillStyle="rgba(241,238,229,.48)";
+  context.font='400 16px "Noto Sans Thai", sans-serif';
+  context.fillText("การเสริมดวงเป็นความเชื่อส่วนบุคคล",72,1860);
+
+  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Wallpaper failed")),"image/jpeg",.92));
 }
 
 function showToast(message){
@@ -556,6 +789,31 @@ $("nextDay").addEventListener("click",event=>selectDay(Number(event.currentTarge
 $("copyBtn").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(readingText());showToast("คัดลอกคำอ่านแล้ว");}
   catch{showToast("ไม่สามารถคัดลอกได้ กรุณาลองใหม่");}
+});
+
+$("downloadBtn").addEventListener("click",async()=>{
+  const button=$("downloadBtn");
+  const day=selectedDay;
+  button.disabled=true;
+  button.textContent="Preparing…";
+  try{
+    const blob=await createWallpaper(day);
+    const link=document.createElement("a");
+    link.href=URL.createObjectURL(blob);
+    link.download=`arstinla-birthday-${String(day).padStart(2,"0")}-wallpaper.jpg`;
+    link.click();
+    setTimeout(()=>URL.revokeObjectURL(link.href),4000);
+    await recordDownload(day);
+    showToast("ดาวน์โหลด Wallpaper แล้ว");
+  }
+  catch(error){
+    console.error(error);
+    showToast("สร้าง Wallpaper ไม่สำเร็จ กรุณาลองใหม่");
+  }
+  finally{
+    button.disabled=false;
+    button.textContent="Download Wallpaper";
+  }
 });
 
 $("shareBtn").addEventListener("click",async()=>{
