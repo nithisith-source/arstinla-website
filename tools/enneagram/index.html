@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171816">
+<meta name="description" content="ARSTINLA Enneagram Compass แบบสำรวจแรงขับภายใน 9 รูปแบบ เพื่อการสำรวจและเข้าใจตัวเอง">
+<title>Enneagram Compass — ARSTINLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,300..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#171816;--paper:#f2efe8;--panel:#1c1d1a;--soft:#242520;
+  --text:#f3f0e9;--muted:#98998f;--line:#383a34;--sand:#c47a55;
+  --font-en:"Instrument Sans",sans-serif;--font-serif:"Instrument Serif",serif;
+  --font-th:"Noto Sans Thai",sans-serif
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font-th);font-weight:300}
+button,a{font:inherit}button{color:inherit}a{color:inherit;text-decoration:none}
+.site-header{height:82px;padding:0 clamp(20px,4vw,62px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:relative;z-index:3}
+.brand{font-family:var(--font-en);font-weight:650;letter-spacing:.2em;font-size:15px}.brand span{font-weight:300;color:var(--muted);letter-spacing:.08em}
+.top-nav{display:flex;align-items:center;gap:24px}.top-nav a{color:var(--muted);font-family:var(--font-en);font-size:10px;letter-spacing:.14em;text-transform:uppercase}.top-nav a:hover{color:var(--text)}
+.hero{min-height:calc(100vh - 82px);display:grid;grid-template-columns:minmax(0,1.12fr) minmax(330px,.88fr);border-bottom:1px solid var(--line)}
+.hero-copy{padding:clamp(64px,9vw,142px) clamp(24px,7vw,110px);display:flex;flex-direction:column;justify-content:center}
+.eyebrow,.section-label{font-family:var(--font-en);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--sand)}
+h1{font-family:var(--font-en);font-weight:300;font-size:clamp(66px,9.2vw,154px);line-height:.78;letter-spacing:-.075em;margin:35px 0}
+h1 em{font-family:var(--font-serif);font-weight:400;color:var(--sand)}
+.hero-copy>p{max-width:640px;color:#b8b9b1;font-size:clamp(16px,1.4vw,21px);line-height:1.9;margin:0}
+.hero-meta{display:flex;gap:42px;margin-top:55px}.hero-meta strong{display:block;font-family:var(--font-en);font-size:25px;font-weight:300}.hero-meta span{display:block;margin-top:6px;color:var(--muted);font-family:var(--font-en);font-size:9px;letter-spacing:.15em;text-transform:uppercase}
+.wheel-stage{min-height:520px;border-left:1px solid var(--line);display:grid;place-items:center;overflow:hidden;position:relative;background:radial-gradient(circle at center,#29251f 0,transparent 62%)}
+.wheel{width:min(62vw,600px);aspect-ratio:1;border:1px solid #454039;border-radius:50%;position:relative;animation:turn 90s linear infinite}
+.wheel::before,.wheel::after{content:"";position:absolute;border:1px solid #3a3832;border-radius:50%;inset:15%}.wheel::after{inset:34%;background:var(--ink)}
+.wheel-line{position:absolute;width:1px;height:50%;background:#4b463f;left:50%;top:0;transform-origin:bottom center}
+.wheel-number{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border:1px solid #534d45;background:var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--font-serif);font-size:25px;color:var(--sand);transform:rotate(var(--angle)) translateY(-255px) rotate(calc(-1 * var(--angle)));z-index:2}
+@keyframes turn{to{transform:rotate(360deg)}}
+.wheel-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;z-index:2;pointer-events:none}.wheel-center strong{font-family:var(--font-serif);font-size:48px;font-weight:400}.wheel-center span{display:block;color:var(--muted);font-family:var(--font-en);font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
+.intro{background:var(--paper);color:var(--ink);padding:clamp(72px,9vw,130px) clamp(24px,7vw,110px);display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr);gap:clamp(50px,8vw,130px)}
+.intro h2,.test-head h2,.result-hero h2{font-family:var(--font-en);font-weight:300;letter-spacing:-.055em;line-height:.95;margin:20px 0;font-size:clamp(44px,6vw,88px)}
+.intro h2 em,.result-hero h2 em{font-family:var(--font-serif);font-weight:400;color:var(--sand)}
+.intro-copy{font-size:17px;line-height:1.9;color:#565750}.intro-copy p:first-child{font-size:clamp(21px,2vw,29px);line-height:1.65;color:var(--ink)}
+.privacy{margin-top:35px;border-top:1px solid #cbc8bf;padding-top:22px;font-size:13px;color:#70716a}
+.begin{margin-top:32px;border:0;background:var(--ink);color:#fff;padding:20px 28px;min-width:230px;text-transform:uppercase;font-family:var(--font-en);font-size:11px;letter-spacing:.16em;cursor:pointer}.begin:hover{background:var(--sand)}
+.test{display:none;min-height:100vh}.test.active{display:grid;grid-template-columns:minmax(290px,.7fr) minmax(0,1.3fr)}
+.test-side{padding:clamp(35px,5vw,74px);border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;position:sticky;top:0;height:100vh}
+.test-head h2{font-size:clamp(46px,5vw,78px)}
+.test-head p{color:var(--muted);line-height:1.8;max-width:440px}
+.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-family:var(--font-en);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:13px}
+.progress{height:2px;background:var(--line);overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--sand);transition:width .35s}
+.test-main{padding:clamp(38px,7vw,110px);display:flex;align-items:center}
+.question-card{width:min(100%,850px);margin:auto}
+.question-kicker{font-family:var(--font-en);font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--sand)}
+.question{font-size:clamp(28px,3.25vw,52px);line-height:1.45;font-weight:300;min-height:220px;margin:30px 0 45px}
+.scale-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:12px}
+.answers{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.answer{min-height:92px;border:1px solid var(--line);background:transparent;cursor:pointer;font-family:var(--font-en);font-size:20px;transition:.2s}.answer small{display:block;color:var(--muted);font-size:8px;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}.answer:hover,.answer.selected{border-color:var(--sand);background:var(--sand);color:white}.answer:hover small,.answer.selected small{color:#fff}
+.question-nav{display:flex;justify-content:space-between;gap:15px;margin-top:34px}.nav-btn{border:0;background:transparent;color:var(--muted);font-family:var(--font-en);font-size:11px;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;padding:12px 0}.nav-btn:hover{color:var(--text)}.nav-btn[disabled]{opacity:.25;cursor:not-allowed}
+.result{display:none}.result.active{display:block}
+.result-hero{padding:clamp(72px,9vw,140px) clamp(24px,7vw,110px);display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.28fr);gap:clamp(45px,7vw,110px);border-bottom:1px solid var(--line)}
+.result-number{font-family:var(--font-serif);font-size:clamp(170px,25vw,390px);line-height:.72;color:var(--sand);letter-spacing:-.08em}
+.result-hero h2{font-size:clamp(50px,7vw,108px)}.result-hero p{font-size:clamp(17px,1.7vw,24px);line-height:1.8;color:#b9bab3;max-width:760px}
+.wing{display:inline-flex;border:1px solid var(--line);padding:11px 15px;margin-top:24px;color:var(--sand);font-family:var(--font-en);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.result-grid{background:var(--paper);color:var(--ink);padding:clamp(65px,8vw,120px) clamp(24px,7vw,110px);display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:clamp(45px,8vw,130px)}
+.profile-block{padding:29px 0;border-top:1px solid #cbc8bf}.profile-block h3{font-family:var(--font-en);font-size:12px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 15px}.profile-block p{font-size:16px;line-height:1.85;color:#5d5e57;margin:0}
+.score-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:25px}.score-title h3{font-family:var(--font-en);font-size:clamp(31px,4vw,55px);font-weight:300;letter-spacing:-.04em;margin:0}.score-title span{color:#77786f;font-size:12px}
+.score-row{display:grid;grid-template-columns:34px minmax(100px,1fr) minmax(140px,2.2fr) 46px;align-items:center;gap:13px;padding:11px 0;border-top:1px solid #d7d3ca}.score-num{font-family:var(--font-serif);font-size:24px;color:var(--sand)}.score-name{font-size:13px}.score-bar{height:7px;background:#d6d2c8;overflow:hidden}.score-bar i{display:block;height:100%;background:var(--ink);width:0;transition:width 1s}.score-pct{text-align:right;font-family:var(--font-en);font-size:12px}
+.result-actions{background:var(--paper);color:var(--ink);padding:0 clamp(24px,7vw,110px) clamp(70px,8vw,120px);display:flex;gap:12px;flex-wrap:wrap}.result-actions button{border:1px solid #b8b4aa;background:transparent;padding:17px 22px;font-family:var(--font-en);font-size:10px;letter-spacing:.13em;text-transform:uppercase;cursor:pointer}.result-actions button:first-child{background:var(--ink);color:white;border-color:var(--ink)}.result-actions button:hover{background:var(--sand);color:#fff;border-color:var(--sand)}
+.notice{background:#0e0f0d;padding:30px clamp(24px,7vw,110px);color:#898a83;font-size:12px;line-height:1.8;border-top:1px solid var(--line)}
+footer{padding:22px clamp(20px,4vw,62px);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-family:var(--font-en);font-size:11px;border-top:1px solid var(--line)}footer nav{display:flex;gap:22px}footer a:hover{color:var(--sand)}
+.toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#fff;color:#171816;padding:13px 19px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.hero,.intro,.result-hero,.result-grid{grid-template-columns:1fr}.wheel-stage{border-left:0;border-top:1px solid var(--line);min-height:620px}.intro{gap:30px}.test.active{grid-template-columns:1fr}.test-side{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);gap:40px}.test-main{min-height:70vh}.result-number{font-size:210px}.wheel-number{transform:rotate(var(--angle)) translateY(-235px) rotate(calc(-1 * var(--angle)))}}
+@media(max-width:600px){.site-header{height:auto;min-height:76px;align-items:flex-start;padding-top:21px;padding-bottom:21px}.brand span{display:block;margin-top:5px}.top-nav{gap:12px;flex-direction:column;align-items:flex-end}.hero{min-height:0}.hero-copy{padding-top:85px;padding-bottom:80px}.wheel-stage{min-height:420px}.wheel{width:365px}.wheel-number{width:38px;height:38px;margin:-19px;font-size:20px;transform:rotate(var(--angle)) translateY(-165px) rotate(calc(-1 * var(--angle)))}.question{min-height:240px}.answers{gap:5px}.answer{min-height:76px;font-size:17px}.answer small{display:none}.scale-labels{font-size:10px}.score-row{grid-template-columns:28px 90px 1fr 38px;gap:8px}.score-name{font-size:11px}.result-number{font-size:160px}.hero-meta{gap:25px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.wheel{animation:none}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">ARSTINLA <span>/ Enneagram Compass</span></a>
+  <nav class="top-nav" aria-label="Tools navigation">
+    <a href="/tools/birthday/">Birthday Insight</a>
+    <a href="/tools/image/">Image Tool</a>
+    <a href="/">Back to website</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="hero-copy">
+      <div class="eyebrow">ARSTINLA Digital Tool / 03</div>
+      <h1>Find your<br><em>inner drive.</em></h1>
+      <p>สำรวจแรงขับที่อยู่เบื้องหลังความคิด การตัดสินใจ และวิธีที่คุณสัมพันธ์กับผู้คน ผ่านมุมมองบุคลิกภาพแบบนพลักษณ์ 9 รูปแบบ</p>
+      <div class="hero-meta">
+        <div><strong>45</strong><span>Original prompts</span></div>
+        <div><strong>9</strong><span>Ways of being</span></div>
+        <div><strong>7 min</strong><span>Quiet reflection</span></div>
+      </div>
+    </div>
+    <div class="wheel-stage" aria-hidden="true">
+      <div class="wheel">
+        <i class="wheel-line" style="transform:rotate(0deg)"></i><i class="wheel-line" style="transform:rotate(40deg)"></i><i class="wheel-line" style="transform:rotate(80deg)"></i><i class="wheel-line" style="transform:rotate(120deg)"></i><i class="wheel-line" style="transform:rotate(160deg)"></i><i class="wheel-line" style="transform:rotate(200deg)"></i><i class="wheel-line" style="transform:rotate(240deg)"></i><i class="wheel-line" style="transform:rotate(280deg)"></i><i class="wheel-line" style="transform:rotate(320deg)"></i>
+        <span class="wheel-number" style="--angle:0deg">1</span><span class="wheel-number" style="--angle:40deg">2</span><span class="wheel-number" style="--angle:80deg">3</span><span class="wheel-number" style="--angle:120deg">4</span><span class="wheel-number" style="--angle:160deg">5</span><span class="wheel-number" style="--angle:200deg">6</span><span class="wheel-number" style="--angle:240deg">7</span><span class="wheel-number" style="--angle:280deg">8</span><span class="wheel-number" style="--angle:320deg">9</span>
+      </div>
+      <div class="wheel-center"><div><strong>9</strong><span>inner patterns</span></div></div>
+    </div>
+  </section>
+
+  <section class="intro" id="intro">
+    <div>
+      <div class="section-label">Before you begin</div>
+      <h2>Answer from<br><em>real life.</em></h2>
+    </div>
+    <div class="intro-copy">
+      <p>เลือกคำตอบจากสิ่งที่คุณเป็น “ส่วนใหญ่” ไม่ใช่ภาพที่อยากเป็น หรือบทบาทที่สถานการณ์กำลังบังคับให้เป็น</p>
+      <p>แต่ละข้อให้คะแนนตั้งแต่ 1 = ไม่ตรงกับฉันเลย ถึง 5 = ตรงกับฉันมาก ไม่มีคำตอบที่ดีหรือไม่ดี และคุณสามารถย้อนกลับไปแก้คำตอบได้ตลอดเวลา</p>
+      <div class="privacy">คำตอบและผลลัพธ์ประมวลผลอยู่ในเบราว์เซอร์ของคุณเท่านั้น เราไม่อัปโหลดหรือบันทึกคำตอบไว้บนเซิร์ฟเวอร์</div>
+      <button class="begin" id="beginBtn" type="button">Begin the Compass →</button>
+    </div>
+  </section>
+
+  <section class="test" id="test" aria-live="polite">
+    <aside class="test-side">
+      <div class="test-head"><div class="section-label">Enneagram Compass</div><h2>Pause.<br>Notice.<br>Choose.</h2><p>อ่านช้า ๆ แล้วเลือกจากปฏิกิริยาที่เกิดขึ้นจริงในชีวิตประจำวัน</p></div>
+      <div><div class="progress-meta"><span id="progressText">Question 01 / 45</span><span id="progressPct">0%</span></div><div class="progress"><i id="progressBar"></i></div></div>
+    </aside>
+    <div class="test-main">
+      <div class="question-card">
+        <div class="question-kicker" id="questionKicker">Statement 01</div>
+        <div class="question" id="questionText"></div>
+        <div class="scale-labels"><span>ไม่ตรงกับฉันเลย</span><span>ตรงกับฉันมาก</span></div>
+        <div class="answers" id="answers">
+          <button class="answer" type="button" data-value="1">1<small>Never</small></button>
+          <button class="answer" type="button" data-value="2">2<small>Rarely</small></button>
+          <button class="answer" type="button" data-value="3">3<small>Sometimes</small></button>
+          <button class="answer" type="button" data-value="4">4<small>Often</small></button>
+          <button class="answer" type="button" data-value="5">5<small>Very true</small></button>
+        </div>
+        <div class="question-nav"><button class="nav-btn" id="prevBtn" type="button">← Previous</button><button class="nav-btn" id="nextBtn" type="button">Next →</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="result" id="result" aria-live="polite">
+    <div class="result-hero">
+      <div class="result-number" id="resultNumber">1</div>
+      <div><div class="eyebrow">Your strongest pattern</div><h2 id="resultTitle"></h2><p id="resultSummary"></p><div class="wing" id="resultWing"></div></div>
+    </div>
+    <div class="result-grid">
+      <div>
+        <div class="profile-block"><h3>Core drive / แรงขับภายใน</h3><p id="resultDrive"></p></div>
+        <div class="profile-block"><h3>Natural strength / จุดแข็ง</h3><p id="resultStrength"></p></div>
+        <div class="profile-block"><h3>Watch closely / จุดที่ควรสังเกต</h3><p id="resultWatch"></p></div>
+        <div class="profile-block"><h3>Growth direction / ทิศทางเติบโต</h3><p id="resultGrowth"></p></div>
+      </div>
+      <div>
+        <div class="score-title"><h3>Your 9-pattern map</h3><span>relative score</span></div>
+        <div id="scoreRows"></div>
+      </div>
+    </div>
+    <div class="result-actions"><button id="shareBtn" type="button">Share result</button><button id="copyBtn" type="button">Copy summary</button><button id="restartBtn" type="button">Take it again</button></div>
+    <div class="notice">ผลลัพธ์นี้เป็นเครื่องมือเพื่อการสำรวจตัวเองและความบันเทิง ไม่ใช่แบบประเมินทางคลินิก การวินิจฉัย หรือคำแนะนำจากผู้เชี่ยวชาญ บุคลิกของคนมีความซับซ้อนและเปลี่ยนแปลงตามบริบทได้เสมอ</div>
+  </section>
+</main>
+
+<footer><span>© 2026 ARSTINLA Design &amp; Consult</span><nav><a href="/tools/image/">Image Tool</a><a href="/tools/birthday/">Birthday Insight</a><a href="/">Main Website</a></nav></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const profiles={
+  1:{en:"The Principled",th:"ผู้ยึดมั่นในหลักการ",drive:"อยากทำสิ่งต่าง ๆ ให้ถูกต้อง มีคุณภาพ และสอดคล้องกับมาตรฐานภายในของตน",summary:"คุณมองเห็นสิ่งที่ควรปรับปรุงได้รวดเร็ว รับผิดชอบ และจริงจังกับการทำสิ่งที่มีความหมายให้ดีที่สุด",strength:"มีวินัย ซื่อตรง รอบคอบ และเปลี่ยนความตั้งใจดีให้กลายเป็นระบบที่ใช้งานได้จริง",watch:"เสียงวิจารณ์ในใจอาจเข้มงวดเกินไป ทั้งกับตัวเองและคนรอบข้าง จนมองข้ามสิ่งที่ดีพออยู่แล้ว",growth:"ฝึกให้พื้นที่กับความไม่สมบูรณ์แบบ ชื่นชมความคืบหน้า และแยกให้ออกระหว่างสิ่งที่ผิดจริงกับสิ่งที่เพียงไม่ตรงใจ"},
+  2:{en:"The Supportive",th:"ผู้มอบความใส่ใจ",drive:"อยากเป็นคนสำคัญต่อผู้อื่น ผ่านการช่วยเหลือ ความอบอุ่น และการรับรู้ความต้องการของคนรอบตัว",summary:"คุณอ่านบรรยากาศและความรู้สึกของผู้คนได้ไว พร้อมลงมือดูแลจนคนอื่นรู้สึกว่าไม่ได้เผชิญเรื่องต่าง ๆ ตามลำพัง",strength:"เอาใจใส่ สร้างความไว้วางใจ เชื่อมผู้คน และทำให้ทีมมีความเป็นมนุษย์มากขึ้น",watch:"การให้มากเกินไปอาจทำให้ละเลยความต้องการของตัวเอง หรือคาดหวังการตอบแทนโดยไม่ได้พูดออกมา",growth:"ถามตัวเองให้บ่อยว่าต้องการอะไร ฝึกรับโดยไม่รู้สึกผิด และช่วยเมื่อมีขอบเขตที่ดีต่อทั้งสองฝ่าย"},
+  3:{en:"The Achiever",th:"ผู้ขับเคลื่อนความสำเร็จ",drive:"อยากสร้างคุณค่าให้มองเห็นได้ ผ่านผลงาน ความสามารถ และการไปถึงเป้าหมายอย่างมีประสิทธิภาพ",summary:"คุณจับจังหวะของเป้าหมายได้ดี ปรับตัวเร็ว และมีพลังพาความคิดไปสู่ผลลัพธ์ที่คนอื่นมองเห็นได้",strength:"มุ่งผลลัพธ์ คล่องตัว สร้างแรงบันดาลใจ และจัดลำดับสิ่งสำคัญได้ภายใต้ข้อจำกัด",watch:"เมื่อผูกคุณค่าตัวเองกับผลงานมากเกินไป อาจเหนื่อยโดยไม่รู้ตัวหรือปรับภาพลักษณ์จนห่างจากความรู้สึกจริง",growth:"นิยามความสำเร็จด้วยภาษาของตัวเอง พักโดยไม่ต้องพิสูจน์อะไร และบอกความรู้สึกก่อนรีบแก้ปัญหา"},
+  4:{en:"The Individualist",th:"ผู้ค้นหาความหมาย",drive:"อยากเข้าใจและถ่ายทอดตัวตนที่แท้จริง ผ่านความรู้สึกลึกซึ้ง ความหมาย และความงามที่มีเอกลักษณ์",summary:"คุณไวต่อความละเอียดอ่อน มองเห็นมิติที่คนอื่นอาจมองข้าม และต้องการให้งานกับชีวิตสะท้อนความจริงภายใน",strength:"สร้างสรรค์ จริงใจ เข้าใจอารมณ์ และเปลี่ยนประสบการณ์ที่ซับซ้อนให้กลายเป็นความหมาย",watch:"การเปรียบเทียบหรือจดจ่อกับสิ่งที่ขาด อาจทำให้ความธรรมดาดูไม่มีคุณค่าและอารมณ์พาออกห่างจากการลงมือทำ",growth:"สร้างจังหวะเล็ก ๆ ที่สม่ำเสมอ อยู่กับสิ่งที่มีตรงหน้า และจำไว้ว่าความธรรมดาก็สามารถจริงและงดงามได้"},
+  5:{en:"The Observer",th:"ผู้สังเกตและเข้าใจ",drive:"อยากมีความรู้ ความสามารถ และพื้นที่เพียงพอ เพื่อรับมือโลกอย่างไม่ถูกบุกรุกหรือใช้พลังเกินจำเป็น",summary:"คุณถอยออกมามองภาพรวมก่อนลงมือ ชอบทำความเข้าใจระบบให้ชัด และให้คุณค่ากับความคิดที่ผ่านการกลั่นกรอง",strength:"วิเคราะห์ลึก เป็นอิสระทางความคิด สงบนิ่ง และมองเห็นความเชื่อมโยงที่ซ่อนอยู่",watch:"การรอให้พร้อมหรือรู้มากพอ อาจกลายเป็นการถอยห่างจากผู้คน ประสบการณ์ และการลงมือในเวลาที่เหมาะสม",growth:"ทดลองมีส่วนร่วมก่อนรู้ครบทุกอย่าง แบ่งปันสิ่งที่คิดทีละน้อย และดูแลพลังงานโดยไม่ปิดประตูจากโลกภายนอก"},
+  6:{en:"The Loyalist",th:"ผู้สร้างความมั่นคง",drive:"อยากมีความมั่นคง ความไว้ใจ และความพร้อมรับมือ จึงสังเกตความเสี่ยงและตรวจสอบสิ่งต่าง ๆ อย่างจริงจัง",summary:"คุณมองเห็นจุดเปราะบางก่อนใคร ให้ความสำคัญกับความรับผิดชอบ และยืนหยัดกับคนหรือสิ่งที่เชื่อใจ",strength:"รอบคอบ ซื่อสัตย์ เตรียมพร้อม ทำงานเป็นทีม และตั้งคำถามที่ช่วยป้องกันปัญหา",watch:"การคิดเผื่อหลายชั้นอาจทำให้ความไม่แน่นอนดูอันตรายกว่าความจริง หรือมอบอำนาจการตัดสินใจให้เสียงภายนอก",growth:"แยกข้อเท็จจริงออกจากสมมติฐาน เชื่อสัญชาตญาณของตัวเอง และเลือกก้าวเล็ก ๆ แม้ยังไม่เห็นทุกคำตอบ"},
+  7:{en:"The Explorer",th:"ผู้เปิดโลกความเป็นไปได้",drive:"อยากรักษาอิสระ ความมีชีวิตชีวา และทางเลือก ด้วยการมองหาประสบการณ์หรือความคิดใหม่อยู่เสมอ",summary:"คุณมองเห็นโอกาสได้เร็ว เชื่อมไอเดียเก่ง และนำพลังเบาสบายเข้ามาในสถานการณ์ที่คนอื่นอาจติดอยู่กับข้อจำกัด",strength:"คิดกว้าง กระตือรือร้น ยืดหยุ่น แก้ปัญหาเฉพาะหน้า และจุดประกายความหวัง",watch:"การรีบไปหาสิ่งใหม่อาจทำให้ข้ามความไม่สบายใจ งานที่ต้องทำให้จบ หรือความลึกที่เกิดจากการอยู่กับสิ่งเดิม",growth:"อยู่กับประสบการณ์หนึ่งให้นานพอ ทำสิ่งสำคัญให้จบ และยอมรับว่าความรู้สึกหนักไม่ได้พรากอิสระไปจากคุณ"},
+  8:{en:"The Protector",th:"ผู้ใช้พลังเพื่อปกป้อง",drive:"อยากกำหนดชีวิตด้วยตนเอง รักษาความเป็นอิสระ และปกป้องคนหรือสิ่งสำคัญจากการถูกควบคุม",summary:"คุณเผชิญปัญหาอย่างตรงไปตรงมา ตัดสินใจได้ภายใต้แรงกดดัน และพร้อมยืนอยู่แนวหน้าเมื่อสถานการณ์ต้องการความชัดเจน",strength:"กล้าหาญ เด็ดขาด มีพลัง ปกป้องความยุติธรรม และรับมือความขัดแย้งได้",watch:"ความเข้มแข็งอาจกลบความเปราะบาง หรือทำให้การสื่อสารแรงกว่าที่ตั้งใจ จนคนอื่นไม่กล้าบอกข้อมูลสำคัญ",growth:"ใช้พลังให้พอดีกับสถานการณ์ ฟังจนจบก่อนตัดสิน และยอมให้ความอ่อนโยนเป็นส่วนหนึ่งของความแข็งแกร่ง"},
+  9:{en:"The Peacemaker",th:"ผู้ประสานความกลมกลืน",drive:"อยากรักษาความสงบ ความเชื่อมโยง และพื้นที่ที่ทุกฝ่ายอยู่ร่วมกันได้ โดยหลีกเลี่ยงความขัดแย้งที่ไม่จำเป็น",summary:"คุณรับรู้หลายมุมพร้อมกัน ทำให้คนรู้สึกผ่อนคลาย และช่วยประสานความแตกต่างโดยไม่เร่งบังคับคำตอบ",strength:"ใจเย็น เปิดกว้าง รับฟังดี ประนีประนอม และสร้างความมั่นคงให้กลุ่ม",watch:"การตามจังหวะคนอื่นมากไปอาจทำให้ความต้องการของตัวเองเลือนหาย งานสำคัญถูกเลื่อน หรือความไม่พอใจสะสมเงียบ ๆ",growth:"ระบุสิ่งที่ตัวเองต้องการให้ชัด เริ่มจากลำดับแรกเพียงเรื่องเดียว และมองความขัดแย้งที่จริงใจเป็นทางไปสู่ความสัมพันธ์ที่แข็งแรงขึ้น"}
+};
+
+const questions=[
+  [1,"เมื่อเห็นงานที่ยังไม่เรียบร้อย ฉันมักคิดทันทีว่าควรแก้ตรงไหน"],[2,"ฉันสังเกตได้ไวว่าคนรอบตัวกำลังต้องการความช่วยเหลืออะไร"],[3,"เป้าหมายที่ชัดเจนทำให้ฉันรู้สึกมีพลังและอยากเดินหน้า"],[4,"ฉันให้ความสำคัญกับการเป็นตัวเอง แม้สิ่งนั้นจะทำให้แตกต่างจากคนส่วนใหญ่"],[5,"ก่อนแสดงความคิดเห็น ฉันอยากมีเวลาคิดและทำความเข้าใจข้อมูลให้พอ"],[6,"ฉันมักคิดเผื่อว่าอะไรอาจผิดพลาด และจะรับมืออย่างไร"],[7,"เมื่อมีทางเลือกใหม่ที่น่าสนใจ ฉันรู้สึกตื่นเต้นมากกว่ากังวล"],[8,"ถ้าสถานการณ์ไม่ชัด ฉันมักเป็นคนลุกขึ้นมากำหนดทิศทาง"],[9,"ฉันพยายามทำให้ทุกฝ่ายคุยกันได้โดยไม่ต้องปะทะกันเกินจำเป็น"],
+  [1,"ฉันรู้สึกสบายใจเมื่อได้ทำตามมาตรฐานที่เชื่อว่าถูกต้อง"],[2,"ความสัมพันธ์ที่อบอุ่นทำให้ฉันรู้สึกว่าตัวเองมีคุณค่า"],[3,"ฉันปรับวิธีนำเสนอตัวเองให้เหมาะกับเป้าหมายและผู้ฟังได้รวดเร็ว"],[4,"อารมณ์และบรรยากาศมีผลต่อแรงบันดาลใจของฉันมาก"],[5,"ฉันต้องการพื้นที่ส่วนตัวเพื่อเติมพลังและจัดระเบียบความคิด"],[6,"ก่อนเชื่อเรื่องสำคัญ ฉันอยากตรวจสอบแหล่งข้อมูลหรือถามความเห็นอีกครั้ง"],[7,"ฉันมักเห็นหลายความเป็นไปได้จนเลือกทำเพียงอย่างเดียวได้ยาก"],[8,"ฉันพูดตรงเมื่อเห็นว่ามีคนถูกเอาเปรียบหรือขอบเขตถูกละเมิด"],[9,"ฉันยอมปรับตามคนอื่นได้ง่าย หากช่วยให้บรรยากาศยังราบรื่น"],
+  [1,"คำวิจารณ์เล็ก ๆ ในใจช่วยผลักดันให้ฉันทำสิ่งต่าง ๆ ให้ดีขึ้น"],[2,"ฉันมักให้เวลาและพลังกับคนอื่นก่อนดูว่าตัวเองเหลือเท่าไร"],[3,"ฉันชอบวัดความคืบหน้าจากผลลัพธ์ที่เห็นได้จริง"],[4,"ฉันรู้สึกว่าประสบการณ์บางอย่างในตัวฉันอธิบายให้คนอื่นเข้าใจได้ยาก"],[5,"การเข้าใจระบบอย่างลึกซึ้งสำคัญสำหรับฉันมากกว่าการเป็นจุดสนใจ"],[6,"ฉันผูกพันกับคนหรือทีมที่พิสูจน์แล้วว่าไว้ใจกันได้"],[7,"ฉันใช้การวางแผนเรื่องสนุกหรือโครงการใหม่ช่วยพาตัวเองออกจากความรู้สึกหนัก"],[8,"ฉันไม่ชอบให้ใครมาควบคุมการตัดสินใจของฉันโดยไม่มีเหตุผล"],[9,"บางครั้งฉันรู้ว่าตัวเองต้องการอะไรช้ากว่ารู้ว่าคนอื่นต้องการอะไร"],
+  [1,"ถ้าทำสิ่งที่ควรทำไม่ได้ ฉันมักรู้สึกผิดแม้ไม่มีใครตำหนิ"],[2,"ฉันยินดีเป็นคนที่ผู้อื่นโทรหาเมื่อมีปัญหา"],[3,"เมื่อเจองานยาก ฉันโฟกัสที่วิธีทำให้สำเร็จมากกว่าความรู้สึกระหว่างทาง"],[4,"ฉันมองหาความหมายที่ลึกกว่าคำตอบแบบผิวเผิน"],[5,"ฉันรู้สึกมั่นใจขึ้นเมื่อได้เตรียมความรู้ก่อนเข้าไปมีส่วนร่วม"],[6,"ฉันกล้าตั้งคำถามกับแผนที่ดูดี หากยังเห็นช่องโหว่"],[7,"กิจวัตรที่ซ้ำเดิมนาน ๆ ทำให้ฉันรู้สึกเหมือนถูกจำกัด"],[8,"คนมักมองว่าฉันมีพลังหรือชัดเจน แม้ฉันไม่ได้ตั้งใจนำ"],[9,"ฉันทำงานได้ดีเมื่อมีจังหวะสงบและไม่มีใครเร่งรัด"],
+  [1,"ฉันเคารพคนที่รับผิดชอบและทำในสิ่งที่พูด"],[2,"ฉันรับรู้ความรู้สึกของคนอื่นได้ง่ายจนบางครั้งรับมาด้วย"],[3,"ฉันอยากให้สิ่งที่ทำสะท้อนความสามารถและสร้างความน่าเชื่อถือ"],[4,"ฉันให้คุณค่ากับความงาม รายละเอียด และสิ่งที่มีเรื่องราวเฉพาะตัว"],[5,"ฉันระวังการรับภาระที่อาจใช้เวลา พลัง หรืออารมณ์มากเกินไป"],[6,"เมื่อรู้สึกไม่แน่นอน ฉันจะหากติกา คน หรือข้อมูลที่พอพึ่งพาได้"],[7,"ฉันคิดไอเดียต่อยอดได้เร็วและสนุกกับการเชื่อมเรื่องที่ดูไม่เกี่ยวกัน"],[8,"ฉันเคารพคนที่กล้าพูดความจริงกับฉันอย่างตรงไปตรงมา"],[9,"ฉันมองเห็นเหตุผลของหลายฝ่าย จนบางครั้งตัดสินใจช้ากว่าที่ควร"]
+];
+
+const state={index:0,answers:Array(questions.length).fill(null)};
+const $=id=>document.getElementById(id);
+const test=$("test"),result=$("result"),intro=$("intro");
+
+function renderQuestion(){
+  const [type,text]=questions[state.index];
+  $("questionText").textContent=text;
+  $("questionKicker").textContent=`Statement ${String(state.index+1).padStart(2,"0")} · Pattern ${type}`;
+  const done=state.answers.filter(Boolean).length;
+  const pct=Math.round(done/questions.length*100);
+  $("progressText").textContent=`Question ${String(state.index+1).padStart(2,"0")} / ${questions.length}`;
+  $("progressPct").textContent=`${pct}% answered`;
+  $("progressBar").style.width=`${pct}%`;
+  document.querySelectorAll(".answer").forEach(btn=>btn.classList.toggle("selected",Number(btn.dataset.value)===state.answers[state.index]));
+  $("prevBtn").disabled=state.index===0;
+  $("nextBtn").textContent=state.index===questions.length-1?"View result →":"Next →";
+}
+
+function showTest(){
+  test.classList.add("active");result.classList.remove("active");
+  test.scrollIntoView({behavior:"smooth"});renderQuestion();
+}
+
+function goNext(){
+  if(!state.answers[state.index]){toast("กรุณาเลือกคำตอบก่อน");return}
+  if(state.index<questions.length-1){state.index++;renderQuestion()}else finish();
+}
+
+function finish(){
+  if(state.answers.some(value=>!value)){const next=state.answers.findIndex(value=>!value);state.index=next;renderQuestion();toast("ยังตอบไม่ครบทุกข้อ");return}
+  const totals=Object.fromEntries(Array.from({length:9},(_,i)=>[i+1,0]));
+  const counts={...totals};
+  questions.forEach(([type],i)=>{totals[type]+=state.answers[i];counts[type]++});
+  const scores=Object.keys(totals).map(Number).map(type=>({type,raw:totals[type]/counts[type]})).sort((a,b)=>b.raw-a.raw||a.type-b.type);
+  const top=scores[0],profile=profiles[top.type];
+  const left=top.type===1?9:top.type-1,right=top.type===9?1:top.type+1;
+  const wing=totals[left]>=totals[right]?left:right;
+  $("resultNumber").textContent=top.type;
+  $("resultTitle").innerHTML=`${profile.en}<br><em>${profile.th}</em>`;
+  $("resultSummary").textContent=profile.summary;
+  $("resultWing").textContent=`Possible wing · ${top.type}w${wing} / ${profiles[wing].th}`;
+  $("resultDrive").textContent=profile.drive;$("resultStrength").textContent=profile.strength;$("resultWatch").textContent=profile.watch;$("resultGrowth").textContent=profile.growth;
+  const max=Math.max(...scores.map(s=>s.raw)),min=Math.min(...scores.map(s=>s.raw));
+  $("scoreRows").innerHTML=scores.map(s=>{const relative=max===min?100:Math.round(45+(s.raw-min)/(max-min)*55);const pct=Math.round(s.raw/5*100);return `<div class="score-row"><span class="score-num">${s.type}</span><span class="score-name">${profiles[s.type].th}</span><span class="score-bar"><i style="width:${relative}%"></i></span><span class="score-pct">${pct}%</span></div>`}).join("");
+  test.classList.remove("active");result.classList.add("active");result.scrollIntoView({behavior:"smooth"});
+  sessionStorage.setItem("arstinlaEnneagram",JSON.stringify({answers:state.answers,result:top.type,wing}));
+}
+
+function resultText(){const type=Number($("resultNumber").textContent),p=profiles[type];return `ผล Enneagram Compass ของฉัน: Type ${type} — ${p.en} (${p.th})\n${p.summary}\n\nสำรวจตัวเองได้ที่ ${location.origin}/tools/enneagram/`}
+function toast(message){const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2200)}
+
+$("beginBtn").addEventListener("click",showTest);
+document.querySelectorAll(".answer").forEach(btn=>btn.addEventListener("click",()=>{state.answers[state.index]=Number(btn.dataset.value);renderQuestion();setTimeout(goNext,170)}));
+$("prevBtn").addEventListener("click",()=>{if(state.index>0){state.index--;renderQuestion()}});
+$("nextBtn").addEventListener("click",goNext);
+$("restartBtn").addEventListener("click",()=>{state.index=0;state.answers.fill(null);sessionStorage.removeItem("arstinlaEnneagram");showTest()});
+$("copyBtn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(resultText());toast("คัดลอกผลลัพธ์แล้ว")}catch{toast("ไม่สามารถคัดลอกได้")}});
+$("shareBtn").addEventListener("click",async()=>{const data={title:"ARSTINLA Enneagram Compass",text:resultText(),url:`${location.origin}/tools/enneagram/`};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(resultText());toast("คัดลอกผลลัพธ์สำหรับแชร์แล้ว")}}catch(error){if(error.name!=="AbortError")toast("ไม่สามารถแชร์ได้")}});
+</script>
+</body>
+</html>
