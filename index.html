@@ -1959,9 +1959,22 @@ background-size: cover;
   }
 
 
-  .knowledge-tool {
+  .knowledge-tools {
 
     margin-top: 34px;
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+  }
+
+
+  .knowledge-tool {
+
+    min-height: 320px;
 
     padding:
       clamp(28px, 4vw, 48px);
@@ -2042,6 +2055,18 @@ background-size: cover;
     border-bottom: 1px solid currentColor;
 
     padding-bottom: 5px;
+  }
+
+
+  @media (max-width: 760px) {
+
+    .knowledge-tools {
+      grid-template-columns: 1fr;
+    }
+
+    .knowledge-tool {
+      min-height: 0;
+    }
   }
 
 
@@ -4351,7 +4376,7 @@ data-contact-link
 
   </div>
 
-  <div class="container">
+  <div class="container knowledge-tools">
 
     <a
       href="/tools/image/"
@@ -4378,6 +4403,35 @@ data-contact-link
 
       <span class="knowledge-tool-cta">
         Open Image Tool →
+      </span>
+
+    </a>
+
+    <a
+      href="/tools/birthday/"
+      class="knowledge-tool reveal"
+      aria-label="Open ARSTINLA Birthday Insight"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Birthday Insight
+        </div>
+
+        <h3>
+          Read the day you were born.
+        </h3>
+
+        <p>
+          เลือกวันที่เกิดเพื่ออ่านบุคลิก วิธีคิด และความสัมพันธ์
+          จากคำอ่านครบทั้ง 31 วัน
+        </p>
+
+      </div>
+
+      <span class="knowledge-tool-cta">
+        Read Your Day →
       </span>
 
     </a>
@@ -4840,6 +4894,10 @@ data-contact-link
 
   <a href="/tools/image/">
     IMAGE TOOL
+  </a>
+
+  <a href="/tools/birthday/">
+    BIRTHDAY INSIGHT
   </a>
 
 </div>

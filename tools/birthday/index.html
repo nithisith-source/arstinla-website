@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171816">
+<meta name="description" content="อ่านบุคลิกและแนวโน้มจากวันที่เกิด 1–31 ในรูปแบบ ARSTINLA Birthday Insight">
+<title>Birthday Insight | ARSTINLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#171816;
+  --panel:#1e1f1c;
+  --panel-2:#242520;
+  --line:#353630;
+  --text:#f0ede5;
+  --muted:#9b9b91;
+  --cream:#f1eee5;
+  --sand:#c8b79b;
+  --orange:#c37855;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{
+  min-height:100vh;
+  background:var(--ink);
+  color:var(--text);
+  font-family:"Noto Sans Thai","Instrument Sans",system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.65;
+}
+button,input{font:inherit}
+button{color:inherit}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--sand);color:var(--ink)}
+
+.site-header{
+  min-height:74px;
+  padding:20px clamp(20px,4vw,56px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  border-bottom:1px solid var(--line);
+}
+.brand{
+  font-family:"Instrument Sans",sans-serif;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.16em;
+}
+.brand span{color:var(--muted);font-weight:400}
+.top-nav{display:flex;align-items:center;gap:24px;color:var(--muted)}
+.top-nav a{font-family:"Instrument Sans",sans-serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase}
+.top-nav a:hover{color:var(--sand)}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  padding:clamp(52px,8vw,112px) clamp(20px,7vw,112px) clamp(46px,7vw,90px);
+  border-bottom:1px solid var(--line);
+}
+.hero::after{
+  content:"31";
+  position:absolute;
+  right:clamp(-24px,2vw,30px);
+  top:50%;
+  translate:0 -50%;
+  font-family:"Instrument Serif",serif;
+  font-size:clamp(180px,32vw,520px);
+  line-height:.75;
+  color:transparent;
+  -webkit-text-stroke:1px #2f302b;
+  pointer-events:none;
+}
+.eyebrow{
+  position:relative;
+  z-index:1;
+  font-family:"Instrument Sans",sans-serif;
+  color:var(--orange);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+.hero h1{
+  position:relative;
+  z-index:1;
+  margin-top:22px;
+  max-width:760px;
+  font-family:"Instrument Serif",serif;
+  font-size:clamp(48px,8.5vw,126px);
+  font-weight:400;
+  letter-spacing:-.055em;
+  line-height:.88;
+}
+.hero h1 em{color:var(--sand);font-weight:400}
+.hero-copy{
+  position:relative;
+  z-index:1;
+  margin-top:28px;
+  max-width:570px;
+  color:var(--muted);
+  font-size:clamp(14px,1.6vw,17px);
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:minmax(300px,390px) minmax(0,1fr);
+  min-height:760px;
+}
+.selector{
+  padding:clamp(28px,4vw,52px);
+  border-right:1px solid var(--line);
+  background:#191a17;
+}
+.selector-inner{position:sticky;top:24px}
+.section-label{
+  font-family:"Instrument Sans",sans-serif;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+.date-panel{
+  margin-top:20px;
+  padding:22px;
+  background:var(--panel);
+  border:1px solid var(--line);
+}
+.date-panel label{display:block;margin-bottom:10px;color:var(--muted);font-size:13px}
+.date-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+input[type="date"]{
+  width:100%;
+  min-width:0;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  background:var(--ink);
+  color:var(--text);
+  color-scheme:dark;
+}
+.date-submit{
+  padding:0 16px;
+  border:0;
+  background:var(--sand);
+  color:var(--ink);
+  cursor:pointer;
+  font-weight:600;
+}
+.date-submit:hover{background:var(--cream)}
+.hint{margin-top:9px;color:var(--muted);font-size:11px}
+.day-title{margin-top:34px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.day-title span:last-child{color:var(--muted);font-family:"Instrument Sans",sans-serif;font-size:11px}
+.days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+  margin-top:14px;
+}
+.day{
+  aspect-ratio:1;
+  min-width:0;
+  border:1px solid var(--line);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  font-family:"Instrument Sans",sans-serif;
+  font-size:12px;
+  transition:.2s var(--ease);
+}
+.day:hover{border-color:var(--sand);color:var(--text);transform:translateY(-1px)}
+.day[aria-pressed="true"]{border-color:var(--orange);background:var(--orange);color:white}
+.selector-note{
+  margin-top:28px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:11px;
+}
+
+.reading{min-width:0;background:var(--panel)}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.metric{padding:20px clamp(18px,3vw,38px);border-right:1px solid var(--line)}
+.metric:last-child{border-right:0}
+.metric-value{
+  font-family:"Instrument Serif",serif;
+  font-size:clamp(24px,3vw,38px);
+  line-height:1;
+}
+.metric-value.accent{color:var(--sand)}
+.metric-label{margin-top:7px;color:var(--muted);font-family:"Instrument Sans",sans-serif;font-size:9px;letter-spacing:.15em;text-transform:uppercase}
+
+.article{padding:clamp(40px,7vw,104px) clamp(22px,8vw,120px)}
+.article-head{display:grid;grid-template-columns:auto 1fr;gap:clamp(22px,4vw,60px);align-items:start}
+.day-number{
+  font-family:"Instrument Serif",serif;
+  color:var(--orange);
+  font-size:clamp(72px,10vw,146px);
+  line-height:.7;
+  letter-spacing:-.07em;
+}
+.article h2{
+  max-width:760px;
+  font-size:clamp(28px,5vw,66px);
+  font-weight:300;
+  line-height:1.18;
+  letter-spacing:-.045em;
+}
+.lead{
+  margin-top:clamp(36px,6vw,70px);
+  max-width:900px;
+  padding:clamp(24px,4vw,42px);
+  border-top:1px solid var(--orange);
+  border-bottom:1px solid var(--line);
+  background:#22231f;
+  color:var(--cream);
+  font-size:clamp(17px,2vw,23px);
+  line-height:1.8;
+}
+.article-body{max-width:790px;margin-top:50px}
+.article-body p{margin-top:24px;color:#b9b8af;font-size:clamp(14px,1.45vw,17px);line-height:1.95}
+.article-body p:first-child{margin-top:0}
+.article-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:52px;padding-top:28px;border-top:1px solid var(--line)}
+.action{
+  border:1px solid var(--line);
+  background:transparent;
+  padding:11px 18px;
+  cursor:pointer;
+  font-family:"Instrument Sans",sans-serif;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.action:hover{border-color:var(--sand);color:var(--sand)}
+.action.primary{border-color:var(--sand);background:var(--sand);color:var(--ink)}
+.action.primary:hover{background:var(--cream);border-color:var(--cream)}
+.article-nav{display:grid;grid-template-columns:1fr 1fr;margin-top:56px;border:1px solid var(--line)}
+.nav-day{padding:20px;border:0;background:transparent;text-align:left;cursor:pointer}
+.nav-day+ .nav-day{border-left:1px solid var(--line);text-align:right}
+.nav-day:hover{background:var(--panel-2)}
+.nav-kicker{display:block;color:var(--muted);font-family:"Instrument Sans",sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.nav-name{display:block;margin-top:5px;color:var(--text);font-size:12px}
+.loading{padding:100px 24px;text-align:center;color:var(--muted)}
+.toast{
+  position:fixed;
+  left:50%;bottom:24px;
+  translate:-50% 20px;
+  padding:11px 18px;
+  background:var(--cream);
+  color:var(--ink);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s var(--ease);
+  font-size:13px;
+  z-index:10;
+}
+.toast.show{opacity:1;translate:-50% 0}
+
+footer{
+  padding:22px clamp(20px,4vw,56px);
+  border-top:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-family:"Instrument Sans",sans-serif;
+  font-size:11px;
+}
+footer nav{display:flex;gap:20px}
+footer a:hover{color:var(--sand)}
+
+@media(max-width:900px){
+  .dashboard{grid-template-columns:1fr}
+  .selector{border-right:0;border-bottom:1px solid var(--line)}
+  .selector-inner{position:static}
+  .days{grid-template-columns:repeat(8,1fr)}
+  .article-head{grid-template-columns:1fr;gap:28px}
+  .day-number{font-size:88px}
+}
+@media(max-width:560px){
+  .site-header{align-items:flex-start}
+  .top-nav{gap:14px;flex-direction:column;align-items:flex-end}
+  .top-nav a{font-size:9px}
+  .hero::after{opacity:.55}
+  .days{grid-template-columns:repeat(7,1fr)}
+  .metrics{grid-template-columns:1fr 1fr}
+  .metric:nth-child(2){border-right:0}
+  .metric:last-child{grid-column:1/-1;border-top:1px solid var(--line)}
+  .article-nav{grid-template-columns:1fr}
+  .nav-day+ .nav-day{border-left:0;border-top:1px solid var(--line);text-align:left}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="/">ARSTINLA <span>/ Birthday Insight</span></a>
+  <nav class="top-nav" aria-label="Tools navigation">
+    <a href="/tools/image/">Image Tool</a>
+    <a href="/">Back to website</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">ARSTINLA Digital Tool / 02</div>
+  <h1>Read the day<br><em>you were born.</em></h1>
+  <p class="hero-copy">เลือกวันที่เกิดเพื่ออ่านบุคลิก วิธีคิด ความสัมพันธ์ และมุมที่คนรอบตัวอาจยังไม่เคยสังเกตเห็นในตัวคุณ</p>
+</section>
+
+<main class="dashboard">
+  <aside class="selector" aria-label="เลือกวันที่เกิด">
+    <div class="selector-inner">
+      <div class="section-label">Choose your birth date</div>
+      <div class="date-panel">
+        <label for="birthDate">วัน เดือน ปีเกิด</label>
+        <div class="date-row">
+          <input id="birthDate" type="date" autocomplete="bday">
+          <button class="date-submit" id="dateSubmit" type="button">อ่าน</button>
+        </div>
+        <p class="hint">ระบบใช้เฉพาะ “วันที่” เพื่อค้นหาคำอ่าน และไม่บันทึกข้อมูลของคุณ</p>
+      </div>
+
+      <div class="day-title">
+        <span class="section-label">Or select a day</span>
+        <span>01—31</span>
+      </div>
+      <div class="days" id="days"></div>
+      <p class="selector-note">คำอ่านนี้เรียบเรียงจากข้อมูลบุคลิกตามวันที่เกิด ใช้เพื่อความบันเทิงและการสำรวจตัวเอง ไม่ใช่คำแนะนำด้านสุขภาพ การเงิน หรือการตัดสินใจสำคัญ</p>
+    </div>
+  </aside>
+
+  <section class="reading" aria-live="polite">
+    <div class="loading" id="loading">กำลังเตรียมคำอ่านทั้ง 31 วัน…</div>
+    <div id="readingContent" hidden>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-value accent" id="metricDay">01</div>
+          <div class="metric-label">Selected day</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">31</div>
+          <div class="metric-label">Birth readings</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="readTime">4 min</div>
+          <div class="metric-label">Reading time</div>
+        </div>
+      </div>
+
+      <article class="article">
+        <div class="article-head">
+          <div class="day-number" id="dayNumber">01</div>
+          <div>
+            <div class="eyebrow">Born on day <span id="dayLabel">01</span></div>
+            <h2 id="readingTitle"></h2>
+          </div>
+        </div>
+        <p class="lead" id="readingLead"></p>
+        <div class="article-body" id="readingBody"></div>
+
+        <div class="article-actions">
+          <button class="action primary" id="shareBtn" type="button">Share reading</button>
+          <button class="action" id="copyBtn" type="button">Copy text</button>
+        </div>
+
+        <div class="article-nav">
+          <button class="nav-day" id="prevDay" type="button">
+            <span class="nav-kicker">← Previous day</span>
+            <span class="nav-name" id="prevName"></span>
+          </button>
+          <button class="nav-day" id="nextDay" type="button">
+            <span class="nav-kicker">Next day →</span>
+            <span class="nav-name" id="nextName"></span>
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 ARSTINLA Design &amp; Consult</span>
+  <nav>
+    <a href="/tools/image/">Image Tool</a>
+    <a href="/">Main Website</a>
+  </nav>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const titles = {
+  1:"คนรักเสรี กล้าหาญ และไม่ก้มหัวให้ใคร",
+  2:"เพื่อนเป็นคนสำคัญ",
+  3:"เพื่อนที่แสนดี",
+  4:"จริงใจและมั่นคง",
+  5:"นักอุดมการณ์ หรือบางทีก็เผด็จการ",
+  6:"อยู่ได้ด้วยความรัก",
+  7:"นักเล่าประสบการณ์",
+  8:"ทุกอย่างต้องพร้อม",
+  9:"เจ้าความคิด",
+  10:"แข็ง… หรือไม่ก็…แกร่ง",
+  11:"แม้จะเจ้าอารมณ์ แต่ก็สร้างสรรค์",
+  12:"คนเก่งที่มีเพื่อนน้อย",
+  13:"น่ารักน่าคบ",
+  14:"น่ารักน่าคบ",
+  15:"เห็นง่าย—รู้จักยาก",
+  16:"ไม่ลุ่มหลงอะไรง่าย ๆ",
+  17:"สมบูรณ์แบบ",
+  18:"ที่ปรึกษาผู้เคร่งครัด",
+  19:"เปี่ยมด้วยกำลังภายใน",
+  20:"อารมณ์เหมือนใบไม้ไหว…แต่น่ารัก",
+  21:"นุ่มนวล เจ้าเสน่ห์",
+  22:"คงเส้นคงวา",
+  23:"ตัวเองคือความมั่นใจ",
+  24:"มีน้ำใจไมตรี",
+  25:"รวงข้าวที่มีเมล็ดมาก",
+  26:"สุขุม มองไกล",
+  27:"ซื่อสัตย์ยุติธรรมประจำใจ",
+  28:"เรื่อย ๆ มาเรียง ๆ",
+  29:"รักใครไม่ผันแปร",
+  30:"ทรราชย์น้อย",
+  31:"ต้องการกำลังใจ"
+};
+
+const $ = id => document.getElementById(id);
+const readings = new Map();
+let selectedDay = 1;
+let toastTimer;
+
+function cleanParagraph(text){
+  return text.replace(/\s*\n\s*/g," ").replace(/[ \t]+/g," ").trim();
+}
+
+function paragraphBlocks(segment){
+  const paragraphs=[];
+  let current=[];
+  segment.replace(/\r/g,"").split("\n").forEach(line=>{
+    if(!line.trim()){
+      if(line.length>0 && current.length){
+        paragraphs.push(cleanParagraph(current.join(" ")));
+        current=[];
+      }
+      return;
+    }
+    current.push(line.trim());
+  });
+  if(current.length)paragraphs.push(cleanParagraph(current.join(" ")));
+  return paragraphs.filter(Boolean);
+}
+
+function parseReadings(raw){
+  const normalized = raw.replace(/\r/g,"").trim();
+  const pattern = /^\s*คนเกิดวันที่\s*(\d+)\s*:\s*(.+?)\s*$/gm;
+  const matches = [...normalized.matchAll(pattern)];
+  matches.forEach((match,index) => {
+    const day = Number(match[1]);
+    const start = match.index + match[0].length;
+    const end = index + 1 < matches.length ? matches[index + 1].index : normalized.length;
+    const paragraphs = paragraphBlocks(normalized.slice(start,end));
+    readings.set(day,{day,title:titles[day] || cleanParagraph(match[2]),paragraphs});
+  });
+}
+
+function buildDayButtons(){
+  const fragment = document.createDocumentFragment();
+  for(let day=1;day<=31;day++){
+    const button = document.createElement("button");
+    button.type="button";
+    button.className="day";
+    button.textContent=String(day).padStart(2,"0");
+    button.dataset.day=day;
+    button.setAttribute("aria-label",`เลือกวันที่ ${day}`);
+    button.addEventListener("click",()=>selectDay(day,true));
+    fragment.append(button);
+  }
+  $("days").append(fragment);
+}
+
+function readMinutes(paragraphs){
+  const words = paragraphs.join(" ").split(/\s+/).filter(Boolean).length;
+  return Math.max(2,Math.ceil(words/150));
+}
+
+function shortTitle(day){
+  const title=titles[day];
+  return `${String(day).padStart(2,"0")} / ${title.length>28 ? title.slice(0,28)+"…" : title}`;
+}
+
+function selectDay(day,scroll=false){
+  const item=readings.get(day);
+  if(!item)return;
+  selectedDay=day;
+  const padded=String(day).padStart(2,"0");
+  const [lead,...rest]=item.paragraphs;
+
+  $("metricDay").textContent=padded;
+  $("dayNumber").textContent=padded;
+  $("dayLabel").textContent=padded;
+  $("readingTitle").textContent=item.title;
+  $("readingLead").textContent=lead || "";
+  $("readTime").textContent=`${readMinutes(item.paragraphs)} min`;
+  $("readingBody").replaceChildren(...rest.map(text=>{
+    const p=document.createElement("p");
+    p.textContent=text;
+    return p;
+  }));
+
+  document.querySelectorAll(".day").forEach(button=>{
+    button.setAttribute("aria-pressed",Number(button.dataset.day)===day ? "true" : "false");
+  });
+
+  const prev=day===1?31:day-1;
+  const next=day===31?1:day+1;
+  $("prevDay").dataset.day=prev;
+  $("nextDay").dataset.day=next;
+  $("prevName").textContent=shortTitle(prev);
+  $("nextName").textContent=shortTitle(next);
+
+  const url=new URL(location.href);
+  url.searchParams.set("day",day);
+  history.replaceState(null,"",url);
+  document.title=`คนเกิดวันที่ ${day}: ${item.title} | ARSTINLA`;
+  if(scroll && window.innerWidth<901){document.querySelector(".reading").scrollIntoView({behavior:"smooth"});}
+}
+
+function readingText(){
+  const item=readings.get(selectedDay);
+  return `คนเกิดวันที่ ${selectedDay}: ${item.title}\n\n${item.paragraphs.join("\n\n")}\n\nอ่านเพิ่มเติม: ${location.href}`;
+}
+
+function showToast(message){
+  clearTimeout(toastTimer);
+  $("toast").textContent=message;
+  $("toast").classList.add("show");
+  toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2200);
+}
+
+$("dateSubmit").addEventListener("click",()=>{
+  const value=$("birthDate").value;
+  if(!value){showToast("กรุณาเลือกวันเกิด");return;}
+  const day=Number(value.slice(-2));
+  selectDay(day,true);
+});
+$("birthDate").addEventListener("change",()=>$("dateSubmit").click());
+$("prevDay").addEventListener("click",event=>selectDay(Number(event.currentTarget.dataset.day),true));
+$("nextDay").addEventListener("click",event=>selectDay(Number(event.currentTarget.dataset.day),true));
+
+$("copyBtn").addEventListener("click",async()=>{
+  try{await navigator.clipboard.writeText(readingText());showToast("คัดลอกคำอ่านแล้ว");}
+  catch{showToast("ไม่สามารถคัดลอกได้ กรุณาลองใหม่");}
+});
+
+$("shareBtn").addEventListener("click",async()=>{
+  const item=readings.get(selectedDay);
+  const shareData={title:`คนเกิดวันที่ ${selectedDay}: ${item.title}`,text:`คำอ่านสำหรับคนเกิดวันที่ ${selectedDay} — ${item.title}`,url:location.href};
+  try{
+    if(navigator.share){await navigator.share(shareData);}
+    else{await navigator.clipboard.writeText(location.href);showToast("คัดลอกลิงก์สำหรับแชร์แล้ว");}
+  }catch(error){if(error.name!=="AbortError")showToast("ไม่สามารถแชร์ได้ กรุณาลองใหม่");}
+});
+
+async function init(){
+  buildDayButtons();
+  try{
+    const response=await fetch("birthdays.txt");
+    if(!response.ok)throw new Error("Cannot load readings");
+    parseReadings(await response.text());
+    if(readings.size!==31)throw new Error(`Expected 31 readings, found ${readings.size}`);
+    $("loading").hidden=true;
+    $("readingContent").hidden=false;
+    const requested=Number(new URL(location.href).searchParams.get("day"));
+    selectDay(requested>=1 && requested<=31 ? requested : 1);
+  }catch(error){
+    console.error(error);
+    $("loading").textContent="ไม่สามารถโหลดข้อมูลได้ กรุณารีเฟรชหน้าอีกครั้ง";
+  }
+}
+
+init();
+</script>
+</body>
+</html>
