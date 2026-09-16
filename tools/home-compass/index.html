@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171816">
+<meta name="description" content="ARSTINLA Home Compass — สำรวจทิศที่สนับสนุนเจ้าของบ้านตามหลัก Eight Mansions ควบคู่คำแนะนำด้านแดด ลม และบริบทบ้านในประเทศไทย">
+<title>Home Compass — ARSTINLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,300..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#171816;--paper:#f2efe8;--panel:#20211e;--text:#f4f1ea;--muted:#96978f;--line:#3a3b36;--sand:#c47a55;--pale-line:#cbc7bd;--font-en:"Instrument Sans",sans-serif;--font-serif:"Instrument Serif",serif;--font-th:"Noto Sans Thai",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}[hidden]{display:none!important}body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font-th);font-weight:300}button,input,select{font:inherit}button,a{color:inherit}a{text-decoration:none}
+.site-header{min-height:76px;padding:17px clamp(20px,4vw,62px);display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid var(--line);position:relative;z-index:3}.brand{font-family:var(--font-en);font-weight:650;letter-spacing:.2em;font-size:15px}.brand span{font-weight:300;color:var(--muted);letter-spacing:.08em}.top-nav{display:flex;align-items:center;gap:20px}.top-nav a{color:var(--muted);font:10px var(--font-en);letter-spacing:.13em;text-transform:uppercase}.top-nav a:hover{color:var(--text)}
+.app-shell{min-height:calc(100svh - 76px);display:grid;grid-template-columns:minmax(390px,.82fr) minmax(0,1.18fr)}
+.intro-panel{padding:clamp(48px,6vw,94px);display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--line);position:relative;overflow:hidden}.eyebrow,.section-label{font:600 10px var(--font-en);letter-spacing:.2em;text-transform:uppercase;color:var(--sand)}h1{font-family:var(--font-en);font-size:clamp(62px,7vw,112px);font-weight:300;letter-spacing:-.07em;line-height:.82;margin:28px 0 30px}h1 em{font-family:var(--font-serif);font-weight:400;color:var(--sand)}.intro-copy{max-width:590px;color:#b6b7af;font-size:clamp(15px,1.25vw,19px);line-height:1.85;margin:0}.intro-meta{display:flex;gap:34px;margin-top:34px}.intro-meta strong{display:block;font:300 24px var(--font-en)}.intro-meta span{display:block;color:var(--muted);font:9px var(--font-en);letter-spacing:.14em;text-transform:uppercase;margin-top:5px}
+.compass-mark{--bearing:0deg;width:clamp(210px,20vw,320px);aspect-ratio:1;border:1px solid #ffffff26;border-radius:50%;margin:46px auto 0;position:relative;background:radial-gradient(circle,#171816 0 24%,transparent 25%),repeating-conic-gradient(from -22.5deg,#ffffff0b 0 1deg,transparent 1deg 45deg)}.compass-mark::before,.compass-mark::after{content:"";position:absolute;background:#ffffff1c}.compass-mark::before{left:50%;top:8%;bottom:8%;width:1px}.compass-mark::after{top:50%;left:8%;right:8%;height:1px}.compass-needle{position:absolute;inset:13%;transform:rotate(var(--bearing));transition:transform .8s cubic-bezier(.2,.7,.2,1)}.compass-needle::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:82px solid var(--sand)}.compass-needle::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:15px;height:15px;border:5px solid var(--ink);border-radius:50%;background:var(--paper)}.compass-mark b{position:absolute;font:500 9px var(--font-en);letter-spacing:.15em;color:#d7d5cf}.compass-mark .n{top:7%;left:50%;transform:translateX(-50%)}.compass-mark .e{right:7%;top:50%;transform:translateY(-50%)}.compass-mark .s{bottom:7%;left:50%;transform:translateX(-50%)}.compass-mark .w{left:7%;top:50%;transform:translateY(-50%)}
+.privacy{color:#71726c;font-size:10px;line-height:1.7;margin:34px 0 0}
+.calculator-panel{background:var(--paper);color:var(--ink);padding:clamp(42px,5.2vw,84px);display:flex;align-items:center}.calculator,.result-view{width:min(900px,100%);margin:auto}.panel-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:34px}.panel-head h2,.result-view h2{font:300 clamp(42px,4.7vw,72px) var(--font-en);letter-spacing:-.055em;line-height:.95;margin:13px 0 0}.panel-head p{max-width:330px;color:#686a63;line-height:1.7;margin:0;font-size:13px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.field{display:grid;gap:8px}.field.full{grid-column:1/-1}.field-label{font:600 10px var(--font-en);letter-spacing:.14em;text-transform:uppercase;color:#62635d}.field input,.field select{width:100%;min-height:58px;border:1px solid #bdb9af;background:#f8f6f1;color:var(--ink);padding:0 16px;border-radius:0}.field input:focus,.field select:focus{outline:2px solid #c47a5570;outline-offset:1px}.field small{color:#7c7d76;font-size:10px;line-height:1.6}
+.birth-date-fields{display:grid;grid-template-columns:.68fr 1.32fr 1fr;gap:8px}.birth-date-fields select{min-width:0;padding:0 12px}
+.profile-options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.profile-option{position:relative}.profile-option input{position:absolute;opacity:0;pointer-events:none}.profile-option span{display:block;border:1px solid #bdb9af;padding:16px;background:#f8f6f1;text-align:center;cursor:pointer}.profile-option input:checked+span{background:var(--ink);border-color:var(--ink);color:white}.form-note{margin:24px 0 0;padding:16px 18px;border-left:2px solid var(--sand);background:#e9e5dc;color:#65665f;font-size:11px;line-height:1.7}.submit-btn{width:100%;min-height:62px;border:0;background:var(--ink);color:white;margin-top:24px;font:600 11px var(--font-en);letter-spacing:.17em;text-transform:uppercase;cursor:pointer}.submit-btn:hover{background:var(--sand)}
+.result-view{padding:10px 0}.result-kicker{display:flex;justify-content:space-between;gap:15px;align-items:center}.back-btn{border:0;background:transparent;color:#66675f;padding:0;font:600 10px var(--font-en);letter-spacing:.13em;text-transform:uppercase;cursor:pointer}.back-btn:hover{color:var(--sand)}.result-title-row{display:flex;justify-content:space-between;align-items:end;gap:30px;border-bottom:1px solid var(--pale-line);padding-bottom:26px}.kua-badge{flex:0 0 auto;width:112px;height:112px;border:1px solid var(--ink);display:grid;place-items:center}.kua-badge strong{font:400 58px var(--font-serif);line-height:1}.kua-badge span{font:8px var(--font-en);letter-spacing:.12em;text-transform:uppercase;color:#77786f}
+.recommendation{display:grid;grid-template-columns:1fr auto;gap:26px;align-items:center;padding:28px 0;border-bottom:1px solid var(--pale-line)}.direction-name{font:300 clamp(40px,4.2vw,67px) var(--font-en);letter-spacing:-.045em;line-height:1}.direction-name small{display:block;margin-bottom:9px;font:600 9px var(--font-en);letter-spacing:.18em;text-transform:uppercase;color:var(--sand)}.direction-degree{width:100px;height:100px;border-radius:50%;border:1px solid #aaa69b;display:grid;place-items:center;text-align:center}.direction-degree strong{font:400 26px var(--font-serif)}.direction-degree span{display:block;font:8px var(--font-en);letter-spacing:.1em;text-transform:uppercase;color:#77786f}.result-lead{color:#5f6059;line-height:1.85;margin:22px 0 0}
+.direction-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:25px}.direction-card{border:1px solid var(--pale-line);padding:16px;min-height:116px}.direction-card.recommended{background:var(--ink);color:white;border-color:var(--ink)}.direction-card strong{font:400 24px var(--font-serif)}.direction-card span{display:block;margin-top:10px;font-size:11px;line-height:1.5}.direction-card small{display:block;color:#7b7c74;font:8px var(--font-en);letter-spacing:.1em;text-transform:uppercase;margin-top:5px}.direction-card.recommended small{color:#b8b8b0}
+.insight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}.insight{border:1px solid var(--pale-line);padding:20px}.insight .section-label{color:#9c5d3d}.insight h3{font-size:15px;margin:12px 0 7px}.insight p{color:#66675f;font-size:12px;line-height:1.75;margin:0}.result-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.result-actions button{border:1px solid #aaa69b;background:transparent;padding:14px 18px;font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}.result-actions button:first-child{background:var(--ink);color:white;border-color:var(--ink)}.result-actions button:hover{background:var(--sand);border-color:var(--sand);color:white}.method-note{color:#7b7c74;font-size:10px;line-height:1.7;margin:18px 0 0}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,18px);opacity:0;background:white;color:var(--ink);padding:13px 19px;font-size:12px;z-index:10;pointer-events:none;transition:.25s;box-shadow:0 15px 50px #0005}.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{padding:22px clamp(20px,4vw,62px);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font:11px var(--font-en);border-top:1px solid var(--line)}footer nav{display:flex;gap:20px;flex-wrap:wrap}footer a:hover{color:var(--sand)}
+@media(max-width:980px){.app-shell{grid-template-columns:1fr}.intro-panel{border-right:0;border-bottom:1px solid var(--line);min-height:auto}.calculator-panel{min-height:auto}.compass-mark{margin-left:0}.direction-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:981px) and (max-height:820px){
+  .intro-panel{padding:34px clamp(42px,5vw,72px);justify-content:flex-start}
+  h1{font-size:clamp(66px,6.2vw,86px);margin:22px 0 20px}
+  .intro-copy{font-size:14px;line-height:1.7;max-width:470px}
+  .intro-meta{margin-top:22px}
+  .compass-mark{position:absolute;width:250px;right:-76px;bottom:-76px;margin:0;opacity:.72}
+  .privacy{margin-top:auto;max-width:330px}
+  .calculator-panel{padding:28px clamp(42px,4vw,58px)}
+  .panel-head{margin-bottom:20px}
+  .panel-head h2{font-size:clamp(44px,3.8vw,54px);margin-top:8px}
+  .form-grid{gap:11px 14px}
+  .field{gap:5px}.field input,.field select{min-height:49px}.profile-option span{padding:12px}
+  .form-note{margin-top:13px;padding:11px 15px;line-height:1.55}
+  .submit-btn{min-height:44px;margin-top:11px}
+}
+@media(max-width:620px){.site-header{align-items:flex-start}.brand span{display:block;margin-top:5px}.top-nav{flex-direction:column;align-items:flex-end;gap:9px}.intro-panel,.calculator-panel{padding:58px 22px}.intro-meta{gap:22px}.panel-head,.result-title-row{display:block}.panel-head p{margin-top:20px}.form-grid,.insight-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.kua-badge{margin-top:24px}.recommendation{grid-template-columns:1fr}.direction-degree{width:82px;height:82px}.direction-grid{grid-template-columns:1fr 1fr}.direction-card{min-height:108px;padding:13px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">ARSTINLA <span>/ Home Compass</span></a>
+  <nav class="top-nav" aria-label="Tools navigation"><a href="/tools/color-sequence/">Color Sequence</a><a href="/tools/birthday/">Birthday Insight</a><a href="/">Back to website</a></nav>
+</header>
+
+<main class="app-shell">
+  <section class="intro-panel">
+    <div class="eyebrow">ARSTINLA DIGITAL TOOL / 05</div>
+    <h1>Find the direction<br>that fits <em>you.</em></h1>
+    <p class="intro-copy">สำรวจทิศที่สนับสนุนเจ้าของบ้านตามหลัก Eight Mansions พร้อมตรวจความเหมาะสมด้านแดด ลม ถนน และการอยู่อาศัยจริงในประเทศไทย</p>
+    <div class="intro-meta"><div><strong>8</strong><span>Directions</span></div><div><strong>2</strong><span>Design layers</span></div><div><strong>3 min</strong><span>Review</span></div></div>
+    <div class="compass-mark" id="compassMark" aria-hidden="true"><div class="compass-needle"></div><b class="n">N</b><b class="e">E</b><b class="s">S</b><b class="w">W</b></div>
+    <p class="privacy">ข้อมูลทั้งหมดประมวลผลบนอุปกรณ์ของคุณและไม่ถูกส่งหรือบันทึกบนเซิร์ฟเวอร์</p>
+  </section>
+
+  <section class="calculator-panel">
+    <form class="calculator" id="compassForm">
+      <div class="panel-head"><div><div class="section-label">Owner &amp; site</div><h2>Start with the person.<br>Check with the place.</h2></div><p>ผลลัพธ์จะแยก “ทิศตามความเชื่อ” ออกจาก “ข้อสังเกตด้านสถาปัตยกรรม” เพื่อให้ตัดสินใจได้อย่างมีเหตุผล</p></div>
+      <div class="form-grid">
+        <div class="field"><span class="field-label" id="birthDateLabel">วันเดือนปีเกิดเจ้าของบ้าน</span><div class="birth-date-fields" aria-labelledby="birthDateLabel"><select id="birthDay" required aria-label="วันที่เกิด"><option value="" selected disabled>วัน</option></select><select id="birthMonth" required aria-label="เดือนเกิด"><option value="" selected disabled>เดือน</option></select><select id="birthYear" required aria-label="ปีเกิด ค.ศ."><option value="" selected disabled>ปี ค.ศ.</option></select></div><small>เลือกวัน เดือน และปี ค.ศ. · ผู้เกิดช่วงต้นเดือนกุมภาพันธ์อาจอยู่คนละปีกัว</small></div>
+        <div class="field"><span class="field-label">รูปแบบคำนวณตามตำราดั้งเดิม</span><div class="profile-options"><label class="profile-option"><input type="radio" name="profile" value="male" checked><span>สูตรผู้ชาย</span></label><label class="profile-option"><input type="radio" name="profile" value="female"><span>สูตรผู้หญิง</span></label></div><small>เป็นตัวเลือกของสูตรดั้งเดิม ไม่ใช่การระบุอัตลักษณ์</small></div>
+        <label class="field"><span class="field-label">ภูมิภาคของโครงการ</span><select id="region"><option value="central">กรุงเทพฯ / ภาคกลาง</option><option value="north">ภาคเหนือ</option><option value="northeast">ภาคตะวันออกเฉียงเหนือ</option><option value="east">ภาคตะวันออก</option><option value="south">ภาคใต้ / ชายฝั่ง</option></select></label>
+        <label class="field"><span class="field-label">ทิศที่หน้าที่ดินหรือถนนอยู่</span><select id="roadDirection"><option value="">ยังไม่กำหนด / เลือกได้</option><option value="N">ทิศเหนือ</option><option value="NE">ทิศตะวันออกเฉียงเหนือ</option><option value="E">ทิศตะวันออก</option><option value="SE">ทิศตะวันออกเฉียงใต้</option><option value="S">ทิศใต้</option><option value="SW">ทิศตะวันตกเฉียงใต้</option><option value="W">ทิศตะวันตก</option><option value="NW">ทิศตะวันตกเฉียงเหนือ</option></select><small>ใช้เปรียบเทียบกับทิศที่คำนวณได้ ไม่ได้บังคับให้ต้องหมุนตัวบ้าน</small></label>
+        <label class="field full"><span class="field-label">สิ่งที่อยากให้บ้านสนับสนุนเป็นพิเศษ</span><select id="priority"><option value="balanced">สมดุลระหว่างความเชื่อกับการอยู่อาศัยจริง</option><option value="career">การงาน พลัง และความก้าวหน้า</option><option value="health">สุขภาพ การพักฟื้น และความสบาย</option><option value="family">ครอบครัวและความสัมพันธ์</option><option value="focus">สมาธิ ความสงบ และการทำงาน</option></select></label>
+      </div>
+      <p class="form-note">ระบบใช้จุดเปลี่ยนปีโดยประมาณวันที่ 4 กุมภาพันธ์ตามแนวทาง Li Chun หากเกิดวันที่ 3–5 กุมภาพันธ์ ควรตรวจวัน Li Chun ของปีเกิดเพิ่มเติมก่อนตัดสินใจจริง</p>
+      <button class="submit-btn" type="submit">Calculate My Home Direction →</button>
+    </form>
+
+    <section class="result-view" id="resultView" hidden aria-live="polite">
+      <div class="result-kicker"><div class="section-label">Your home compass</div><button class="back-btn" id="editBtn" type="button">← Edit information</button></div>
+      <div class="result-title-row"><div><h2 id="resultTitle">Kua 4 · East Group</h2><p class="result-lead" id="resultLead"></p></div><div class="kua-badge"><div><strong id="kuaNumber">4</strong><span id="kuaTrigram">Xun · Wood</span></div></div></div>
+      <div class="recommendation"><div class="direction-name"><small id="recommendationLabel">Balanced recommendation</small><span id="recommendedDirection">NORTH</span></div><div class="direction-degree"><div><strong id="bearingValue">0°</strong><span id="bearingRange">337.5–22.5°</span></div></div></div>
+      <p class="result-lead" id="recommendationText"></p>
+      <div class="direction-grid" id="directionGrid"></div>
+      <div class="insight-grid"><article class="insight"><div class="section-label">Existing site</div><h3 id="siteTitle"></h3><p id="siteText"></p></article><article class="insight"><div class="section-label">Climate check</div><h3 id="climateTitle"></h3><p id="climateText"></p></article></div>
+      <div class="result-actions"><button id="copyBtn" type="button">Copy Result</button><button id="shareBtn" type="button">Share Compass</button><button id="resetBtn" type="button">Start Again</button></div>
+      <p class="method-note">คำแนะนำนี้เป็นเครื่องมือสำรวจตามความเชื่อ Eight Mansions และหลักออกแบบเบื้องต้น ไม่ใช่คำรับรองโชคลาภ สุขภาพ หรือผลลัพธ์ชีวิต การกำหนดทิศอาคารจริงควรตรวจผังเมือง ทางเข้าที่ดิน แดด ลม ฝน วิว ความเป็นส่วนตัว และรายละเอียดโครงการร่วมกับสถาปนิก</p>
+    </section>
+  </section>
+</main>
+
+<footer><span>© 2026 ARSTINLA Design &amp; Consult</span><nav><a href="/tools/color-sequence/">Color Sequence</a><a href="/tools/birthday/">Birthday Insight</a><a href="/tools/enneagram/">Enneagram</a><a href="/">Main Website</a></nav></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const directionNames={N:"ทิศเหนือ",NE:"ทิศตะวันออกเฉียงเหนือ",E:"ทิศตะวันออก",SE:"ทิศตะวันออกเฉียงใต้",S:"ทิศใต้",SW:"ทิศตะวันตกเฉียงใต้",W:"ทิศตะวันตก",NW:"ทิศตะวันตกเฉียงเหนือ"};
+const directionEnglish={N:"NORTH",NE:"NORTHEAST",E:"EAST",SE:"SOUTHEAST",S:"SOUTH",SW:"SOUTHWEST",W:"WEST",NW:"NORTHWEST"};
+const bearings={N:{value:0,range:"337.5–22.5°"},NE:{value:45,range:"22.5–67.5°"},E:{value:90,range:"67.5–112.5°"},SE:{value:135,range:"112.5–157.5°"},S:{value:180,range:"157.5–202.5°"},SW:{value:225,range:"202.5–247.5°"},W:{value:270,range:"247.5–292.5°"},NW:{value:315,range:"292.5–337.5°"}};
+const climateScore={N:5,NE:4.7,E:4.3,SE:4,S:3.3,NW:2.7,SW:1.8,W:1.2};
+const climateAdvice={
+  N:"รับแสงตรงน้อยกว่าหลายทิศ เหมาะกับช่องเปิดหลัก แต่ยังต้องตรวจฝนสาดและทิศลมของพื้นที่จริง",
+  NE:"ได้แสงเช้าที่อ่อนกว่าแดดบ่าย เหมาะกับพื้นที่ใช้งานช่วงเช้าและการเปิดมุมมอง",
+  E:"รับแสงเช้า ช่วยให้บ้านสว่างเร็วและสะสมความร้อนน้อยกว่าทิศตะวันตก ควรมีชายคาหรือระแนง",
+  SE:"สมดุลระหว่างแสงเช้าและโอกาสรับลมตามฤดูกาล เหมาะกับการวางช่องเปิดให้เกิดลมพัดผ่าน",
+  S:"แดดมุมสูงสามารถควบคุมด้วยชายคาได้ดี ควรคำนวณความลึกกันสาดให้ตรงกับตำแหน่งจริง",
+  SW:"อาจรับทั้งลม ฝนสาด และแดดบ่าย ควรมีชายคาลึก พื้นที่กึ่งภายนอก และผนังกันความร้อน",
+  W:"รับความร้อนช่วงบ่ายสูง ควรลดช่องกระจก ใช้พื้นที่บริการเป็น buffer และเพิ่มร่มเงา",
+  NW:"มีโอกาสรับแดดบ่ายตามฤดูกาล ควรใช้ระแนงแนวตั้ง ต้นไม้ และผนังที่จัดการความร้อนได้ดี"
+};
+const regionAdvice={central:"กรุงเทพฯ และภาคกลางมีอากาศร้อนชื้น ควรเน้นร่มเงา ลดแดดบ่าย และสร้างทางลมข้ามอาคาร",north:"ภาคเหนือมีความต่างอุณหภูมิตามฤดูกาลมากขึ้น ควรออกแบบทั้งการบังแดดหน้าร้อนและรับแสงอย่างเหมาะสมในฤดูเย็น",northeast:"ภาคตะวันออกเฉียงเหนือมีแดดแรงและช่วงอากาศแห้ง ควรให้ความสำคัญกับฉนวน หลังคา ร่มเงา และลานที่ไม่สะสมความร้อน",east:"ภาคตะวันออกมีฝนและความชื้นสูงหลายพื้นที่ ควรตรวจฝนสาด ลมชายฝั่ง และวัสดุที่ทนความชื้น",south:"ภาคใต้และพื้นที่ชายฝั่งควรให้ความสำคัญกับฝนสาด ลมแรง ความชื้น การกัดกร่อน และการระบายอากาศต่อเนื่อง"};
+const roles=[
+  {key:"sheng",label:"Sheng Qi",thai:"พลังและความก้าวหน้า"},
+  {key:"tian",label:"Tian Yi",thai:"สุขภาพและการฟื้นตัว"},
+  {key:"yan",label:"Yan Nian",thai:"ครอบครัวและความสัมพันธ์"},
+  {key:"fu",label:"Fu Wei",thai:"สมาธิและความมั่นคง"}
+];
+const kuaData={
+  1:{trigram:"Kan",symbol:"坎",element:"Water",group:"East",dirs:{sheng:"SE",tian:"E",yan:"S",fu:"N"}},
+  2:{trigram:"Kun",symbol:"坤",element:"Earth",group:"West",dirs:{sheng:"NE",tian:"W",yan:"NW",fu:"SW"}},
+  3:{trigram:"Zhen",symbol:"震",element:"Wood",group:"East",dirs:{sheng:"S",tian:"N",yan:"SE",fu:"E"}},
+  4:{trigram:"Xun",symbol:"巽",element:"Wood",group:"East",dirs:{sheng:"N",tian:"S",yan:"E",fu:"SE"}},
+  6:{trigram:"Qian",symbol:"乾",element:"Metal",group:"West",dirs:{sheng:"W",tian:"NE",yan:"SW",fu:"NW"}},
+  7:{trigram:"Dui",symbol:"兌",element:"Metal",group:"West",dirs:{sheng:"NW",tian:"SW",yan:"NE",fu:"W"}},
+  8:{trigram:"Gen",symbol:"艮",element:"Earth",group:"West",dirs:{sheng:"SW",tian:"NW",yan:"W",fu:"NE"}},
+  9:{trigram:"Li",symbol:"離",element:"Fire",group:"East",dirs:{sheng:"E",tian:"SE",yan:"N",fu:"S"}}
+};
+const priorityRole={career:"sheng",health:"tian",family:"yan",focus:"fu"};
+const priorityLabels={balanced:"Balanced recommendation",career:"Career & vitality",health:"Health & recovery",family:"Family & relationship",focus:"Focus & stability"};
+const $=id=>document.getElementById(id);
+let currentResult=null;
+let toastTimer;
+
+const thaiMonths=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+for(let day=1;day<=31;day++)$("birthDay").add(new Option(String(day).padStart(2,"0"),day));
+thaiMonths.forEach((month,index)=>$("birthMonth").add(new Option(month,index+1)));
+for(let year=new Date().getFullYear();year>=1900;year--)$("birthYear").add(new Option(year,year));
+
+function reduceDigit(value){
+  let number=Math.abs(Number(value));
+  while(number>9)number=String(number).split("").reduce((sum,digit)=>sum+Number(digit),0);
+  return number;
+}
+
+function fengShuiYear(date){
+  const year=date.getFullYear();
+  const month=date.getMonth()+1;
+  const day=date.getDate();
+  return month<2||(month===2&&day<4)?year-1:year;
+}
+
+function calculateKua(date,profile){
+  const year=fengShuiYear(date);
+  const base=reduceDigit(year);
+  let kua=profile==="male"?reduceDigit(11-base):reduceDigit(4+base);
+  if(kua===5)kua=profile==="male"?2:8;
+  return {kua,year,boundaryWarning:date.getMonth()===1&&date.getDate()>=3&&date.getDate()<=5};
+}
+
+function recommendedDirection(data,priority){
+  if(priority!=="balanced")return data.dirs[priorityRole[priority]];
+  return Object.values(data.dirs).sort((a,b)=>climateScore[b]-climateScore[a])[0];
+}
+
+function roleForDirection(data,direction){return roles.find(role=>data.dirs[role.key]===direction)}
+
+function siteReading(data,roadDirection){
+  if(!roadDirection)return {title:"ยังเลือกทิศหน้าบ้านได้",text:"ใช้ผลนี้เป็นหนึ่งในข้อมูลตั้งต้น แล้วนำไปเทียบกับถนน ทางเข้า วิว อาคารรอบข้าง และรูปแปลงก่อนวางผังจริง"};
+  const role=roleForDirection(data,roadDirection);
+  if(role)return {title:`${directionNames[roadDirection]}อยู่ในกลุ่มทิศสนับสนุน`,text:`ตามความเชื่อ ทิศนี้สัมพันธ์กับ “${role.thai}” แต่ยังต้องออกแบบชายคา ช่องเปิด และพื้นที่กันชนให้เหมาะกับแดดและฝน`};
+  return {title:`${directionNames[roadDirection]}ไม่อยู่ใน 4 ทิศสนับสนุน`,text:"ไม่จำเป็นต้องหมุนอาคารหรือย้ายทางเข้าทันที สามารถใช้ทิศสนับสนุนกับหัวเตียง โต๊ะทำงาน หรือช่องเปิดสำคัญ และให้บริบทที่ดินเป็นตัวตัดสินหลัก"};
+}
+
+function resultText(result){
+  const dirs=roles.map(role=>`${role.thai}: ${directionNames[result.data.dirs[role.key]]}`).join(" · ");
+  return `ARSTINLA Home Compass\nเลขกัว ${result.kua} — ${result.data.trigram} / ${result.data.group} Group\nทิศแนะนำ: ${directionNames[result.recommended]}\n${dirs}\n\nคำแนะนำนี้เป็นการสำรวจตามความเชื่อและหลักออกแบบเบื้องต้น ไม่ใช่คำรับรองผลลัพธ์ชีวิต\n${location.origin}/tools/home-compass/`;
+}
+
+function renderResult(result){
+  const {kua,data,recommended,priority,region,roadDirection,year,boundaryWarning}=result;
+  const suggestedRole=roleForDirection(data,recommended);
+  const practicalAlternative=Object.values(data.dirs).filter(direction=>direction!==recommended).sort((a,b)=>climateScore[b]-climateScore[a])[0];
+  const hotFacing=climateScore[recommended]<3;
+  const site=siteReading(data,roadDirection);
+  $("resultTitle").textContent=`Kua ${kua} · ${data.group} Group`;
+  $("kuaNumber").textContent=kua;
+  $("kuaTrigram").textContent=`${data.trigram} · ${data.element}`;
+  $("resultLead").textContent=`คำนวณจากปีกัว ${year} ได้ตรีลักษณ์ ${data.symbol} ${data.trigram} ธาตุ ${data.element} และทิศสนับสนุน 4 ทิศตามแนวทาง Eight Mansions${boundaryWarning?" · วันเกิดอยู่ใกล้ช่วง Li Chun ควรตรวจวันเปลี่ยนปีจริงเพิ่มเติม":""}`;
+  $("recommendationLabel").textContent=priorityLabels[priority];
+  $("recommendedDirection").textContent=directionEnglish[recommended];
+  $("bearingValue").textContent=`${bearings[recommended].value}°`;
+  $("bearingRange").textContent=bearings[recommended].range;
+  $("recommendationText").textContent=hotFacing
+    ? `${directionNames[recommended]}ตรงกับเป้าหมาย “${suggestedRole.thai}” ตามความเชื่อ แต่มีโอกาสรับความร้อนหรือสภาพอากาศหนัก ควรเปรียบเทียบ ${directionNames[practicalAlternative]} ซึ่งเป็นทิศสนับสนุนที่จัดการสภาพอากาศได้ง่ายกว่า`
+    : `${directionNames[recommended]}สัมพันธ์กับ “${suggestedRole.thai}” และเป็นหนึ่งในทิศสนับสนุนที่สามารถพัฒนาเป็นแนวหน้าบ้านหรือทิศใช้งานหลักได้ โดยต้องตรวจบริบทที่ดินจริงประกอบ`;
+  $("directionGrid").innerHTML=roles.map(role=>{const direction=data.dirs[role.key];return `<article class="direction-card ${direction===recommended?"recommended":""}"><strong>${directionEnglish[direction]}</strong><span>${role.thai}</span><small>${role.label} · ${bearings[direction].value}°</small></article>`}).join("");
+  $("siteTitle").textContent=site.title;
+  $("siteText").textContent=site.text;
+  $("climateTitle").textContent=`ตรวจ ${directionNames[recommended]} ใน ${$("region").selectedOptions[0].text}`;
+  $("climateText").textContent=`${climateAdvice[recommended]} ${regionAdvice[region]}`;
+  $("compassMark").style.setProperty("--bearing",`${bearings[recommended].value}deg`);
+}
+
+function toast(message){
+  clearTimeout(toastTimer);
+  $("toast").textContent=message;
+  $("toast").classList.add("show");
+  toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2200);
+}
+
+$("compassForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const day=Number($("birthDay").value);
+  const month=Number($("birthMonth").value);
+  const year=Number($("birthYear").value);
+  if(!day||!month||!year){toast("กรุณาเลือกวัน เดือน และปีเกิด");return}
+  const date=new Date(year,month-1,day,12);
+  if(date.getFullYear()!==year||date.getMonth()!==month-1||date.getDate()!==day){toast("วันที่เลือกไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง");return}
+  const profile=document.querySelector('input[name="profile"]:checked').value;
+  const calculation=calculateKua(date,profile);
+  const data=kuaData[calculation.kua];
+  const priority=$("priority").value;
+  currentResult={...calculation,data,priority,region:$("region").value,roadDirection:$("roadDirection").value,recommended:recommendedDirection(data,priority)};
+  renderResult(currentResult);
+  $("compassForm").hidden=true;
+  $("resultView").hidden=false;
+  $("resultView").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+function editResult(){
+  $("resultView").hidden=true;
+  $("compassForm").hidden=false;
+  $("compassForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+$("editBtn").addEventListener("click",editResult);
+$("resetBtn").addEventListener("click",()=>{$("compassForm").reset();currentResult=null;$("compassMark").style.setProperty("--bearing","0deg");editResult()});
+$("copyBtn").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(resultText(currentResult));toast("คัดลอกผลลัพธ์แล้ว")}catch{toast("ไม่สามารถคัดลอกได้")}});
+$("shareBtn").addEventListener("click",async()=>{const data={title:"ARSTINLA Home Compass",text:resultText(currentResult),url:`${location.origin}/tools/home-compass/`};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(resultText(currentResult));toast("คัดลอกผลสำหรับแชร์แล้ว")}}catch(error){if(error.name!=="AbortError")toast("ไม่สามารถแชร์ได้")}});
+</script>
+</body>
+</html>
