@@ -1959,6 +1959,92 @@ background-size: cover;
   }
 
 
+  .knowledge-tool {
+
+    margin-top: 34px;
+
+    padding:
+      clamp(28px, 4vw, 48px);
+
+    background: var(--black);
+
+    color: white;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 34px;
+
+    flex-wrap: wrap;
+
+    transition:
+      background .3s var(--ease),
+      transform .3s var(--ease);
+  }
+
+
+  .knowledge-tool:hover {
+    background: var(--dark);
+    transform: translateY(-3px);
+  }
+
+
+  .knowledge-tool-copy {
+    max-width: 720px;
+  }
+
+
+  .knowledge-tool .label {
+    color: var(--orange);
+  }
+
+
+  .knowledge-tool h3 {
+
+    margin-top: 18px;
+
+    font-family: var(--font-en);
+
+    font-size:
+      clamp(1.8rem, 3vw, 3rem);
+
+    font-weight: 300;
+
+    letter-spacing: -.045em;
+  }
+
+
+  .knowledge-tool p {
+
+    margin-top: 14px;
+
+    color: #b9bab4;
+
+    line-height: 1.7;
+  }
+
+
+  .knowledge-tool-cta {
+
+    font-family: var(--font-en);
+
+    font-size: .72rem;
+
+    letter-spacing: .14em;
+
+    text-transform: uppercase;
+
+    color: var(--orange);
+
+    border-bottom: 1px solid currentColor;
+
+    padding-bottom: 5px;
+  }
+
+
   /* =========================================================
      CTA STRIP
   ========================================================= */
@@ -3202,6 +3288,7 @@ background-repeat:
     </div>
 
 
+
   </div>
 
 
@@ -4264,6 +4351,39 @@ data-contact-link
 
   </div>
 
+  <div class="container">
+
+    <a
+      href="/tools/image/"
+      class="knowledge-tool reveal"
+      aria-label="Open ARSTINLA Image Tool"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Free Tool
+        </div>
+
+        <h3>
+          ARSTINLA Image Tool
+        </h3>
+
+        <p>
+          ย่อและแปลงรูปหลายไฟล์เป็น WebP, JPEG หรือ PNG
+          ได้ในเบราว์เซอร์ รูปทั้งหมดอยู่บนเครื่องของคุณ
+        </p>
+
+      </div>
+
+      <span class="knowledge-tool-cta">
+        Open Image Tool →
+      </span>
+
+    </a>
+
+  </div>
+
 </section>
 
 
@@ -4716,6 +4836,10 @@ data-contact-link
     rel="noopener noreferrer"
   >
     YOUTUBE
+  </a>
+
+  <a href="/tools/image/">
+    IMAGE TOOL
   </a>
 
 </div>

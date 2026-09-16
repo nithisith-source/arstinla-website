@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171816">
+<meta name="description" content="ARSTINLA Image Tool — แปลงและย่อรูปภาพหลายไฟล์พร้อมกันสำหรับใช้บนเว็บไซต์ ทำงานในเครื่องคุณ ไฟล์ไม่ถูกอัปโหลด">
+<title>ARSTINLA Image Tool | แปลงรูปสำหรับเว็บไซต์</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{
+  --ink:#171816;
+  --panel:#201F1D;
+  --panel-2:#252420;
+  --line:#33322F;
+  --text:#ECE9E2;
+  --muted:#97948C;
+  --sand:#C8B79B;
+  --ok:#9FB89A;
+  --bad:#C09090;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;
+  line-height:1.55;
+  min-height:100vh;
+}
+::selection{background:var(--sand);color:var(--ink)}
+
+/* ---------- header ---------- */
+header{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  padding:22px clamp(18px,4vw,48px);
+  border-bottom:1px solid var(--line);
+}
+.brand{font-weight:600;letter-spacing:.14em;font-size:13px;text-decoration:none;color:inherit}
+.brand span{color:var(--muted);font-weight:400}
+#installBtn{
+  display:none;
+  background:none;border:1px solid var(--line);color:var(--text);
+  font:inherit;font-size:13px;padding:7px 14px;cursor:pointer;
+}
+#installBtn:hover{border-color:var(--sand);color:var(--sand)}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(28px,5vw,56px) clamp(18px,4vw,48px) clamp(20px,3vw,36px)}
+.hero h1{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-weight:400;
+  font-size:clamp(30px,4.5vw,52px);
+  line-height:1.12;
+  max-width:16em;
+}
+.hero h1 em{font-style:italic;color:var(--sand)}
+.hero p{color:var(--muted);margin-top:12px;max-width:44em}
+
+/* ---------- layout ---------- */
+main{
+  display:grid;
+  grid-template-columns:minmax(300px,380px) 1fr;
+  gap:0;
+  border-top:1px solid var(--line);
+  min-height:60vh;
+}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+
+/* ---------- left: drop + settings ---------- */
+.controls{
+  border-right:1px solid var(--line);
+  padding:clamp(18px,3vw,32px);
+  display:flex;flex-direction:column;gap:26px;
+}
+@media(max-width:860px){.controls{border-right:none;border-bottom:1px solid var(--line)}}
+
+.drop{
+  border:1px dashed var(--line);
+  padding:34px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition:border-color .15s,background .15s;
+  background:var(--panel);
+}
+.drop:hover,.drop:focus-visible{border-color:var(--sand)}
+.drop.over{border-color:var(--sand);background:var(--panel-2)}
+.drop strong{display:block;font-weight:500;margin-bottom:6px}
+.drop small{color:var(--muted)}
+.drop input{display:none}
+
+fieldset{border:none;display:flex;flex-direction:column;gap:10px}
+legend{font-size:12px;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.seg{display:flex;border:1px solid var(--line)}
+.seg button{
+  flex:1;background:none;border:none;color:var(--muted);
+  font:inherit;font-size:14px;padding:9px 0;cursor:pointer;
+  border-right:1px solid var(--line);
+}
+.seg button:last-child{border-right:none}
+.seg button[aria-pressed="true"]{background:var(--panel-2);color:var(--text)}
+.seg button:hover{color:var(--text)}
+
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.row label{color:var(--muted);font-size:14px}
+.row output{font-variant-numeric:tabular-nums}
+input[type=range]{
+  width:100%;accent-color:var(--sand);height:22px;background:transparent;
+}
+select,input[type=text]{
+  background:var(--panel);border:1px solid var(--line);color:var(--text);
+  font:inherit;font-size:14px;padding:8px 10px;width:100%;
+}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--sand);outline-offset:1px}
+
+.convertBtn{
+  background:var(--text);color:var(--ink);border:none;
+  font:inherit;font-weight:600;font-size:15px;
+  padding:14px;cursor:pointer;width:100%;
+  transition:background .15s;
+}
+.convertBtn:hover{background:var(--sand)}
+.convertBtn:disabled{background:var(--line);color:var(--muted);cursor:default}
+
+.privacy{font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+
+/* ---------- right: results ---------- */
+.results{display:flex;flex-direction:column}
+.summary{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-bottom:1px solid var(--line);
+}
+.summary div{padding:18px clamp(14px,2vw,28px);border-right:1px solid var(--line)}
+.summary div:last-child{border-right:none}
+.summary .num{
+  font-family:"Instrument Serif",Georgia,serif;
+  font-size:clamp(22px,3vw,34px);line-height:1.1;
+  font-variant-numeric:tabular-nums;
+}
+.summary .num.save{color:var(--sand)}
+.summary .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
+.tablewrap{flex:1;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th{
+  text-align:left;font-weight:500;font-size:12px;color:var(--muted);
+  padding:12px clamp(14px,2vw,28px);border-bottom:1px solid var(--line);
+}
+td{
+  padding:11px clamp(14px,2vw,28px);
+  border-bottom:1px solid var(--line);
+  font-variant-numeric:tabular-nums;
+  vertical-align:middle;
+}
+td.name{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td .thumb{
+  width:34px;height:34px;object-fit:cover;display:inline-block;
+  vertical-align:middle;margin-right:10px;background:var(--panel);
+}
+.pct{color:var(--ok)}
+.pct.worse{color:var(--bad)}
+.status{color:var(--muted);font-size:13px}
+.dl{
+  background:none;border:1px solid var(--line);color:var(--text);
+  font:inherit;font-size:12.5px;padding:5px 10px;cursor:pointer;
+}
+.dl:hover{border-color:var(--sand);color:var(--sand)}
+.rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:4px 8px}
+.rm:hover{color:var(--bad)}
+
+.empty{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);padding:48px 24px;text-align:center;
+}
+
+.actions{
+  display:flex;gap:12px;align-items:center;justify-content:flex-end;
+  padding:16px clamp(14px,2vw,28px);
+  border-top:1px solid var(--line);
+}
+.actions .zipBtn{
+  background:var(--sand);color:var(--ink);border:none;
+  font:inherit;font-weight:600;font-size:14px;padding:11px 22px;cursor:pointer;
+}
+.actions .zipBtn:hover{filter:brightness(1.08)}
+.actions .zipBtn:disabled{background:var(--line);color:var(--muted);cursor:default}
+.actions .clearBtn{
+  background:none;border:1px solid var(--line);color:var(--muted);
+  font:inherit;font-size:14px;padding:10px 18px;cursor:pointer;
+}
+.actions .clearBtn:hover{color:var(--text)}
+
+.bar{height:2px;background:var(--line);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0;transform:scaleX(0);transform-origin:left;background:var(--sand);transition:transform .2s}
+
+footer{
+  padding:20px clamp(18px,4vw,48px);
+  border-top:1px solid var(--line);
+  color:var(--muted);font-size:12.5px;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+footer a{color:var(--muted)}
+footer a:hover{color:var(--sand)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">ARSTINLA <span>/ Image Tool</span></a>
+  <button id="installBtn" type="button">ติดตั้งลงเครื่อง</button>
+</header>
+
+<section class="hero">
+  <h1>Optimize images<br>for <em>real web.</em></h1>
+  <p>แปลงรูปหลายไฟล์พร้อมกันเป็น WebP / JPEG / PNG พร้อมย่อขนาดให้พอดีกับหน้าเว็บ ทุกอย่างทำงานในเครื่องของคุณ — ไฟล์ไม่ถูกส่งขึ้นอินเทอร์เน็ต</p>
+</section>
+
+<main>
+  <div class="controls">
+
+    <div class="drop" id="drop" tabindex="0" role="button" aria-controls="fileInput">
+      <strong>ลากรูปมาวางที่นี่</strong>
+      <small>หรือคลิกเพื่อเลือกไฟล์ · JPG, PNG, WebP, GIF, BMP</small>
+    </div>
+    <input type="file" id="fileInput" multiple accept="image/*" hidden>
+
+    <fieldset>
+      <legend>ฟอร์แมตปลายทาง</legend>
+      <div class="seg" id="fmtSeg" role="group" aria-label="ฟอร์แมตปลายทาง">
+        <button type="button" data-fmt="image/webp" aria-pressed="true">WebP</button>
+        <button type="button" data-fmt="image/jpeg" aria-pressed="false">JPEG</button>
+        <button type="button" data-fmt="image/png" aria-pressed="false">PNG</button>
+      </div>
+    </fieldset>
+
+    <fieldset id="qualityField">
+      <legend>คุณภาพ</legend>
+      <div class="row">
+        <label for="quality">Quality</label>
+        <output id="qualityOut">82</output>
+      </div>
+      <input type="range" id="quality" min="40" max="100" value="82">
+    </fieldset>
+
+    <fieldset>
+      <legend>ความกว้างสูงสุด</legend>
+      <select id="maxWidth" aria-label="ความกว้างสูงสุด">
+        <option value="0">ขนาดเดิม — ไม่ย่อ</option>
+        <option value="1920">1920 px — รูปเต็มจอ / Hero</option>
+        <option value="1600" selected>1600 px — รูปโปรเจกต์</option>
+        <option value="1200">1200 px — รูปในเนื้อหา</option>
+        <option value="800">800 px — Thumbnail / Grid</option>
+        <option value="400">400 px — Preview เล็ก</option>
+      </select>
+    </fieldset>
+
+    <fieldset>
+      <legend>เติมหน้าชื่อไฟล์ (ไม่บังคับ)</legend>
+      <input type="text" id="prefix" placeholder="เช่น courtyard-house-" autocomplete="off">
+    </fieldset>
+
+    <button class="convertBtn" id="convertBtn" type="button" disabled>แปลงทั้งหมด</button>
+    <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+
+    <p class="privacy">ความเป็นส่วนตัว: การแปลงทั้งหมดเกิดขึ้นในเบราว์เซอร์ของคุณ ไม่มีการอัปโหลดไฟล์ไปยังเซิร์ฟเวอร์ใด ๆ</p>
+  </div>
+
+  <div class="results">
+    <div class="summary">
+      <div><div class="num" id="sumBefore">—</div><div class="lbl">ขนาดรวมก่อนแปลง</div></div>
+      <div><div class="num" id="sumAfter">—</div><div class="lbl">ขนาดรวมหลังแปลง</div></div>
+      <div><div class="num save" id="sumSave">—</div><div class="lbl">ประหยัดพื้นที่</div></div>
+    </div>
+
+    <div class="tablewrap" id="tablewrap" hidden>
+      <table>
+        <thead>
+          <tr><th>ไฟล์</th><th>ขนาดเดิม</th><th>ขนาดใหม่</th><th>ลดลง</th><th>สถานะ</th><th></th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty">ยังไม่มีไฟล์ — ลากรูปมาวางทางซ้ายเพื่อเริ่ม</div>
+
+    <div class="actions">
+      <button class="clearBtn" id="clearBtn" type="button">ล้างรายการ</button>
+      <button class="zipBtn" id="zipBtn" type="button" disabled>ดาวน์โหลดทั้งหมด (.zip)</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>ARSTINLA Design &amp; Consult — เครื่องมือฟรีสำหรับเจ้าของเว็บและช่างภาพงานสถาปัตย์</span>
+  <a href="/">กลับสู่ arstinla.com</a>
+</footer>
+
+<script>
+"use strict";
+/* ---------- state ---------- */
+const items = []; // {id, file, outName, origSize, blob, newSize, status, thumbURL}
+let outFmt = "image/webp";
+let uid = 0;
+
+const $ = id => document.getElementById(id);
+const drop = $("drop"), fileInput = $("fileInput"), tbody = $("tbody");
+
+/* ---------- helpers ---------- */
+function fmtBytes(n){
+  if(n == null) return "—";
+  if(n < 1024) return n + " B";
+  if(n < 1048576) return (n/1024).toFixed(0) + " KB";
+  return (n/1048576).toFixed(2) + " MB";
+}
+function extFor(mime){ return mime === "image/webp" ? ".webp" : mime === "image/jpeg" ? ".jpg" : ".png"; }
+function baseName(name){ return name.replace(/\.[^.]+$/, ""); }
+function sanitize(s){ return s.replace(/[^\w\u0E00-\u0E7F.\-]+/g, "-"); }
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[ch]);
+}
+
+/* ---------- add files ---------- */
+function addFiles(list){
+  for(const f of list){
+    if(!f.type.startsWith("image/")) continue;
+    const it = { id: ++uid, file: f, origSize: f.size, blob: null, newSize: null, status: "รอแปลง", thumbURL: URL.createObjectURL(f) };
+    items.push(it);
+  }
+  render();
+}
+drop.addEventListener("click", () => fileInput.click());
+drop.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); fileInput.click(); } });
+fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+document.addEventListener("dragover", e => e.preventDefault());
+document.addEventListener("drop", e => e.preventDefault());
+
+/* ---------- settings ---------- */
+$("fmtSeg").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-fmt]");
+  if(!btn) return;
+  outFmt = btn.dataset.fmt;
+  for(const b of $("fmtSeg").children) b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+  $("qualityField").style.opacity = outFmt === "image/png" ? .4 : 1;
+  $("quality").disabled = outFmt === "image/png";
+});
+$("quality").addEventListener("input", () => $("qualityOut").textContent = $("quality").value);
+
+/* ---------- convert ---------- */
+async function convertOne(it, quality, maxW, prefix){
+  it.status = "กำลังแปลง…"; renderRow(it);
+  try{
+    const bmp = await createImageBitmap(it.file);
+    let w = bmp.width, h = bmp.height;
+    if(maxW > 0 && w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+    const canvas = document.createElement("canvas");
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if(outFmt === "image/jpeg"){ ctx.fillStyle = "#fff"; ctx.fillRect(0,0,w,h); } // flatten transparency
+    ctx.drawImage(bmp, 0, 0, w, h);
+    bmp.close();
+    const blob = await new Promise((res, rej) =>
+      canvas.toBlob(b => b ? res(b) : rej(new Error("toBlob failed")), outFmt, quality/100));
+    it.blob = blob;
+    it.newSize = blob.size;
+    const safeBase = sanitize(prefix + baseName(it.file.name)).replace(/^-+|-+$/g, "") || ("image-" + it.id);
+    it.outName = safeBase + extFor(outFmt);
+    it.status = w + "×" + h;
+  }catch(err){
+    it.status = "แปลงไม่ได้ — ฟอร์แมตนี้เบราว์เซอร์ไม่รองรับ";
+    it.blob = null; it.newSize = null;
+  }
+  renderRow(it);
+}
+
+$("convertBtn").addEventListener("click", async () => {
+  const q = +$("quality").value, maxW = +$("maxWidth").value, prefix = $("prefix").value.trim();
+  $("convertBtn").disabled = true;
+  const bar = $("barFill");
+  let done = 0;
+  for(const it of items){
+    await convertOne(it, q, maxW, prefix);
+    bar.style.transform = "scaleX(" + (++done / items.length) + ")";
+  }
+  updateSummary();
+  $("convertBtn").disabled = items.length === 0;
+  $("zipBtn").disabled = !items.some(it => it.blob);
+  setTimeout(() => bar.style.transform = "scaleX(0)", 1200);
+});
+
+/* ---------- render ---------- */
+function pctCell(it){
+  if(it.newSize == null) return "—";
+  const d = 100 * (1 - it.newSize / it.origSize);
+  const cls = d >= 0 ? "pct" : "pct worse";
+  return '<span class="' + cls + '">' + (d >= 0 ? "−" : "+") + Math.abs(d).toFixed(0) + "%</span>";
+}
+function rowHTML(it){
+  return '<td class="name"><img class="thumb" alt="" src="' + escapeHTML(it.thumbURL) + '">' + escapeHTML(it.file.name) + '</td>' +
+    '<td>' + fmtBytes(it.origSize) + '</td>' +
+    '<td>' + fmtBytes(it.newSize) + '</td>' +
+    '<td>' + pctCell(it) + '</td>' +
+    '<td class="status">' + escapeHTML(it.status) + '</td>' +
+    '<td style="text-align:right;white-space:nowrap">' +
+      (it.blob ? '<button class="dl" data-dl="' + it.id + '">บันทึก</button> ' : '') +
+      '<button class="rm" data-rm="' + it.id + '" aria-label="ลบออกจากรายการ">×</button></td>';
+}
+function renderRow(it){
+  const tr = tbody.querySelector('tr[data-id="' + it.id + '"]');
+  if(tr) tr.innerHTML = rowHTML(it);
+}
+function render(){
+  tbody.innerHTML = items.map(it => '<tr data-id="' + it.id + '">' + rowHTML(it) + '</tr>').join("");
+  const has = items.length > 0;
+  $("tablewrap").hidden = !has;
+  $("empty").style.display = has ? "none" : "flex";
+  $("convertBtn").disabled = !has;
+  $("zipBtn").disabled = !items.some(it => it.blob);
+  updateSummary();
+}
+function updateSummary(){
+  const conv = items.filter(it => it.newSize != null);
+  const before = conv.reduce((s, it) => s + it.origSize, 0);
+  const after = conv.reduce((s, it) => s + it.newSize, 0);
+  $("sumBefore").textContent = conv.length ? fmtBytes(before) : "—";
+  $("sumAfter").textContent = conv.length ? fmtBytes(after) : "—";
+  $("sumSave").textContent = conv.length && before ? "−" + (100 * (1 - after/before)).toFixed(0) + "%" : "—";
+}
+
+tbody.addEventListener("click", e => {
+  const dl = e.target.closest("[data-dl]");
+  if(dl){
+    const it = items.find(x => x.id == dl.dataset.dl);
+    if(it && it.blob) saveBlob(it.blob, it.outName);
+    return;
+  }
+  const rm = e.target.closest("[data-rm]");
+  if(rm){
+    const i = items.findIndex(x => x.id == rm.dataset.rm);
+    if(i > -1){ URL.revokeObjectURL(items[i].thumbURL); items.splice(i, 1); render(); }
+  }
+});
+$("clearBtn").addEventListener("click", () => {
+  items.forEach(it => URL.revokeObjectURL(it.thumbURL));
+  items.length = 0; render();
+});
+
+/* ---------- download ---------- */
+function saveBlob(blob, name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+$("zipBtn").addEventListener("click", async () => {
+  const conv = items.filter(it => it.blob);
+  if(!conv.length) return;
+  $("zipBtn").disabled = true;
+  const zip = new JSZip();
+  const used = new Set();
+  for(const it of conv){
+    let n = it.outName, i = 1;
+    while(used.has(n)) n = it.outName.replace(/(\.\w+)$/, "-" + (++i) + "$1");
+    used.add(n);
+    zip.file(n, it.blob);
+  }
+  const blob = await zip.generateAsync({type:"blob"});
+  saveBlob(blob, "arstinla-images.zip");
+  $("zipBtn").disabled = false;
+});
+
+/* ---------- PWA install ---------- */
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  $("installBtn").style.display = "inline-block";
+});
+$("installBtn").addEventListener("click", async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  $("installBtn").style.display = "none";
+});
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
