@@ -228,18 +228,15 @@ input[type="date"]{
 }
 .visual-stage:hover .day-art{transform:scale(1.06)}
 .day-number{
-  position:absolute;
-  left:clamp(16px,3vw,34px);
-  bottom:clamp(10px,2vw,24px);
-  z-index:2;
+  position:relative;
   font-family:"Instrument Serif",serif;
-  color:var(--cream);
-  font-size:clamp(92px,12vw,172px);
-  line-height:.68;
+  color:var(--sand);
+  font-size:clamp(78px,9vw,132px);
+  line-height:.72;
   letter-spacing:-.07em;
-  text-shadow:0 8px 34px rgba(0,0,0,.55);
+  margin-bottom:30px;
 }
-.reading-heading{padding:32px 0}
+.reading-heading{padding:0}
 .reading-heading .eyebrow{margin-bottom:18px}
 .article h2{
   max-width:760px;
@@ -272,6 +269,7 @@ input[type="date"]{
 .wallpaper-intro .section-label{color:var(--orange)}
 .wallpaper-intro p{margin-top:9px;color:#b9b8af;line-height:1.8}
 .wallpaper-intro small{display:block;margin-top:10px;color:var(--muted);font-size:10px}
+.wallpaper-affirmation{padding-top:14px;border-top:1px solid var(--line);font-size:clamp(16px,1.8vw,21px);color:var(--cream)!important}
 .action{
   border:1px solid var(--line);
   background:transparent;
@@ -330,7 +328,7 @@ footer a:hover{color:var(--sand)}
   .days{grid-template-columns:repeat(8,1fr)}
   .article-head{grid-template-columns:minmax(150px,220px) 1fr;gap:28px}
   .visual-stage{height:320px}
-  .day-number{font-size:108px}
+  .day-number{font-size:92px}
 }
 @media(max-width:560px){
   .site-header{align-items:flex-start}
@@ -344,6 +342,7 @@ footer a:hover{color:var(--sand)}
   .article-head{grid-template-columns:1fr;gap:22px}
   .visual-stage{height:340px}
   .reading-heading{padding:8px 0 0}
+  .day-number{font-size:82px;margin:14px 0 24px}
   .article-nav{grid-template-columns:1fr}
   .nav-day+ .nav-day{border-left:0;border-top:1px solid var(--line);text-align:left}
 }
@@ -416,9 +415,9 @@ footer a:hover{color:var(--sand)}
         <div class="article-head">
           <div class="visual-stage" aria-hidden="true">
             <div class="day-art" id="dayArt"></div>
-            <div class="day-number" id="dayNumber">01</div>
           </div>
           <div class="reading-heading">
+            <div class="day-number" id="dayNumber">01</div>
             <div class="eyebrow">Born on day <span id="dayLabel">01</span></div>
             <h2 id="readingTitle"></h2>
           </div>
@@ -428,7 +427,8 @@ footer a:hover{color:var(--sand)}
 
         <div class="wallpaper-intro">
           <div class="section-label">Your daily talisman</div>
-          <p>ดาวน์โหลดภาพประจำวันเกิดไว้เป็น Wallpaper เพื่อเตือนใจถึงพลัง จุดเด่น และตัวตนในแบบของคุณ</p>
+          <p>ดาวน์โหลดภาพประจำวันเกิดไว้เป็น Wallpaper พร้อมคำเตือนใจที่ช่วยถ่วงสมดุลจุดอ่อนของวันนั้น</p>
+          <p class="wallpaper-affirmation" id="affirmationText"></p>
           <small>การเสริมดวงเป็นความเชื่อส่วนบุคคล ภาพนี้ใช้เพื่อความบันเทิงและสร้างกำลังใจเท่านั้น</small>
         </div>
 
@@ -498,6 +498,40 @@ const titles = {
   29:"รักใครไม่ผันแปร",
   30:"ทรราชย์น้อย",
   31:"ต้องการกำลังใจ"
+};
+
+const affirmations = {
+  1:"อิสระที่แท้จริง ไม่จำเป็นต้องต่อสู้กับทุกเรื่อง",
+  2:"ดูแลคนอื่นได้ แต่อย่าลืมถามหัวใจตัวเองว่าต้องการอะไร",
+  3:"ความใจดีไม่ต้องแลกด้วยการยอมทุกอย่าง",
+  4:"ความมั่นคงไม่ใช่การฝืนอยู่กับสิ่งที่ไม่เหมาะกับเรา",
+  5:"ความคิดที่ถูกต้อง จะทรงพลังยิ่งขึ้นเมื่อเปิดพื้นที่ให้ผู้อื่น",
+  6:"คุณมีคุณค่า แม้วันที่ไม่ได้รับความรักในแบบที่คาดหวัง",
+  7:"เรื่องราวของคุณงดงามขึ้น เมื่อหยุดและฟังผู้อื่นด้วย",
+  8:"ความพร้อมไม่เกิดขึ้นทั้งหมดก่อนเริ่ม ก้าวเล็ก ๆ วันนี้ก็พอ",
+  9:"ความคิดมากมายมีค่า เมื่อเลือกหนึ่งเรื่องมาลงมือทำ",
+  10:"ความแข็งแกร่งไม่ใช่การแบกทุกอย่างไว้คนเดียว",
+  11:"อารมณ์คือข้อมูล ไม่ใช่คำสั่ง หายใจก่อนตอบเสมอ",
+  12:"เปิดใจให้คนที่ไว้ใจ คุณไม่จำเป็นต้องเก่งอยู่ลำพัง",
+  13:"ความน่ารักของคุณ ไม่ต้องพิสูจน์ด้วยการเอาใจทุกคน",
+  14:"พูดความต้องการของตัวเองตรง ๆ ความสัมพันธ์ที่ดีรับฟังได้",
+  15:"ยอมให้คนอื่นรู้จักคุณทีละน้อย โดยไม่ต้องรีบเปิดทั้งหมด",
+  16:"การระวังตัวช่วยปกป้องคุณ แต่อย่าให้มันปิดประตูโอกาส",
+  17:"ความสมบูรณ์แบบไม่สำคัญเท่าความก้าวหน้าที่ทำได้จริง",
+  18:"คำแนะนำที่ดีที่สุด เริ่มจากการฟังอย่างไม่ตัดสิน",
+  19:"พลังภายในไม่ต้องดัง ความสงบก็เป็นรูปแบบหนึ่งของความกล้า",
+  20:"ความรู้สึกเปลี่ยนได้ อย่าตัดสินตัวเองจากช่วงเวลาเดียว",
+  21:"เสน่ห์ที่แท้จริงเกิดจากความชัดเจน ไม่ใช่การปรับตัวตามทุกคน",
+  22:"ความสม่ำเสมอไม่ใช่ความนิ่งเฉย ลองขยับจากสิ่งเดิมทีละน้อย",
+  23:"ความมั่นใจไม่ต้องชนะทุกครั้ง แค่ยอมรับและเรียนรู้ได้",
+  24:"น้ำใจที่ดีต้องมีขอบเขต คุณไม่จำเป็นต้องรับผิดชอบทุกความรู้สึก",
+  25:"ถ่อมตัวได้ แต่อย่าลดคุณค่าผลงานและความต้องการของตัวเอง",
+  26:"การมองไกลสำคัญ แต่อย่าพลาดชีวิตที่กำลังเกิดตรงหน้า",
+  27:"ความยุติธรรมเริ่มจากการไม่ตัดสินตัวเองเข้มงวดเกินไป",
+  28:"จังหวะสบายช่วยให้ไปไกล แต่อย่าปล่อยสิ่งสำคัญให้รอเสมอ",
+  29:"ความรักมั่นคงได้ โดยไม่ต้องยึดแน่นหรือกลัวการเปลี่ยนแปลง",
+  30:"ความเด็ดขาดมีพลัง เมื่อมาพร้อมความอ่อนโยนและการฟัง",
+  31:"คุณไม่ต้องรอให้ใครยืนยัน จึงจะเห็นคุณค่าในตัวเอง"
 };
 
 const $ = id => document.getElementById(id);
@@ -582,6 +616,7 @@ function selectDay(day,scroll=false){
   $("dayNumber").textContent=padded;
   $("dayLabel").textContent=padded;
   $("readingTitle").textContent=item.title;
+  $("affirmationText").textContent=`“${affirmations[day]}”`;
   $("readingLead").textContent=lead || "";
   $("readTime").textContent=`${readMinutes(item.paragraphs)} min`;
   const atlasIndex=Math.floor((day-1)/8);
@@ -703,7 +738,7 @@ function drawWallpaperArtwork(context,image,day,width,height){
   context.drawImage(image,sourceX,sourceY,sourceWidth,sourceHeight,0,0,width,height);
 }
 
-function wrapWallpaperTitle(context,text,maxWidth){
+function wrapWallpaperText(context,text,maxWidth,maxLines=3){
   const segments=typeof Intl.Segmenter==="function"
     ? [...new Intl.Segmenter("th",{granularity:"word"}).segment(text)].map(part=>part.segment)
     : [...text];
@@ -715,7 +750,7 @@ function wrapWallpaperTitle(context,text,maxWidth){
     else{line=next;}
   });
   if(line.trim())lines.push(line.trim());
-  return lines.slice(0,3);
+  return lines.slice(0,maxLines);
 }
 
 async function createWallpaper(day){
@@ -746,17 +781,25 @@ async function createWallpaper(day){
   context.fillText("ARSTINLA  /  BIRTHDAY INSIGHT",72,96);
 
   context.fillStyle="#f1eee5";
-  context.font='400 405px "Instrument Serif", Georgia, serif';
-  context.fillText(String(day).padStart(2,"0"),60,1388);
+  context.font='400 340px "Instrument Serif", Georgia, serif';
+  context.fillText(String(day).padStart(2,"0"),60,1210);
 
   context.fillStyle="#c37855";
   context.font='600 20px "Instrument Sans", sans-serif';
-  context.fillText(`BORN ON DAY ${String(day).padStart(2,"0")}`,72,1478);
+  context.fillText(`BORN ON DAY ${String(day).padStart(2,"0")}`,72,1300);
 
   context.fillStyle="#f1eee5";
-  context.font='300 54px "Noto Sans Thai", sans-serif';
-  const lines=wrapWallpaperTitle(context,item.title,width-144);
-  lines.forEach((line,index)=>context.fillText(line,72,1558+(index*72)));
+  context.font='300 48px "Noto Sans Thai", sans-serif';
+  const lines=wrapWallpaperText(context,item.title,width-144,3);
+  lines.forEach((line,index)=>context.fillText(line,72,1380+(index*64)));
+
+  context.fillStyle="#c37855";
+  context.font='600 18px "Instrument Sans", sans-serif';
+  context.fillText("A NOTE FOR YOU",72,1582);
+  context.fillStyle="#f1eee5";
+  context.font='500 34px "Noto Sans Thai", sans-serif';
+  const affirmationLines=wrapWallpaperText(context,affirmations[day],width-144,3);
+  affirmationLines.forEach((line,index)=>context.fillText(line,72,1632+(index*46)));
 
   context.strokeStyle="rgba(241,238,229,.32)";
   context.beginPath();
