@@ -3131,6 +3131,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "45": {
+
+    number: "45",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "Baan Sanchoa",
+
+    officialTitle:
+      "Baan Sanchoa",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Nakhonpathom",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-45.jpg",
+
+    hero:
+      "/assets/project-45.jpg",
+
+    heroAlt:
+      "Baan Sanchoa",
+
+    assetFolder:
+      "/assets/project-45/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
