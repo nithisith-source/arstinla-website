@@ -3139,6 +3139,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "47": {
+
+    number: "47",
+
+    slug: "renovate-project",
+
+    url:
+      "/projects/renovate-project/",
+
+    title:
+      "K'Dear Residence",
+
+    officialTitle:
+      "K'Dear Residence",
+
+    category:
+      "Renovation",
+
+    filterCategory:
+      "renovation",
+
+    location:
+      "Nawathani, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-47.jpg",
+
+    hero:
+      "/assets/project-47.jpg",
+
+    heroAlt:
+      "K'Dear Residence",
+
+    assetFolder:
+      "/assets/project-47/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
