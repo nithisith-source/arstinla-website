@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171816">
+<meta name="description" content="ARSTINLA Schematic Planner — จัดวางห้อง ปรับขนาด และอ่านทิศแดดลมสำหรับการออกแบบเบื้องต้น">
+<title>Schematic Planner — ARSTINLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,300..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#171816;--paper:#f2efe8;--soft:#e8e4db;--text:#f4f1ea;--muted:#888980;--line:#373833;--pale:#c9c4b9;--sand:#c47a55;--sun:#df8b4e;--wind:#5b99a5;--green:#738678;--font-en:"Instrument Sans",sans-serif;--font-serif:"Instrument Serif",serif;--font-th:"Noto Sans Thai",sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font-th);font-weight:300}button,input,select{font:inherit}button,a{color:inherit}a{text-decoration:none}button{cursor:pointer}
+.site-header{height:72px;padding:0 clamp(20px,3.4vw,52px);display:flex;align-items:center;justify-content:space-between;gap:22px;border-bottom:1px solid var(--line);position:relative;z-index:8}.brand{font-family:var(--font-en);font-weight:650;letter-spacing:.19em;font-size:14px}.brand span{font-weight:300;color:var(--muted);letter-spacing:.07em}.top-nav{display:flex;gap:18px;align-items:center}.top-nav a{font:10px var(--font-en);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.top-nav a:hover{color:var(--text)}
+.planner-shell{display:grid;grid-template-columns:330px minmax(0,1fr);min-height:calc(100svh - 72px)}.control-panel{border-right:1px solid var(--line);padding:30px 24px 38px;overflow:auto;max-height:calc(100svh - 72px)}.eyebrow,.section-label{font:600 9px var(--font-en);letter-spacing:.19em;text-transform:uppercase;color:var(--sand)}.control-panel h1{font:300 45px/1 var(--font-en);letter-spacing:-.055em;margin:12px 0 10px}.control-intro{margin:0;color:#a2a39c;font-size:12px;line-height:1.7}.control-section{border-top:1px solid var(--line);padding-top:19px;margin-top:22px}.control-section h2{font:500 10px var(--font-en);letter-spacing:.16em;text-transform:uppercase;margin:0 0 13px}.field{display:grid;gap:6px;margin-top:10px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field label,.mini-label{font-size:10px;color:#aaa9a2}.field input,.field select{width:100%;height:43px;border:1px solid #484943;background:#20211e;color:white;padding:0 11px;border-radius:0}.field input:focus,.field select:focus{outline:1px solid var(--sand);border-color:var(--sand)}.unit-input{position:relative}.unit-input input{padding-right:34px}.unit-input span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#77786f;font:9px var(--font-en);pointer-events:none}
+.add-room{width:100%;height:44px;border:1px solid var(--sand);background:var(--sand);color:white;margin-top:12px;font:600 9px var(--font-en);letter-spacing:.14em;text-transform:uppercase}.add-room:hover{background:#a85f3d}.room-list{display:grid;gap:7px;margin-top:13px}.room-list-item{display:grid;grid-template-columns:1fr auto;align-items:center;border:1px solid #3f403b;background:#1d1e1b}.room-list-item>button:first-child{border:0;background:transparent;text-align:left;padding:10px 11px}.room-list-item strong{display:block;font-size:12px;font-weight:400}.room-list-item small{color:#7f8079;font:9px var(--font-en);letter-spacing:.05em}.room-list-item.active{border-color:var(--sand)}.room-list-item .quick-delete{width:34px;height:100%;border:0;border-left:1px solid #3f403b;background:transparent;color:#777}.room-list-item .quick-delete:hover{color:white;background:#733f31}
+.selected-editor[hidden]{display:none}.selected-editor{border:1px solid #6c523f;padding:13px;margin-top:12px;background:#1c1d1a}.selected-editor .field{margin-top:8px}.delete-room{width:100%;height:38px;border:1px solid #69483c;background:transparent;color:#c78d73;margin-top:11px;font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase}.delete-room:hover{background:#733f31;color:white}
+.toggle-list{display:grid;gap:9px}.toggle{display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:11px;color:#aaa}.toggle input{accent-color:var(--sand);width:17px;height:17px}.reset-btn{width:100%;height:40px;border:1px solid #4a4b45;background:transparent;margin-top:16px;font:600 9px var(--font-en);letter-spacing:.13em;text-transform:uppercase;color:#aaa}.reset-btn:hover{color:white;border-color:#888}
+.workspace{background:var(--paper);color:var(--ink);min-width:0;padding:24px clamp(20px,3vw,48px) 44px;overflow:auto;max-height:calc(100svh - 72px)}.stage-bar{max-width:1200px;margin:0 auto 18px;display:flex;justify-content:space-between;align-items:center;gap:16px}.stage-title strong{display:block;font:500 11px var(--font-en);letter-spacing:.14em;text-transform:uppercase}.stage-title span{font-size:10px;color:#77786f}.stage-actions{display:flex;gap:8px;flex-wrap:wrap}.stage-actions button{height:38px;padding:0 15px;border:1px solid #aaa69b;background:transparent;font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase}.stage-actions button.primary{background:var(--ink);color:white;border-color:var(--ink)}.stage-actions button:hover{background:var(--sand);border-color:var(--sand);color:white}
+.client-sheet{max-width:1200px;margin:auto;border:1px solid var(--pale);background:#f7f4ed;padding:clamp(18px,2.4vw,34px)}.sheet-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:20px}.sheet-head h2{font:300 clamp(32px,4vw,60px)/1 var(--font-en);letter-spacing:-.05em;margin:8px 0 0}.sheet-meta{text-align:right;font:10px/1.8 var(--font-en);letter-spacing:.08em;text-transform:uppercase;color:#6f7069}.plan-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:start}.plan-wrap{position:relative;padding:34px 25px 25px 36px}.plan-board{--major-x:6.25%;--major-y:8.3333%;--minor-x:.625%;--minor-y:.83333%;--print-width:160mm;--print-height:120mm;position:relative;width:100%;aspect-ratio:4/3;background-color:#eee9df;background-image:linear-gradient(to right,#7772686b 1px,transparent 1px),linear-gradient(to bottom,#7772686b 1px,transparent 1px),linear-gradient(to right,#938e8429 1px,transparent 1px),linear-gradient(to bottom,#938e8429 1px,transparent 1px);background-size:var(--major-x) 100%,100% var(--major-y),var(--minor-x) 100%,100% var(--minor-y);border:1px solid #68665f;overflow:hidden}.plan-board.grid-off{background-image:none}.room-layer,.environment-layer{position:absolute;inset:0}.environment-layer{pointer-events:none;z-index:3}.room-layer{z-index:2}.room-block{position:absolute;display:flex;flex-direction:column;justify-content:space-between;padding:10px;border:1px solid #191a18;background:color-mix(in srgb,var(--room-color) 80%,#f7f4ed);color:#171816;overflow:hidden;user-select:none;touch-action:none;cursor:grab;transition:box-shadow .15s}.room-block:active{cursor:grabbing}.room-block.selected{z-index:4;box-shadow:0 0 0 3px var(--sand),0 8px 28px #0002}.room-block strong{font-size:clamp(10px,1.2vw,15px);font-weight:500;line-height:1.2}.room-block small{font:8px/1.35 var(--font-en);letter-spacing:.07em;text-transform:uppercase}.room-block .zone{align-self:flex-end;font:600 8px var(--font-en);padding:3px 5px;border:1px solid #0004}.room-nudge{position:absolute;z-index:7;display:grid;grid-template-columns:repeat(3,30px);grid-template-rows:repeat(3,30px);gap:3px;padding:5px;transform:translate(-50%,-50%);background:#171816ed;border:1px solid var(--sand);box-shadow:0 12px 32px #0006}.room-nudge[hidden]{display:none}.room-nudge button{width:30px;height:30px;padding:0;border:1px solid #5a5b54;background:#2b2c28;color:white;font:600 16px var(--font-en);line-height:1}.room-nudge button:hover,.room-nudge button:focus-visible{background:var(--sand);border-color:var(--sand);outline:0}.room-nudge [data-nudge="up"]{grid-column:2;grid-row:1}.room-nudge [data-nudge="left"]{grid-column:1;grid-row:2}.room-nudge [data-nudge="right"]{grid-column:3;grid-row:2}.room-nudge [data-nudge="down"]{grid-column:2;grid-row:3}.nudge-step{grid-column:2;grid-row:2;display:grid;place-items:center;color:#d2a085;font:600 7px var(--font-en);letter-spacing:.04em;text-transform:uppercase;text-align:center}.compass-label{position:absolute;z-index:7;padding:2px;background:#f7f4edcc;font:600 9px var(--font-en);letter-spacing:.12em;color:#55564f}.compass-label.n{top:5px;left:50%;transform:translateX(-50%)}.compass-label.s{bottom:5px;left:50%;transform:translateX(-50%)}.compass-label.w{left:6px;top:50%;transform:translateY(-50%)}.compass-label.e{right:6px;top:50%;transform:translateY(-50%)}.dimension-axis{position:absolute;z-index:6;pointer-events:none;color:#6d6b64;font:600 clamp(5px,.55vw,8px) var(--font-en);font-variant-numeric:tabular-nums}.dimension-top{height:17px}.dimension-left{width:23px}.dimension-mark{position:absolute;line-height:1;white-space:nowrap}.dimension-top .dimension-mark{bottom:4px;transform:translateX(-50%)}.dimension-top .dimension-mark::after{content:"";position:absolute;left:50%;top:10px;width:1px;height:4px;background:#777268}.dimension-left .dimension-mark{left:0;width:18px;text-align:right;transform:translateY(-50%)}.dimension-left .dimension-mark::after{content:"";position:absolute;left:20px;top:50%;width:4px;height:1px;background:#777268}
+.environment-info{border:1px solid var(--pale);background:#f1ede4}.environment-info article{padding:17px;border-bottom:1px solid var(--pale)}.environment-info article:last-child{border-bottom:0}.environment-info strong{display:block;font:500 13px var(--font-en);margin:8px 0 4px}.environment-info p{margin:0;color:#66675f;font-size:11px;line-height:1.65}.data-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.data-chip{border:1px solid #bbb6ab;padding:5px 7px;font:8px var(--font-en);letter-spacing:.06em;text-transform:uppercase}.sun-key{color:#a4572f}.wind-key{color:#357685}
+.legend{display:flex;gap:17px;flex-wrap:wrap;margin:15px 25px 0;font-size:9px;color:#6b6c65}.legend span{display:flex;gap:6px;align-items:center}.legend i{width:20px;height:2px;background:var(--sun)}.legend .wind i{background:var(--wind)}.legend .room i{background:#9ea892;height:10px}.legend .grid-key i{width:20px;height:10px;border:1px solid #777268;background:repeating-linear-gradient(90deg,transparent 0 3px,#9d988e55 3px 4px)}.legend .metric-scale i{width:10mm;height:4px;border:solid #55564f;border-width:0 1px 1px;background:none}.scale-spec{width:100%;border-top:1px solid var(--pale);padding-top:9px;font:600 8px var(--font-en);letter-spacing:.09em;text-transform:uppercase}.drag-note{margin-left:auto}.analysis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.analysis-card{border-top:1px solid var(--pale);padding-top:16px}.analysis-card h3{font:400 22px var(--font-en);letter-spacing:-.025em;margin:7px 0 8px}.analysis-card p{margin:0;color:#66675f;font-size:11px;line-height:1.7}.room-report{grid-column:1/-1;border-top:1px solid var(--pale);padding-top:17px}.report-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.report-item{border:1px solid var(--pale);padding:13px;min-height:112px}.report-item header{display:flex;justify-content:space-between;gap:10px}.report-item strong{font-size:12px}.report-item b{font:600 8px var(--font-en);letter-spacing:.1em;text-transform:uppercase;color:var(--green)}.report-item.review b{color:#a4572f}.report-item p{margin:8px 0 0;color:#6f7069;font-size:10px;line-height:1.6}.method-note{border-top:1px solid var(--pale);margin-top:20px;padding-top:15px;color:#85867f;font-size:9px;line-height:1.7}.method-note a{text-decoration:underline}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);opacity:0;background:white;color:var(--ink);padding:12px 18px;font-size:11px;z-index:20;pointer-events:none;transition:.2s;box-shadow:0 15px 45px #0005}.toast.show{opacity:1;transform:translate(-50%,0)}
+body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .control-panel{display:none}body.present-mode .workspace{max-height:none;min-height:calc(100svh - 72px)}body.present-mode .client-sheet{max-width:1400px}.present-only{display:none}body.present-mode .present-only{display:inline}
+@media(max-width:1080px){.planner-shell{grid-template-columns:290px minmax(0,1fr)}.plan-layout{grid-template-columns:1fr}.environment-info{display:grid;grid-template-columns:repeat(3,1fr)}.environment-info article{border-bottom:0;border-right:1px solid var(--pale)}.environment-info article:last-child{border-right:0}.report-list{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.site-header{height:auto;min-height:72px;padding-top:16px;padding-bottom:16px;align-items:flex-start}.brand span{display:block;margin-top:4px}.top-nav{flex-direction:column;align-items:flex-end;gap:7px}.planner-shell{display:block}.control-panel,.workspace{max-height:none}.control-panel{border-right:0;border-bottom:1px solid var(--line)}.workspace{padding:20px 12px 36px}.stage-bar,.sheet-head{align-items:flex-start}.stage-bar{display:block}.stage-actions{margin-top:12px}.sheet-head{display:block}.sheet-meta{text-align:left;margin-top:10px}.client-sheet{padding:15px}.plan-wrap{padding:34px 28px 28px 36px}.environment-info{display:block}.environment-info article{border-right:0;border-bottom:1px solid var(--pale)}.analysis{grid-template-columns:1fr}.room-report{grid-column:auto}.report-list{grid-template-columns:1fr}.legend{margin-left:16px;margin-right:16px}.drag-note{width:100%;margin:5px 0 0}.room-block{padding:6px}.room-block small{font-size:6px}}
+@media print{.site-header,.control-panel,.stage-bar,.toast,.room-nudge{display:none!important}.planner-shell{display:block}.workspace{padding:0;max-height:none;overflow:visible}.client-sheet{border:0;max-width:none;padding:5mm}.sheet-head{margin-bottom:4mm}.plan-layout{grid-template-columns:max-content 70mm;gap:8mm}.plan-wrap{padding:8mm}.plan-board{width:var(--print-width)!important;height:var(--print-height)!important;aspect-ratio:auto!important}.legend{width:var(--print-width);margin:3mm 8mm 0}.analysis{break-before:page}.method-note{break-inside:avoid}body{background:white}@page{size:A2 landscape;margin:10mm}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.room-nudge{transform:none;touch-action:manipulation}
+.field-hint{margin:0;color:#77786f;font-size:9px;line-height:1.5}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">ARSTINLA <span>/ Schematic Planner</span></a>
+  <nav class="top-nav" aria-label="Tools navigation"><a href="/tools/home-compass/">Home Compass</a><a href="/tools/color-sequence/">Color Sequence</a><a href="/">Main Website</a></nav>
+</header>
+
+<main class="planner-shell">
+  <aside class="control-panel">
+    <div class="eyebrow">ARSTINLA DIGITAL TOOL / 06</div>
+    <h1>Plan before<br>the plan.</h1>
+    <p class="control-intro">จัดฟังก์ชัน ขนาดห้อง และอ่านทิศแดด–ลม เพื่อสร้างบทสนทนาแรกกับลูกค้าก่อนพัฒนาแบบจริง</p>
+
+    <section class="control-section">
+      <h2>Project &amp; site</h2>
+      <div class="field"><label for="projectName">ชื่อโครงการ</label><input id="projectName" value="Concept House 01"></div>
+      <div class="field"><label for="region">ภูมิภาค</label><select id="region"><option value="central">กรุงเทพฯ / ภาคกลาง</option><option value="north">ภาคเหนือ</option><option value="northeast">ภาคตะวันออกเฉียงเหนือ</option><option value="east">ภาคตะวันออก</option><option value="south">ภาคใต้</option></select></div>
+      <div class="field"><label for="studyDate">วันที่ใช้ดูแนวแดด</label><input id="studyDate" type="date"></div>
+      <div class="field-row">
+        <div class="field"><label for="siteWidth">กว้างผัง</label><div class="unit-input"><input id="siteWidth" type="number" min="8" max="30" step="1" value="16"><span>ม.</span></div></div>
+        <div class="field"><label for="siteDepth">ยาวผัง</label><div class="unit-input"><input id="siteDepth" type="number" min="8" max="30" step="1" value="12"><span>ม.</span></div></div>
+      </div>
+      <div class="field"><label for="northAngle">มุมทิศเหนือ</label><div class="unit-input"><input id="northAngle" type="number" min="0" max="359" step="1" value="0"><span>°</span></div><p class="field-hint">0° = ด้านบนผัง · หมุนตามเข็มนาฬิกา</p></div>
+    </section>
+
+    <section class="control-section">
+      <h2>Add a room</h2>
+      <div class="field"><label for="newRoomType">ประเภทห้อง</label><select id="newRoomType"></select></div>
+      <div class="field"><label for="newRoomName">ชื่อห้อง</label><input id="newRoomName" placeholder="เช่น ห้องนอนคุณแม่"></div>
+      <div class="field-row">
+        <div class="field"><label for="newRoomWidth">กว้าง</label><div class="unit-input"><input id="newRoomWidth" type="number" min="1" max="12" step="0.01" value="4.00"><span>ม.</span></div></div>
+        <div class="field"><label for="newRoomDepth">ยาว</label><div class="unit-input"><input id="newRoomDepth" type="number" min="1" max="12" step="0.01" value="4.00"><span>ม.</span></div></div>
+      </div>
+      <button class="add-room" id="addRoom" type="button">Add room to schematic +</button>
+      <div class="room-list" id="roomList"></div>
+    </section>
+
+    <section class="control-section selected-editor" id="selectedEditor" hidden>
+      <h2>Edit selected room</h2>
+      <div class="field"><label for="selectedName">ชื่อห้อง</label><input id="selectedName"></div>
+      <div class="field"><label for="selectedType">ประเภท</label><select id="selectedType"></select></div>
+      <div class="field-row">
+        <div class="field"><label for="selectedWidth">กว้าง</label><div class="unit-input"><input id="selectedWidth" type="number" min="1" step="0.01"><span>ม.</span></div></div>
+        <div class="field"><label for="selectedDepth">ยาว</label><div class="unit-input"><input id="selectedDepth" type="number" min="1" step="0.01"><span>ม.</span></div></div>
+      </div>
+      <button class="delete-room" id="deleteSelected" type="button">Remove selected room</button>
+    </section>
+
+    <section class="control-section">
+      <h2>Diagram layers</h2>
+      <div class="toggle-list">
+        <label class="toggle">Sun path &amp; solar rays <input id="showSun" type="checkbox" checked></label>
+        <label class="toggle">Seasonal wind <input id="showWind" type="checkbox" checked></label>
+        <label class="toggle">Planning grid <input id="showGrid" type="checkbox" checked></label>
+      </div>
+      <button class="reset-btn" id="resetPlan" type="button">Reset sample plan</button>
+    </section>
+  </aside>
+
+  <section class="workspace">
+    <div class="stage-bar">
+      <div class="stage-title"><strong>Client Preview · Schematic Design</strong><span>คลิกห้องเพื่อใช้ลูกศรขยับทีละ 0.10 ม. · ลากเพื่อย้ายระยะไกล</span></div>
+      <div class="stage-actions"><button id="presentBtn" type="button">Present client view</button><button id="printBtn" type="button">Print / PDF</button><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
+    </div>
+
+    <article class="client-sheet" id="clientSheet">
+      <header class="sheet-head">
+        <div><div class="section-label">Schematic design / environmental review</div><h2 id="sheetProjectName">Concept House 01</h2></div>
+        <div class="sheet-meta"><span id="sheetRegion">Bangkok / Central</span><br><span id="sheetSize">16 × 12 m</span><br>Scale 1:100 · A2 @ 100%<br><span id="sheetNorth">North is up</span></div>
+      </header>
+
+      <div class="plan-layout">
+        <div>
+          <div class="plan-wrap">
+            <span class="compass-label n">N</span><span class="compass-label e">E</span><span class="compass-label s">S</span><span class="compass-label w">W</span>
+            <div class="dimension-axis dimension-top" id="dimensionTop" aria-hidden="true"></div>
+            <div class="dimension-axis dimension-left" id="dimensionLeft" aria-hidden="true"></div>
+            <div class="plan-board" id="planBoard" tabindex="0" aria-label="Schematic plan board">
+              <div class="room-layer" id="roomLayer"></div>
+              <svg class="environment-layer" id="environmentLayer" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <marker id="sunArrow" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" refX="16" refY="9" orient="auto"><path d="M0,0 L18,9 L0,18 Z" fill="#df8b4e"/></marker>
+                  <marker id="windArrow" markerUnits="userSpaceOnUse" markerWidth="20" markerHeight="20" refX="18" refY="10" orient="auto"><path d="M0,0 L20,10 L0,20 Z" fill="#5b99a5"/></marker>
+                </defs>
+                <g id="sunGroup"></g><g id="windGroup"></g>
+              </svg>
+            </div>
+            <div class="room-nudge" id="roomNudge" aria-label="ลูกศรเลื่อนห้องครั้งละ 0.10 เมตร" hidden>
+              <button type="button" data-nudge="up" aria-label="เลื่อนห้องขึ้น 0.10 เมตร" title="ขึ้น 0.10 ม.">↑</button>
+              <button type="button" data-nudge="left" aria-label="เลื่อนห้องไปทางซ้าย 0.10 เมตร" title="ซ้าย 0.10 ม.">←</button>
+              <span class="nudge-step">0.10<br>m</span>
+              <button type="button" data-nudge="right" aria-label="เลื่อนห้องไปทางขวา 0.10 เมตร" title="ขวา 0.10 ม.">→</button>
+              <button type="button" data-nudge="down" aria-label="เลื่อนห้องลง 0.10 เมตร" title="ลง 0.10 ม.">↓</button>
+            </div>
+          </div>
+          <div class="legend"><span><i></i>Solar ray</span><span class="wind"><i></i>Prevailing wind</span><span class="room"><i></i>Room function</span><span class="grid-key"><i></i>1.00 m grid / 0.10 m subdivision</span><span class="metric-scale"><i></i>1.00 m</span><span class="drag-note">Drag room blocks · Arrow keys move 0.10 m</span><span class="scale-spec">Scale 1:100 · 1.00 m = 10 mm · Print A2 at 100% / Actual size</span></div>
+        </div>
+
+        <aside class="environment-info">
+          <article><div class="section-label sun-key">Sun chart</div><strong id="sunTitle">Solar study</strong><p id="sunSummary"></p><div class="data-row" id="sunData"></div></article>
+          <article><div class="section-label wind-key">Wind</div><strong id="windTitle">Seasonal wind</strong><p id="windSummary"></p><div class="data-row" id="windData"></div></article>
+          <article><div class="section-label">Area schedule</div><strong id="areaTotal">0 sq.m.</strong><p id="areaSummary"></p></article>
+        </aside>
+      </div>
+
+      <section class="analysis">
+        <article class="analysis-card"><div class="section-label">Design reading</div><h3>Place rooms by comfort, not rules alone.</h3><p id="designReading"></p></article>
+        <article class="analysis-card"><div class="section-label">Next conversation</div><h3>Questions for the client.</h3><p>ตรวจจำนวนผู้ใช้งาน ช่วงเวลาที่ใช้แต่ละห้อง ความเป็นส่วนตัว วิว ทางเข้าจริง ระดับพื้น และความสัมพันธ์ระหว่างห้อง ก่อนพัฒนาเป็น Bubble Diagram และแบบร่าง</p></article>
+        <div class="room-report"><div class="section-label">Room direction review</div><div class="report-list" id="reportList"></div></div>
+      </section>
+
+      <p class="method-note">เครื่องมือนี้ใช้เพื่อสื่อสารแนวคิดเบื้องต้น ไม่ใช่แบบก่อสร้างหรือผลวิเคราะห์วิศวกรรม ตำแหน่งดวงอาทิตย์คำนวณโดยประมาณจากสมการ Solar Position ของ <a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" target="_blank" rel="noopener">NOAA</a> และทิศลมอ้างอิงฤดูกาลมรสุมทั่วไปของประเทศไทยจาก <a href="https://tmd.go.th/info/%E0%B8%A5%E0%B8%A1%E0%B8%A1%E0%B8%A3%E0%B8%AA%E0%B8%B8%E0%B8%A1" target="_blank" rel="noopener">กรมอุตุนิยมวิทยา</a> ควรตรวจสภาพภูมิประเทศ อาคารข้างเคียง ข้อมูลอากาศรายพื้นที่ กฎหมาย และสำรวจหน้างานก่อนตัดสินใจจริง</p>
+    </article>
+  </section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const directions=["N","NE","E","SE","S","SW","W","NW"];
+const directionThai={N:"เหนือ",NE:"ตะวันออกเฉียงเหนือ",E:"ตะวันออก",SE:"ตะวันออกเฉียงใต้",S:"ใต้",SW:"ตะวันตกเฉียงใต้",W:"ตะวันตก",NW:"ตะวันตกเฉียงเหนือ",C:"กลางผัง"};
+const regions={
+  central:{label:"Bangkok / Central",lat:13.7563,lon:100.5018},
+  north:{label:"Northern Thailand",lat:18.7883,lon:98.9853},
+  northeast:{label:"Northeastern Thailand",lat:16.4322,lon:102.8236},
+  east:{label:"Eastern Thailand",lat:12.6814,lon:101.2816},
+  south:{label:"Southern Thailand",lat:9.1382,lon:99.3217}
+};
+const roomTypes={
+  living:{label:"Living / Family",thai:"ห้องนั่งเล่น",color:"#bbc2ae",prefs:["N","NE","E"],reason:"รับแสงอ่อนและเปิดมุมมองได้ดี เหมาะกับพื้นที่ใช้งานนาน"},
+  bedroom:{label:"Bedroom",thai:"ห้องนอน",color:"#c8bcae",prefs:["N","NE","E","SE"],reason:"เหมาะกับแสงเช้าและควรหลีกเลี่ยงความร้อนสะสมช่วงบ่าย"},
+  kitchen:{label:"Kitchen",thai:"ครัว",color:"#c8a88e",prefs:["E","SE","S"],reason:"แสงเช้าช่วยให้พื้นที่แห้งและควรมีทางระบายกลิ่นออกนอกอาคาร"},
+  dining:{label:"Dining",thai:"รับประทานอาหาร",color:"#c9c39c",prefs:["N","NE","E","SE"],reason:"ควรสัมพันธ์กับครัวและพื้นที่ครอบครัว พร้อมรับแสงธรรมชาติ"},
+  work:{label:"Work / Study",thai:"ทำงาน / อ่านหนังสือ",color:"#aab9bb",prefs:["N","NE","E"],reason:"แสงสม่ำเสมอช่วยลดแสงจ้าและความร้อนระหว่างทำงาน"},
+  bathroom:{label:"Bathroom",thai:"ห้องน้ำ",color:"#aab4ad",prefs:["W","NW","SW","S"],reason:"ใช้เป็นพื้นที่กันชนได้ แต่ต้องมีช่องระบายอากาศและควบคุมความชื้น"},
+  service:{label:"Service",thai:"บริการ / ซักล้าง",color:"#aaa69e",prefs:["W","NW","SW","S"],reason:"วางเป็นพื้นที่กันชนด้านร้อนได้และควรเชื่อมทางบริการ"},
+  stair:{label:"Stair / Hall",thai:"บันได / โถง",color:"#b8b1a5",prefs:["W","NW","SW","C"],reason:"ช่วยเป็นแกนสัญจรและพื้นที่กันชนโดยไม่แย่งทิศดีของห้องหลัก"},
+  terrace:{label:"Terrace",thai:"เฉลียง",color:"#b8c3aa",prefs:["N","NE","E","SE"],reason:"เหมาะกับแสงเช้า ร่มเงา และการเชื่อมพื้นที่ภายใน–ภายนอก"},
+  parking:{label:"Parking",thai:"ที่จอดรถ",color:"#aaa9a4",prefs:["W","SW","NW","S"],reason:"ใช้บังแดดด้านร้อนและแยกการสัญจรจากพื้นที่พักอาศัย"},
+  custom:{label:"Custom",thai:"กำหนดเอง",color:"#c1b7a7",prefs:directions,reason:"พิจารณาจากเวลาใช้งาน ความเป็นส่วนตัว วิว และความสัมพันธ์กับห้องอื่น"}
+};
+const sampleRooms=[
+  {id:"living-1",name:"Living Room",type:"living",x:8,y:1,w:7,d:4},
+  {id:"bed-1",name:"Master Bedroom",type:"bedroom",x:1,y:1,w:6,d:4},
+  {id:"dining-1",name:"Dining",type:"dining",x:7,y:5,w:5,d:3},
+  {id:"kitchen-1",name:"Kitchen",type:"kitchen",x:12,y:5,w:3,d:3},
+  {id:"bed-2",name:"Bedroom 02",type:"bedroom",x:1,y:5,w:6,d:4},
+  {id:"bath-1",name:"Bathroom",type:"bathroom",x:12,y:8,w:3,d:3},
+  {id:"service-1",name:"Service",type:"service",x:7,y:9,w:5,d:2}
+];
+let rooms=[];
+let selectedId=null;
+let toastTimer;
+
+function cloneSample(){return sampleRooms.map(room=>({...room}))}
+function clamp(value,min,max){return Math.min(max,Math.max(min,value))}
+function snap(value){return Math.round((value+Number.EPSILON)*10)/10}
+function round2(value){return Math.round((value+Number.EPSILON)*100)/100}
+function format2(value){return round2(Number(value)||0).toFixed(2)}
+function site(){return {w:clamp(Number($("siteWidth").value)||16,8,30),d:clamp(Number($("siteDepth").value)||12,8,30)}}
+function diagramSize(){const size=site();return {w:size.w*100,h:size.d*100}}
+function toast(message){clearTimeout(toastTimer);$("toast").textContent=message;$("toast").classList.add("show");toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2200)}
+function populateTypes(select){select.innerHTML=Object.entries(roomTypes).map(([value,type])=>`<option value="${value}">${type.label} · ${type.thai}</option>`).join("")}
+function defaultDate(){const date=new Date();return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`}
+function northAngle(){const value=Number($("northAngle").value);return ((Number.isFinite(value)?value:0)%360+360)%360}
+function toPlanAzimuth(worldAzimuth){return (worldAzimuth+northAngle())%360}
+function formatAngle(value){return Number(value.toFixed(2)).toString()}
+function zoneFor(room){
+  const size=site();const dx=room.x+room.w/2-size.w/2;const dy=room.y+room.d/2-size.d/2;
+  if(Math.hypot(dx/(size.w/2),dy/(size.d/2))<.18)return "C";
+  const screenAngle=(Math.atan2(dx,-dy)*180/Math.PI+360)%360;const angle=(screenAngle-northAngle()+360)%360;
+  return directions[Math.round(angle/45)%8];
+}
+function roomReview(room){
+  const zone=zoneFor(room);const type=roomTypes[room.type];const preferred=type.prefs.includes(zone);const afternoon=["W","SW","NW"].includes(zone);
+  const status=preferred?"เหมาะสมเบื้องต้น":"ควรทบทวน";
+  const message=preferred?`${directionThai[zone]}อยู่ในกลุ่มทิศที่เหมาะกับ${type.thai} · ${type.reason}`:`ตำแหน่ง${directionThai[zone]}ยังไม่ใช่ตัวเลือกแรกของ${type.thai}${afternoon?"และมีโอกาสรับแดดบ่าย":""} · ${type.reason}`;
+  return {zone,status,message,preferred};
+}
+function dayOfYear(date){return Math.floor((Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())-Date.UTC(date.getFullYear(),0,0))/86400000)}
+function solarPosition(date,hour,lat,lon){
+  const days=((date.getFullYear()%4===0&&date.getFullYear()%100!==0)||date.getFullYear()%400===0)?366:365;
+  const gamma=2*Math.PI/days*(dayOfYear(date)-1+(hour-12)/24);
+  const eqtime=229.18*(.000075+.001868*Math.cos(gamma)-.032077*Math.sin(gamma)-.014615*Math.cos(2*gamma)-.040849*Math.sin(2*gamma));
+  const decl=.006918-.399912*Math.cos(gamma)+.070257*Math.sin(gamma)-.006758*Math.cos(2*gamma)+.000907*Math.sin(2*gamma)-.002697*Math.cos(3*gamma)+.00148*Math.sin(3*gamma);
+  const offset=eqtime+4*lon-60*7;const trueSolarTime=hour*60+offset;const hourAngle=(trueSolarTime/4-180)*Math.PI/180;const latRad=lat*Math.PI/180;
+  const cosZenith=Math.sin(latRad)*Math.sin(decl)+Math.cos(latRad)*Math.cos(decl)*Math.cos(hourAngle);
+  const zenith=Math.acos(clamp(cosZenith,-1,1));const elevation=90-zenith*180/Math.PI;
+  const azimuth=(Math.atan2(Math.sin(hourAngle),Math.cos(hourAngle)*Math.sin(latRad)-Math.tan(decl)*Math.cos(latRad))*180/Math.PI+180+360)%360;
+  return {azimuth,elevation,hour,declination:decl*180/Math.PI};
+}
+function compassName(azimuth){return directions[Math.round(azimuth/45)%8]}
+function edgePoint(azimuth,inset=26){
+  const diagram=diagramSize();const rad=azimuth*Math.PI/180,dx=Math.sin(rad),dy=-Math.cos(rad),cx=diagram.w/2,cy=diagram.h/2;
+  const tx=Math.abs(dx)<.0001?Infinity:(cx-inset)/Math.abs(dx);const ty=Math.abs(dy)<.0001?Infinity:(cy-inset)/Math.abs(dy);const t=Math.min(tx,ty);
+  return {x:cx+dx*t,y:cy+dy*t,dx,dy};
+}
+function renderCompass(){
+  const board=$("planBoard");const bw=board.clientWidth;const bh=board.clientHeight;if(!bw||!bh)return;const diagram=diagramSize();
+  [["n",0],["e",90],["s",180],["w",270]].forEach(([key,azimuth])=>{const label=document.querySelector(`.compass-label.${key}`);const point=edgePoint(toPlanAzimuth(azimuth),0);label.style.left=`${board.offsetLeft+point.x/diagram.w*bw+point.dx*26}px`;label.style.top=`${board.offsetTop+point.y/diagram.h*bh+point.dy*26}px`;label.style.right="auto";label.style.bottom="auto";label.style.transform="translate(-50%,-50%)"});
+}
+function renderDimensions(){
+  const board=$("planBoard"),size=site(),bw=board.clientWidth,bh=board.clientHeight;if(!bw||!bh)return;const top=$("dimensionTop"),left=$("dimensionLeft");
+  top.style.left=`${board.offsetLeft}px`;top.style.top=`${board.offsetTop-18}px`;top.style.width=`${bw}px`;left.style.left=`${board.offsetLeft-25}px`;left.style.top=`${board.offsetTop}px`;left.style.height=`${bh}px`;
+  top.innerHTML=Array.from({length:Math.floor(size.w)+1},(_,metre)=>`<span class="dimension-mark" style="left:${metre/size.w*100}%">${metre}</span>`).join("");
+  left.innerHTML=Array.from({length:Math.floor(size.d)+1},(_,metre)=>`<span class="dimension-mark" style="top:${metre/size.d*100}%">${metre}</span>`).join("");
+}
+function selectedDate(){const parts=$("studyDate").value.split("-").map(Number);return new Date(parts[0],parts[1]-1,parts[2],12)}
+function windFor(date){
+  const key=(date.getMonth()+1)*100+date.getDate();
+  if(key>=515&&key<=1015)return {from:"SW",azimuth:225,title:"Southwest monsoon",thai:"มรสุมตะวันตกเฉียงใต้",note:"ลมชื้นและฝนจากตะวันตกเฉียงใต้ ควรเปิดทางลมพร้อมป้องกันฝนสาด"};
+  if(key>=1016||key<=215)return {from:"NE",azimuth:45,title:"Northeast monsoon",thai:"มรสุมตะวันออกเฉียงเหนือ",note:"ลมจากตะวันออกเฉียงเหนือเด่นในช่วงฤดูหนาวและฤดูแล้งของไทยตอนบน"};
+  return {from:"S",azimuth:180,title:"Summer transition",thai:"ลมฤดูร้อนจากทิศใต้",note:"ช่วงเปลี่ยนฤดูมักได้รับอิทธิพลลมใต้จากอ่าวไทย ควรตรวจข้อมูลพื้นที่จริงร่วมด้วย"};
+}
+function sunPositions(){const region=regions[$("region").value];const date=selectedDate();return [8,12,16].map(hour=>solarPosition(date,hour,region.lat,region.lon)).filter(item=>item.elevation>0)}
+function sunPathPositions(){
+  const region=regions[$("region").value];const date=selectedDate();const positions=[];
+  for(let hour=5;hour<=19;hour+=.25){const sun=solarPosition(date,hour,region.lat,region.lon);if(sun.elevation>=0)positions.push(sun)}
+  return positions;
+}
+function sunPathPoint(sun,inset=48){
+  const diagram=diagramSize();const rad=toPlanAzimuth(sun.azimuth)*Math.PI/180;const radius=(90-clamp(sun.elevation,0,90))/90;
+  return {x:diagram.w/2+Math.sin(rad)*radius*(diagram.w/2-inset),y:diagram.h/2-Math.cos(rad)*radius*(diagram.h/2-inset)};
+}
+function smoothSvgPath(points){
+  if(points.length<2)return "";let path=`M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+  for(let index=0;index<points.length-1;index++){const p0=points[index-1]||points[index],p1=points[index],p2=points[index+1],p3=points[index+2]||p2;const cp1={x:p1.x+(p2.x-p0.x)/6,y:p1.y+(p2.y-p0.y)/6},cp2={x:p2.x-(p3.x-p1.x)/6,y:p2.y-(p3.y-p1.y)/6};path+=` C ${cp1.x.toFixed(2)} ${cp1.y.toFixed(2)}, ${cp2.x.toFixed(2)} ${cp2.y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`}
+  return path;
+}
+function sunArcSide(pathPositions){
+  const peak=pathPositions.reduce((highest,sun)=>!highest||sun.elevation>highest.elevation?sun:highest,null);if(!peak)return {thai:"ไม่พบแนวแดด",english:"NO DAYLIGHT"};
+  const latitude=regions[$("region").value].lat,offset=peak.declination-latitude;if(Math.abs(offset)<.15)return {thai:"ผ่านเหนือศีรษะ",english:"OVERHEAD ARC"};
+  return offset>0?{thai:"อ้อมเหนือ",english:"NORTH ARC"}:{thai:"อ้อมใต้",english:"SOUTH ARC"};
+}
+function windCurve(start,end,offset=0){
+  const vx=end.x-start.x,vy=end.y-start.y,length=Math.hypot(vx,vy)||1,nx=-vy/length,ny=vx/length,lane=offset*34,wave=48*(offset===0?1:offset>0 ? .78 : 1.18);const sx=start.x+nx*lane,sy=start.y+ny*lane,ex=end.x+nx*lane,ey=end.y+ny*lane;
+  const mid={x:sx+vx*.5,y:sy+vy*.5};const cp1={x:sx+vx*.18+nx*wave,y:sy+vy*.18+ny*wave},cp2={x:sx+vx*.34+nx*wave,y:sy+vy*.34+ny*wave},cp3={x:sx+vx*.66-nx*wave,y:sy+vy*.66-ny*wave},cp4={x:sx+vx*.84-nx*wave,y:sy+vy*.84-ny*wave};
+  return {start:{x:sx,y:sy},mid,end:{x:ex,y:ey},cp1,cp2,cp3,cp4,path:`M ${sx.toFixed(2)} ${sy.toFixed(2)} C ${cp1.x.toFixed(2)} ${cp1.y.toFixed(2)}, ${cp2.x.toFixed(2)} ${cp2.y.toFixed(2)}, ${mid.x.toFixed(2)} ${mid.y.toFixed(2)} C ${cp3.x.toFixed(2)} ${cp3.y.toFixed(2)}, ${cp4.x.toFixed(2)} ${cp4.y.toFixed(2)}, ${ex.toFixed(2)} ${ey.toFixed(2)}`};
+}
+function renderEnvironment(){
+  const suns=sunPositions();const pathPositions=sunPathPositions();const pathPoints=pathPositions.map(sun=>sunPathPoint(sun));const arcSide=sunArcSide(pathPositions);const wind=windFor(selectedDate());const diagram=diagramSize();
+  $("sunGroup").style.display=$("showSun").checked?"":"none";$("windGroup").style.display=$("showWind").checked?"":"none";
+  const sunPath=pathPoints.length>1?`<path d="${smoothSvgPath(pathPoints)}" fill="none" stroke="#df8b4e" stroke-width="9" stroke-dasharray="24 18" stroke-linecap="round" stroke-linejoin="round" opacity=".42"/>`:"";
+  const sunRays=suns.map((sun,index)=>{const planAzimuth=toPlanAzimuth(sun.azimuth);const start=edgePoint(planAzimuth,35);const end=edgePoint((planAzimuth+180)%360,85);const marker=sunPathPoint(sun);return `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="#df8b4e" stroke-width="${index===1?4:3}" stroke-dasharray="${index===1?"0":"12 10"}" opacity=".58" marker-end="url(#sunArrow)"/><circle cx="${marker.x}" cy="${marker.y}" r="12" fill="#f7f4ed" fill-opacity=".9" stroke="#df8b4e" stroke-width="4"/><text x="${clamp(marker.x+15,15,diagram.w-65)}" y="${clamp(marker.y-14,18,diagram.h-15)}" fill="#9b542f" font-family="Instrument Sans" font-size="18">${sun.hour}:00</text>`}).join("");
+  $("sunGroup").innerHTML=sunPath+sunRays;
+  const windPlanAzimuth=toPlanAzimuth(wind.azimuth);const start=edgePoint(windPlanAzimuth,20);const end=edgePoint((windPlanAzimuth+180)%360,20);
+  $("windGroup").innerHTML=[-1,0,1].map(offset=>{const curve=windCurve(start,end,offset);return `<path d="${curve.path}" fill="none" stroke="#5b99a5" stroke-width="${offset===0?10:8}" stroke-linecap="round" opacity="${offset===0?".42":".32"}" marker-end="url(#windArrow)"/>`}).join("");
+  $("sunTitle").textContent=new Intl.DateTimeFormat("th-TH",{day:"numeric",month:"short",year:"numeric"}).format(selectedDate());
+  $("sunSummary").textContent=`เส้นปะโค้งคำนวณจากวันที่และละติจูดของ ${regions[$("region").value].label} จึงแสดงแนวดวงอาทิตย์${arcSide.thai}ตามฤดูกาลจริง โดยทิศเหนือหมุน ${formatAngle(northAngle())}° ตามเข็มนาฬิกาจากด้านบนผัง`;
+  $("sunData").innerHTML=`<span class="data-chip">${arcSide.english} · ${arcSide.thai}</span>`+suns.map(sun=>`<span class="data-chip">${sun.hour}:00 · ${compassName(sun.azimuth)} ${Math.round(sun.azimuth)}° · ALT ${Math.round(sun.elevation)}°</span>`).join("");
+  $("windTitle").textContent=wind.title;$("windSummary").textContent=`${wind.thai}: ${wind.note}`;$("windData").innerHTML=`<span class="data-chip">FROM ${wind.from}</span><span class="data-chip">TOWARD ${compassName((wind.azimuth+180)%360)}</span>`;
+}
+function renderRooms(){
+  const size=site();const board=$("planBoard");board.style.aspectRatio=`${size.w} / ${size.d}`;board.style.setProperty("--major-x",`${100/size.w}%`);board.style.setProperty("--major-y",`${100/size.d}%`);board.style.setProperty("--minor-x",`${10/size.w}%`);board.style.setProperty("--minor-y",`${10/size.d}%`);board.style.setProperty("--print-width",`${size.w*10}mm`);board.style.setProperty("--print-height",`${size.d*10}mm`);$("environmentLayer").setAttribute("viewBox",`0 0 ${size.w*100} ${size.d*100}`);board.classList.toggle("grid-off",!$("showGrid").checked);
+  rooms.forEach(room=>{room.w=clamp(room.w,1,size.w);room.d=clamp(room.d,1,size.d);room.x=clamp(room.x,0,size.w-room.w);room.y=clamp(room.y,0,size.d-room.d)});
+  $("roomLayer").innerHTML=rooms.map(room=>{const type=roomTypes[room.type];const zone=zoneFor(room);return `<div class="room-block ${room.id===selectedId?"selected":""}" data-id="${room.id}" tabindex="0" style="--room-color:${type.color};left:${room.x/size.w*100}%;top:${room.y/size.d*100}%;width:${room.w/size.w*100}%;height:${room.d/size.d*100}%"><strong>${escapeHtml(room.name)}</strong><span class="zone">${zone}</span><small>${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m.</small></div>`}).join("");
+  document.querySelectorAll(".room-block").forEach(block=>{block.addEventListener("pointerdown",startDrag);block.addEventListener("click",()=>selectRoom(block.dataset.id));block.addEventListener("keydown",moveWithKeyboard)});
+  renderDimensions();renderCompass();renderNudge();
+}
+function renderNudge(){
+  const control=$("roomNudge");const room=rooms.find(item=>item.id===selectedId);control.hidden=!room;if(!room)return;
+  const board=$("planBoard");const size=site();const bw=board.clientWidth;const bh=board.clientHeight;if(!bw||!bh)return;
+  const boardLeft=board.offsetLeft;const boardTop=board.offsetTop;const roomLeft=boardLeft+room.x/size.w*bw;const roomTop=boardTop+room.y/size.d*bh;const roomWidth=room.w/size.w*bw;const roomHeight=room.d/size.d*bh;
+  const controlWidth=control.offsetWidth;const controlHeight=control.offsetHeight;const gap=10;const bounds={left:boardLeft,top:boardTop,right:boardLeft+bw,bottom:boardTop+bh};
+  const candidates=[
+    {side:"bottom",left:roomLeft+roomWidth/2-controlWidth/2,top:roomTop+roomHeight+gap},
+    {side:"right",left:roomLeft+roomWidth+gap,top:roomTop+roomHeight/2-controlHeight/2},
+    {side:"top",left:roomLeft+roomWidth/2-controlWidth/2,top:roomTop-controlHeight-gap},
+    {side:"left",left:roomLeft-controlWidth-gap,top:roomTop+roomHeight/2-controlHeight/2}
+  ];
+  const otherRects=rooms.filter(item=>item.id!==room.id).map(item=>({left:boardLeft+item.x/size.w*bw,top:boardTop+item.y/size.d*bh,right:boardLeft+(item.x+item.w)/size.w*bw,bottom:boardTop+(item.y+item.d)/size.d*bh}));
+  const overlapArea=(candidate,target)=>Math.max(0,Math.min(candidate.left+controlWidth,target.right)-Math.max(candidate.left,target.left))*Math.max(0,Math.min(candidate.top+controlHeight,target.bottom)-Math.max(candidate.top,target.top));
+  const score=candidate=>{const inside=candidate.left>=bounds.left&&candidate.top>=bounds.top&&candidate.left+controlWidth<=bounds.right&&candidate.top+controlHeight<=bounds.bottom;return (inside?0:1e8)+otherRects.reduce((total,target)=>total+overlapArea(candidate,target),0)};
+  const chosen=candidates.reduce((best,candidate)=>score(candidate)<score(best)?candidate:best,candidates[0]);
+  control.dataset.side=chosen.side;control.style.left=`${clamp(chosen.left,bounds.left,bounds.right-controlWidth)}px`;control.style.top=`${clamp(chosen.top,bounds.top,bounds.bottom-controlHeight)}px`;control.setAttribute("aria-label",`ลูกศรเลื่อน ${room.name} ครั้งละ 0.10 เมตร`);
+}
+function renderRoomList(){
+  $("roomList").innerHTML=rooms.map(room=>`<div class="room-list-item ${room.id===selectedId?"active":""}"><button type="button" data-select="${room.id}"><strong>${escapeHtml(room.name)}</strong><small>${format2(room.w)} × ${format2(room.d)} m · ${directionThai[zoneFor(room)]}</small></button><button class="quick-delete" type="button" data-delete="${room.id}" aria-label="ลบ ${escapeHtml(room.name)}">×</button></div>`).join("");
+  document.querySelectorAll("[data-select]").forEach(button=>button.addEventListener("click",()=>selectRoom(button.dataset.select)));
+  document.querySelectorAll("[data-delete]").forEach(button=>button.addEventListener("click",()=>removeRoom(button.dataset.delete)));
+}
+function renderEditor(){
+  const room=rooms.find(item=>item.id===selectedId);$("selectedEditor").hidden=!room;if(!room)return;
+  $("selectedName").value=room.name;$("selectedType").value=room.type;$("selectedWidth").value=format2(room.w);$("selectedDepth").value=format2(room.d);
+  const size=site();$("selectedWidth").max=size.w;$("selectedDepth").max=size.d;
+}
+function renderAnalysis(){
+  const size=site();const total=rooms.reduce((sum,room)=>sum+room.w*room.d,0);const coverage=Math.round(total/(size.w*size.d)*100);
+  $("areaTotal").textContent=`${format2(total)} sq.m.`;$("areaSummary").textContent=`พื้นที่ฟังก์ชันรวม ${coverage}% ของกรอบผัง ${format2(size.w*size.d)} ตร.ม. พื้นที่ที่เหลือใช้สำหรับผนัง ทางสัญจร ช่องว่าง และพื้นที่ภายนอก`;
+  const westRooms=rooms.filter(room=>["W","SW","NW"].includes(zoneFor(room))&&!roomTypes[room.type].prefs.includes(zoneFor(room))).length;
+  $("designReading").textContent=westRooms?`พบ ${westRooms} ห้องที่ควรทบทวนด้านแดดบ่าย ใช้พื้นที่บริการ ชายคา ระแนง ต้นไม้ หรือผนังทึบเป็นแนวกันความร้อน และจัดช่องเปิดตรงข้ามกันเพื่อสร้างลมผ่าน`:`ตำแหน่งห้องหลักสอดคล้องกับคำแนะนำเบื้องต้น ควรพัฒนาต่อด้วยทางเข้า วิว ความเป็นส่วนตัว และช่องเปิดสำหรับลมข้ามอาคาร`;
+  $("reportList").innerHTML=rooms.map(room=>{const review=roomReview(room);return `<article class="report-item ${review.preferred?"":"review"}"><header><strong>${escapeHtml(room.name)}</strong><b>${review.status}</b></header><p>${format2(room.w)} × ${format2(room.d)} ม. · ${format2(room.w*room.d)} ตร.ม. · ${review.message}</p></article>`}).join("");
+}
+function renderHeader(){const size=site();const angle=formatAngle(northAngle());$("sheetProjectName").textContent=$("projectName").value.trim()||"Untitled Project";$("sheetRegion").textContent=regions[$("region").value].label;$("sheetSize").textContent=`${size.w} × ${size.d} m`;$("sheetNorth").textContent=Number(angle)===0?"North is up":`North ${angle}° clockwise from top`}
+function renderAll(save=true,preserveEditor=false){renderHeader();renderRooms();renderRoomList();if(!preserveEditor)renderEditor();renderEnvironment();renderAnalysis();if(save)saveState()}
+function escapeHtml(value){return String(value).replace(/[&<>"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]))}
+function selectRoom(id){selectedId=id;renderAll()}
+function removeRoom(id){rooms=rooms.filter(room=>room.id!==id);if(selectedId===id)selectedId=null;renderAll();toast("ลบห้องออกจากผังแล้ว")}
+function uniqueName(type){const base=roomTypes[type].thai;let number=1,name=base;while(rooms.some(room=>room.name===name)){number++;name=`${base} ${String(number).padStart(2,"0")}`}return name}
+function addRoom(){
+  const size=site();const type=$("newRoomType").value;const w=round2(clamp(Number($("newRoomWidth").value)||4,1,size.w));const d=round2(clamp(Number($("newRoomDepth").value)||4,1,size.d));const id=`room-${Date.now()}`;
+  const room={id,name:$("newRoomName").value.trim()||uniqueName(type),type,x:snap(Math.max(0,(size.w-w)/2)),y:snap(Math.max(0,(size.d-d)/2)),w,d};rooms.push(room);selectedId=id;$("newRoomName").value="";$("newRoomWidth").value=format2(w);$("newRoomDepth").value=format2(d);renderAll();toast("เพิ่มห้องแล้ว ลากไปยังตำแหน่งที่ต้องการได้เลย")
+}
+let dragState=null;
+function startDrag(event){
+  if(event.button!==0)return;const element=event.currentTarget;const id=element.dataset.id;selectedId=id;document.querySelectorAll(".room-block").forEach(block=>block.classList.toggle("selected",block===element));renderRoomList();renderEditor();const room=rooms.find(item=>item.id===id);const rect=$("planBoard").getBoundingClientRect();dragState={id,startX:event.clientX,startY:event.clientY,x:room.x,y:room.y,rect,element};element.setPointerCapture(event.pointerId);element.addEventListener("pointermove",dragMove);element.addEventListener("pointerup",endDrag,{once:true});
+}
+function dragMove(event){if(!dragState)return;const room=rooms.find(item=>item.id===dragState.id);const size=site();room.x=clamp(snap(dragState.x+(event.clientX-dragState.startX)/dragState.rect.width*size.w),0,size.w-room.w);room.y=clamp(snap(dragState.y+(event.clientY-dragState.startY)/dragState.rect.height*size.d),0,size.d-room.d);dragState.element.style.left=`${room.x/size.w*100}%`;dragState.element.style.top=`${room.y/size.d*100}%`;dragState.element.querySelector(".zone").textContent=zoneFor(room);renderNudge()}
+function endDrag(event){event.currentTarget.removeEventListener("pointermove",dragMove);dragState=null;renderAll()}
+function moveRoom(room,dx,dy){const size=site();room.x=clamp(round2(room.x+dx),0,size.w-room.w);room.y=clamp(round2(room.y+dy),0,size.d-room.d)}
+function nudgeSelected(direction){const room=rooms.find(item=>item.id===selectedId);if(!room)return;const delta={up:[0,-.1],down:[0,.1],left:[-.1,0],right:[.1,0]}[direction];if(!delta)return;moveRoom(room,delta[0],delta[1]);renderAll()}
+function moveWithKeyboard(event){if(!["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key))return;event.preventDefault();const room=rooms.find(item=>item.id===event.currentTarget.dataset.id);const delta={ArrowUp:[0,-.1],ArrowDown:[0,.1],ArrowLeft:[-.1,0],ArrowRight:[.1,0]}[event.key];moveRoom(room,delta[0],delta[1]);selectedId=room.id;renderAll()}
+function updateSelected(preserveEditor=false){const room=rooms.find(item=>item.id===selectedId);if(!room)return;const size=site();room.name=$("selectedName").value.trim()||roomTypes[$("selectedType").value].thai;room.type=$("selectedType").value;room.w=round2(clamp(Number($("selectedWidth").value)||1,1,size.w));room.d=round2(clamp(Number($("selectedDepth").value)||1,1,size.d));room.x=clamp(room.x,0,size.w-room.w);room.y=clamp(room.y,0,size.d-room.d);renderAll(true,preserveEditor)}
+function saveState(){try{localStorage.setItem("arstinla-schematic",JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:formatAngle(northAngle()),rooms}))}catch{}}
+function loadState(){
+  try{const saved=JSON.parse(localStorage.getItem("arstinla-schematic"));if(saved?.rooms?.length){$("projectName").value=saved.projectName||"Concept House 01";$("region").value=saved.region||"central";$("studyDate").value=saved.studyDate||defaultDate();$("siteWidth").value=saved.siteWidth||16;$("siteDepth").value=saved.siteDepth||12;$("northAngle").value=saved.northAngle??0;rooms=saved.rooms;return}}catch{}
+  rooms=cloneSample();$("studyDate").value=defaultDate();$("northAngle").value=0;
+}
+function resetPlan(){localStorage.removeItem("arstinla-schematic");rooms=cloneSample();selectedId=null;$("projectName").value="Concept House 01";$("region").value="central";$("studyDate").value=defaultDate();$("siteWidth").value=16;$("siteDepth").value=12;$("northAngle").value=0;$("showSun").checked=true;$("showWind").checked=true;$("showGrid").checked=true;renderAll();toast("กลับสู่ผังตัวอย่างแล้ว")}
+function drawArrow(ctx,x1,y1,x2,y2,color,width=3){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();const angle=Math.atan2(y2-y1,x2-x1);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-12*Math.cos(angle-.45),y2-12*Math.sin(angle-.45));ctx.lineTo(x2-12*Math.cos(angle+.45),y2-12*Math.sin(angle+.45));ctx.closePath();ctx.fill()}
+function mapPlanPoint(point,bx,by,bw,bh,diagram){return {x:bx+point.x/diagram.w*bw,y:by+point.y/diagram.h*bh}}
+function drawSmoothCanvasPath(ctx,points,color,width,dash=[],opacity=1){
+  if(points.length<2)return;ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.globalAlpha=opacity;ctx.setLineDash(dash);ctx.lineCap="round";ctx.lineJoin="round";ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);
+  for(let index=0;index<points.length-1;index++){const p0=points[index-1]||points[index],p1=points[index],p2=points[index+1],p3=points[index+2]||p2;ctx.bezierCurveTo(p1.x+(p2.x-p0.x)/6,p1.y+(p2.y-p0.y)/6,p2.x-(p3.x-p1.x)/6,p2.y-(p3.y-p1.y)/6,p2.x,p2.y)}ctx.stroke();ctx.restore();
+}
+function drawWindCanvas(ctx,curve,bx,by,bw,bh,diagram,width,opacity){
+  const point=value=>mapPlanPoint(value,bx,by,bw,bh,diagram),start=point(curve.start),mid=point(curve.mid),end=point(curve.end),cp1=point(curve.cp1),cp2=point(curve.cp2),cp3=point(curve.cp3),cp4=point(curve.cp4);ctx.save();ctx.strokeStyle="#5b99a5";ctx.fillStyle="#5b99a5";ctx.lineWidth=width;ctx.globalAlpha=opacity;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(start.x,start.y);ctx.bezierCurveTo(cp1.x,cp1.y,cp2.x,cp2.y,mid.x,mid.y);ctx.bezierCurveTo(cp3.x,cp3.y,cp4.x,cp4.y,end.x,end.y);ctx.stroke();const angle=Math.atan2(end.y-cp4.y,end.x-cp4.x);ctx.beginPath();ctx.moveTo(end.x,end.y);ctx.lineTo(end.x-18*Math.cos(angle-.48),end.y-18*Math.sin(angle-.48));ctx.lineTo(end.x-18*Math.cos(angle+.48),end.y-18*Math.sin(angle+.48));ctx.closePath();ctx.fill();ctx.restore();
+}
+async function downloadPng(){
+  await document.fonts.ready;const angle=northAngle();const northLabel=angle===0?"NORTH IS UP":`NORTH ${formatAngle(angle)}° CLOCKWISE FROM TOP`;const canvas=document.createElement("canvas");canvas.width=1800;canvas.height=1250;const ctx=canvas.getContext("2d");ctx.fillStyle="#f7f4ed";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#171816";ctx.font="600 18px Instrument Sans";ctx.fillText("ARSTINLA · SCHEMATIC DESIGN",80,65);ctx.font="300 54px Instrument Sans";ctx.fillText($("sheetProjectName").textContent,80,125);ctx.fillStyle="#6f7069";ctx.font="16px Instrument Sans";ctx.fillText(`${$("sheetRegion").textContent} · ${$("sheetSize").textContent} · ${northLabel}`,80,160);
+  const bx=80,by=210,maxBw=1120,maxBh=840,size=site(),ratio=size.w/size.d;let bw=maxBw,bh=bw/ratio;if(bh>maxBh){bh=maxBh;bw=bh*ratio}ctx.fillStyle="#eee9df";ctx.fillRect(bx,by,bw,bh);for(let tenth=0;tenth<=size.w*10;tenth++){const major=tenth%10===0;ctx.strokeStyle=major?"#8d887e":"#d4cfc4";ctx.lineWidth=major?1.4:.4;ctx.beginPath();ctx.moveTo(bx+tenth/(size.w*10)*bw,by);ctx.lineTo(bx+tenth/(size.w*10)*bw,by+bh);ctx.stroke()}for(let tenth=0;tenth<=size.d*10;tenth++){const major=tenth%10===0;ctx.strokeStyle=major?"#8d887e":"#d4cfc4";ctx.lineWidth=major?1.4:.4;ctx.beginPath();ctx.moveTo(bx,by+tenth/(size.d*10)*bh);ctx.lineTo(bx+bw,by+tenth/(size.d*10)*bh);ctx.stroke()}ctx.save();ctx.fillStyle="#6d6b64";ctx.strokeStyle="#777268";ctx.lineWidth=1;ctx.font="600 12px Instrument Sans";ctx.textAlign="center";ctx.textBaseline="bottom";for(let metre=0;metre<=Math.floor(size.w);metre++){const x=bx+metre/size.w*bw;ctx.fillText(String(metre),x,by-9);ctx.beginPath();ctx.moveTo(x,by-6);ctx.lineTo(x,by-2);ctx.stroke()}ctx.textAlign="right";ctx.textBaseline="middle";for(let metre=0;metre<=Math.floor(size.d);metre++){const y=by+metre/size.d*bh;ctx.fillText(String(metre),bx-9,y);ctx.beginPath();ctx.moveTo(bx-6,y);ctx.lineTo(bx-2,y);ctx.stroke()}ctx.restore();
+  rooms.forEach(room=>{const x=bx+room.x/size.w*bw,y=by+room.y/size.d*bh,w=room.w/size.w*bw,h=room.d/size.d*bh;ctx.fillStyle=roomTypes[room.type].color;ctx.fillRect(x,y,w,h);ctx.strokeStyle="#171816";ctx.strokeRect(x,y,w,h);ctx.fillStyle="#171816";ctx.font="500 20px Noto Sans Thai";ctx.fillText(room.name,x+12,y+30);ctx.font="14px Instrument Sans";ctx.fillText(`${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m. · ${zoneFor(room)}`,x+12,y+h-14)});
+  const diagram=diagramSize();if($("showSun").checked){const pathPoints=sunPathPositions().map(sun=>mapPlanPoint(sunPathPoint(sun),bx,by,bw,bh,diagram));drawSmoothCanvasPath(ctx,pathPoints,"#df8b4e",8,[22,16],.42);sunPositions().forEach((sun,index)=>{const planAzimuth=toPlanAzimuth(sun.azimuth),start=mapPlanPoint(edgePoint(planAzimuth,35),bx,by,bw,bh,diagram),end=mapPlanPoint(edgePoint((planAzimuth+180)%360,85),bx,by,bw,bh,diagram),marker=mapPlanPoint(sunPathPoint(sun),bx,by,bw,bh,diagram);ctx.save();ctx.globalAlpha=.58;drawArrow(ctx,start.x,start.y,end.x,end.y,"#df8b4e",index===1?4:3);ctx.restore();ctx.save();ctx.fillStyle="#f7f4ed";ctx.strokeStyle="#df8b4e";ctx.lineWidth=3;ctx.beginPath();ctx.arc(marker.x,marker.y,9,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#9b542f";ctx.font="600 14px Instrument Sans";ctx.fillText(`${sun.hour}:00`,marker.x+12,marker.y-10);ctx.restore()})}
+  if($("showWind").checked){const wind=windFor(selectedDate()),planAzimuth=toPlanAzimuth(wind.azimuth),start=edgePoint(planAzimuth,20),end=edgePoint((planAzimuth+180)%360,20);[-1,0,1].forEach(offset=>drawWindCanvas(ctx,windCurve(start,end,offset),bx,by,bw,bh,diagram,offset===0?9:7,offset===0 ? .42 : .32))}
+  ctx.fillStyle="#171816";ctx.font="600 16px Instrument Sans";ctx.fillText("ENVIRONMENTAL READING",1260,230);ctx.font="400 25px Instrument Sans";ctx.fillText($("sunTitle").textContent,1260,275);ctx.font="16px Noto Sans Thai";wrapCanvasText(ctx,$("sunSummary").textContent,1260,310,460,27);ctx.fillStyle="#171816";ctx.font="400 25px Instrument Sans";ctx.fillText($("windTitle").textContent,1260,440);ctx.font="16px Noto Sans Thai";wrapCanvasText(ctx,$("windSummary").textContent,1260,475,460,27);ctx.font="400 25px Instrument Sans";ctx.fillText($("areaTotal").textContent,1260,610);ctx.font="16px Noto Sans Thai";wrapCanvasText(ctx,$("areaSummary").textContent,1260,645,460,27);ctx.fillStyle="#6f7069";ctx.font="14px Noto Sans Thai";wrapCanvasText(ctx,"แนวคิดเบื้องต้นสำหรับการพูดคุย ไม่ใช่แบบก่อสร้าง ควรตรวจหน้างาน กฎหมาย โครงสร้าง และข้อมูลภูมิอากาศรายพื้นที่ก่อนพัฒนาแบบจริง",80,1110,1640,24);
+  const link=document.createElement("a");link.download=`${($("projectName").value||"schematic-plan").replace(/[^a-zA-Z0-9ก-๙]+/g,"-")}-schematic.png`;link.href=canvas.toDataURL("image/png",1);link.click();toast("ดาวน์โหลดภาพ Schematic แล้ว")
+}
+function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight){const words=text.split(" ");let line="";for(const word of words){const test=`${line}${word} `;if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,y);line=`${word} `;y+=lineHeight}else line=test}ctx.fillText(line,x,y)}
+
+populateTypes($("newRoomType"));populateTypes($("selectedType"));loadState();renderAll(false);
+$("addRoom").addEventListener("click",addRoom);$("deleteSelected").addEventListener("click",()=>selectedId&&removeRoom(selectedId));
+$("selectedName").addEventListener("input",()=>updateSelected(true));
+$("selectedType").addEventListener("change",()=>updateSelected());
+[$("selectedWidth"),$("selectedDepth")].forEach(input=>{input.addEventListener("input",()=>updateSelected(true));input.addEventListener("blur",()=>updateSelected())});
+[$("newRoomWidth"),$("newRoomDepth")].forEach(input=>input.addEventListener("blur",()=>{input.value=format2(input.value)}));
+[$("projectName"),$("region"),$("studyDate"),$("siteWidth"),$("siteDepth"),$("northAngle"),$("showSun"),$("showWind"),$("showGrid")].forEach(input=>input.addEventListener(input.type==="text"||input.type==="number"?"input":"change",()=>renderAll()));
+$("northAngle").addEventListener("blur",()=>{$("northAngle").value=formatAngle(northAngle());renderAll()});
+$("newRoomType").addEventListener("change",()=>{$("newRoomName").placeholder=`เช่น ${roomTypes[$("newRoomType").value].thai}`});
+$("resetPlan").addEventListener("click",resetPlan);$("printBtn").addEventListener("click",()=>window.print());$("downloadBtn").addEventListener("click",downloadPng);
+$("roomNudge").addEventListener("pointerdown",event=>event.stopPropagation());document.querySelectorAll("[data-nudge]").forEach(button=>button.addEventListener("click",event=>{event.stopPropagation();nudgeSelected(button.dataset.nudge)}));
+window.addEventListener("resize",()=>{renderDimensions();renderCompass();renderNudge()});window.addEventListener("beforeprint",()=>{renderDimensions();renderCompass();renderNudge()});
+$("presentBtn").addEventListener("click",()=>{document.body.classList.toggle("present-mode");$("presentBtn").textContent=document.body.classList.contains("present-mode")?"Exit presentation":"Present client view";requestAnimationFrame(()=>{renderDimensions();renderCompass();renderNudge()});window.scrollTo({top:0,behavior:"smooth"})});
+</script>
+</body>
+</html>
