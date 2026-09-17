@@ -3163,13 +3163,13 @@ next: "05"
     country:
       "Thailand",
 
-    year: "",
+    year: "2022",
 
-    completion: "",
+    completion: "2024",
 
-    area: "",
+    area: "380",
 
-    areaNumber: 0,
+    areaNumber: 380,
 
     status:
       "Draft",
