@@ -3211,6 +3211,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "48": {
+
+    number: "48",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "SPORT COMPLEX",
+
+    officialTitle:
+      "SPORT COMPLEX",
+
+    category:
+      "Public & Institutional",
+
+    filterCategory:
+      "public",
+
+    location:
+      "Pattaya",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-48.jpg",
+
+    hero:
+      "/assets/project-48.jpg",
+
+    heroAlt:
+      "SPORT COMPLEX",
+
+    assetFolder:
+      "/assets/project-48/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
