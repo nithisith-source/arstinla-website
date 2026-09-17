@@ -3283,6 +3283,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "49": {
+
+    number: "49",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "Baan Mark",
+
+    officialTitle:
+      "Baan Mark",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Wangchan, Rayong",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-49.jpg",
+
+    hero:
+      "/assets/project-49.jpg",
+
+    heroAlt:
+      "Baan Mark",
+
+    assetFolder:
+      "/assets/project-49/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
