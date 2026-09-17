@@ -3243,13 +3243,13 @@ next: "05"
     country:
       "Thailand",
 
-    year: "",
+    year: "2020",
 
-    completion: "",
+    completion: "2020",
 
-    area: "",
+    area: "30000",
 
-    areaNumber: 0,
+    areaNumber: 30000,
 
     status:
       "Draft",
