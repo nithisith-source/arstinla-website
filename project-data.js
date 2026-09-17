@@ -3355,6 +3355,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "50": {
+
+    number: "50",
+
+    slug: "new-project",
+
+    url:
+      "/projects/new-project/",
+
+    title:
+      "Cube Condo",
+
+    officialTitle:
+      "Cube Condo",
+
+    category:
+      "Interior",
+
+    filterCategory:
+      "interior",
+
+    location:
+      "LADPRAW 93, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-50.jpg",
+
+    hero:
+      "/assets/project-50.jpg",
+
+    heroAlt:
+      "Cube Condo",
+
+    assetFolder:
+      "/assets/project-50/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
