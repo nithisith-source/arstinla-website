@@ -2595,13 +2595,13 @@ next: "05"
     country:
       "Thailand",
 
-    year: "",
+    year: "2022",
 
-    completion: "",
+    completion: "2023",
 
-    area: "",
+    area: "280",
 
-    areaNumber: 0,
+    areaNumber: 280,
 
     status:
       "Draft",
