@@ -3203,6 +3203,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "46": {
+
+    number: "46",
+
+    slug: "private-residence",
+
+    url:
+      "/projects/private-residence/",
+
+    title:
+      "Baan Ruksatrupt",
+
+    officialTitle:
+      "Baan Ruksatrupt",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Kabinburi, Prajinburi",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-46.jpg",
+
+    hero:
+      "/assets/project-46.jpg",
+
+    heroAlt:
+      "Baan Ruksatrupt",
+
+    assetFolder:
+      "/assets/project-46/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
