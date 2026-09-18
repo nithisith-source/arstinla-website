@@ -1,6 +1,6 @@
 const CACHE_PREFIX = "arstinla-imgtool-";
-const CACHE = CACHE_PREFIX + "v2";
-const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg"];
+const CACHE = CACHE_PREFIX + "v3";
+const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg", "/tools/shared/download-gate.js"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

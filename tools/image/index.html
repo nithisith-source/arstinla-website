@@ -308,6 +308,7 @@ footer a:hover{color:var(--sand)}
   <a href="/">กลับสู่ arstinla.com</a>
 </footer>
 
+<script src="/tools/shared/download-gate.js"></script>
 <script>
 "use strict";
 /* ---------- state ---------- */
@@ -442,11 +443,14 @@ function updateSummary(){
   $("sumSave").textContent = conv.length && before ? "−" + (100 * (1 - after/before)).toFixed(0) + "%" : "—";
 }
 
-tbody.addEventListener("click", e => {
+tbody.addEventListener("click", async e => {
   const dl = e.target.closest("[data-dl]");
   if(dl){
     const it = items.find(x => x.id == dl.dataset.dl);
-    if(it && it.blob) saveBlob(it.blob, it.outName);
+    if(it && it.blob){
+      const allowed=await ARSTINLA_DOWNLOAD_GATE.request({tool:"ARSTINLA Image Tool",file:it.outName,buttonLabel:"ดาวน์โหลด "+it.outName});
+      if(allowed)saveBlob(it.blob,it.outName);
+    }
     return;
   }
   const rm = e.target.closest("[data-rm]");
@@ -471,6 +475,8 @@ function saveBlob(blob, name){
 $("zipBtn").addEventListener("click", async () => {
   const conv = items.filter(it => it.blob);
   if(!conv.length) return;
+  const allowed=await ARSTINLA_DOWNLOAD_GATE.request({tool:"ARSTINLA Image Tool",file:"arstinla-images.zip",buttonLabel:"ดาวน์โหลดไฟล์ ZIP"});
+  if(!allowed)return;
   $("zipBtn").disabled = true;
   const zip = new JSZip();
   const used = new Set();

@@ -469,6 +469,7 @@ footer a:hover{color:var(--sand)}
 
 <div class="toast" id="toast" role="status"></div>
 
+<script src="/tools/shared/download-gate.js"></script>
 <script>
 const titles = {
   1:"คนรักเสรี กล้าหาญ และไม่ก้มหัวให้ใคร",
@@ -807,15 +808,18 @@ async function createWallpaper(day){
 
   context.strokeStyle="rgba(241,238,229,.32)";
   context.beginPath();
-  context.moveTo(72,1778);
-  context.lineTo(width-72,1778);
+  context.moveTo(72,1768);
+  context.lineTo(width-72,1768);
   context.stroke();
   context.fillStyle="rgba(241,238,229,.78)";
   context.font='400 19px "Noto Sans Thai", sans-serif';
-  context.fillText("ภาพประจำวันเกิด • เพื่อเตือนใจถึงพลังและตัวตนของคุณ",72,1824);
+  context.fillText("ภาพประจำวันเกิด • เพื่อเตือนใจถึงพลังและตัวตนของคุณ",72,1810);
   context.fillStyle="rgba(241,238,229,.48)";
   context.font='400 16px "Noto Sans Thai", sans-serif';
-  context.fillText("การเสริมดวงเป็นความเชื่อส่วนบุคคล",72,1860);
+  context.fillText("การเสริมดวงเป็นความเชื่อส่วนบุคคล",72,1840);
+  context.fillStyle="rgba(241,238,229,.82)";
+  context.font='600 15px "Instrument Sans", sans-serif';
+  context.fillText("ARSTINLA DESIGN & CONSULT · arstinla.com · LINE @arstinla",72,1868);
 
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Wallpaper failed")),"image/jpeg",.92));
 }
@@ -845,6 +849,13 @@ $("copyBtn").addEventListener("click",async()=>{
 $("downloadBtn").addEventListener("click",async()=>{
   const button=$("downloadBtn");
   const day=selectedDay;
+  const allowed=await ARSTINLA_DOWNLOAD_GATE.request({
+    tool:"ARSTINLA Birthday Insight",
+    file:`Birthday ${String(day).padStart(2,"0")} Wallpaper`,
+    buttonLabel:"ดาวน์โหลด Wallpaper",
+    shareText:`คำอ่านสำหรับคนเกิดวันที่ ${day} จาก ARSTINLA Birthday Insight\n${location.href}`
+  });
+  if(!allowed)return;
   button.disabled=true;
   button.textContent="Preparing…";
   try{
