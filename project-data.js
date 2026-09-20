@@ -410,16 +410,20 @@ Resort-like Living ภายในบ้านพักอาศัย
     country:
       "Thailand",
 
-    year: "",
+    year: "2022",
 
-    completion: "",
+    completion: "2026",
 
-    area: "",
+    area: "280",
 
-    areaNumber: 0,
+    areaNumber: 280,
 
     status:
       "Draft",
+
+    briefTitle: "",
+
+    brief: "",
 
     service:
       "Architecture / Design",
