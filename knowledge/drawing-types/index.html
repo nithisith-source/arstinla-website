@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบ 5 ชนิด: ใครทำ ใช้ทำอะไร มีอะไรบ้าง</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500&family=IBM+Plex+Sans+Thai:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/knowledge/article-shell.css">
+<style>
+/* ===== ส่วนนี้คัดลอกไปวางในบทความได้ทั้งก้อน (CSS + <section class="dt">) ===== */
+.dt{
+  --dt-bg:#F3F0E8; --dt-card:#FAF8F3; --dt-ink:#1E1C18; --dt-ink2:#5C574D; --dt-ink3:#8A8477;
+  --dt-line:#D6D0C2; --dt-accent:#7C5A34; --dt-accent-soft:#E7DCCB;
+  font-family:"IBM Plex Sans Thai","Anuphan",-apple-system,"Segoe UI",Tahoma,sans-serif;
+  color:var(--dt-ink); line-height:1.65; font-size:15px; max-width:1040px; margin:0 auto;
+}
+.dt *{box-sizing:border-box}
+.dt-eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dt-accent);margin:0 0 8px}
+.dt-title{font-family:"Anuphan",sans-serif;font-weight:400;font-size:clamp(26px,4vw,36px);line-height:1.2;margin:0 0 10px;letter-spacing:-.01em}
+.dt-lede{color:var(--dt-ink2);margin:0 0 24px;max-width:62ch;font-size:16px}
+
+.dt-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--dt-ink)}
+.dt table{width:100%;border-collapse:collapse;min-width:860px}
+.dt thead th{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:500;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dt-ink2);text-align:left;padding:14px 14px 12px;border-bottom:1px solid var(--dt-line);vertical-align:bottom;
+}
+.dt tbody td{padding:18px 14px 20px;border-bottom:1px solid var(--dt-line);vertical-align:top;color:var(--dt-ink2);font-size:14.5px}
+.dt tbody tr:last-child td{border-bottom:1px solid var(--dt-ink)}
+.dt td.dt-name{color:var(--dt-ink);width:19%}
+.dt .dt-num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--dt-accent);display:block;margin-bottom:6px;letter-spacing:.08em}
+.dt .dt-th{font-family:"Anuphan",sans-serif;font-weight:500;font-size:18px;line-height:1.3;display:block}
+.dt .dt-en{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--dt-ink3);display:block;margin-top:4px;letter-spacing:.04em}
+.dt td.dt-note{font-size:13.5px}
+.dt .dt-phase td{padding:8px 14px;background:var(--dt-accent-soft);border-bottom:0}
+.dt .dt-phase span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dt-accent)}
+.dt-foot{margin:18px 0 0;font-size:13.5px;color:var(--dt-ink3);max-width:70ch}
+.dt-foot strong{color:var(--dt-ink2);font-weight:500}
+
+/* มือถือ: เปลี่ยนตารางเป็นการ์ดเรียงลง ไม่ต้องเลื่อนซ้ายขวา */
+@media (max-width:720px){
+  .dt-scroll{overflow:visible;border-top:0}
+  .dt table{min-width:0;display:block}
+  .dt thead{display:none}
+  .dt tbody,.dt tr,.dt td{display:block;width:auto}
+  .dt tbody tr{border:1px solid var(--dt-line);background:var(--dt-card);margin-bottom:12px;padding:6px 0}
+  .dt tbody tr.dt-phase{border:0;background:transparent;padding:0;margin:20px 0 10px}
+  .dt .dt-phase td{background:transparent;padding:0}
+  .dt tbody td{border:0;padding:8px 16px}
+  .dt td.dt-name{width:auto;padding-top:14px}
+  .dt tbody td[data-label]::before{content:attr(data-label);display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dt-accent);margin-bottom:2px}
+  .dt tbody tr:last-child td{border-bottom:0}
+  .dt tbody td:last-child{padding-bottom:16px}
+}
+/* ===== จบส่วนคัดลอก ===== */
+
+/* ตัวอย่างหน้าเพจ (ไม่ต้องคัดลอก) */
+body{margin:0;background:#F3F0E8;padding:48px 20px 80px}
+</style>
+</head>
+<body>
+
+<nav class="article-nav" aria-label="Article navigation">
+  <a class="article-brand" href="/">ARSTINLA<small>Design &amp; Consult</small></a>
+  <a class="article-back" href="/#knowledge">← Knowledge</a>
+</nav>
+
+<section class="dt">
+  <p class="dt-eyebrow">Drawing · Comparison</p>
+  <h2 class="dt-title">แบบ 5 ชนิด: ใครทำ ใช้ทำอะไร มีอะไรบ้าง</h2>
+  <p class="dt-lede">คำว่า "แบบ" ในปากเจ้าของบ้านหมายถึงเอกสารได้อย่างน้อย 5 ชนิด ซึ่งคนทำ หน้าที่ ระดับรายละเอียด และราคาไม่เหมือนกันเลย</p>
+
+  <div class="dt-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">แบบ</th>
+        <th scope="col">ใครทำ</th>
+        <th scope="col">ใช้ทำอะไร</th>
+        <th scope="col">มีอะไรบ้าง</th>
+        <th scope="col">ข้อควรรู้</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="dt-phase"><td colspan="5"><span>งานของผู้ออกแบบ</span></td></tr>
+
+      <tr>
+        <td class="dt-name"><span class="dt-num">01</span><span class="dt-th">แบบไอเดีย / แบบร่าง</span><span class="dt-en">Concept · Schematic</span></td>
+        <td data-label="ใครทำ">สถาปนิก หรือแบบที่แจกฟรีตามเว็บ</td>
+        <td data-label="ใช้ทำอะไร">ให้เจ้าของบ้านเห็นภาพรวม ตัดสินใจทิศทาง และประเมินงบคร่าว ๆ</td>
+        <td data-label="มีอะไรบ้าง">แปลนพื้น รูปด้าน รูปตัดเบื้องต้น ภาพ 3D ขนาดโดยประมาณ</td>
+        <td class="dt-note" data-label="ข้อควรรู้">สร้างจริงไม่ได้ ยื่นราชการไม่ได้ ยังไม่มีลายเซ็นผู้ประกอบวิชาชีพ</td>
+      </tr>
+
+      <tr>
+        <td class="dt-name"><span class="dt-num">02</span><span class="dt-th">แบบขออนุญาต</span><span class="dt-en">Permit Drawing</span></td>
+        <td data-label="ใครทำ">สถาปนิกและวิศวกรที่มีใบอนุญาต ลงนามรับรอง</td>
+        <td data-label="ใช้ทำอะไร">ยื่นต่อเจ้าพนักงานท้องถิ่น (แบบ ข.1) เพื่อรับใบอนุญาตก่อสร้าง อ.1</td>
+        <td data-label="มีอะไรบ้าง">แผนที่สังเขป ผังบริเวณ แปลนทุกชั้น รูปด้านอย่างน้อย 2 ด้าน รูปตัด แบบขยายพื้นฐาน ผังโครงสร้าง ระบบหลัก รายการประกอบแบบ และรายการคำนวณเมื่อเข้าเกณฑ์</td>
+        <td class="dt-note" data-label="ข้อควรรู้">แสดงเฉพาะสิ่งที่กฎหมายตรวจ (ระยะร่น ที่ว่าง ความสูง โครงสร้าง) มาตราส่วนไม่เล็กกว่า 1:100 รายละเอียดไม่พอสำหรับก่อสร้างจริง</td>
+      </tr>
+
+      <tr>
+        <td class="dt-name"><span class="dt-num">03</span><span class="dt-th">แบบก่อสร้าง</span><span class="dt-en">Construction Drawing</span></td>
+        <td data-label="ใครทำ">สถาปนิกและวิศวกร</td>
+        <td data-label="ใช้ทำอะไร">ให้ผู้รับเหมาเสนอราคาและก่อสร้างได้ถูกต้องครบถ้วน เป็นเอกสารแนบสัญญาจ้าง</td>
+        <td data-label="มีอะไรบ้าง">ครบ 4 หมวด: สถาปัตย์ โครงสร้าง ไฟฟ้า สุขาภิบาล พร้อมแบบขยายทุกจุดสำคัญ ตารางประตูหน้าต่าง ตารางวัสดุ รายการประกอบแบบละเอียด</td>
+        <td class="dt-note" data-label="ข้อควรรู้">ต้องสอดคล้องกับแบบขออนุญาต ถ้าเปลี่ยนสาระสำคัญ (ร่น สูง พื้นที่ โครงสร้าง) ต้องยื่นแก้ไขก่อนสร้าง</td>
+      </tr>
+
+      <tr class="dt-phase"><td colspan="5"><span>งานของผู้ก่อสร้าง</span></td></tr>
+
+      <tr>
+        <td class="dt-name"><span class="dt-num">04</span><span class="dt-th">แบบประกอบการติดตั้ง</span><span class="dt-en">Shop Drawing</span></td>
+        <td data-label="ใครทำ">ผู้รับเหมาหรือผู้ผลิต ส่งให้สถาปนิก-วิศวกรตรวจอนุมัติ</td>
+        <td data-label="ใช้ทำอะไร">แสดงวิธีผลิตและติดตั้งจริงของงานเฉพาะส่วน ก่อนลงมือทำ</td>
+        <td data-label="มีอะไรบ้าง">แบบขยายระดับชิ้นงาน เช่น เหล็กเสริม โครงหลังคา งานอะลูมิเนียม บันได ครัวบิลท์อิน งานระบบ ระบุขนาดจริง วัสดุ วิธียึด</td>
+        <td class="dt-note" data-label="ข้อควรรู้">ทำระหว่างก่อสร้าง อ้างอิงจากแบบก่อสร้างและสภาพหน้างาน ไม่ใช่การเปลี่ยนแบบ</td>
+      </tr>
+
+      <tr>
+        <td class="dt-name"><span class="dt-num">05</span><span class="dt-th">แบบตามที่สร้างจริง</span><span class="dt-en">As-built Drawing</span></td>
+        <td data-label="ใครทำ">ผู้รับเหมา (บางกรณีวิศวกร/สถาปนิกตรวจรับรอง)</td>
+        <td data-label="ใช้ทำอะไร">บันทึกสิ่งที่สร้างจริง ใช้ดูแลรักษา ซ่อมแซม ต่อเติม และเป็นหลักฐานเมื่องานเสร็จ</td>
+        <td data-label="มีอะไรบ้าง">แบบก่อสร้างที่แก้ไขให้ตรงกับของจริง โดยเฉพาะแนวท่อ สายไฟ และตำแหน่งที่ต่างจากแบบเดิม</td>
+        <td class="dt-note" data-label="ข้อควรรู้">ควรระบุในสัญญาว่าต้องส่งมอบ เจ้าของบ้านจำนวนมากไม่เคยได้รับ</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="dt-foot"><strong>อ่านตารางนี้อย่างไร</strong> — ลำดับ 01–03 คืองานของผู้ออกแบบ ลำดับ 04–05 คืองานของผู้ก่อสร้าง และ "จ้างแบบขออนุญาตอย่างเดียว" หมายถึงได้ถึงขั้นที่ 02 เท่านั้น</p>
+</section>
+
+</body>
+</html>

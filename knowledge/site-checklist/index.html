@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="เช็กลิสต์ 5 ขั้น 30 ข้อ สำหรับอ่านที่ดินและความต้องการครอบครัวก่อนเลือกแบบบ้าน โดย ARSTINLA">
+<title>อ่านที่ดินก่อนหาแบบ</title>
+<meta name="color-scheme" content="light">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/knowledge/article-shell.css">
+<style>
+:root{
+  --bg:#F3F0E8; --bg-2:#EAE6DB; --ink:#1E1C18; --ink-2:#5C574D; --ink-3:#8A8477;
+  --line:#D6D0C2; --accent:#7C5A34; --accent-soft:#E7DCCB; --ok:#4F6B3E; --ok-soft:#DCE4D0;
+  --card:#FAF8F3; --shadow:0 1px 0 rgba(30,28,24,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai","Anuphan",-apple-system,"Segoe UI",Tahoma,sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding-block:48px 96px;padding-inline:20px}
+.eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:"Anuphan",sans-serif;font-weight:400;font-size:clamp(34px,7vw,52px);line-height:1.15;margin:10px 0 18px;text-wrap:balance;letter-spacing:-.01em}
+h2{font-family:"Anuphan",sans-serif;font-weight:500;font-size:26px;line-height:1.3;margin:6px 0 4px;text-wrap:balance}
+.lede{font-size:18px;color:var(--ink-2);max-width:60ch;margin:0 0 28px}
+.lede strong{color:var(--ink);font-weight:500}
+.rule{border:0;border-top:1px solid var(--line);margin:0}
+
+/* progress */
+.progress{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.progress-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.progress-row .count{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.progress-row .count b{color:var(--ink);font-weight:500}
+.bar{height:3px;background:var(--bg-2);margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s ease}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+
+/* sections */
+.step{padding:36px 0 30px;border-top:1px solid var(--line)}
+.step-head{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:start;margin-bottom:8px}
+.num{font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--accent);padding-top:12px}
+.why{color:var(--ink-2);max-width:62ch;margin:0 0 20px;font-size:15.5px}
+.items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.item{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;background:var(--card);border:1px solid var(--line);padding:14px 16px 14px 14px;box-shadow:var(--shadow);cursor:pointer;transition:background .15s}
+.item:hover{background:var(--bg-2)}
+.item input{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:4px 0 0;border:1.5px solid var(--ink-3);background:transparent;cursor:pointer;position:relative;flex:none}
+.item input:checked{background:var(--ok);border-color:var(--ok)}
+.item input:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.item input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.item .t{font-weight:500;line-height:1.45}
+.item .d{color:var(--ink-2);font-size:14.5px;margin-top:4px;line-height:1.6}
+.item .d a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
+.item.done .t{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-3)}
+.item.done .d{color:var(--ink-3)}
+.tag{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--accent);background:var(--accent-soft);padding:1px 7px;margin-left:6px;vertical-align:1px}
+
+/* outcome */
+.outcome{margin-top:44px;padding:28px 26px;background:var(--accent-soft);border-left:3px solid var(--accent)}
+.outcome h2{margin-top:0;font-size:22px}
+.outcome p{margin:8px 0;color:var(--ink-2);max-width:60ch}
+.outcome ul{margin:10px 0 0;padding-left:20px;color:var(--ink-2)}
+.outcome li{margin:4px 0}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+button.btn{font:inherit;font-size:14px;letter-spacing:.04em;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:10px 18px;cursor:pointer}
+button.btn:hover{background:var(--ink);color:var(--bg)}
+button.btn.ghost{border-color:var(--line);color:var(--ink-2)}
+button.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.note{margin-top:36px;font-size:13.5px;color:var(--ink-3);max-width:62ch;line-height:1.65}
+.note a{color:var(--ink-2)}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+
+@media print{
+  .progress,.actions{display:none}
+  body{background:#fff;color:#000}
+  .item{break-inside:avoid;border-color:#bbb;box-shadow:none;background:#fff}
+  .wrap{padding-block:0}
+}
+@media (max-width:480px){
+  .step-head{grid-template-columns:1fr}
+  .num{padding-top:0}
+  .item{padding:12px}
+}
+</style>
+<style>html{color-scheme:light} img{max-width:100%}</style>
+</head>
+<body>
+<nav class="article-nav" aria-label="Article navigation">
+  <a class="article-brand" href="/">ARSTINLA<small>Design &amp; Consult</small></a>
+  <a class="article-back" href="/#knowledge">← Knowledge</a>
+</nav>
+<div class="wrap">
+  <div class="eyebrow">Before you build · Free tool</div>
+  <h1>อ่านที่ดินก่อนหาแบบ</h1>
+  <p class="lede">มีที่ดินแล้ว อย่าเพิ่งเปิดหาแบบบ้าน เช็กลิสต์ 5 ขั้นนี้ช่วยให้คุณ <strong>อ่านที่ดินและครอบครัวของตัวเอง</strong> ให้ออกก่อน แล้วสไตล์บ้านที่เหมาะจะค่อย ๆ ปรากฏขึ้นเอง ติ๊กได้ตามจริง ระบบจะจำไว้ในเครื่องของคุณ</p>
+
+  <div class="progress">
+    <div class="progress-row">
+      <span class="eyebrow">ความคืบหน้า</span>
+      <span class="count"><b id="done">0</b> / <span id="total">0</span> ข้อ</span>
+    </div>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+
+  <!-- 01 -->
+  <section class="step" id="s1">
+    <div class="step-head"><div class="num">01</div><div>
+      <div class="eyebrow">Paper first</div>
+      <h2>เอกสารสิทธิ์และแนวเขต</h2>
+    </div></div>
+    <p class="why">ทุกอย่างเริ่มที่กระดาษแผ่นเดียว ถ้าเขตที่ดินจริงไม่ตรงโฉนด หรือทางเข้าไม่ใช่ของเรา แบบบ้านที่สวยแค่ไหนก็สร้างไม่ได้</p>
+    <ul class="items">
+      <li class="item"><input type="checkbox" id="c1-1"><label for="c1-1"><div class="t">รู้ประเภทเอกสารสิทธิ์ของแปลงนี้</div><div class="d">โฉนด (น.ส.4) / น.ส.3ก / น.ส.3 / ส.ป.ก. สิทธิ์ในการก่อสร้างและกู้ต่างกันมาก ถ้าไม่ใช่โฉนด ควรปรึกษาก่อนลงทุนออกแบบ</div></label></li>
+      <li class="item"><input type="checkbox" id="c1-2"><label for="c1-2"><div class="t">ตรวจภาระผูกพันหลังโฉนด</div><div class="d">จำนอง ขายฝาก ภาระจำยอม สิทธิอาศัย หรือคดีความ ขอคัดสำเนาได้ที่สำนักงานที่ดิน</div></label></li>
+      <li class="item"><input type="checkbox" id="c1-3"><label for="c1-3"><div class="t">ดูรูปแปลงและตำแหน่งเทียบถนนใน LandsMaps<span class="tag">ฟรี</span></div><div class="d">กรมที่ดินเปิดให้ค้นด้วยเลขโฉนดที่ <a href="https://landsmaps.dol.go.th/" target="_blank" rel="noopener">landsmaps.dol.go.th</a> จะเห็นรูปแปลง เนื้อที่ และแปลงข้างเคียง</div></label></li>
+      <li class="item"><input type="checkbox" id="c1-4"><label for="c1-4"><div class="t">หาหมุดเขตครบทุกมุม และรังวัดถ้าไม่แน่ใจ</div><div class="d">หมุดหายหรือรั้วเพื่อนบ้านล้ำเขต คือปัญหาที่พบบ่อยที่สุดหลังซื้อ ขอรังวัดสอบเขตกับสำนักงานที่ดินก่อนออกแบบ</div></label></li>
+      <li class="item"><input type="checkbox" id="c1-5"><label for="c1-5"><div class="t">ยืนยันว่ามีทางเข้าออกที่ถูกกฎหมาย</div><div class="d">ที่ดินติดถนนสาธารณะ หรือผ่านที่ดินคนอื่น? ถ้าผ่านที่คนอื่น ต้องมี "ภาระจำยอม" จดทะเบียนไว้ ไม่ใช่แค่คำสัญญาปากเปล่า ที่ดินตาบอดต้องขอ "ทางจำเป็น" (ป.พ.พ. ม.1349) ซึ่งมีค่าทดแทน</div></label></li>
+      <li class="item"><input type="checkbox" id="c1-6"><label for="c1-6"><div class="t">วัดความกว้างของถนนหน้าที่ดิน</div><div class="d">ถนนกว้างน้อยกว่า 6 ม. ต้องร่นอาคารจากกึ่งกลางถนน 3 ม. ความกว้างถนนยังกำหนดว่ารถบรรทุกวัสดุและรถเข็มเข้าได้หรือไม่</div></label></li>
+    </ul>
+  </section>
+
+  <!-- 02 -->
+  <section class="step" id="s2">
+    <div class="step-head"><div class="num">02</div><div>
+      <div class="eyebrow">The rules</div>
+      <h2>กฎหมายที่วาดกรอบบ้านไว้แล้ว</h2>
+    </div></div>
+    <p class="why">ก่อนที่คุณจะเลือกสไตล์ กฎหมายได้กำหนด "ก้อน" ที่สร้างได้บนที่ดินไว้แล้ว รู้กรอบนี้ก่อน จะไม่เสียใจกับแบบที่ต้องตัดทิ้ง</p>
+    <ul class="items">
+      <li class="item"><input type="checkbox" id="c2-1"><label for="c2-1"><div class="t">เช็กสีผังเมืองของแปลง<span class="tag">ฟรี</span></div><div class="d">ค้นที่ <a href="https://plludds.dpt.go.th/" target="_blank" rel="noopener">plludds.dpt.go.th</a> ของกรมโยธาธิการฯ สีเหลือง/ส้ม = ที่อยู่อาศัย, เขียว = ชนบทและเกษตร, ม่วง = อุตสาหกรรม แต่ละสีมีข้อจำกัดเรื่องประเภทอาคาร ความสูง และสัดส่วนพื้นที่ต่างกัน</div></label></li>
+      <li class="item"><input type="checkbox" id="c2-2"><label for="c2-2"><div class="t">ตรวจแนวเวนคืนและถนนโครงการในอนาคต</div><div class="d">สอบถามสำนักงานเขต/เทศบาล และดูแผนของ รฟม. หรือการทางพิเศษฯ ถ้าที่ดินอยู่ในแนวถนนผังเมือง อาจสร้างไม่ได้เต็มแปลง</div></label></li>
+      <li class="item"><input type="checkbox" id="c2-3"><label for="c2-3"><div class="t">วาดระยะร่นลงบนแปลนที่ดินของตัวเอง</div><div class="d">หลักทั่วไปตามกฎกระทรวงฉบับที่ 55: ผนังที่มีหน้าต่าง/ประตูห่างเขต ≥ 2 ม. (บ้านสูงไม่เกิน 9 ม.), ผนังทึบห่างเขต ≥ 50 ซม., ริมคลอง/แหล่งน้ำสาธารณะร่น 3–6 ม. ขึ้นกับความกว้าง วาดแล้วจะเห็น "พื้นที่ที่สร้างได้จริง" ซึ่งมักเล็กกว่าที่คิด</div></label></li>
+      <li class="item"><input type="checkbox" id="c2-4"><label for="c2-4"><div class="t">คำนวณที่ว่างขั้นต่ำ 30%</div><div class="d">บ้านพักอาศัยต้องเหลือที่ว่างไม่น้อยกว่า 30% ของพื้นที่ชั้นที่กว้างที่สุด ที่ดินหน้าแคบหรือแปลงเล็กจะถูกข้อนี้บีบรูปทรงบ้านทันที</div></label></li>
+      <li class="item"><input type="checkbox" id="c2-5"><label for="c2-5"><div class="t">ถามข้อบัญญัติท้องถิ่นเพิ่มเติม</div><div class="d">กทม. เทศบาล และพื้นที่ควบคุมพิเศษ (ริมทะเล เขตอนุรักษ์ ใกล้สนามบิน) อาจกำหนดความสูง รูปทรงหลังคา หรือวัสดุเพิ่มจากกฎกลาง</div></label></li>
+      <li class="item"><input type="checkbox" id="c2-6"><label for="c2-6"><div class="t">ถ้าอยู่ในหมู่บ้านจัดสรร ขอระเบียบของโครงการ</div><div class="d">หลายโครงการมีข้อกำหนดเรื่องแนวรั้ว สีหลังคา ความสูง และต้องส่งแบบให้นิติบุคคลอนุมัติก่อนยื่นราชการ</div></label></li>
+    </ul>
+  </section>
+
+  <!-- 03 -->
+  <section class="step" id="s3">
+    <div class="step-head"><div class="num">03</div><div>
+      <div class="eyebrow">Sun · Wind · Rain</div>
+      <h2>ทิศทางแดด ลม และฝนของแปลงนี้</h2>
+    </div></div>
+    <p class="why">บ้านที่อยู่สบายในเมืองไทยไม่ได้มาจากสไตล์ แต่มาจากการวางห้องให้ถูกทิศ แดดบ่ายจากตะวันตกและฝนจากตะวันตกเฉียงใต้เป็นสองสิ่งที่ต้องรับมือก่อน</p>
+    <ul class="items">
+      <li class="item"><input type="checkbox" id="c3-1"><label for="c3-1"><div class="t">หาทิศเหนือจริงของแปลง แล้ววาดลงบนรูปแปลง</div><div class="d">ใช้เข็มทิศในมือถือหรือ Google Maps ตรวจสอบกับรูปแปลงใน LandsMaps อย่าเดาจากถนน เพราะถนนส่วนใหญ่ไม่ได้ตรงทิศ</div></label></li>
+      <li class="item"><input type="checkbox" id="c3-2"><label for="c3-2"><div class="t">ระบุด้านที่รับแดดบ่าย (ตะวันตก / ตะวันตกเฉียงใต้)</div><div class="d">ดวงอาทิตย์อ้อมใต้ราว 8 เดือน (ก.ย.–เม.ย.) ทิศตะวันตกจึงร้อนที่สุด ด้านนี้เหมาะกับโรงรถ ห้องเก็บของ ห้องน้ำ หรือครัวที่มีชายคายาว ไม่ใช่ห้องนอนหรือกระจกบานใหญ่</div></label></li>
+      <li class="item"><input type="checkbox" id="c3-3"><label for="c3-3"><div class="t">ระบุด้านที่รับลมฝน (ตะวันตกเฉียงใต้ กลาง พ.ค.–ต.ค.)</div><div class="d">ลมมรสุมตะวันตกเฉียงใต้พาฝนสาดมาทางนี้ ช่องเปิด ระเบียง และประตูใหญ่ด้านนี้ต้องมีชายคาหรือระแนงกัน</div></label></li>
+      <li class="item"><input type="checkbox" id="c3-4"><label for="c3-4"><div class="t">ระบุด้านรับลมเย็น (ตะวันออกเฉียงเหนือ ต.ค.–ก.พ. และตะวันออกเฉียงใต้)</div><div class="d">ด้านนี้คือด้านที่ควรเปิดรับ พื้นที่นั่งเล่น ห้องอาหาร และสวนที่ใช้บ่อยควรอยู่ฝั่งนี้ ห้องนอนเหมาะกับทิศเหนือที่แดดอ่อนและกลางคืนเย็น</div></label></li>
+      <li class="item"><input type="checkbox" id="c3-5"><label for="c3-5"><div class="t">สำรวจสิ่งบังแดด บังลม และบังวิว รอบแปลง</div><div class="d">อาคารสูงข้างเคียง ต้นไม้ใหญ่ กำแพงเพื่อนบ้าน หรือที่ว่างที่อาจถูกสร้างทับในอนาคต ถ่ายรูปจากกลางแปลงทั้ง 8 ทิศเก็บไว้</div></label></li>
+      <li class="item"><input type="checkbox" id="c3-6"><label for="c3-6"><div class="t">จดเสียง กลิ่น และความเป็นส่วนตัวแต่ละด้าน</div><div class="d">ถนนใหญ่ โรงงาน วัด ตลาด โรงเรียน หน้าต่างเพื่อนบ้านที่มองเข้ามา ไปดูที่ดินอย่างน้อย 2 ช่วงเวลา: เช้าวันธรรมดา และเย็นวันหยุด</div></label></li>
+    </ul>
+  </section>
+
+  <!-- 04 -->
+  <section class="step" id="s4">
+    <div class="step-head"><div class="num">04</div><div>
+      <div class="eyebrow">Ground truth</div>
+      <h2>ดิน น้ำ และสิ่งที่อยู่ใต้พื้น</h2>
+    </div></div>
+    <p class="why">งบส่วนที่คนมักลืมอยู่ใต้ดิน ค่าถม ค่าเข็ม และค่าป้องกันน้ำท่วม อาจกินงบไปก่อนที่จะได้เริ่มสร้างตัวบ้านเสียอีก</p>
+    <ul class="items">
+      <li class="item"><input type="checkbox" id="c4-1"><label for="c4-1"><div class="t">เช็กประวัติน้ำท่วมย้อนหลังของพิกัดนี้<span class="tag">ฟรี</span></div><div class="d">ดูความถี่น้ำท่วมขังรอบ 11 ปีได้ที่ <a href="https://disaster.gistda.or.th/" target="_blank" rel="noopener">GISTDA</a> แล้วถามเพื่อนบ้านเก่าว่าปี 2554 น้ำถึงระดับไหน</div></label></li>
+      <li class="item"><input type="checkbox" id="c4-2"><label for="c4-2"><div class="t">วัดระดับที่ดินเทียบกับถนนและแปลงข้างเคียง</div><div class="d">ที่ดินต่ำกว่าถนนต้องถม โดยทั่วไปถมสูงกว่าถนน 50–80 ซม. แต่ถ้าถมสูงกว่าเพื่อนบ้านมาก น้ำจะไหลไปหาเขาและกลายเป็นข้อพิพาท</div></label></li>
+      <li class="item"><input type="checkbox" id="c4-3"><label for="c4-3"><div class="t">รู้ประวัติที่ดิน: เคยเป็นบ่อ นา บึง หรือที่ทิ้งขยะไหม</div><div class="d">ที่ถมใหม่ ที่เคยเป็นบ่อ และที่ริมน้ำ คือกลุ่มเสี่ยงทรุดสูงสุด ต้องเผื่อเวลาให้ดินทรุดตัวก่อนสร้าง และเคลียร์เศษวัสดุก่อนถม</div></label></li>
+      <li class="item"><input type="checkbox" id="c4-4"><label for="c4-4"><div class="t">ตั้งงบเจาะสำรวจดิน</div><div class="d">สำหรับบ้านอยู่ราว 20,000–40,000 บาท หรือประมาณ 1% ของงบก่อสร้าง แลกกับการรู้ความยาวเข็มที่ถูกต้อง ในกรุงเทพฯ และปริมณฑลชั้นดินอ่อนลึก 12–15 ม. เข็มมักต้องยาว 21 ม. ขึ้นไป</div></label></li>
+      <li class="item"><input type="checkbox" id="c4-5"><label for="c4-5"><div class="t">ถ้าถมดินเกิน 2,000 ตร.ม. ต้องแจ้งท้องถิ่น</div><div class="d">ตาม พ.ร.บ.การขุดดินและถมดิน พ.ศ. 2543 และต้องมีทางระบายน้ำไม่ให้กระทบแปลงข้างเคียง</div></label></li>
+      <li class="item"><input type="checkbox" id="c4-6"><label for="c4-6"><div class="t">เช็กสาธารณูปโภคที่มาถึงหน้าที่ดิน</div><div class="d">ไฟฟ้า (เฟสเดียวหรือสามเฟส ระยะจากเสาไฟ), ประปา (มีท่อเมนหรือต้องเจาะบาดาล), อินเทอร์เน็ต, ท่อระบายน้ำสาธารณะ และการเก็บขยะ ค่าเดินสายเข้าที่ดินลึกอาจหลักแสน</div></label></li>
+    </ul>
+  </section>
+
+  <!-- 05 -->
+  <section class="step" id="s5">
+    <div class="step-head"><div class="num">05</div><div>
+      <div class="eyebrow">The brief</div>
+      <h2>ครอบครัวของคุณต้องการอะไรจริง ๆ</h2>
+    </div></div>
+    <p class="why">สไตล์คือคำตอบสุดท้าย ไม่ใช่คำถามแรก ตอบข้อเหล่านี้ให้ตรงกับชีวิตจริงของบ้านคุณ แล้วสถาปนิกจะออกแบบให้ "เหมือนคุณ" ได้ ไม่ใช่เหมือนรูปในอินเทอร์เน็ต</p>
+    <ul class="items">
+      <li class="item"><input type="checkbox" id="c5-1"><label for="c5-1"><div class="t">ใครอยู่บ้านบ้าง วันนี้และอีก 10 ปีข้างหน้า</div><div class="d">ลูกที่จะโต พ่อแม่ที่จะย้ายมาอยู่ด้วย คนช่วยงานบ้าน สัตว์เลี้ยง จำนวนคนกำหนดจำนวนห้องน้ำมากกว่าจำนวนห้องนอน</div></label></li>
+      <li class="item"><input type="checkbox" id="c5-2"><label for="c5-2"><div class="t">ใครอยู่บ้านช่วงกลางวัน และทำอะไร</div><div class="d">ทำงานที่บ้าน? ทำอาหารหนัก ๆ ทุกวัน? ห้องที่ใช้กลางวันควรได้ทิศดี ส่วนห้องที่ใช้แค่กลางคืนยอมได้มากกว่า</div></label></li>
+      <li class="item"><input type="checkbox" id="c5-3"><label for="c5-3"><div class="t">เขียนกิจวัตร 1 วันของทุกคนในบ้าน</div><div class="d">ตื่นกี่โมง ออกจากบ้านทางไหน กลับมาวางของตรงไหน ใครนอนดึก ใครตื่นเช้า เส้นทางเหล่านี้คือแปลนบ้านตัวจริง</div></label></li>
+      <li class="item"><input type="checkbox" id="c5-4"><label for="c5-4"><div class="t">รถกี่คัน จอดอย่างไร และเผื่อรถ EV ไหม</div><div class="d">ที่จอดรถกินหน้าที่ดินมากที่สุด และมักตัดสินว่าบ้านหันหน้าไปทางไหนโดยไม่รู้ตัว</div></label></li>
+      <li class="item"><input type="checkbox" id="c5-5"><label for="c5-5"><div class="t">ตั้งงบรวมทั้งโครงการ ไม่ใช่แค่ตัวบ้าน</div><div class="d">รวมค่าถมดิน เสาเข็ม รั้ว ถนนในแปลง ระบบน้ำ-ไฟเข้าที่ดิน ค่าออกแบบ ค่าขออนุญาต และเผื่อสำรอง 10–15% ตัวบ้านมักเป็นแค่ 70–80% ของงบทั้งหมด</div></label></li>
+      <li class="item"><input type="checkbox" id="c5-6"><label for="c5-6"><div class="t">รู้ว่าอยากได้ "ความรู้สึก" แบบไหน ไม่ใช่ "หน้าตา" แบบไหน</div><div class="d">เย็น โปร่ง เป็นส่วนตัว ดูแลง่าย ต้อนรับแขกบ่อย ความรู้สึกเหล่านี้ประกอบกับที่ดินในข้อ 01–04 จะพาไปสู่สไตล์ที่เหมาะเอง เก็บรูปอ้างอิงได้ แต่จดว่าชอบอะไร "ใน" รูปนั้น</div></label></li>
+    </ul>
+  </section>
+
+  <div class="outcome">
+    <div class="eyebrow">What you should have now</div>
+    <h2>สิ่งที่ควรมีในมือก่อนคุยกับสถาปนิก</h2>
+    <p>ถ้าติ๊กครบ คุณจะมีชุดข้อมูลที่ทำให้การออกแบบเริ่มได้ทันทีและแม่นตั้งแต่แบบร่างแรก:</p>
+    <ul>
+      <li>สำเนาโฉนดพร้อมรูปแปลง หมุดเขต และความกว้างถนน</li>
+      <li>สีผังเมือง ระยะร่น และข้อกำหนดท้องถิ่นที่เกี่ยวข้อง</li>
+      <li>ทิศเหนือ ทิศแดดบ่าย ทิศลมฝน และรูปถ่ายรอบแปลง 8 ทิศ</li>
+      <li>ประวัติน้ำท่วม ระดับที่ดิน ประวัติการถม และสาธารณูปโภคที่มาถึง</li>
+      <li>รายชื่อผู้อยู่อาศัย กิจวัตร จำนวนรถ งบรวม และ "ความรู้สึก" ที่อยากได้</li>
+    </ul>
+    <p>แบบบ้านที่ดีคือคำตอบของข้อมูลชุดนี้ ไม่ใช่รูปที่เลือกไว้ก่อนแล้วค่อยหาทางยัดลงที่ดิน</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="print" type="button">พิมพ์ / บันทึกเป็น PDF</button>
+    <button class="btn ghost" id="reset" type="button">ล้างการติ๊กทั้งหมด</button>
+  </div>
+
+  <p class="note">ตัวเลขทางกฎหมายในเช็กลิสต์นี้เป็นหลักทั่วไปตาม พ.ร.บ.ควบคุมอาคาร พ.ศ. 2522 และกฎกระทรวงฉบับที่ 55 (พ.ศ. 2543) พื้นที่ของคุณอาจมีข้อกำหนดเพิ่มเติม โปรดตรวจสอบกับสำนักงานเขต/เทศบาล หรือสถาปนิกผู้ได้รับใบอนุญาตก่อนตัดสินใจ</p>
+
+  <div class="foot"><span>ARSTINLA · Before you build</span><span>www.arstinla.com</span></div>
+</div>
+
+<script src="/tools/shared/download-gate.js"></script>
+<script>
+(function(){
+  var KEY='arstinla-site-checklist-v1';
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('.item input[type=checkbox]'));
+  var done=document.getElementById('done'), total=document.getElementById('total'), bar=document.getElementById('bar');
+  total.textContent=boxes.length;
+  function load(){ try{ var s=JSON.parse(localStorage.getItem(KEY)||'{}'); boxes.forEach(function(b){ b.checked=!!s[b.id]; }); }catch(e){} }
+  function save(){ try{ var s={}; boxes.forEach(function(b){ if(b.checked) s[b.id]=1; }); localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} }
+  function render(){
+    var n=0; boxes.forEach(function(b){ b.closest('.item').classList.toggle('done',b.checked); if(b.checked) n++; });
+    done.textContent=n; bar.style.width=(boxes.length? (n/boxes.length*100):0)+'%';
+  }
+  boxes.forEach(function(b){ b.addEventListener('change',function(){ save(); render(); }); });
+  document.getElementById('reset').addEventListener('click',function(){ boxes.forEach(function(b){ b.checked=false; }); save(); render(); });
+  document.getElementById('print').addEventListener('click',async function(){
+    var allowed=window.ARSTINLA_DOWNLOAD_GATE
+      ? await window.ARSTINLA_DOWNLOAD_GATE.request({tool:'ARSTINLA Site Checklist',file:'เช็กลิสต์อ่านที่ดินก่อนหาแบบ',buttonLabel:'พิมพ์ / บันทึกเป็น PDF'})
+      : true;
+    if(allowed) window.print();
+  });
+  load(); render();
+})();
+</script>
+</body>
+</html>
