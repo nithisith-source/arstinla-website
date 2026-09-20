@@ -3463,19 +3463,19 @@ next: "05"
     country:
       "Thailand",
 
-    year: "",
+    year: "2020",
 
-    completion: "",
+    completion: "2021",
 
-    area: "",
+    area: "3000",
 
-    areaNumber: 0,
+    areaNumber: 3000,
 
     status:
       "Draft",
 
     service:
-      "Architecture / Design",
+      "Interior / Architecture / Design",
 
     briefTitle: "",
 
