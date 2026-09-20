@@ -1845,6 +1845,8 @@ background-size: cover;
 
     padding:
       150px 0;
+
+    scroll-margin-top: 72px;
   }
 
 
@@ -1956,6 +1958,24 @@ background-size: cover;
       currentColor;
 
     padding-bottom: 4px;
+  }
+
+
+  @media (min-width: 981px) {
+
+    .knowledge-grid {
+      row-gap: 0;
+    }
+
+
+    .knowledge-grid > .article {
+
+      display: grid;
+
+      grid-row: span 5;
+
+      grid-template-rows: subgrid;
+    }
   }
 
 
@@ -5595,6 +5615,34 @@ data-contact-link
   ====================================================== */
 
 
+  function restoreRequestedSection() {
+    const hash = window.location.hash;
+
+    if (!hash) return;
+
+    let sectionId;
+
+    try {
+      sectionId = decodeURIComponent(
+        hash.slice(1)
+      );
+    }
+    catch (error) {
+      return;
+    }
+
+    const target =
+      document.getElementById(sectionId);
+
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: "auto",
+      block: "start"
+    });
+  }
+
+
   async function loadClientVoices() {
     const section =
       document.getElementById(
@@ -5790,6 +5838,8 @@ data-contact-link
       if (navLink) {
         navLink.hidden = false;
       }
+
+      restoreRequestedSection();
     }
     catch (error) {
       console.warn(
@@ -5800,7 +5850,27 @@ data-contact-link
   }
 
 
-  loadClientVoices();
+  restoreRequestedSection();
+
+
+  loadClientVoices().finally(() => {
+    window.setTimeout(
+      restoreRequestedSection,
+      0
+    );
+  });
+
+  window.addEventListener(
+    "load",
+    restoreRequestedSection,
+    { once: true }
+  );
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(
+      restoreRequestedSection
+    );
+  }
 
 
   const nav =
