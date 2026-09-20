@@ -394,7 +394,7 @@
 
     align-items: center;
 
-    gap: 32px;
+    gap: clamp(18px, 1.65vw, 32px);
 
     font-family: var(--font-en);
 
@@ -1959,9 +1959,53 @@ background-size: cover;
   }
 
 
+  /* =========================================================
+     TOOLS
+  ========================================================= */
+
+
+  .tools {
+
+    padding:
+      130px 0 150px;
+
+    background: var(--paper);
+
+    border-top:
+      1px solid var(--line);
+  }
+
+
+  .tools-header {
+
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1.25fr)
+      minmax(280px, .75fr);
+
+    gap: clamp(40px, 8vw, 120px);
+
+    align-items: end;
+  }
+
+
+  .tools .label {
+    color: var(--orange);
+  }
+
+
+  .tools-description {
+
+    max-width: 540px;
+
+    padding-bottom: 10px;
+  }
+
+
   .knowledge-tools {
 
-    margin-top: 34px;
+    margin-top: 70px;
 
     display: grid;
 
@@ -2074,6 +2118,11 @@ background-size: cover;
 
 
   @media (max-width: 760px) {
+
+    .tools-header {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
 
     .knowledge-tools {
       grid-template-columns: 1fr;
@@ -2726,6 +2775,7 @@ background-size: cover;
     .client-voices,
     .process,
     .knowledge,
+    .tools,
    .contact {
   padding:
     95px 0;
@@ -3197,6 +3247,10 @@ background-repeat:
 
       <a href="#knowledge">
         Knowledge
+      </a>
+
+      <a href="#tools">
+        Tools
       </a>
 
       <a
@@ -4391,33 +4445,73 @@ data-contact-link
 
   </div>
 
+</section>
+
+
+
+<!-- =======================================================
+     TOOLS
+======================================================= -->
+
+
+<section
+  class="tools"
+  id="tools"
+>
+
+  <div class="container tools-header">
+
+    <div class="reveal">
+
+      <div class="label">
+        Tools
+      </div>
+
+      <h2
+        class="section-title th"
+        style="margin-top:25px"
+      >
+        เครื่องมือสำหรับเริ่มต้น<br>
+        แนวคิดของคุณ
+      </h2>
+
+    </div>
+
+    <p class="body-large tools-description reveal reveal-delay-1">
+      ทดลอง วางแผน และสำรวจโจทย์เบื้องต้น
+      ผ่านเครื่องมือดิจิทัลของ ARSTINLA
+      ก่อนนำแนวคิดไปพัฒนาร่วมกับผู้ออกแบบ
+    </p>
+
+  </div>
+
   <div class="container knowledge-tools">
 
     <a
-      href="/tools/image/"
+      href="/tools/schematic-planner/"
       class="knowledge-tool reveal"
-      aria-label="Open ARSTINLA Image Tool"
+      aria-label="Open ARSTINLA Schematic Planner"
     >
 
       <div class="knowledge-tool-copy">
 
         <div class="label">
-          Free Tool
+          Schematic Planner
         </div>
 
         <h3>
-          ARSTINLA Image Tool
+          Plan rooms with sun &amp; wind.
         </h3>
 
         <p>
-          ย่อและแปลงรูปหลายไฟล์เป็น WebP, JPEG หรือ PNG
-          ได้ในเบราว์เซอร์ รูปทั้งหมดอยู่บนเครื่องของคุณ
+          เพิ่ม ลด และปรับขนาดห้องบนผังเบื้องต้น
+          พร้อมอ่านทิศแดด ลม และดาวน์โหลดภาพคุยกับลูกค้า
         </p>
 
       </div>
 
       <span class="knowledge-tool-cta">
-        Open Image Tool →
+        Build a Schematic →
       </span>
 
     </a>
@@ -4452,35 +4546,6 @@ data-contact-link
     </a>
 
     <a
-      href="/tools/enneagram/"
-      class="knowledge-tool reveal"
-      aria-label="Open ARSTINLA Enneagram Compass"
-    >
-
-      <div class="knowledge-tool-copy">
-
-        <div class="label">
-          Enneagram Compass
-        </div>
-
-        <h3>
-          Find your inner drive.
-        </h3>
-
-        <p>
-          แบบสำรวจ 45 ข้อเพื่อทำความเข้าใจแรงขับภายใน
-          ผ่านบุคลิกภาพแบบนพลักษณ์ 9 รูปแบบ
-        </p>
-
-      </div>
-
-      <span class="knowledge-tool-cta">
-        Begin the Compass →
-      </span>
-
-    </a>
-
-    <a
       href="/tools/color-sequence/"
       class="knowledge-tool reveal"
       aria-label="Open ARSTINLA Color Sequence"
@@ -4505,6 +4570,35 @@ data-contact-link
 
       <span class="knowledge-tool-cta">
         Choose Your Colors →
+      </span>
+
+    </a>
+
+    <a
+      href="/tools/enneagram/"
+      class="knowledge-tool reveal"
+      aria-label="Open ARSTINLA Enneagram Compass"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Enneagram Compass
+        </div>
+
+        <h3>
+          Find your inner drive.
+        </h3>
+
+        <p>
+          แบบสำรวจ 45 ข้อเพื่อทำความเข้าใจแรงขับภายใน
+          ผ่านบุคลิกภาพแบบนพลักษณ์ 9 รูปแบบ
+        </p>
+
+      </div>
+
+      <span class="knowledge-tool-cta">
+        Begin the Compass →
       </span>
 
     </a>
@@ -4539,30 +4633,30 @@ data-contact-link
     </a>
 
     <a
-      href="/tools/schematic-planner/"
+      href="/tools/image/"
       class="knowledge-tool reveal"
-      aria-label="Open ARSTINLA Schematic Planner"
+      aria-label="Open ARSTINLA Image Tool"
     >
 
       <div class="knowledge-tool-copy">
 
         <div class="label">
-          Schematic Planner
+          Free Tool
         </div>
 
         <h3>
-          Plan rooms with sun &amp; wind.
+          ARSTINLA Image Tool
         </h3>
 
         <p>
-          เพิ่ม ลด และปรับขนาดห้องบนผังเบื้องต้น
-          พร้อมอ่านทิศแดด ลม และดาวน์โหลดภาพคุยกับลูกค้า
+          ย่อและแปลงรูปหลายไฟล์เป็น WebP, JPEG หรือ PNG
+          ได้ในเบราว์เซอร์ รูปทั้งหมดอยู่บนเครื่องของคุณ
         </p>
 
       </div>
 
       <span class="knowledge-tool-cta">
-        Build a Schematic →
+        Open Image Tool →
       </span>
 
     </a>
