@@ -3431,6 +3431,78 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "51": {
+
+    number: "51",
+
+    slug: "renovate-interior-project",
+
+    url:
+      "/projects/renovate-interior-project/",
+
+    title:
+      "G.Leas",
+
+    officialTitle:
+      "G.Leas",
+
+    category:
+      "Interior",
+
+    filterCategory:
+      "interior",
+
+    location:
+      "Jatujuk, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    thumbnail:
+      "/assets/project-51.jpg",
+
+    hero:
+      "/assets/project-51.jpg",
+
+    heroAlt:
+      "G.Leas",
+
+    assetFolder:
+      "/assets/project-51/",
+
+    siteImages: [],
+
+    planImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
