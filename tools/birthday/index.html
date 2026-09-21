@@ -270,6 +270,61 @@ input[type="date"]{
 .wallpaper-intro p{margin-top:9px;color:#b9b8af;line-height:1.8}
 .wallpaper-intro small{display:block;margin-top:10px;color:var(--muted);font-size:10px}
 .wallpaper-affirmation{padding-top:14px;border-top:1px solid var(--line);font-size:clamp(16px,1.8vw,21px);color:var(--cream)!important}
+.wallpaper-choices{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:22px;
+}
+.wallpaper-choice{
+  min-width:0;
+  padding:0;
+  border:1px solid var(--line);
+  background:#191a17;
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  transition:border-color .22s var(--ease),transform .22s var(--ease),background .22s var(--ease);
+}
+.wallpaper-choice:hover{border-color:#706b5e;transform:translateY(-2px)}
+.wallpaper-choice[aria-pressed="true"]{border-color:var(--orange);background:#24231e}
+.wallpaper-thumb{
+  position:relative;
+  display:block;
+  aspect-ratio:9/13;
+  overflow:hidden;
+  isolation:isolate;
+  background-color:#11120f;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+}
+.wallpaper-thumb--rooted{background-size:400% 200%}
+.wallpaper-thumb--rooted::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(9,10,8,.02) 30%,rgba(9,10,8,.92) 100%);
+  pointer-events:none;
+}
+.wallpaper-thumb--divine{background-color:#eee3d0}
+.wallpaper-thumb--gemstone{background-color:#b8c8dc}
+.wallpaper-thumb-number{
+  position:absolute;
+  left:14px;
+  bottom:10px;
+  z-index:2;
+  color:var(--cream);
+  font-family:"Instrument Serif",serif;
+  font-size:clamp(52px,7vw,92px);
+  line-height:.8;
+  letter-spacing:-.07em;
+}
+.wallpaper-choice-copy{display:block;padding:14px 15px 16px}
+.wallpaper-choice-index{display:block;color:var(--orange);font-family:"Instrument Sans",sans-serif;font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+.wallpaper-choice-name{display:block;margin-top:5px;font-size:15px}
+.wallpaper-choice-note{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.55}
 .action{
   border:1px solid var(--line);
   background:transparent;
@@ -343,6 +398,9 @@ footer a:hover{color:var(--sand)}
   .visual-stage{height:340px}
   .reading-heading{padding:8px 0 0}
   .day-number{font-size:82px;margin:14px 0 24px}
+  .wallpaper-choices{grid-template-columns:1fr}
+  .wallpaper-choice{display:grid;grid-template-columns:116px 1fr;align-items:center}
+  .wallpaper-thumb{width:116px;aspect-ratio:9/13}
   .article-nav{grid-template-columns:1fr}
   .nav-day+ .nav-day{border-left:0;border-top:1px solid var(--line);text-align:left}
 }
@@ -432,10 +490,41 @@ footer a:hover{color:var(--sand)}
           <p>ดาวน์โหลดภาพประจำวันเกิดไว้เป็น Wallpaper พร้อมคำเตือนใจที่ช่วยถ่วงสมดุลจุดอ่อนของวันนั้น</p>
           <p class="wallpaper-affirmation" id="affirmationText"></p>
           <small>การเสริมดวงเป็นความเชื่อส่วนบุคคล ภาพนี้ใช้เพื่อความบันเทิงและสร้างกำลังใจเท่านั้น</small>
+
+          <div class="wallpaper-choices" id="wallpaperChoices" aria-label="เลือกรูปแบบ Wallpaper">
+            <button class="wallpaper-choice" type="button" data-wallpaper-style="rooted" aria-pressed="true">
+              <span class="wallpaper-thumb wallpaper-thumb--rooted">
+                <span class="wallpaper-thumb-number">01</span>
+              </span>
+              <span class="wallpaper-choice-copy">
+                <span class="wallpaper-choice-index">Style 01</span>
+                <span class="wallpaper-choice-name">Rooted</span>
+                <span class="wallpaper-choice-note">ภาพเต็ม · พลังของรากฐาน</span>
+              </span>
+            </button>
+
+            <button class="wallpaper-choice" type="button" data-wallpaper-style="divine" aria-pressed="false">
+              <span class="wallpaper-thumb wallpaper-thumb--divine"></span>
+              <span class="wallpaper-choice-copy">
+                <span class="wallpaper-choice-index">Style 02</span>
+                <span class="wallpaper-choice-name">Divine Days Ink</span>
+                <span class="wallpaper-choice-note">เทพประจำวัน · ลายเส้นหมึกจีนร่วมสมัย</span>
+              </span>
+            </button>
+
+            <button class="wallpaper-choice" type="button" data-wallpaper-style="gemstone" aria-pressed="false">
+              <span class="wallpaper-thumb wallpaper-thumb--gemstone"></span>
+              <span class="wallpaper-choice-copy">
+                <span class="wallpaper-choice-index">Style 03</span>
+                <span class="wallpaper-choice-name">Mystical Gemstone</span>
+                <span class="wallpaper-choice-note">อัญมณีประจำเลข · พลังสงบเหนือกาลเวลา</span>
+              </span>
+            </button>
+          </div>
         </div>
 
         <div class="article-actions">
-          <button class="action primary" id="downloadBtn" type="button">Download Wallpaper</button>
+          <button class="action primary" id="downloadBtn" type="button">Download Rooted Wallpaper</button>
           <button class="action" id="shareBtn" type="button">Share reading</button>
           <button class="action" id="copyBtn" type="button">Copy text</button>
         </div>
@@ -541,7 +630,13 @@ const affirmations = {
 
 const $ = id => document.getElementById(id);
 const readings = new Map();
+const wallpaperStyles = {
+  rooted:{label:"Rooted",index:"01",extension:"jpg"},
+  divine:{label:"Divine Days Ink",index:"02",extension:"jpg",assetPath:day=>`assets/wallpapers/divine/day-${String(day).padStart(2,"0")}.jpg`},
+  gemstone:{label:"Mystical Gemstone",index:"03",extension:"jpg",assetPath:day=>`assets/wallpapers/gemstone/day-${String(day).padStart(2,"0")}.jpg`}
+};
 let selectedDay = 1;
+let selectedWallpaperStyle = "rooted";
 let toastTimer;
 const atlasFiles = [
   "assets/birthday-atlas-01-08.webp",
@@ -630,6 +725,14 @@ function selectDay(day,scroll=false){
   const artRow=Math.floor(artIndex/4);
   $("dayArt").style.backgroundImage=`url("${atlasFiles[atlasIndex]}")`;
   $("dayArt").style.backgroundPosition=`${(artColumn/3)*100}% ${artRow*100}%`;
+  const rootedPreview=document.querySelector(".wallpaper-thumb--rooted");
+  rootedPreview.style.backgroundImage=`url("${atlasFiles[atlasIndex]}")`;
+  rootedPreview.style.backgroundPosition=`${(artColumn/3)*100}% ${artRow*100}%`;
+  document.querySelector(".wallpaper-thumb--divine").style.backgroundImage=`url("${wallpaperStyles.divine.assetPath(day)}")`;
+  document.querySelector(".wallpaper-thumb--gemstone").style.backgroundImage=`url("${wallpaperStyles.gemstone.assetPath(day)}")`;
+  document.querySelectorAll(".wallpaper-thumb-number").forEach(number=>{
+    number.textContent=padded;
+  });
   $("readingBody").replaceChildren(...rest.map(text=>{
     const p=document.createElement("p");
     p.textContent=text;
@@ -716,7 +819,7 @@ function waitForWallpaperAtlas(day){
   });
 }
 
-function drawWallpaperArtwork(context,image,day,width,height){
+function drawWallpaperRegion(context,image,day,x,y,width,height){
   const cellWidth=image.naturalWidth/4;
   const cellHeight=image.naturalHeight/2;
   const index=(day-1)%8;
@@ -740,7 +843,11 @@ function drawWallpaperArtwork(context,image,day,width,height){
 
   context.imageSmoothingEnabled=true;
   context.imageSmoothingQuality="high";
-  context.drawImage(image,sourceX,sourceY,sourceWidth,sourceHeight,0,0,width,height);
+  context.drawImage(image,sourceX,sourceY,sourceWidth,sourceHeight,x,y,width,height);
+}
+
+function drawWallpaperArtwork(context,image,day,width,height){
+  drawWallpaperRegion(context,image,day,0,0,width,height);
 }
 
 function wrapWallpaperText(context,text,maxWidth,maxLines=3){
@@ -758,15 +865,24 @@ function wrapWallpaperText(context,text,maxWidth,maxLines=3){
   return lines.slice(0,maxLines);
 }
 
-async function createWallpaper(day){
-  const [atlas]=await Promise.all([waitForWallpaperAtlas(day),document.fonts?.ready || Promise.resolve()]);
-  const item=readings.get(day);
-  const width=1080;
-  const height=1920;
-  const canvas=document.createElement("canvas");
-  canvas.width=width;
-  canvas.height=height;
-  const context=canvas.getContext("2d");
+function drawWallpaperFooter(context,colors){
+  context.strokeStyle=colors.line;
+  context.beginPath();
+  context.moveTo(72,1768);
+  context.lineTo(1008,1768);
+  context.stroke();
+  context.fillStyle=colors.text;
+  context.font='400 19px "Noto Sans Thai", sans-serif';
+  context.fillText("ภาพประจำวันเกิด • เพื่อเตือนใจถึงพลังและตัวตนของคุณ",72,1810);
+  context.fillStyle=colors.muted;
+  context.font='400 16px "Noto Sans Thai", sans-serif';
+  context.fillText("การเสริมดวงเป็นความเชื่อส่วนบุคคล",72,1840);
+  context.fillStyle=colors.brand;
+  context.font='600 15px "Instrument Sans", sans-serif';
+  context.fillText("ARSTINLA DESIGN & CONSULT · arstinla.com · LINE @arstinla",72,1868);
+}
+
+function drawRootedWallpaper(context,atlas,day,item,width,height){
   drawWallpaperArtwork(context,atlas,day,width,height);
 
   const wash=context.createLinearGradient(0,0,0,height);
@@ -780,48 +896,62 @@ async function createWallpaper(day){
   context.strokeStyle="rgba(241,238,229,.42)";
   context.lineWidth=2;
   context.strokeRect(46,46,width-92,height-92);
-
   context.fillStyle="#f1eee5";
   context.font='600 24px "Instrument Sans", sans-serif';
   context.fillText("ARSTINLA  /  BIRTHDAY INSIGHT",72,96);
-
-  context.fillStyle="#f1eee5";
   context.font='400 340px "Instrument Serif", Georgia, serif';
   context.fillText(String(day).padStart(2,"0"),60,1210);
-
   context.fillStyle="#c37855";
   context.font='600 20px "Instrument Sans", sans-serif';
   context.fillText(`BORN ON DAY ${String(day).padStart(2,"0")}`,72,1300);
-
   context.fillStyle="#f1eee5";
   context.font='300 48px "Noto Sans Thai", sans-serif';
-  const lines=wrapWallpaperText(context,item.title,width-144,3);
-  lines.forEach((line,index)=>context.fillText(line,72,1380+(index*64)));
-
+  wrapWallpaperText(context,item.title,width-144,3).forEach((line,index)=>context.fillText(line,72,1380+(index*64)));
   context.fillStyle="#c37855";
   context.font='600 18px "Instrument Sans", sans-serif';
   context.fillText("A NOTE FOR YOU",72,1582);
   context.fillStyle="#f1eee5";
   context.font='500 34px "Noto Sans Thai", sans-serif';
-  const affirmationLines=wrapWallpaperText(context,affirmations[day],width-144,3);
-  affirmationLines.forEach((line,index)=>context.fillText(line,72,1632+(index*46)));
+  wrapWallpaperText(context,affirmations[day],width-144,3).forEach((line,index)=>context.fillText(line,72,1632+(index*46)));
+  drawWallpaperFooter(context,{
+    line:"rgba(241,238,229,.32)",
+    text:"rgba(241,238,229,.78)",
+    muted:"rgba(241,238,229,.48)",
+    brand:"rgba(241,238,229,.82)"
+  });
+}
 
-  context.strokeStyle="rgba(241,238,229,.32)";
-  context.beginPath();
-  context.moveTo(72,1768);
-  context.lineTo(width-72,1768);
-  context.stroke();
-  context.fillStyle="rgba(241,238,229,.78)";
-  context.font='400 19px "Noto Sans Thai", sans-serif';
-  context.fillText("ภาพประจำวันเกิด • เพื่อเตือนใจถึงพลังและตัวตนของคุณ",72,1810);
-  context.fillStyle="rgba(241,238,229,.48)";
-  context.font='400 16px "Noto Sans Thai", sans-serif';
-  context.fillText("การเสริมดวงเป็นความเชื่อส่วนบุคคล",72,1840);
-  context.fillStyle="rgba(241,238,229,.82)";
-  context.font='600 15px "Instrument Sans", sans-serif';
-  context.fillText("ARSTINLA DESIGN & CONSULT · arstinla.com · LINE @arstinla",72,1868);
+async function createWallpaper(day){
+  const [atlas]=await Promise.all([waitForWallpaperAtlas(day),document.fonts?.ready || Promise.resolve()]);
+  const item=readings.get(day);
+  const width=1080;
+  const height=1920;
+  const canvas=document.createElement("canvas");
+  canvas.width=width;
+  canvas.height=height;
+  const context=canvas.getContext("2d");
 
-  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Wallpaper failed")),"image/jpeg",.92));
+  drawRootedWallpaper(context,atlas,day,item,width,height);
+
+  return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error("Wallpaper failed")),"image/jpeg",.94));
+}
+
+async function getWallpaperBlob(day,styleId){
+  const style=wallpaperStyles[styleId] || wallpaperStyles.rooted;
+  if(!style.assetPath)return createWallpaper(day);
+  const response=await fetch(style.assetPath(day));
+  if(!response.ok)throw new Error(`Cannot load ${style.label} wallpaper`);
+  return response.blob();
+}
+
+function selectWallpaperStyle(styleId){
+  if(!wallpaperStyles[styleId])return;
+  selectedWallpaperStyle=styleId;
+  document.querySelectorAll(".wallpaper-choice").forEach(choice=>{
+    choice.setAttribute("aria-pressed",choice.dataset.wallpaperStyle===styleId ? "true" : "false");
+  });
+  const style=wallpaperStyles[styleId];
+  $("downloadBtn").textContent=`Download ${style.label} Wallpaper`;
 }
 
 function showToast(message){
@@ -840,6 +970,9 @@ $("dateSubmit").addEventListener("click",()=>{
 $("birthDate").addEventListener("change",()=>$("dateSubmit").click());
 $("prevDay").addEventListener("click",event=>selectDay(Number(event.currentTarget.dataset.day),true));
 $("nextDay").addEventListener("click",event=>selectDay(Number(event.currentTarget.dataset.day),true));
+document.querySelectorAll(".wallpaper-choice").forEach(choice=>{
+  choice.addEventListener("click",()=>selectWallpaperStyle(choice.dataset.wallpaperStyle));
+});
 
 $("copyBtn").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(readingText());showToast("คัดลอกคำอ่านแล้ว");}
@@ -849,9 +982,11 @@ $("copyBtn").addEventListener("click",async()=>{
 $("downloadBtn").addEventListener("click",async()=>{
   const button=$("downloadBtn");
   const day=selectedDay;
+  const styleId=selectedWallpaperStyle;
+  const style=wallpaperStyles[styleId];
   const allowed=await ARSTINLA_DOWNLOAD_GATE.request({
     tool:"ARSTINLA Birthday Insight",
-    file:`Birthday ${String(day).padStart(2,"0")} Wallpaper`,
+    file:`Birthday ${String(day).padStart(2,"0")} · ${style.label} Wallpaper`,
     buttonLabel:"ดาวน์โหลด Wallpaper",
     shareText:`คำอ่านสำหรับคนเกิดวันที่ ${day} จาก ARSTINLA Birthday Insight\n${location.href}`
   });
@@ -859,14 +994,14 @@ $("downloadBtn").addEventListener("click",async()=>{
   button.disabled=true;
   button.textContent="Preparing…";
   try{
-    const blob=await createWallpaper(day);
+    const blob=await getWallpaperBlob(day,styleId);
     const link=document.createElement("a");
     link.href=URL.createObjectURL(blob);
-    link.download=`arstinla-birthday-${String(day).padStart(2,"0")}-wallpaper.jpg`;
+    link.download=`arstinla-birthday-${String(day).padStart(2,"0")}-${styleId}-wallpaper.${style.extension}`;
     link.click();
     setTimeout(()=>URL.revokeObjectURL(link.href),4000);
     await recordDownload(day);
-    showToast("ดาวน์โหลด Wallpaper แล้ว");
+    showToast(`ดาวน์โหลด ${style.label} Wallpaper แล้ว`);
   }
   catch(error){
     console.error(error);
@@ -874,7 +1009,7 @@ $("downloadBtn").addEventListener("click",async()=>{
   }
   finally{
     button.disabled=false;
-    button.textContent="Download Wallpaper";
+    selectWallpaperStyle(selectedWallpaperStyle);
   }
 });
 
