@@ -277,6 +277,11 @@ input[type="date"]{
   margin-top:22px;
 }
 .wallpaper-choice{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  height:100%;
   min-width:0;
   padding:0;
   border:1px solid var(--line);
@@ -321,10 +326,13 @@ input[type="date"]{
   line-height:.8;
   letter-spacing:-.07em;
 }
-.wallpaper-choice-copy{display:block;padding:14px 15px 16px}
+.wallpaper-choice-copy{display:flex;flex:1;flex-direction:column;padding:14px 15px 16px}
 .wallpaper-choice-index{display:block;color:var(--orange);font-family:"Instrument Sans",sans-serif;font-size:9px;letter-spacing:.16em;text-transform:uppercase}
 .wallpaper-choice-name{display:block;margin-top:5px;font-size:15px}
 .wallpaper-choice-note{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.55}
+.wallpaper-choice-story{display:flex;flex:1;flex-direction:column;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+.wallpaper-choice-symbol{display:block;color:var(--sand);font-size:12px;line-height:1.55}
+.wallpaper-choice-description{display:block;margin-top:6px;color:#aaa99f;font-size:11px;line-height:1.75}
 .action{
   border:1px solid var(--line);
   background:transparent;
@@ -401,6 +409,7 @@ footer a:hover{color:var(--sand)}
   .wallpaper-choices{grid-template-columns:1fr}
   .wallpaper-choice{display:grid;grid-template-columns:116px 1fr;align-items:center}
   .wallpaper-thumb{width:116px;aspect-ratio:9/13}
+  .wallpaper-choice-name,.wallpaper-choice-note,.wallpaper-choice-symbol{min-height:0!important}
   .article-nav{grid-template-columns:1fr}
   .nav-day+ .nav-day{border-left:0;border-top:1px solid var(--line);text-align:left}
 }
@@ -500,6 +509,10 @@ footer a:hover{color:var(--sand)}
                 <span class="wallpaper-choice-index">Style 01</span>
                 <span class="wallpaper-choice-name">Rooted</span>
                 <span class="wallpaper-choice-note">ภาพเต็ม · พลังของรากฐาน</span>
+                <span class="wallpaper-choice-story">
+                  <span class="wallpaper-choice-symbol" id="rootedSymbol"></span>
+                  <span class="wallpaper-choice-description" id="rootedDescription"></span>
+                </span>
               </span>
             </button>
 
@@ -509,6 +522,10 @@ footer a:hover{color:var(--sand)}
                 <span class="wallpaper-choice-index">Style 02</span>
                 <span class="wallpaper-choice-name">Divine Days Ink</span>
                 <span class="wallpaper-choice-note">เทพประจำวัน · ลายเส้นหมึกจีนร่วมสมัย</span>
+                <span class="wallpaper-choice-story">
+                  <span class="wallpaper-choice-symbol" id="divineSymbol"></span>
+                  <span class="wallpaper-choice-description" id="divineDescription"></span>
+                </span>
               </span>
             </button>
 
@@ -518,6 +535,10 @@ footer a:hover{color:var(--sand)}
                 <span class="wallpaper-choice-index">Style 03</span>
                 <span class="wallpaper-choice-name">Mystical Gemstone</span>
                 <span class="wallpaper-choice-note">อัญมณีประจำเลข · พลังสงบเหนือกาลเวลา</span>
+                <span class="wallpaper-choice-story">
+                  <span class="wallpaper-choice-symbol" id="gemstoneSymbol"></span>
+                  <span class="wallpaper-choice-description" id="gemstoneDescription"></span>
+                </span>
               </span>
             </button>
           </div>
@@ -628,6 +649,86 @@ const affirmations = {
   31:"คุณไม่ต้องรอให้ใครยืนยัน จึงจะเห็นคุณค่าในตัวเอง"
 };
 
+const rootedVisuals = {
+  1:{symbol:"อินทรีเหนือเส้นทางสีทอง",meaning:"อินทรีแทนอิสรภาพและความกล้า ส่วนเส้นทางคดเคี้ยวเตือนว่าผู้นำที่แท้จริงเลือกทิศของตนเองโดยไม่ต้องเร่งพิสูจน์กับใคร"},
+  2:{symbol:"ผู้คนใต้ดวงจันทร์",meaning:"กลุ่มคนสะท้อนพรสวรรค์ในการประสานความแตกต่าง ดวงจันทร์เตือนให้รับฟังความรู้สึกของตนเองพอ ๆ กับความต้องการของคนรอบตัว"},
+  3:{symbol:"พู่กัน แจกัน และกิ่งดอกไม้",meaning:"พู่กันแทนความคิดสร้างสรรค์ ส่วนดอกไม้คือผลจากการบ่มเพาะ ภาพนี้ชวนให้เปลี่ยนไอเดียมากมายให้กลายเป็นผลงานที่จับต้องได้"},
+  4:{symbol:"ก้อนหินสมดุลเหนือยอดเขา",meaning:"หินแต่ละก้อนคือภาระและความรับผิดชอบที่จัดวางอย่างมีสติ ความมั่นคงเกิดจากการยืดหยุ่น ไม่ใช่การควบคุมทุกอย่าง"},
+  5:{symbol:"ยอดเขาและดาวนำทาง",meaning:"ยอดเขาแทนเป้าหมายสูง ดาวสว่างแทนวิสัยทัศน์ ภาพนี้เตือนให้ใช้ความทะเยอทะยานนำทางโดยไม่ลืมพักระหว่างทาง"},
+  6:{symbol:"ดอกไม้ขาวและวงกลมประสาน",meaning:"ดอกไม้สื่อถึงความอ่อนโยน วงกลมที่ซ้อนกันคือความสัมพันธ์หลายบทบาท ความงามจะชัดขึ้นเมื่อให้พื้นที่ทั้งตนเองและผู้อื่น"},
+  7:{symbol:"หนังสือเปิดและทางช้างเผือก",meaning:"หนังสือคือปัญญาที่เรียนรู้ได้ ส่วนแสงจากหน้ากระดาษคือจินตนาการ ภาพนี้ชวนให้แบ่งปันความรู้แทนการเก็บทุกคำตอบไว้คนเดียว"},
+  8:{symbol:"ประภาคารท่ามกลางคลื่น",meaning:"ประภาคารไม่หยุดพายุแต่ช่วยบอกทิศ ภาพนี้แทนความสามารถในการเป็นหลักให้คนอื่น พร้อมเตือนว่าแสงของคุณต้องได้รับการดูแลเช่นกัน"},
+  9:{symbol:"บันไดสู่ดวงจันทร์",meaning:"บันไดคือการเติบโตทีละขั้น ดวงจันทร์แทนโลกภายใน ความสำเร็จของคุณเริ่มจากการยอมรับความรู้สึกก่อนก้าวขึ้นระดับถัดไป"},
+  10:{symbol:"เรขาคณิตจักรวาล",meaning:"เส้นวงโคจรสะท้อนความคิดซับซ้อนและความสามารถในการมองภาพรวม จุดศูนย์กลางเตือนให้เลือกแก่นสำคัญก่อนกระจายพลังไปหลายทิศ"},
+  11:{symbol:"ต้นไม้ที่เผยให้เห็นราก",meaning:"เรือนยอดแทนความสร้างสรรค์ รากลึกแทนอารมณ์และประสบการณ์ ภาพนี้ชวนให้ยืนมั่นคงกับตัวตน ก่อนตอบสนองต่อสิ่งที่มากระทบใจ"},
+  12:{symbol:"จันทร์เสี้ยวเหนือผืนน้ำ",meaning:"จันทร์เสี้ยวคือความละเอียดอ่อน ผืนน้ำคืออารมณ์ที่เคลื่อนไหว ความสงบเกิดเมื่อไม่บังคับให้ทุกความรู้สึกต้องมีคำตอบทันที"},
+  13:{symbol:"อาทิตย์ขึ้นเหนือทางสีทอง",meaning:"แสงเช้าสื่อถึงการเริ่มต้นใหม่ เส้นทางยาวคือความเพียร ภาพนี้สนับสนุนให้ลงมืออย่างต่อเนื่องแทนการรอจังหวะที่สมบูรณ์แบบ"},
+  14:{symbol:"ประตูและบันไดสู่แสง",meaning:"ประตูแทนโอกาส บันไดแทนวินัย การเปลี่ยนผ่านจะเกิดขึ้นเมื่อกล้าก้าวออกจากพื้นที่คุ้นเคยด้วยจังหวะที่มั่นคง"},
+  15:{symbol:"มือรองรับดวงดาว",meaning:"มือเปิดคือการให้และการรับ ดวงดาวคือศักยภาพที่ยังเติบโต ภาพนี้เตือนให้ช่วยเหลือผู้อื่นโดยไม่ละเลยขอบเขตของตนเอง"},
+  16:{symbol:"ดอกบัวเหนือเงาสะท้อน",meaning:"ดอกบัวเติบโตจากโคลนแต่ยังคงสง่างาม เงาในน้ำเตือนว่าความนิ่งและการทบทวนตนเองช่วยให้ปัญญาภายในเผยตัว"},
+  17:{symbol:"ตาชั่งและวงกลมสมดุล",meaning:"ตาชั่งแทนความยุติธรรมและเหตุผล เส้นที่ตัดกันเตือนว่าความถูกต้องไม่ได้มีเพียงมุมเดียว จงฟังหัวใจก่อนตัดสิน"},
+  18:{symbol:"ต้นไม้เดี่ยวริมทะเลสาบ",meaning:"ต้นไม้เดี่ยวสื่อถึงความเป็นอิสระ ผืนน้ำนิ่งสะท้อนความลึกซึ้ง ภาพนี้ชวนให้เปิดพื้นที่สงบโดยไม่เปลี่ยนความสันโดษให้เป็นกำแพง"},
+  19:{symbol:"หมาป่าสองตัวใต้จันทร์เต็มดวง",meaning:"หมาป่าคู่แทนความซื่อสัตย์และสัญชาตญาณ ดวงจันทร์ขยายอารมณ์ ภาพนี้เตือนให้ไว้ใจความสัมพันธ์โดยไม่ปล่อยความกังวลนำทาง"},
+  20:{symbol:"ทางสีทองสู่ยอดเขาและดาว",meaning:"เส้นทางสูงชันแทนความมุ่งมั่น ดาวบนยอดคือจุดหมาย ภาพนี้ชวนให้ใช้พลังอย่างมีทิศทางและยอมรับความช่วยเหลือระหว่างทาง"},
+  21:{symbol:"ต้นอ่อนที่งอกจากหิน",meaning:"ยอดอ่อนแทนความหวังและการฟื้นตัว หินแข็งคือข้อจำกัด ภาพนี้ย้ำว่าความอ่อนโยนที่สม่ำเสมอสามารถเปลี่ยนพื้นที่ยากให้เกิดชีวิต"},
+  22:{symbol:"ซุ้มประตูซ้อนสู่ภูเขา",meaning:"ประตูหลายชั้นแทนโลกภายในที่ซับซ้อน ทางออกปลายซุ้มเตือนว่าความชัดเจนเกิดเมื่อค่อย ๆ ผ่านความกลัวทีละชั้น"},
+  23:{symbol:"เนินทรายใต้ดวงจันทร์",meaning:"ทรายเปลี่ยนรูปตามลมแต่ไม่สูญหาย ดวงจันทร์แทนสัญชาตญาณ ภาพนี้ส่งเสริมการปรับตัวโดยยังรักษาแก่นของตนเอง"},
+  24:{symbol:"ปลาคู่หมุนเวียนในสายน้ำ",meaning:"ปลาคู่แทนการให้และรับ การหมุนเป็นวงกลมคือความสัมพันธ์ที่ต้องเคลื่อนไหว ภาพนี้เตือนให้เมตตาโดยมีขอบเขต"},
+  25:{symbol:"ภูเขาซ้อนและดวงอาทิตย์",meaning:"ภูเขาหลายชั้นคือประสบการณ์ที่สั่งสม แสงอาทิตย์คือศักดิ์ศรี ภาพนี้ชวนให้ยอมรับคุณค่าของเส้นทางตนเองโดยไม่เปรียบเทียบ"},
+  26:{symbol:"เปลือกหอยเกลียวและใบแปะก๊วย",meaning:"เกลียวหอยแทนการเติบโตเป็นจังหวะ ใบไม้แทนการปรับตัว ภาพนี้เตือนว่าการเดินช้าลงไม่ได้หมายถึงการหยุดพัฒนา"},
+  27:{symbol:"ผลึกใสท่ามกลางหินดำ",meaning:"ผลึกสื่อถึงความชัดเจนและหลักการ หินดำคือแรงกดดัน ภาพนี้ชวนให้รักษาความจริงของตนโดยไม่แข็งกับตัวเองเกินไป"},
+  28:{symbol:"สายน้ำผ่านหุบผาสูง",meaning:"ผาหินแทนข้อจำกัด ส่วนสายน้ำหาทางของมันได้เสมอ ภาพนี้สนับสนุนความยืดหยุ่นที่ยังคงมุ่งไปข้างหน้า"},
+  29:{symbol:"ซุ้มหน้าต่างสู่จันทร์และภูเขา",meaning:"ซุ้มเปิดคือมุมมองใหม่ ดวงจันทร์คือความรู้สึกลึก ภาพนี้เตือนให้เปิดใจต่อการเปลี่ยนแปลงโดยไม่ละทิ้งความมั่นคง"},
+  30:{symbol:"ข้างขึ้นข้างแรมและกิ่งใบ",meaning:"ดวงจันทร์หลายระยะคือวงจรชีวิต กิ่งใบคือการเติบโต ภาพนี้ชวนให้ยอมรับทั้งช่วงเร่งและช่วงพักด้วยความอ่อนโยน"},
+  31:{symbol:"บันไดสู่ยอดพีระมิดและดาว",meaning:"บันไดยาวแทนการฝึกฝน ดาวเหนือยอดคือการตระหนักรู้ ภาพนี้ย้ำว่าคุณค่าที่แท้จริงเกิดจากการเดินทางภายใน ไม่ใช่คำยืนยันภายนอก"}
+};
+
+const divineProfiles = {
+  1:{name:"Surya · สุริยะ",meaning:"เทพแห่งดวงอาทิตย์ สื่อถึงพลังชีวิต ความกล้า และภาวะผู้นำ ชวนให้เปล่งแสงของตนโดยไม่บดบังผู้อื่น"},
+  2:{name:"Chandra · จันทรา",meaning:"เทพแห่งดวงจันทร์ สื่อถึงสัญชาตญาณ ความอ่อนโยน และสมดุลทางอารมณ์ ชวนให้รับฟังความรู้สึกอย่างสงบ"},
+  3:{name:"Brihaspati · พฤหัสบดี",meaning:"ครูแห่งทวยเทพ สื่อถึงปัญญา การเรียนรู้ และการเติบโต ชวนให้ใช้ความรู้เพื่อสร้างประโยชน์ที่ยั่งยืน"},
+  4:{name:"Durga · ทุรคา",meaning:"เทวีแห่งการคุ้มครองและความกล้าหาญ สื่อถึงพลังที่อ่อนโยนแต่เด็ดขาดในการปกป้องสิ่งสำคัญ"},
+  5:{name:"Ganesha · คเณศ",meaning:"เทพผู้ขจัดอุปสรรคและเปิดทางเริ่มต้นใหม่ สื่อถึงปัญญา ความคล่องตัว และการลงมืออย่างมีสติ"},
+  6:{name:"Lakshmi · ลักษมี",meaning:"เทวีแห่งความอุดมสมบูรณ์ ความงาม และความกลมกลืน ชวนให้เห็นคุณค่าในสิ่งที่มีและแบ่งปันอย่างพอดี"},
+  7:{name:"Shiva · ศิวะ",meaning:"เทพแห่งการเปลี่ยนแปลงและความนิ่งภายใน สื่อถึงการปล่อยสิ่งเก่าเพื่อสร้างพื้นที่ให้ตัวตนที่แท้จริง"},
+  8:{name:"Shani · ศนี",meaning:"เทพแห่งวินัย เวลา และผลของการกระทำ สื่อถึงความรับผิดชอบ ความอดทน และความสำเร็จที่สร้างทีละขั้น"},
+  9:{name:"Skanda · สกันทะ",meaning:"เทพนักรบแห่งความกล้าและการตัดสินใจ สื่อถึงการใช้พลังอย่างมีเป้าหมาย ไม่ต่อสู้กับทุกเรื่องพร้อมกัน"},
+  10:{name:"Rama · พระราม",meaning:"สัญลักษณ์ของหน้าที่ ความซื่อตรง และการควบคุมตนเอง ชวนให้ยืนหยัดในหลักการโดยไม่สูญเสียความเมตตา"},
+  11:{name:"Chandrashekhara Shiva · ศิวะผู้ทรงจันทร์",meaning:"จันทร์เหนือพระเศียรสื่อถึงการวางอารมณ์ไว้ภายใต้สติ พลังสร้างสรรค์จะชัดขึ้นเมื่อใจนิ่งก่อนตอบสนอง"},
+  12:{name:"Saraswati · สรัสวดี",meaning:"เทวีแห่งความรู้ ศิลปะ และถ้อยคำ สื่อถึงการเรียนรู้ที่ไหลลื่นและการสื่อสารความจริงด้วยความงดงาม"},
+  13:{name:"Varaha · วราหะ",meaning:"อวตารผู้ยกโลกขึ้นจากความมืด สื่อถึงความทรหด การกอบกู้ และพลังที่จะยืนขึ้นใหม่หลังช่วงยากลำบาก"},
+  14:{name:"Krishna · กฤษณะ",meaning:"สัญลักษณ์ของปัญญา ความรัก และความเบิกบาน สื่อถึงการทำหน้าที่อย่างเต็มที่โดยไม่ยึดติดกับผลลัพธ์"},
+  15:{name:"Radha · ราธา",meaning:"สัญลักษณ์ของความรักที่ลึกซึ้งและการอุทิศใจ ชวนให้รักอย่างจริงใจพร้อมรักษาคุณค่าของตนเอง"},
+  16:{name:"Dakshinamurti · ทักษิณามูรติ",meaning:"ศิวะในรูปครูผู้สอนด้วยความเงียบ สื่อถึงปัญญาภายใน การทบทวน และคำตอบที่ปรากฏเมื่อใจสงบ"},
+  17:{name:"Vishnu · วิษณุ",meaning:"เทพผู้รักษาสมดุลของจักรวาล สื่อถึงความมั่นคง การปกป้อง และการประคองสิ่งต่าง ๆ ให้ดำเนินอย่างพอดี"},
+  18:{name:"Hanuman · หนุมาน",meaning:"สัญลักษณ์ของความภักดี ความกล้า และพลังใจ สื่อถึงความแข็งแกร่งที่เติบโตจากเป้าหมายซึ่งใหญ่กว่าตนเอง"},
+  19:{name:"Surya Narayana · สุริยนารายณ์",meaning:"พลังดวงอาทิตย์ในฐานะแสงแห่งชีวิตและความจริง สื่อถึงความชัดเจน ความอบอุ่น และความมั่นใจที่มีเมตตา"},
+  20:{name:"Parvati · ปารวตี",meaning:"เทวีแห่งความรัก ครอบครัว และความเพียร สื่อถึงพลังอ่อนโยนที่มั่นคงและการดูแลโดยไม่ละเลยตนเอง"},
+  21:{name:"Lakshmi Narayana · ลักษมีนารายณ์",meaning:"การรวมพลังแห่งความอุดมสมบูรณ์กับการคุ้มครอง สื่อถึงความสำเร็จที่สมดุลระหว่างการรับและการดูแล"},
+  22:{name:"Kali · กาลี",meaning:"เทวีแห่งการตัดสิ่งเก่าและความกล้าเผชิญความจริง สื่อถึงการยุติวงจรที่ไม่รับใช้ชีวิตอีกต่อไป"},
+  23:{name:"Budha · พุธ",meaning:"เทพแห่งสติปัญญา ภาษา และความคล่องตัว สื่อถึงการคิดชัด พูดตรง และปรับตัวโดยไม่เสียหลัก"},
+  24:{name:"Annapurna · อันนปูรณา",meaning:"เทวีแห่งอาหารและการหล่อเลี้ยง สื่อถึงความเอื้อเฟื้อ ความพอเพียง และการดูแลผู้อื่นโดยมีขอบเขต"},
+  25:{name:"Matsya · มัตสยะ",meaning:"อวตารปลาแห่งการนำทางผ่านมหาน้ำ สื่อถึงสัญชาตญาณ การเอาตัวรอด และการเคลื่อนผ่านความเปลี่ยนแปลง"},
+  26:{name:"Kurma · กูรมะ",meaning:"อวตารเต่าผู้เป็นฐานรองรับ สื่อถึงความมั่นคง ความอดทน และพลังของการเดินหน้าอย่างไม่หวั่นไหว"},
+  27:{name:"Narasimha · นรสิงห์",meaning:"อวตารผู้พิทักษ์ที่กล้าหาญ สื่อถึงการปกป้องความถูกต้องและการใช้พลังเด็ดขาดในเวลาที่จำเป็น"},
+  28:{name:"Savitr · สวิตฤ",meaning:"พลังดวงอาทิตย์ยามเริ่มต้น สื่อถึงแรงบันดาลใจ การตื่นรู้ และการเริ่มวันใหม่ด้วยเจตนาที่ชัดเจน"},
+  29:{name:"Radha–Krishna · ราธา–กฤษณะ",meaning:"สัญลักษณ์ของความรักและการประสานสองพลัง สื่อถึงความสัมพันธ์ที่มั่นคงเมื่อใกล้ชิดโดยไม่ยึดครอง"},
+  30:{name:"Vishnu–Lakshmi · วิษณุ–ลักษมี",meaning:"การรวมพลังคุ้มครองกับความอุดมสมบูรณ์ สื่อถึงบ้าน ชีวิต และความสำเร็จที่เติบโตบนสมดุล"},
+  31:{name:"Mahayogi Shiva · มหาโยคีศิวะ",meaning:"ศิวะในรูปโยคีผู้เป็นอิสระภายใน สื่อถึงการรู้จักตน การวางเสียงภายนอก และความสงบที่ไม่ต้องรอการยืนยัน"}
+};
+
+const gemstoneProfiles = {
+  1:{name:"Ruby · ทับทิม",meaning:"สื่อถึงพลังชีวิต ความกล้า และภาวะผู้นำ ช่วยเตือนให้ใช้ความมั่นใจอย่างอบอุ่นและมีทิศทาง"},
+  2:{name:"Moonstone · มูนสโตน",meaning:"สื่อถึงสัญชาตญาณ ความสงบ และสมดุลอารมณ์ ช่วยเตือนให้ฟังความรู้สึกโดยไม่ถูกอารมณ์พาไป"},
+  3:{name:"Yellow Sapphire · บุษราคัม",meaning:"สื่อถึงปัญญา ความมั่นใจ และโอกาสในการเติบโต ช่วยเตือนให้เปลี่ยนความคิดดีให้เป็นการลงมือจริง"},
+  4:{name:"Orange Garnet · โกเมนส้ม",meaning:"สื่อถึงความมั่นคง พลังสร้างสรรค์ และความกล้าปรับเปลี่ยน ช่วยเตือนให้ยืดหยุ่นโดยไม่เสียรากฐาน"},
+  5:{name:"Emerald · มรกต",meaning:"สื่อถึงการเติบโต ความชัดเจน และการสื่อสารจากใจ ช่วยเตือนให้เลือกสิ่งสำคัญก่อนกระจายพลัง"},
+  6:{name:"Diamond & Rose Quartz · เพชรและโรสควอตซ์",meaning:"เพชรแทนความชัดเจน โรสควอตซ์แทนความรัก สื่อถึงคุณค่าในตนเองและความสัมพันธ์ที่มีขอบเขต"},
+  7:{name:"Amethyst · อเมทิสต์",meaning:"สื่อถึงความสงบ ปัญญาภายใน และการไตร่ตรอง ช่วยเตือนให้พักจากเสียงรบกวนแล้วกลับมาฟังตนเอง"},
+  8:{name:"Sapphire · ไพลิน",meaning:"สื่อถึงวินัย ความรับผิดชอบ และสมาธิ ช่วยเตือนว่าความสำเร็จที่มั่นคงเกิดจากจังหวะสม่ำเสมอ"},
+  9:{name:"Carnelian · คาร์เนเลียน",meaning:"สื่อถึงความกระตือรือร้น ความอบอุ่น และพลังฟื้นตัว ช่วยเตือนให้ลงมือด้วยใจกล้าโดยไม่รีบร้อนเกินไป"}
+};
+
 const $ = id => document.getElementById(id);
 const readings = new Map();
 const wallpaperStyles = {
@@ -705,6 +806,49 @@ function shortTitle(day){
   return `${String(day).padStart(2,"0")} / ${title.length>28 ? title.slice(0,28)+"…" : title}`;
 }
 
+function gemstoneNumber(day){
+  let value=day;
+  const steps=[];
+  while(value>9){
+    const digits=String(value).split("").map(Number);
+    const total=digits.reduce((sum,digit)=>sum+digit,0);
+    steps.push(`${digits.join("+")}=${total}`);
+    value=total;
+  }
+  return {number:value,calculation:steps.length ? steps.join(" → ") : `เลข ${value}`};
+}
+
+function updateWallpaperDescriptions(day){
+  const rooted=rootedVisuals[day];
+  const divine=divineProfiles[day];
+  const gemstone=gemstoneNumber(day);
+  const gemProfile=gemstoneProfiles[gemstone.number];
+  const gemCalculation=day<10
+    ? `วันที่ ${day} เป็นเลขพลัง ${gemstone.number}`
+    : `วันที่ ${day}: ${gemstone.calculation} จึงสัมพันธ์กับเลข ${gemstone.number}`;
+  $("rootedSymbol").textContent=rooted.symbol;
+  $("rootedDescription").textContent=rooted.meaning;
+  $("divineSymbol").textContent=divine.name;
+  $("divineDescription").textContent=divine.meaning;
+  $("gemstoneSymbol").textContent=gemProfile.name;
+  $("gemstoneDescription").textContent=`${gemCalculation} — ${gemProfile.meaning}`;
+}
+
+let wallpaperAlignmentFrame=0;
+function alignWallpaperChoices(){
+  cancelAnimationFrame(wallpaperAlignmentFrame);
+  wallpaperAlignmentFrame=requestAnimationFrame(()=>{
+    const selectors=[".wallpaper-choice-name",".wallpaper-choice-note",".wallpaper-choice-symbol"];
+    selectors.forEach(selector=>{
+      const elements=[...document.querySelectorAll(selector)];
+      elements.forEach(element=>{element.style.minHeight="";});
+      if(window.innerWidth<=560)return;
+      const tallest=Math.max(...elements.map(element=>element.getBoundingClientRect().height));
+      elements.forEach(element=>{element.style.minHeight=`${Math.ceil(tallest)}px`;});
+    });
+  });
+}
+
 function selectDay(day,scroll=false){
   const item=readings.get(day);
   if(!item)return;
@@ -717,6 +861,7 @@ function selectDay(day,scroll=false){
   $("dayLabel").textContent=padded;
   $("readingTitle").textContent=item.title;
   $("affirmationText").textContent=`“${affirmations[day]}”`;
+  updateWallpaperDescriptions(day);
   $("readingLead").textContent=lead || "";
   $("readTime").textContent=`${readMinutes(item.paragraphs)} min`;
   const atlasIndex=Math.floor((day-1)/8);
@@ -755,6 +900,7 @@ function selectDay(day,scroll=false){
   history.replaceState(null,"",url);
   document.title=`คนเกิดวันที่ ${day}: ${item.title} | ARSTINLA`;
   refreshDownloadCount(day);
+  alignWallpaperChoices();
   if(scroll && window.innerWidth<901){document.querySelector(".reading").scrollIntoView({behavior:"smooth"});}
 }
 
@@ -1021,6 +1167,9 @@ $("shareBtn").addEventListener("click",async()=>{
     else{await navigator.clipboard.writeText(location.href);showToast("คัดลอกลิงก์สำหรับแชร์แล้ว");}
   }catch(error){if(error.name!=="AbortError")showToast("ไม่สามารถแชร์ได้ กรุณาลองใหม่");}
 });
+
+window.addEventListener("resize",alignWallpaperChoices);
+if(document.fonts?.ready){document.fonts.ready.then(alignWallpaperChoices);}
 
 async function init(){
   buildDayButtons();
