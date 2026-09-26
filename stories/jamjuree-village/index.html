@@ -9,14 +9,15 @@
   <title>หมู่บ้านจามจุรี — นิทานสอนนิสัยดี | ARSTINLA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{--ink:#171816;--paper:#f4efe8;--paper-2:#ebe2d8;--pink:#d88086;--pink-soft:#edc8ca;--green:#52695a;--muted:#706f68;--line:rgba(23,24,22,.17);--serif:"Instrument Serif",Georgia,serif;--sans:"Noto Sans Thai",system-ui,sans-serif}
+    :root{--ink:#171816;--paper:#f4efe8;--paper-2:#ebe2d8;--pink:#d88086;--pink-soft:#edc8ca;--green:#52695a;--muted:#706f68;--line:rgba(23,24,22,.17);--font-en:"Space Grotesk",sans-serif;--sans:"IBM Plex Sans Thai",system-ui,sans-serif}
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.65}
     a{color:inherit}
     button{font:inherit}
+    :where(.brand,.nav-links,.eyebrow,.book-meta,.download-button,.store-link,footer strong){font-family:var(--font-en),var(--sans)}
     .container{width:min(1180px,calc(100% - 40px));margin-inline:auto}
     .nav{position:sticky;top:0;z-index:20;background:rgba(244,239,232,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
     .nav-inner{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
@@ -28,7 +29,7 @@
     .hero{min-height:680px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);border-bottom:1px solid var(--line)}
     .hero-copy{padding:clamp(70px,9vw,130px) max(30px,calc((100vw - 1180px)/2));padding-right:clamp(36px,7vw,100px);display:flex;flex-direction:column;justify-content:center}
     .eyebrow{margin:0;color:var(--pink);font-size:.7rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase}
-    h1{max-width:760px;margin:26px 0 24px;font-family:var(--serif);font-size:clamp(4.2rem,9vw,8rem);font-weight:400;line-height:.82;letter-spacing:-.055em}
+    h1{max-width:none;margin:26px 0 24px;font-family:var(--sans);font-size:clamp(2.2rem,6.5vw,5.4rem);font-weight:300;line-height:1;letter-spacing:-.055em;white-space:nowrap}
     .hero-lead{max-width:650px;margin:0;color:#5f5e58;font-size:clamp(1rem,1.7vw,1.28rem)}
     .hero-note{margin-top:34px;display:flex;align-items:center;gap:12px;color:var(--green);font-size:.78rem;font-weight:500;letter-spacing:.06em}
     .hero-note::before{content:"";width:46px;height:1px;background:currentColor}
@@ -37,12 +38,12 @@
     .flower::before,.flower::after{content:"";position:absolute;inset:56px;border:1px solid rgba(237,200,202,.2);border-radius:50%;transform:rotate(45deg)}
     .flower::after{inset:112px;background:rgba(216,128,134,.1)}
     .hero-mark{position:relative;text-align:center}
-    .hero-mark strong{display:block;font-family:var(--serif);font-size:clamp(7rem,16vw,13rem);font-weight:400;line-height:.8;color:var(--pink-soft)}
+    .hero-mark strong{display:block;font-family:var(--font-en);font-size:clamp(7rem,16vw,13rem);font-weight:300;line-height:.8;color:var(--pink-soft)}
     .hero-mark span{display:block;margin-top:32px;font-size:.67rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase}
     @keyframes turn{to{transform:rotate(360deg)}}
     .section{padding:clamp(80px,10vw,140px) 0}
     .section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.55fr);gap:50px;align-items:end;margin-bottom:60px}
-    .section h2{margin:15px 0 0;font-family:var(--serif);font-size:clamp(3.2rem,6vw,6rem);font-weight:400;line-height:.95;letter-spacing:-.04em}
+    .section h2{margin:15px 0 0;font-family:var(--sans);font-size:clamp(3.2rem,6vw,6rem);font-weight:300;line-height:1;letter-spacing:-.04em}
     .section-intro{margin:0;color:var(--muted);font-size:.98rem}
     .friends{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
     .friend{min-height:360px;padding:0 28px 28px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden;transition:background .25s ease,transform .25s ease}
@@ -52,7 +53,7 @@
     .friend-photo{height:190px;margin:0 -28px 22px}
     .friend-number{margin-left:auto;color:var(--pink);font-size:.66rem;letter-spacing:.16em}
     .friend-top{display:flex;align-items:center;min-height:20px}
-    .friend h3{margin:auto 0 4px;font-family:var(--serif);font-size:2.05rem;font-weight:400}
+    .friend h3{margin:auto 0 4px;font-family:var(--sans);font-size:2.05rem;font-weight:400}
     .friend p{margin:0;color:var(--muted);font-size:.85rem}
     .library{background:var(--ink);color:white}
     .library .section-intro{color:#b7b8b2}
@@ -60,7 +61,7 @@
     .book-card{display:flex;min-width:0;flex-direction:column;border:1px solid rgba(255,255,255,.18)}
     .book-cover{height:330px;border-bottom:1px solid rgba(255,255,255,.18)}
     .book-copy{min-height:370px;padding:clamp(28px,4vw,46px);display:flex;flex-direction:column;align-items:flex-start}
-    .book-copy h3{max-width:100%;margin:16px 0 8px;font-family:var(--serif);font-size:clamp(1.35rem,2.25vw,2rem);font-weight:400;line-height:1.15;letter-spacing:-.025em;white-space:nowrap}
+    .book-copy h3{max-width:100%;margin:16px 0 8px;font-family:var(--sans);font-size:clamp(1.75rem,3.5vw,2.5rem);font-weight:400;line-height:1.15;letter-spacing:-.025em;white-space:nowrap}
     .book-copy .habit{margin:0 0 16px;color:var(--pink-soft);font-size:1rem;font-weight:500}
     .book-copy .description{max-width:660px;margin:0;color:#b7b8b2;font-size:.88rem}
     .book-meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:34px;color:#ddd8d0;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
@@ -70,7 +71,7 @@
     .book-status{min-height:24px;margin:13px 0 0;color:var(--pink-soft);font-size:.77rem}
     .reader-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
     .reader-card{border:1px solid var(--line);padding:clamp(30px,5vw,56px);display:flex;flex-direction:column}
-    .reader-card h3{margin:20px 0 12px;font-family:var(--serif);font-size:clamp(2.5rem,4vw,4rem);font-weight:400;line-height:1}
+    .reader-card h3{margin:20px 0 12px;font-family:var(--font-en),var(--sans);font-size:clamp(2.5rem,4vw,4rem);font-weight:300;line-height:1}
     .reader-card ol{margin:24px 0 30px;padding-left:22px;color:var(--muted)}
     .reader-card li{padding-left:8px;margin:8px 0}
     .store-link{display:inline-flex;align-items:center;align-self:flex-start;min-height:48px;margin-top:auto;padding:11px 18px;border:1px solid var(--ink);text-decoration:none;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
@@ -79,7 +80,7 @@
     footer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.72rem}
     .footer-inner{display:flex;justify-content:space-between;gap:20px}
     @media(max-width:900px){.hero{grid-template-columns:1fr}.hero-art{min-height:460px}.friends{grid-template-columns:repeat(2,minmax(0,1fr))}.book-grid{grid-template-columns:1fr}.book-cover{height:300px}.download-button{margin-top:42px}}
-    @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.15rem,5vw,1.35rem)}.reader-grid{grid-template-columns:1fr}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
+    @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.35rem,6vw,1.6rem)}.reader-grid{grid-template-columns:1fr}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.flower{animation:none}.friend{transition:none}}
   </style>
 </head>
@@ -95,7 +96,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">ARSTINLA Stories / สำหรับเด็ก 3–6 ปี</p>
-        <h1>หมู่บ้าน<br>จามจุรี</h1>
+        <h1>หมู่บ้านจามจุรี</h1>
         <p class="hero-lead">นิทานก่อนนอนที่ชวนเด็ก ๆ รู้จักนิสัยดี ผ่านเพื่อนทั้ง 8 ตัวและเรื่องเล่าเล็ก ๆ ที่นำไปใช้ได้ในทุกวัน</p>
         <p class="hero-note">ดาวน์โหลดหนังสือ EPUB ฟรี · อ่านได้บนโทรศัพท์และแท็บเล็ต</p>
       </div>
@@ -125,7 +126,7 @@
       <div class="container">
         <div class="section-head">
           <div><p class="eyebrow">Free EPUB library</p><h2>อ่านนิทานเต็มเรื่อง</h2></div>
-          <p class="section-intro">หนังสือทุกเล่มเปิดให้อ่านฟรีในรูปแบบ EPUB ก่อนดาวน์โหลด ระบบจะชวนให้แชร์นิทานกับเพื่อนหนึ่งครั้งเพื่อสนับสนุนเรื่องเล่าชุดนี้</p>
+          <p class="section-intro">หนังสือทุกเล่มเปิดให้อ่านฟรีในรูปแบบ EPUB เพิ่มเพื่อน LINE @arstinla เพื่อเข้าร่วมชุมชน รับข่าวหนังสือเล่มใหม่ และกลับมาดาวน์โหลดได้ทันที</p>
         </div>
         <div class="book-grid">
           <article class="book-card"><div class="book-cover face-crop" style="--focus-x:50%;--focus-y:51%;--zoom:1.35"><img src="assets/characters/jeed-squirrel.webp" alt="ปกนิทานจี๊ด กระรอก" loading="lazy"></div><div class="book-copy"><p class="eyebrow">Book 01</p><h3>จี๊ดกับเหรียญสิบเหรียญ</h3><p class="habit">รู้จักพอ</p><p class="description">เรื่องของกระรอกน้อยที่เรียนรู้ว่าความสุขไม่ได้อยู่ที่การมีมากที่สุด แต่อยู่ที่การรู้จักพอและแบ่งปัน</p><div class="book-meta"><span>EPUB</span><span>อายุ 3–6 ปี</span><span data-download-count>พร้อมดาวน์โหลด</span></div><button class="download-button" type="button" data-epub-download data-book="jeed-squirrel-01" data-file="downloads/01-jeed-ten-coins.epub">ดาวน์โหลด EPUB</button><p class="book-status" data-book-status role="status">ไฟล์พร้อมสำหรับอ่านบนโทรศัพท์และแท็บเล็ต</p></div></article>
@@ -192,20 +193,25 @@
       button.addEventListener("click",async()=>{
         const file=button.dataset.file;
         const status=button.parentElement.querySelector("[data-book-status]");
+        const bookTitle=button.closest(".book-card")?.querySelector("h3")?.textContent.trim()||"หมู่บ้านจามจุรี";
         if(!file){status.textContent="ไฟล์ EPUB ยังไม่พร้อมดาวน์โหลด กรุณากลับมาตรวจสอบอีกครั้ง";return;}
         const allowed=await ARSTINLA_DOWNLOAD_GATE.request({
           tool:"นิทานชุดหมู่บ้านจามจุรี",
-          file:"หนังสือ EPUB หมู่บ้านจามจุรี",
-          title:"Share a story. Grow a village.",
-          copy:"ช่วยแนะนำหมู่บ้านจามจุรีให้เพื่อนหนึ่งคน เพื่อสนับสนุนการสร้างนิทานสอนนิสัยดีสำหรับเด็ก แล้วกลับมารับหนังสือ EPUB ฟรีได้ทันที",
-          note:"ระบบจะเปิด LINE ให้คุณเลือกเพื่อนและกดส่งด้วยตัวเอง เมื่อกลับมาหน้านี้ให้กดดาวน์โหลดไฟล์ EPUB",
-          hideMessage:true,
-          shareLabel:"แชร์นิทานให้เพื่อนใน LINE",
+          file:`หนังสือ EPUB ${bookTitle}`,
+          title:"Join the village. Read together.",
+          copy:"เพิ่มเพื่อน LINE @arstinla เพื่อเข้าร่วมชุมชนหมู่บ้านจามจุรี แล้วกลับมารับหนังสือ EPUB ฟรีได้ทันที การแชร์นิทานให้เพื่อนเป็นทางเลือกค่ะ",
+          note:"ระบบจะเปิด LINE Official Account @arstinla เมื่อกลับมาหน้านี้ให้กดดาวน์โหลด ข้อความต้อนรับอัตโนมัติจะทำงานเมื่อเปิด Greeting Message ใน LINE OA",
+          hideMessage:false,
+          primaryMode:"add_friend",
+          primaryUnlocks:true,
+          shareUnlocks:false,
+          messageLabel:"เพิ่มเพื่อน LINE @arstinla",
+          shareLabel:"แชร์นิทานให้เพื่อน (ทางเลือก)",
+          sharePendingText:"ขอบคุณที่ช่วยแชร์นิทานค่ะ หากต้องการดาวน์โหลด กรุณากดเพิ่มเพื่อน LINE @arstinla",
           buttonLabel:"ดาวน์โหลดหนังสือ EPUB",
           shareText:`มารู้จักเพื่อนทั้ง 8 ตัวจากนิทานชุด หมู่บ้านจามจุรี 🌸\n${location.href}`
         });
         if(!allowed)return;
-        storyStat(button.dataset.book,"share");
         const link=document.createElement("a");
         link.href=file;
         link.download="";
