@@ -18,6 +18,7 @@
     .arstinla-download-copy{margin:0;color:#696a63;font-size:13px;line-height:1.75}
     .arstinla-download-actions{display:grid;gap:9px;margin-top:24px}
     .arstinla-download-action,.arstinla-download-final{display:flex;align-items:center;justify-content:center;min-height:50px;padding:12px 18px;border:1px solid #171816;text-decoration:none;text-align:center;font:600 11px/1.4 "Instrument Sans","Noto Sans Thai",sans-serif;letter-spacing:.09em;text-transform:uppercase;cursor:pointer}
+    .arstinla-download-action[hidden]{display:none!important}
     .arstinla-download-message{background:#171816;color:#fff}
     .arstinla-download-share{background:transparent;color:#171816}
     .arstinla-download-action:hover,.arstinla-download-action:focus-visible{background:#c47a55;border-color:#c47a55;color:#fff;outline:0}
@@ -140,12 +141,19 @@
     const messageText=String(options.messageText||`สวัสดีครับ สนใจไฟล์ ${file} จาก ${tool}\n${pageUrl()}`);
     const isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const messageLink=gate.querySelector("[data-line-message]");
+    const shareLink=gate.querySelector("[data-line-share]");
+    gate.querySelector("#arstinlaDownloadTitle").textContent=String(options.title||"Share before download.");
+    gate.querySelector("#arstinlaDownloadCopy").textContent=String(options.copy||"เลือก 1 วิธีเพื่อสนับสนุนเครื่องมือฟรีของ ARSTINLA แล้วกลับมารับไฟล์ได้ทันที");
+    gate.querySelector(".arstinla-download-note").textContent=String(options.note||"มือถือจะเปิดแอป LINE ส่วนคอมพิวเตอร์จะเปิดโปรไฟล์หรือ QR พร้อมคัดลอกข้อความให้ ระบบจะไม่กดส่งข้อความแทนคุณ");
+    messageLink.hidden=Boolean(options.hideMessage);
+    messageLink.textContent=String(options.messageLabel||"ส่งผลลัพธ์ให้ ARSTINLA ทาง LINE");
+    shareLink.textContent=String(options.shareLabel||"แชร์ให้เพื่อนใน LINE");
     messageLink.href=isMobile
       ? `https://line.me/R/oaMessage/${LINE_ID_ENCODED}/?${encodeURIComponent(messageText)}`
       : `https://line.me/R/ti/p/${LINE_ID_ENCODED}`;
     messageLink.dataset.desktop=String(!isMobile);
     messageLink.dataset.messageText=messageText;
-    gate.querySelector("[data-line-share]").href=`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(pageUrl())}&text=${encodeURIComponent(shareText)}`;
+    shareLink.href=`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(pageUrl())}&text=${encodeURIComponent(shareText)}`;
     gate.querySelector("[data-line-status]").hidden=true;
     gate.querySelector("[data-download-ready]").hidden=true;
     gate.querySelector("[data-download-final]").textContent=String(options.buttonLabel||"ดาวน์โหลดไฟล์");
@@ -153,7 +161,7 @@
     const previousOverflow=document.documentElement.style.overflow;
     gate.hidden=false;
     document.documentElement.style.overflow="hidden";
-    gate.querySelector("[data-line-message]").focus({preventScroll:true});
+    (messageLink.hidden?shareLink:messageLink).focus({preventScroll:true});
     return new Promise(resolve=>{activeRequest={resolve,gate,previousOverflow}});
   }
 
