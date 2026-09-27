@@ -33,14 +33,8 @@
     .hero-lead{max-width:650px;margin:0;color:#5f5e58;font-size:clamp(1rem,1.7vw,1.28rem)}
     .hero-note{margin-top:34px;display:flex;align-items:center;gap:12px;color:var(--green);font-size:.78rem;font-weight:500;letter-spacing:.06em}
     .hero-note::before{content:"";width:46px;height:1px;background:currentColor}
-    .hero-art{position:relative;overflow:hidden;background:var(--ink);color:#fff;display:grid;place-items:center;padding:60px 40px}
-    .flower{position:absolute;width:420px;height:420px;border:1px solid rgba(237,200,202,.28);border-radius:50%;animation:turn 36s linear infinite}
-    .flower::before,.flower::after{content:"";position:absolute;inset:56px;border:1px solid rgba(237,200,202,.2);border-radius:50%;transform:rotate(45deg)}
-    .flower::after{inset:112px;background:rgba(216,128,134,.1)}
-    .hero-mark{position:relative;text-align:center}
-    .hero-mark strong{display:block;font-family:var(--font-en);font-size:clamp(7rem,16vw,13rem);font-weight:300;line-height:.8;color:var(--pink-soft)}
-    .hero-mark span{display:block;margin-top:32px;font-size:.67rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase}
-    @keyframes turn{to{transform:rotate(360deg)}}
+    .hero-art{overflow:hidden;background:var(--paper);display:grid;place-items:center;padding:0}
+    .hero-cover{width:100%;height:100%;display:block;object-fit:contain}
     .section{padding:clamp(80px,10vw,140px) 0}
     .section-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.55fr);gap:50px;align-items:end;margin-bottom:60px}
     .section h2{margin:15px 0 0;font-family:var(--sans);font-size:clamp(3.2rem,6vw,6rem);font-weight:300;line-height:1;letter-spacing:-.04em}
@@ -89,7 +83,7 @@
     .footer-inner{display:flex;justify-content:space-between;gap:20px}
     @media(max-width:900px){.hero{grid-template-columns:1fr}.hero-art{min-height:460px}.friends{grid-template-columns:repeat(2,minmax(0,1fr))}.book-grid{grid-template-columns:1fr}.book-cover{height:300px}.download-button{margin-top:42px}}
     @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.35rem,6vw,1.6rem)}.reader-grid{grid-template-columns:1fr}.music-player{right:14px;bottom:14px;min-width:0;max-width:calc(100% - 28px);padding-right:14px}.music-copy strong{font-size:.74rem}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.flower{animation:none}.friend{transition:none}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.friend{transition:none}}
   </style>
 </head>
 <body>
@@ -108,7 +102,7 @@
         <p class="hero-lead">นิทานก่อนนอนที่ชวนเด็ก ๆ รู้จักนิสัยดี ผ่านเพื่อนทั้ง 8 ตัวและเรื่องเล่าเล็ก ๆ ที่นำไปใช้ได้ในทุกวัน</p>
         <p class="hero-note">ดาวน์โหลดหนังสือ EPUB ฟรี · อ่านได้บนโทรศัพท์และแท็บเล็ต</p>
       </div>
-      <div class="hero-art" aria-hidden="true"><div class="flower"></div><div class="hero-mark"><strong>8</strong><span>Friends · Good habits</span></div></div>
+      <div class="hero-art"><img class="hero-cover" src="assets/jamjuree-village-hero.webp" alt="ตัวละครทั้ง 8 ตัวจากหมู่บ้านจามจุรี"></div>
     </section>
 
     <section class="section" id="friends">
