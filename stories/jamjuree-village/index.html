@@ -78,10 +78,17 @@
     .store-link{display:inline-flex;align-items:center;align-self:flex-start;min-height:48px;margin-top:auto;padding:11px 18px;border:1px solid var(--ink);text-decoration:none;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
     .store-link:hover{background:var(--ink);color:white}
     .format-note{margin-top:50px;padding:28px;border-left:3px solid var(--pink);background:rgba(255,255,255,.44);color:var(--muted);font-size:.85rem}
+    .music-player{position:fixed;right:20px;bottom:20px;z-index:19;display:flex;align-items:center;gap:12px;min-width:260px;padding:10px 16px 10px 10px;border:1px solid var(--line);background:rgba(244,239,232,.96);box-shadow:0 12px 34px rgba(23,24,22,.14);backdrop-filter:blur(12px)}
+    .music-toggle{width:48px;height:48px;flex:0 0 48px;border:1px solid var(--ink);border-radius:50%;background:transparent;color:var(--ink);font-family:var(--font-en);font-size:1.1rem;line-height:1;cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+    .music-toggle:hover,.music-toggle:focus-visible{border-color:var(--pink);outline:none;color:var(--pink)}
+    .music-player[data-playing="true"] .music-toggle{border-color:var(--pink);background:var(--pink);color:white}
+    .music-copy{display:flex;min-width:0;flex-direction:column;line-height:1.35}
+    .music-copy strong{font-size:.78rem;font-weight:500}
+    .music-status{color:var(--muted);font-size:.68rem}
     footer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.72rem}
     .footer-inner{display:flex;justify-content:space-between;gap:20px}
     @media(max-width:900px){.hero{grid-template-columns:1fr}.hero-art{min-height:460px}.friends{grid-template-columns:repeat(2,minmax(0,1fr))}.book-grid{grid-template-columns:1fr}.book-cover{height:300px}.download-button{margin-top:42px}}
-    @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.35rem,6vw,1.6rem)}.reader-grid{grid-template-columns:1fr}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
+    @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.35rem,6vw,1.6rem)}.reader-grid{grid-template-columns:1fr}.music-player{right:14px;bottom:14px;min-width:0;max-width:calc(100% - 28px);padding-right:14px}.music-copy strong{font-size:.74rem}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.flower{animation:none}.friend{transition:none}}
   </style>
 </head>
@@ -165,6 +172,14 @@
     </section>
   </main>
 
+  <div class="music-player" data-music-player data-playing="false">
+    <button class="music-toggle" type="button" data-music-toggle aria-label="เปิดเพลงหมู่บ้านจามจุรี" aria-pressed="false">♪</button>
+    <span class="music-copy"><strong>เพลงหมู่บ้านจามจุรี</strong><span class="music-status" data-music-status aria-live="polite">แตะเพื่อเปิดเพลง</span></span>
+    <audio data-jamjuree-music preload="none" loop>
+      <source src="assets/audio/jamjuree-village-theme.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
   <footer><div class="container footer-inner"><strong>ARSTINLA / STORIES</strong><span>นิทานเพื่อการเรียนรู้และช่วงเวลาที่ดีของครอบครัว</span></div></footer>
 
   <script src="/tools/shared/download-gate.js"></script>
@@ -226,6 +241,28 @@
         status.textContent="เริ่มดาวน์โหลดแล้ว หากไม่พบไฟล์ให้ตรวจสอบโฟลเดอร์ Downloads";
       });
     });
+    const musicPlayer=document.querySelector("[data-music-player]");
+    if(musicPlayer){
+      const music=musicPlayer.querySelector("[data-jamjuree-music]");
+      const musicToggle=musicPlayer.querySelector("[data-music-toggle]");
+      const musicStatus=musicPlayer.querySelector("[data-music-status]");
+      music.volume=.25;
+      function updateMusicPlayer(playing){
+        musicPlayer.dataset.playing=String(playing);
+        musicToggle.setAttribute("aria-pressed",String(playing));
+        musicToggle.setAttribute("aria-label",playing?"หยุดเพลงหมู่บ้านจามจุรี":"เปิดเพลงหมู่บ้านจามจุรี");
+        musicToggle.textContent=playing?"Ⅱ":"♪";
+        musicStatus.textContent=playing?"กำลังเล่น · แตะเพื่อหยุด":"แตะเพื่อเปิดเพลง";
+      }
+      musicToggle.addEventListener("click",async()=>{
+        if(!music.paused){music.pause();return;}
+        musicStatus.textContent="กำลังเปิดเพลง…";
+        try{await music.play();}catch{musicStatus.textContent="เปิดเพลงไม่ได้ กรุณาลองอีกครั้ง";}
+      });
+      music.addEventListener("play",()=>updateMusicPlayer(true));
+      music.addEventListener("pause",()=>updateMusicPlayer(false));
+      music.addEventListener("error",()=>{musicStatus.textContent="ไม่สามารถโหลดเพลงได้";});
+    }
     loadStoryStats();
   </script>
 </body>
