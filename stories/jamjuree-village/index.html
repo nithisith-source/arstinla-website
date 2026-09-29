@@ -52,9 +52,12 @@
     .friend p{margin:0;color:var(--muted);font-size:.85rem}
     .games-section{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
     #games .section-head h2{margin-top:24px;font-size:clamp(2.8rem,5vw,4.8rem);line-height:1.15}
-    .game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .game-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
     .game-card{min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--paper);color:var(--ink);text-decoration:none;transition:transform .25s ease,box-shadow .25s ease}
     .game-card:hover,.game-card:focus-visible{outline:none;transform:translateY(-4px);box-shadow:0 16px 34px rgba(23,24,22,.1)}
+    .game-card--coming{opacity:.52;cursor:default}
+    .game-card--coming:hover{transform:none;box-shadow:none}
+    .game-card--coming .game-photo img{filter:grayscale(.72)}
     .game-photo{height:250px;border-bottom:1px solid var(--line)}
     .game-copy{min-height:260px;padding:28px;display:flex;flex-direction:column;align-items:flex-start}
     .game-kicker{margin:0;color:var(--pink);font-family:var(--font-en),var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
@@ -92,8 +95,8 @@
     .music-status{color:var(--muted);font-size:.68rem}
     footer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.72rem}
     .footer-inner{display:flex;justify-content:space-between;gap:20px}
-    @media(max-width:900px){.hero{grid-template-columns:1fr}.hero-art{min-height:460px}.friends{grid-template-columns:repeat(2,minmax(0,1fr))}.game-grid{grid-template-columns:1fr}.game-photo{height:320px}.game-copy{min-height:230px}.book-grid{grid-template-columns:1fr}.book-cover{height:300px}.download-button{margin-top:42px}}
-    @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.35rem,6vw,1.6rem)}.reader-grid{grid-template-columns:1fr}.music-player{right:14px;bottom:14px;min-width:0;max-width:calc(100% - 28px);padding-right:14px}.music-copy strong{font-size:.74rem}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.hero-art{min-height:460px}.friends{grid-template-columns:repeat(2,minmax(0,1fr))}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-photo{height:280px}.game-copy{min-height:230px}.book-grid{grid-template-columns:1fr}.book-cover{height:300px}.download-button{margin-top:42px}}
+    @media(max-width:660px){.container{width:min(100% - 28px,1180px)}.nav-inner{min-height:68px}.nav-links a:not(:last-child){display:none}.hero-copy{padding:74px 20px}.hero{min-height:0}.hero-art{min-height:380px}.section-head{grid-template-columns:1fr;gap:24px}.friends{grid-template-columns:1fr}.friend{min-height:340px}.game-grid{grid-template-columns:1fr}.game-photo{height:320px}.book-copy{min-height:0;padding:32px 24px}.book-copy h3{font-size:clamp(1.35rem,6vw,1.6rem)}.reader-grid{grid-template-columns:1fr}.music-player{right:14px;bottom:14px;min-width:0;max-width:calc(100% - 28px);padding-right:14px}.music-copy strong{font-size:.74rem}.footer-inner{display:block}.footer-inner span{display:block;margin-top:8px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.friend{transition:none}}
   </style>
 </head>
@@ -139,20 +142,40 @@
       <div class="container">
         <div class="section-head">
           <div><p class="eyebrow">Play &amp; learn</p><h2>เล่นกับเพื่อนในหมู่บ้าน</h2></div>
-          <p class="section-intro">เกมสั้น ๆ สำหรับเด็ก 3–6 ปี ชวนฝึกคิด ใจเย็น รู้จักพอ และแบ่งปัน ผ่านตัวละครจากนิทานหมู่บ้านจามจุรี</p>
+          <p class="section-intro">เกมสั้น ๆ สำหรับเด็ก 3–6 ปี เรียงตามนิทานตอนที่ 01–08 ชวนฝึกคิด ใจเย็น รู้จักพอ และแบ่งปันไปกับเพื่อนในหมู่บ้าน</p>
         </div>
         <div class="game-grid">
+          <a class="game-card" href="games/jeed-market/">
+            <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:51%;--zoom:1.35"><img src="assets/characters/jeed-squirrel.webp" alt="จี๊ด กระรอก" loading="lazy"></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 01 · รู้จักพอ</p><h3>ตลาดของจี๊ด</h3><p>ช่วยจี๊ดเก็บเหรียญไว้ซื้อของที่ตั้งใจ และแยกให้ออกระหว่างสิ่งที่อยากได้กับสิ่งที่จำเป็น</p><span class="game-link">เริ่มเล่น →</span></div>
+          </a>
+          <article class="game-card game-card--coming">
+            <div class="game-photo face-crop" style="--focus-x:58%;--focus-y:50%;--zoom:1.35"><img src="assets/characters/toom-turtle.webp" alt="ตุ้ม เต่า" loading="lazy"></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 02 · กล้ายอมรับผิด</p><h3>เกมของตุ้ม</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “ตุ้มกับสะพานไม้ไผ่”</p><span class="game-link">เร็ว ๆ นี้</span></div>
+          </article>
+          <article class="game-card game-card--coming">
+            <div class="game-photo face-crop" style="--focus-x:54%;--focus-y:52%;--zoom:1.35"><img src="assets/characters/ploy-elephant.webp" alt="พลอย ช้าง" loading="lazy"></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 03 · ภูมิใจในตัวเอง</p><h3>เกมของพลอย</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “พลอยกับดาวของฉัน”</p><span class="game-link">เร็ว ๆ นี้</span></div>
+          </article>
+          <article class="game-card game-card--coming">
+            <div class="game-photo face-crop" style="--focus-x:51%;--focus-y:45%;--zoom:1.35"><img src="assets/characters/saen-monkey.webp" alt="แสน ลิง" loading="lazy"></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 04 · รักษาคำพูด</p><h3>เกมของแสน</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “แสนกับนิ้วก้อยสัญญา”</p><span class="game-link">เร็ว ๆ นี้</span></div>
+          </article>
           <a class="game-card" href="games/bok-mango/">
             <div class="game-photo face-crop" style="--focus-x:60%;--focus-y:43%;--zoom:1.35"><img src="assets/characters/bok-hornbill.webp" alt="โบก นกเงือก" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">Game 01 · ใจเย็นและอดทน</p><h3>โบกบินขึ้นกิ่งมะม่วง</h3><p>ช่วยโบกกระพือปีกให้ถูกจังหวะ ค่อย ๆ บินขึ้นไปทีละกิ่งจนถึงมะม่วงลูกโต</p><span class="game-link">เริ่มเล่น →</span></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 05 · ทำเองได้</p><h3>โบกบินขึ้นกิ่งมะม่วง</h3><p>ช่วยโบกกระพือปีกให้ถูกจังหวะ ค่อย ๆ บินขึ้นไปทีละกิ่งจนถึงมะม่วงลูกโต</p><span class="game-link">เริ่มเล่น →</span></div>
           </a>
           <a class="game-card" href="games/mok-ice-cream/">
             <div class="game-photo face-crop" style="--focus-x:51%;--focus-y:48%;--zoom:1.35"><img src="assets/characters/mok-cat.webp" alt="หมอก แมว" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">Game 02 · พอดีและแบ่งปัน</p><h3>ร้านไอศกรีมของหมอก</h3><p>เลือกไอศกรีมให้พอดีกับโคน แล้วชวนเพื่อน ๆ มาแบ่งความอร่อยด้วยกัน</p><span class="game-link">เริ่มเล่น →</span></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 06 · กล้าตัดสินใจ</p><h3>ร้านไอศกรีมของหมอก</h3><p>เลือกไอศกรีมให้พอดีกับโคน แล้วชวนเพื่อน ๆ มาแบ่งความอร่อยด้วยกัน</p><span class="game-link">เริ่มเล่น →</span></div>
           </a>
-          <a class="game-card" href="games/jeed-market/">
-            <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:51%;--zoom:1.35"><img src="assets/characters/jeed-squirrel.webp" alt="จี๊ด กระรอก" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">Game 03 · หยุดคิดก่อนซื้อ</p><h3>ตลาดของจี๊ด</h3><p>ช่วยจี๊ดเก็บเหรียญไว้ซื้อของที่ตั้งใจ และแยกให้ออกระหว่างสิ่งที่อยากได้กับสิ่งที่จำเป็น</p><span class="game-link">เริ่มเล่น →</span></div>
+          <article class="game-card game-card--coming">
+            <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:38%;--zoom:1.35"><img src="assets/characters/jorm-gibbon.webp" alt="จ๋อม ชะนี" loading="lazy"></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 07 · เก็บของเป็นที่</p><h3>เกมของจ๋อม</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “ย่ามวิเศษของจ๋อม”</p><span class="game-link">เร็ว ๆ นี้</span></div>
+          </article>
+          <a class="game-card" href="games/nam-calm/">
+            <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:54%;--zoom:1.35"><img src="assets/characters/nam-porcupine.webp" alt="หนาม เม่น" loading="lazy"></div>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 08 · จัดการความโกรธ</p><h3>เวทมนตร์ดับโกรธของหนาม</h3><p>ช่วยหนามหยุด หายใจ และบอกความรู้สึกอย่างอ่อนโยน เพื่อให้ความร้อนในใจค่อย ๆ เย็นลง</p><span class="game-link">เริ่มเล่น →</span></div>
           </a>
         </div>
       </div>
