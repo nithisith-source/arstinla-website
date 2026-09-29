@@ -28,12 +28,12 @@
     .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:28px 0}.stat{padding:24px;border:1px solid var(--line);background:var(--panel)}.stat-label{color:var(--muted);font-family:var(--font-en);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}.stat-value{display:block;margin-top:16px;font-family:var(--font-en);font-size:clamp(2rem,4vw,3.6rem);font-weight:300;line-height:1}.stat-unit{margin-left:8px;color:var(--muted);font-size:.72rem}
     .dashboard-grid{display:grid;grid-template-columns:minmax(330px,.78fr) minmax(0,1.22fr);gap:20px;align-items:start}
     .panel{border:1px solid var(--line);background:var(--panel)}.panel-head{padding:26px 28px;border-bottom:1px solid var(--line)}.panel-head h2{margin:9px 0 0;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:300}.panel-copy{margin:8px 0 0;color:var(--muted);font-size:.82rem;line-height:1.65}
-    .upload-form{display:grid;gap:18px;padding:28px}.field{display:grid;gap:8px}.field label{color:var(--muted);font-size:.74rem}.field input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:0;background:var(--panel-2);color:var(--text)}.field input:focus{outline:1px solid var(--accent);border-color:var(--accent)}
+    .upload-form{display:grid;gap:18px;padding:28px}.field{display:grid;gap:8px}.field label{color:var(--muted);font-size:.74rem}.field input,.field textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:0;background:var(--panel-2);color:var(--text)}.field textarea{min-height:112px;resize:vertical;line-height:1.65}.field input:focus,.field textarea:focus{outline:1px solid var(--accent);border-color:var(--accent)}.field-note{color:var(--muted);font-size:.68rem;line-height:1.55}
     .dropzone{position:relative;min-height:150px;padding:28px;border:1px dashed rgba(255,255,255,.22);display:grid;place-items:center;text-align:center;background:#141513}.dropzone:hover{border-color:var(--accent)}.dropzone input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.drop-icon{display:block;margin-bottom:10px;color:var(--accent);font-family:var(--font-en);font-size:2rem}.drop-title{font-size:1rem}.drop-note{display:block;margin-top:6px;color:var(--muted);font-size:.72rem}
     .file-selected{padding:14px;border-left:2px solid var(--accent);background:var(--panel-2);color:var(--muted);font-size:.76rem;line-height:1.6}.file-selected strong{display:block;color:var(--text);font-weight:400}
     .preview{display:none}.preview.active{display:block}.preview audio{width:100%;accent-color:var(--accent)}
     .status{min-height:22px;margin:0;color:var(--muted);font-size:.76rem;line-height:1.5}.status[data-state="error"]{color:var(--danger)}.status[data-state="success"]{color:var(--success)}
-    .library-list{display:grid}.track-card{display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:18px;align-items:start;padding:24px 28px;border-bottom:1px solid var(--line)}.track-card:last-child{border-bottom:0}.track-index{padding-top:4px;color:var(--accent);font-family:var(--font-en);font-size:.68rem;letter-spacing:.12em}.track-title{margin:0;font-size:1.3rem;font-weight:300}.track-meta{margin:4px 0 16px;color:var(--muted);font-size:.74rem}.track-card audio{width:100%;height:34px;accent-color:var(--accent)}.track-actions{display:flex;gap:8px}.delete-button{padding:8px 10px;border:1px solid rgba(228,127,114,.36);background:transparent;color:var(--danger);font-family:var(--font-en);font-size:.58rem;letter-spacing:.09em;text-transform:uppercase}.delete-button:hover{background:rgba(228,127,114,.08)}.empty{padding:46px 28px;color:var(--muted);line-height:1.7}
+    .library-list{display:grid}.track-card{display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:18px;align-items:start;padding:24px 28px;border-bottom:1px solid var(--line)}.track-card:last-child{border-bottom:0}.track-index{padding-top:4px;color:var(--accent);font-family:var(--font-en);font-size:.68rem;letter-spacing:.12em}.track-title{margin:0;font-size:1.3rem;font-weight:300}.track-meta{margin:4px 0 16px;color:var(--muted);font-size:.74rem}.track-card audio{width:100%;height:34px;accent-color:var(--accent)}.track-actions{display:flex;gap:8px}.delete-button,.save-copy-button{padding:8px 10px;border:1px solid rgba(228,127,114,.36);background:transparent;color:var(--danger);font-family:var(--font-en);font-size:.58rem;letter-spacing:.09em;text-transform:uppercase}.delete-button:hover{background:rgba(228,127,114,.08)}.save-copy-button{border-color:rgba(196,119,82,.55);color:var(--accent-soft)}.save-copy-button:hover{background:rgba(196,119,82,.09)}.copy-editor{margin-top:18px;border-top:1px solid var(--line)}.copy-editor summary{padding:14px 0;color:var(--accent-soft);font-family:var(--font-en);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}.editor-grid{display:grid;gap:13px;padding:4px 0 8px}.editor-field{display:grid;gap:7px;color:var(--muted);font-size:.7rem}.editor-field textarea,.editor-field input{width:100%;padding:11px 12px;border:1px solid var(--line);background:var(--panel-2);color:var(--text)}.editor-field textarea{min-height:125px;resize:vertical;line-height:1.55}.songbook-note{margin:0;color:var(--muted);font-size:.7rem;line-height:1.65}.songbook-toolbar{display:flex;flex-wrap:wrap;gap:7px}.songbook-tool{padding:8px 10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-family:var(--font-en);font-size:.55rem;letter-spacing:.06em;text-transform:uppercase}.songbook-tool:hover{border-color:var(--accent);color:var(--accent-soft)}.songbook-editor{display:grid;gap:10px;max-height:620px;padding:2px 8px 2px 0;overflow:auto}.songbook-row{position:relative;display:grid;gap:0;border:1px solid var(--line);background:#141513}.songbook-row label{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:stretch;margin:0;color:var(--muted);font-family:var(--font-en);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase}.songbook-row label+label{border-top:1px solid var(--line)}.songbook-row label span{display:flex;align-items:center;padding:0 10px;border-right:1px solid var(--line)}.songbook-row input,.songbook-row textarea{width:100%;min-width:0;border:0;background:transparent;color:var(--text);outline:0}.songbook-row input{padding:10px 42px 8px 12px;color:var(--accent-soft);font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:.86rem}.songbook-row textarea{min-height:47px;padding:9px 42px 10px 12px;resize:vertical;font-family:var(--font-th);font-size:.93rem;line-height:1.55}.songbook-row:focus-within{border-color:var(--accent)}.songbook-section-row{grid-template-columns:minmax(0,1fr)}.songbook-section-row input{padding:11px 42px 11px 12px;color:var(--accent-soft);font-family:var(--font-en);font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase}.songbook-row.is-repeat{border-color:rgba(196,119,82,.52)}.songbook-row.is-repeat textarea{color:var(--accent-soft);font-family:var(--font-en);font-size:1.15rem;font-weight:600;letter-spacing:.15em}.songbook-delete{position:absolute;top:7px;right:7px;z-index:2;width:27px;height:27px;padding:0;border:1px solid transparent;background:transparent;color:#666;font-size:1rem}.songbook-delete:hover{border-color:rgba(228,127,114,.45);color:var(--danger)}.editor-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}.editor-status{color:var(--muted);font-size:.68rem}.empty{padding:46px 28px;color:var(--muted);line-height:1.7}
     @media(max-width:1040px){.shell{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:24px;flex-direction:row;align-items:center;gap:22px}.side-label,.sidebar-foot{display:none}.side-nav{display:flex;margin-left:auto}.dashboard-grid{grid-template-columns:1fr}}
     @media(max-width:700px){.main{padding:28px 18px 70px}.topbar{align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.stats{grid-template-columns:1fr}.sidebar{align-items:flex-start;flex-direction:column}.side-nav{width:100%;margin:0;overflow:auto}.track-card{grid-template-columns:34px minmax(0,1fr);padding:22px 18px}.track-actions{grid-column:2}.panel-head,.upload-form{padding:22px 18px}}
   </style>
@@ -73,6 +73,9 @@
           <form class="upload-form" id="uploadForm">
             <div class="field"><label for="titleInput">ชื่อเพลง *</label><input id="titleInput" name="title" type="text" maxlength="120" required></div>
             <div class="field"><label for="artistInput">ศิลปิน / เครดิต</label><input id="artistInput" name="artist" type="text" maxlength="120" value="ARSTINLA"></div>
+            <div class="field"><label for="lyricsInput">เนื้อร้อง</label><textarea id="lyricsInput" name="lyrics" maxlength="30000" placeholder="วางเนื้อร้องแบบข้อความปกติ ใช้ * และ ** กำกับท่อนซ้ำได้ (ไม่บังคับ)"></textarea></div>
+            <div class="field"><label for="chordsInput">คอร์ด</label><textarea id="chordsInput" name="chords" maxlength="30000" spellcheck="false" placeholder="วางคอร์ดและจัดระยะตามที่ต้องการ (ไม่บังคับ)"></textarea></div>
+            <div class="field"><label for="subtitleInput">เนื้อร้องตามเวลา · WebVTT</label><input id="subtitleInput" name="subtitle" type="file" accept="text/vtt,.vtt"><span class="field-note">ไฟล์ .vtt ไม่เกิน 1 MB สำหรับแสดงเนื้อร้องให้ตรงกับเวลาเพลง</span></div>
             <label class="dropzone" for="audioInput"><input id="audioInput" name="audio" type="file" accept="audio/mpeg,.mp3" required><span><span class="drop-icon">＋</span><span class="drop-title">เลือกไฟล์ MP3</span><span class="drop-note">ไฟล์ละไม่เกิน 20 MB</span></span></label>
             <div class="file-selected" id="fileSelected"><strong>ยังไม่ได้เลือกไฟล์</strong>รองรับเฉพาะ .mp3</div>
             <div class="preview" id="previewWrap"><audio id="previewAudio" controls preload="metadata"></audio></div>
@@ -95,6 +98,9 @@
     const uploadForm = document.getElementById("uploadForm");
     const titleInput = document.getElementById("titleInput");
     const artistInput = document.getElementById("artistInput");
+    const lyricsInput = document.getElementById("lyricsInput");
+    const chordsInput = document.getElementById("chordsInput");
+    const subtitleInput = document.getElementById("subtitleInput");
     const audioInput = document.getElementById("audioInput");
     const uploadButton = document.getElementById("uploadButton");
     const uploadStatus = document.getElementById("uploadStatus");
@@ -124,6 +130,39 @@
       return key.trim();
     }
 
+    function songbookRows(track) {
+      if (Array.isArray(track?.songbook)) {
+        return track.songbook.map(row => row?.type === "section"
+          ? { type: "section", text: String(row.text || "") }
+          : { type: "line", chord: String(row?.chord || ""), lyric: String(row?.lyric || "") });
+      }
+
+      const chordLines = String(track?.chords || "").replace(/\r/g, "").split("\n");
+      let chordIndex = 0;
+      return String(track?.lyrics || "").replace(/\r/g, "").split("\n").flatMap(rawLine => {
+        const lyric = rawLine.trim();
+        if (!lyric) return [];
+        const section = lyric.match(/^\[(.+)]$/);
+        if (section) return [{ type: "section", text: section[1].trim() }];
+        return [{ type: "line", chord: String(chordLines[chordIndex++] || ""), lyric }];
+      });
+    }
+
+    function songbookRowMarkup(row) {
+      if (row?.type === "section") {
+        return `<div class="songbook-row songbook-section-row" data-songbook-row data-row-type="section"><input data-songbook-section maxlength="120" aria-label="ชื่อท่อน" value="${escapeHtml(row.text || "")}" placeholder="เช่น Verse 1 / Chorus"><button class="songbook-delete" type="button" data-remove-songbook-row aria-label="ลบบรรทัด">×</button></div>`;
+      }
+
+      const lyric = String(row?.lyric || "");
+      const repeatClass = /^\*{1,2}$/.test(lyric.trim()) ? " is-repeat" : "";
+      return `<div class="songbook-row${repeatClass}" data-songbook-row data-row-type="line"><label><span>Chord</span><input data-songbook-chord maxlength="250" spellcheck="false" value="${escapeHtml(row?.chord || "")}" placeholder="เช่น C  G  Am  F"></label><label><span>Lyric</span><textarea data-songbook-lyric rows="1" maxlength="500" placeholder="เนื้อร้อง หรือ * / ** สำหรับท่อนซ้ำ">${escapeHtml(lyric)}</textarea></label><button class="songbook-delete" type="button" data-remove-songbook-row aria-label="ลบบรรทัด">×</button></div>`;
+    }
+
+    function songbookEditorMarkup(track) {
+      const rows = songbookRows(track);
+      return `<p class="songbook-note">รูปแบบหนังสือเพลง: คอร์ดอยู่บรรทัดบน เนื้อร้องอยู่บรรทัดล่าง · ใช้ <strong>*</strong> และ <strong>**</strong> กำกับท่อนที่ซ้ำ</p><div class="songbook-toolbar"><button class="songbook-tool" type="button" data-add-songbook="line">+ บรรทัดเพลง</button><button class="songbook-tool" type="button" data-add-songbook="section">+ ชื่อท่อน</button><button class="songbook-tool" type="button" data-add-songbook="*">+ * ท่อนซ้ำ</button><button class="songbook-tool" type="button" data-add-songbook="**">+ ** ท่อนซ้ำ</button></div><div class="songbook-editor" data-songbook-editor="${escapeHtml(track.id)}">${rows.map(songbookRowMarkup).join("")}</div>`;
+    }
+
     function renderLibrary() {
       totalTracks.textContent = String(tracks.length).padStart(2, "0");
       const used = tracks.reduce((sum, track) => sum + Number(track.size || 0), 0);
@@ -137,7 +176,16 @@
       libraryList.innerHTML = tracks.map((track, index) => `
         <article class="track-card">
           <span class="track-index">${String(index + 1).padStart(2, "0")}</span>
-          <div><h3 class="track-title">${escapeHtml(track.title)}</h3><p class="track-meta">${escapeHtml(track.artist || "ARSTINLA")} · ${formatSize(track.size)}</p><audio controls preload="none" src="${escapeHtml(track.file)}"></audio></div>
+          <div class="track-main"><h3 class="track-title">${escapeHtml(track.title)}</h3><p class="track-meta">${escapeHtml(track.artist || "ARSTINLA")} · ${formatSize(track.size)}${track.instrumental ? " · INSTRUMENTAL" : ""}</p><audio controls preload="none" src="${escapeHtml(track.file)}"></audio>
+            <details class="copy-editor">
+              <summary>Lyrics · Chords · Subtitle</summary>
+              <div class="editor-grid">
+                ${songbookEditorMarkup(track)}
+                <label class="editor-field">WebVTT subtitle<input data-subtitle-id="${escapeHtml(track.id)}" type="file" accept="text/vtt,.vtt"></label>
+                <div class="editor-actions"><span class="editor-status" data-editor-status="${escapeHtml(track.id)}">${track.subtitle ? "มีไฟล์ subtitle แล้ว · เลือกไฟล์ใหม่เพื่อแทนที่" : track.instrumental ? "เพลงบรรเลง · ไม่ต้องใช้ subtitle" : "ยังไม่มีไฟล์ subtitle"}</span><button class="save-copy-button" type="button" data-save-copy-id="${escapeHtml(track.id)}">Save text</button></div>
+              </div>
+            </details>
+          </div>
           <div class="track-actions"><button class="delete-button" type="button" data-delete-id="${escapeHtml(track.id)}">Delete</button></div>
         </article>
       `).join("");
@@ -192,6 +240,10 @@
         const formData = new FormData();
         formData.append("title", titleInput.value.trim());
         formData.append("artist", artistInput.value.trim() || "ARSTINLA");
+        formData.append("lyrics", lyricsInput.value.trim());
+        formData.append("chords", chordsInput.value.trim());
+        const subtitleFile = subtitleInput.files?.[0];
+        if (subtitleFile) formData.append("subtitle", subtitleFile);
         formData.append("audio", file);
         const response = await fetch("/api/media", { method: "POST", headers: { "x-admin-key": key }, body: formData });
         const result = await response.json();
@@ -209,6 +261,68 @@
     });
 
     libraryList.addEventListener("click", async event => {
+      const removeRowButton = event.target.closest("[data-remove-songbook-row]");
+      if (removeRowButton) {
+        removeRowButton.closest("[data-songbook-row]")?.remove();
+        return;
+      }
+
+      const addRowButton = event.target.closest("[data-add-songbook]");
+      if (addRowButton) {
+        const editor = addRowButton.closest(".editor-grid")?.querySelector("[data-songbook-editor]");
+        if (!editor) return;
+        const kind = addRowButton.dataset.addSongbook;
+        const row = kind === "section"
+          ? { type: "section", text: "" }
+          : { type: "line", chord: "", lyric: kind === "*" || kind === "**" ? kind : "" };
+        editor.insertAdjacentHTML("beforeend", songbookRowMarkup(row));
+        const added = editor.lastElementChild;
+        added?.querySelector(kind === "section" ? "[data-songbook-section]" : "[data-songbook-lyric]")?.focus();
+        return;
+      }
+
+      const saveButton = event.target.closest("[data-save-copy-id]");
+
+      if (saveButton) {
+        const id = saveButton.dataset.saveCopyId;
+        const track = tracks.find(item => item.id === id);
+        const status = libraryList.querySelector(`[data-editor-status="${CSS.escape(id)}"]`);
+        const key = currentKey() || requestAdminKey();
+        if (!track || !key) return;
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving...";
+        status.textContent = "กำลังบันทึก...";
+
+        try {
+          const formData = new FormData();
+          const editor = libraryList.querySelector(`[data-songbook-editor="${CSS.escape(id)}"]`);
+          const songbook = [...editor.querySelectorAll("[data-songbook-row]")].map(row => row.dataset.rowType === "section"
+            ? { type: "section", text: row.querySelector("[data-songbook-section]").value.trim() }
+            : { type: "line", chord: row.querySelector("[data-songbook-chord]").value.trim(), lyric: row.querySelector("[data-songbook-lyric]").value.trim() }
+          ).filter(row => row.type === "section" ? row.text : row.lyric || row.chord);
+          formData.append("id", id);
+          formData.append("songbook", JSON.stringify(songbook));
+          const subtitleFile = libraryList.querySelector(`[data-subtitle-id="${CSS.escape(id)}"]`).files?.[0];
+          if (subtitleFile) formData.append("subtitle", subtitleFile);
+          const response = await fetch("/api/media", { method: "PATCH", headers: { "x-admin-key": key }, body: formData });
+          const result = await response.json();
+          if (response.status === 401) { sessionStorage.removeItem(ADMIN_KEY_NAME); refreshConnection(); throw new Error("Admin Key ไม่ถูกต้อง กรุณาเชื่อมต่อใหม่"); }
+          if (!response.ok) throw new Error(result.error || "บันทึกไม่สำเร็จ");
+          Object.assign(track, result.track);
+          status.textContent = result.track.subtitle ? "บันทึกแล้ว · มี subtitle พร้อมใช้งาน" : "บันทึกเนื้อร้องและคอร์ดแล้ว";
+          status.style.color = "var(--success)";
+        }
+        catch (error) {
+          status.textContent = error.message || "บันทึกไม่สำเร็จ";
+          status.style.color = "var(--danger)";
+        }
+        finally {
+          saveButton.disabled = false;
+          saveButton.textContent = "Save text";
+        }
+        return;
+      }
+
       const button = event.target.closest("[data-delete-id]");
       if (!button) return;
       const track = tracks.find(item => item.id === button.dataset.deleteId);
@@ -227,6 +341,12 @@
         setStatus(result.warning || "ลบเพลงเรียบร้อย", result.warning ? "error" : "success");
       }
       catch (error) { setStatus(error.message || "ลบเพลงไม่สำเร็จ", "error"); button.disabled = false; }
+    });
+
+    libraryList.addEventListener("input", event => {
+      const lyricInput = event.target.closest("[data-songbook-lyric]");
+      if (!lyricInput) return;
+      lyricInput.closest("[data-songbook-row]")?.classList.toggle("is-repeat", /^\*{1,2}$/.test(lyricInput.value.trim()));
     });
 
     refreshConnection();
