@@ -55,9 +55,6 @@
     .game-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
     .game-card{min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--paper);color:var(--ink);text-decoration:none;transition:transform .25s ease,box-shadow .25s ease}
     .game-card:hover,.game-card:focus-visible{outline:none;transform:translateY(-4px);box-shadow:0 16px 34px rgba(23,24,22,.1)}
-    .game-card--coming{opacity:.52;cursor:default}
-    .game-card--coming:hover{transform:none;box-shadow:none}
-    .game-card--coming .game-photo img{filter:grayscale(.72)}
     .game-photo{height:250px;border-bottom:1px solid var(--line)}
     .game-copy{min-height:260px;padding:28px;display:flex;flex-direction:column;align-items:flex-start}
     .game-kicker{margin:0;color:var(--pink);font-family:var(--font-en),var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase}
@@ -149,18 +146,18 @@
             <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:51%;--zoom:1.35"><img src="assets/characters/jeed-squirrel.webp" alt="จี๊ด กระรอก" loading="lazy"></div>
             <div class="game-copy"><p class="game-kicker">ตอนที่ 01 · รู้จักพอ</p><h3>ตลาดของจี๊ด</h3><p>ช่วยจี๊ดเก็บเหรียญไว้ซื้อของที่ตั้งใจ และแยกให้ออกระหว่างสิ่งที่อยากได้กับสิ่งที่จำเป็น</p><span class="game-link">เริ่มเล่น →</span></div>
           </a>
-          <article class="game-card game-card--coming">
+          <a class="game-card" href="games/toom-bamboo-bridge/">
             <div class="game-photo face-crop" style="--focus-x:58%;--focus-y:50%;--zoom:1.35"><img src="assets/characters/toom-turtle.webp" alt="ตุ้ม เต่า" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">ตอนที่ 02 · กล้ายอมรับผิด</p><h3>เกมของตุ้ม</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “ตุ้มกับสะพานไม้ไผ่”</p><span class="game-link">เร็ว ๆ นี้</span></div>
-          </article>
-          <article class="game-card game-card--coming">
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 02 · กล้ายอมรับผิด</p><h3>สะพานไม้ไผ่ของตุ้ม</h3><p>ช่วยตุ้มเลือกไม้ไผ่ให้ยาวพอดีกับสะพาน และเรียนรู้ว่าทำผิดไม่เป็นไร เมื่อเรายอมรับและช่วยกันแก้ไข</p><span class="game-link">เริ่มเล่น →</span></div>
+          </a>
+          <a class="game-card" href="games/ploy-star/">
             <div class="game-photo face-crop" style="--focus-x:54%;--focus-y:52%;--zoom:1.35"><img src="assets/characters/ploy-elephant.webp" alt="พลอย ช้าง" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">ตอนที่ 03 · ภูมิใจในตัวเอง</p><h3>เกมของพลอย</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “พลอยกับดาวของฉัน”</p><span class="game-link">เร็ว ๆ นี้</span></div>
-          </article>
-          <article class="game-card game-card--coming">
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 03 · ภูมิใจในตัวเอง</p><h3>ดาวของพลอย</h3><p>ช่วยพลอยระบายสีดาวตามใจชอบ ไม่มีผิดหรือถูก แล้วภูมิใจในผลงานที่ตั้งใจทำด้วยตัวเอง</p><span class="game-link">เริ่มเล่น →</span></div>
+          </a>
+          <a class="game-card" href="games/saen-pinky-promise/">
             <div class="game-photo face-crop" style="--focus-x:51%;--focus-y:45%;--zoom:1.35"><img src="assets/characters/saen-monkey.webp" alt="แสน ลิง" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">ตอนที่ 04 · รักษาคำพูด</p><h3>เกมของแสน</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “แสนกับนิ้วก้อยสัญญา”</p><span class="game-link">เร็ว ๆ นี้</span></div>
-          </article>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 04 · รักษาคำพูด</p><h3>นิ้วก้อยสัญญาของแสน</h3><p>ช่วยแสนตัดสินใจระหว่างทาง เพื่อทำตามคำสัญญาและบอกเพื่อนทันทีเมื่อมีเหตุจำเป็น</p><span class="game-link">เริ่มเล่น →</span></div>
+          </a>
           <a class="game-card" href="games/bok-mango/">
             <div class="game-photo face-crop" style="--focus-x:60%;--focus-y:43%;--zoom:1.35"><img src="assets/characters/bok-hornbill.webp" alt="โบก นกเงือก" loading="lazy"></div>
             <div class="game-copy"><p class="game-kicker">ตอนที่ 05 · ทำเองได้</p><h3>โบกบินขึ้นกิ่งมะม่วง</h3><p>ช่วยโบกกระพือปีกให้ถูกจังหวะ ค่อย ๆ บินขึ้นไปทีละกิ่งจนถึงมะม่วงลูกโต</p><span class="game-link">เริ่มเล่น →</span></div>
@@ -169,10 +166,10 @@
             <div class="game-photo face-crop" style="--focus-x:51%;--focus-y:48%;--zoom:1.35"><img src="assets/characters/mok-cat.webp" alt="หมอก แมว" loading="lazy"></div>
             <div class="game-copy"><p class="game-kicker">ตอนที่ 06 · กล้าตัดสินใจ</p><h3>ร้านไอศกรีมของหมอก</h3><p>เลือกไอศกรีมให้พอดีกับโคน แล้วชวนเพื่อน ๆ มาแบ่งความอร่อยด้วยกัน</p><span class="game-link">เริ่มเล่น →</span></div>
           </a>
-          <article class="game-card game-card--coming">
+          <a class="game-card" href="games/jorm-magic-bag/">
             <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:38%;--zoom:1.35"><img src="assets/characters/jorm-gibbon.webp" alt="จ๋อม ชะนี" loading="lazy"></div>
-            <div class="game-copy"><p class="game-kicker">ตอนที่ 07 · เก็บของเป็นที่</p><h3>เกมของจ๋อม</h3><p>เว้นพื้นที่สำหรับเกมจากนิทาน “ย่ามวิเศษของจ๋อม”</p><span class="game-link">เร็ว ๆ นี้</span></div>
-          </article>
+            <div class="game-copy"><p class="game-kicker">ตอนที่ 07 · เก็บของเป็นที่</p><h3>ย่ามวิเศษของจ๋อม</h3><p>ช่วยจ๋อมเลือกของที่จำเป็นให้พอดีกับย่าม ฝึกคิดก่อนออกเดินทางและรับผิดชอบของของตัวเอง</p><span class="game-link">เริ่มเล่น →</span></div>
+          </a>
           <a class="game-card" href="games/nam-calm/">
             <div class="game-photo face-crop" style="--focus-x:50%;--focus-y:54%;--zoom:1.35"><img src="assets/characters/nam-porcupine.webp" alt="หนาม เม่น" loading="lazy"></div>
             <div class="game-copy"><p class="game-kicker">ตอนที่ 08 · จัดการความโกรธ</p><h3>เวทมนตร์ดับโกรธของหนาม</h3><p>ช่วยหนามหยุด หายใจ และบอกความรู้สึกอย่างอ่อนโยน เพื่อให้ความร้อนในใจค่อย ๆ เย็นลง</p><span class="game-link">เริ่มเล่น →</span></div>
