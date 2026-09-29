@@ -1,0 +1,31 @@
+{
+  "tracks": [
+    {
+      "id": "everyday-with-you",
+      "title": "ทุกวันธรรมดา...ที่มีเธอ",
+      "artist": "ARSTINLA",
+      "file": "/assets/audio/library/everyday-with-you.mp3",
+      "size": 5756859,
+      "createdAt": "2026-09-29T00:00:00.000Z",
+      "protected": false
+    },
+    {
+      "id": "everything-is-good-now",
+      "title": "ทุกอย่างมันดีหมดแล้ว",
+      "artist": "ARSTINLA",
+      "file": "/assets/audio/library/everything-is-good-now.mp3",
+      "size": 6322783,
+      "createdAt": "2026-09-29T00:00:00.000Z",
+      "protected": false
+    },
+    {
+      "id": "eyelids",
+      "title": "เปลือกตา",
+      "artist": "ARSTINLA",
+      "file": "/assets/audio/library/eyelids.mp3",
+      "size": 5332414,
+      "createdAt": "2026-09-29T00:00:00.000Z",
+      "protected": false
+    }
+  ]
+}

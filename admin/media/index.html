@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ARSTINLA Media Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    :root{--bg:#111210;--panel:#171816;--panel-2:#1d1e1b;--text:#f3f1eb;--muted:#8d8f86;--line:rgba(255,255,255,.13);--accent:#c47752;--accent-soft:#e4a27e;--danger:#e47f72;--success:#8db896;--font-en:"Space Grotesk",sans-serif;--font-th:"IBM Plex Sans Thai",sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-th);font-weight:300}
+    a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}
+    .shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+    .sidebar{position:sticky;top:0;height:100vh;padding:36px 28px;border-right:1px solid var(--line);display:flex;flex-direction:column;background:#0e0f0d}
+    .brand{font-family:var(--font-en);font-size:1rem;font-weight:500;letter-spacing:.25em}.brand small{display:block;margin-top:7px;color:var(--muted);font-size:.43rem;font-weight:400;letter-spacing:.22em}
+    .side-label{margin:54px 0 14px;color:var(--muted);font-family:var(--font-en);font-size:.62rem;letter-spacing:.17em;text-transform:uppercase}
+    .side-nav{display:grid;gap:7px}.side-link{padding:13px 14px;border:1px solid transparent;color:var(--muted);font-family:var(--font-en);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}.side-link:hover,.side-link.active{border-color:var(--line);background:var(--panel);color:var(--text)}.side-link.active{border-left:2px solid var(--accent)}
+    .sidebar-foot{margin-top:auto;color:#62645d;font-size:.7rem;line-height:1.7}
+    .main{min-width:0;padding:42px clamp(24px,4vw,64px) 90px}
+    .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+    .eyebrow{margin:0;color:var(--accent);font-family:var(--font-en);font-size:.66rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+    h1{margin:12px 0 0;font-size:clamp(2.7rem,5vw,5.2rem);font-weight:300;line-height:.95;letter-spacing:-.055em}
+    .top-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}.button,.button-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border:1px solid var(--line);background:transparent;color:var(--text);font-family:var(--font-en);font-size:.67rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase}.button:hover,.button-link:hover{border-color:var(--accent);color:var(--accent-soft)}.button.primary{border-color:var(--accent);background:var(--accent);color:#fff}.button:disabled{opacity:.4;cursor:wait}
+    .connection{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:.72rem}.connection::before{content:"";width:8px;height:8px;border-radius:50%;background:#555}.connection.connected::before{background:var(--success);box-shadow:0 0 0 5px rgba(141,184,150,.08)}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:28px 0}.stat{padding:24px;border:1px solid var(--line);background:var(--panel)}.stat-label{color:var(--muted);font-family:var(--font-en);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}.stat-value{display:block;margin-top:16px;font-family:var(--font-en);font-size:clamp(2rem,4vw,3.6rem);font-weight:300;line-height:1}.stat-unit{margin-left:8px;color:var(--muted);font-size:.72rem}
+    .dashboard-grid{display:grid;grid-template-columns:minmax(330px,.78fr) minmax(0,1.22fr);gap:20px;align-items:start}
+    .panel{border:1px solid var(--line);background:var(--panel)}.panel-head{padding:26px 28px;border-bottom:1px solid var(--line)}.panel-head h2{margin:9px 0 0;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:300}.panel-copy{margin:8px 0 0;color:var(--muted);font-size:.82rem;line-height:1.65}
+    .upload-form{display:grid;gap:18px;padding:28px}.field{display:grid;gap:8px}.field label{color:var(--muted);font-size:.74rem}.field input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:0;background:var(--panel-2);color:var(--text)}.field input:focus{outline:1px solid var(--accent);border-color:var(--accent)}
+    .dropzone{position:relative;min-height:150px;padding:28px;border:1px dashed rgba(255,255,255,.22);display:grid;place-items:center;text-align:center;background:#141513}.dropzone:hover{border-color:var(--accent)}.dropzone input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.drop-icon{display:block;margin-bottom:10px;color:var(--accent);font-family:var(--font-en);font-size:2rem}.drop-title{font-size:1rem}.drop-note{display:block;margin-top:6px;color:var(--muted);font-size:.72rem}
+    .file-selected{padding:14px;border-left:2px solid var(--accent);background:var(--panel-2);color:var(--muted);font-size:.76rem;line-height:1.6}.file-selected strong{display:block;color:var(--text);font-weight:400}
+    .preview{display:none}.preview.active{display:block}.preview audio{width:100%;accent-color:var(--accent)}
+    .status{min-height:22px;margin:0;color:var(--muted);font-size:.76rem;line-height:1.5}.status[data-state="error"]{color:var(--danger)}.status[data-state="success"]{color:var(--success)}
+    .library-list{display:grid}.track-card{display:grid;grid-template-columns:50px minmax(0,1fr) auto;gap:18px;align-items:start;padding:24px 28px;border-bottom:1px solid var(--line)}.track-card:last-child{border-bottom:0}.track-index{padding-top:4px;color:var(--accent);font-family:var(--font-en);font-size:.68rem;letter-spacing:.12em}.track-title{margin:0;font-size:1.3rem;font-weight:300}.track-meta{margin:4px 0 16px;color:var(--muted);font-size:.74rem}.track-card audio{width:100%;height:34px;accent-color:var(--accent)}.track-actions{display:flex;gap:8px}.delete-button{padding:8px 10px;border:1px solid rgba(228,127,114,.36);background:transparent;color:var(--danger);font-family:var(--font-en);font-size:.58rem;letter-spacing:.09em;text-transform:uppercase}.delete-button:hover{background:rgba(228,127,114,.08)}.empty{padding:46px 28px;color:var(--muted);line-height:1.7}
+    @media(max-width:1040px){.shell{grid-template-columns:1fr}.sidebar{position:static;height:auto;padding:24px;flex-direction:row;align-items:center;gap:22px}.side-label,.sidebar-foot{display:none}.side-nav{display:flex;margin-left:auto}.dashboard-grid{grid-template-columns:1fr}}
+    @media(max-width:700px){.main{padding:28px 18px 70px}.topbar{align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.stats{grid-template-columns:1fr}.sidebar{align-items:flex-start;flex-direction:column}.side-nav{width:100%;margin:0;overflow:auto}.track-card{grid-template-columns:34px minmax(0,1fr);padding:22px 18px}.track-actions{grid-column:2}.panel-head,.upload-form{padding:22px 18px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="/">ARSTINLA<small>DESIGN &amp; CONSULT</small></a>
+      <p class="side-label">Management</p>
+      <nav class="side-nav" aria-label="Admin navigation">
+        <a class="side-link" href="/admin/projects/">Projects</a>
+        <a class="side-link" href="/admin/client-voices/">Client voices</a>
+        <a class="side-link active" href="/admin/media/" aria-current="page">Media</a>
+      </nav>
+      <p class="sidebar-foot">ARSTINLA MEDIA SYSTEM<br>MP3 · ORIGINAL MUSIC</p>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><p class="eyebrow">ARSTINLA Admin / Media</p><h1>Media Dashboard</h1></div>
+        <div class="top-actions">
+          <span class="connection" id="connectionStatus">Admin not connected</span>
+          <button class="button" id="connectButton" type="button">Connect admin</button>
+          <a class="button-link" href="/media/" target="_blank" rel="noopener">Open music page ↗</a>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Media summary">
+        <article class="stat"><span class="stat-label">Total tracks</span><strong class="stat-value" id="totalTracks">00</strong></article>
+        <article class="stat"><span class="stat-label">Storage used</span><strong class="stat-value" id="totalStorage">0.0<span class="stat-unit">MB</span></strong></article>
+        <article class="stat"><span class="stat-label">File format</span><strong class="stat-value">MP3</strong></article>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel">
+          <div class="panel-head"><p class="eyebrow">Add new track</p><h2>เพิ่มเพลงใหม่</h2><p class="panel-copy">ใส่ข้อมูลเพลง เลือกไฟล์ MP3 และฟังตัวอย่างก่อนเพิ่มขึ้นเว็บไซต์</p></div>
+          <form class="upload-form" id="uploadForm">
+            <div class="field"><label for="titleInput">ชื่อเพลง *</label><input id="titleInput" name="title" type="text" maxlength="120" required></div>
+            <div class="field"><label for="artistInput">ศิลปิน / เครดิต</label><input id="artistInput" name="artist" type="text" maxlength="120" value="ARSTINLA"></div>
+            <label class="dropzone" for="audioInput"><input id="audioInput" name="audio" type="file" accept="audio/mpeg,.mp3" required><span><span class="drop-icon">＋</span><span class="drop-title">เลือกไฟล์ MP3</span><span class="drop-note">ไฟล์ละไม่เกิน 20 MB</span></span></label>
+            <div class="file-selected" id="fileSelected"><strong>ยังไม่ได้เลือกไฟล์</strong>รองรับเฉพาะ .mp3</div>
+            <div class="preview" id="previewWrap"><audio id="previewAudio" controls preload="metadata"></audio></div>
+            <button class="button primary" id="uploadButton" type="submit">Add music</button>
+            <p class="status" id="uploadStatus" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><p class="eyebrow">Music library</p><h2>เพลงบนเว็บไซต์</h2><p class="panel-copy">เพลงที่เพิ่มแล้วจะปรากฏบนหน้า MUSIC หลังระบบเผยแพร่ประมาณ 1–2 นาที</p></div>
+          <div class="library-list" id="libraryList" aria-live="polite"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const ADMIN_KEY_NAME = "ARSTINLA_ADMIN_KEY";
+    const MAX_SIZE = 20 * 1024 * 1024;
+    const uploadForm = document.getElementById("uploadForm");
+    const titleInput = document.getElementById("titleInput");
+    const artistInput = document.getElementById("artistInput");
+    const audioInput = document.getElementById("audioInput");
+    const uploadButton = document.getElementById("uploadButton");
+    const uploadStatus = document.getElementById("uploadStatus");
+    const fileSelected = document.getElementById("fileSelected");
+    const previewWrap = document.getElementById("previewWrap");
+    const previewAudio = document.getElementById("previewAudio");
+    const libraryList = document.getElementById("libraryList");
+    const totalTracks = document.getElementById("totalTracks");
+    const totalStorage = document.getElementById("totalStorage");
+    const connectionStatus = document.getElementById("connectionStatus");
+    const connectButton = document.getElementById("connectButton");
+    let previewUrl = "";
+    let tracks = [];
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+    }
+    function formatSize(bytes) { return `${(Number(bytes || 0) / 1024 / 1024).toFixed(1)} MB`; }
+    function setStatus(message, state = "") { uploadStatus.textContent = message; uploadStatus.dataset.state = state; }
+    function currentKey() { return sessionStorage.getItem(ADMIN_KEY_NAME) || ""; }
+    function refreshConnection() { const connected = Boolean(currentKey()); connectionStatus.textContent = connected ? "Admin connected" : "Admin not connected"; connectionStatus.classList.toggle("connected", connected); connectButton.textContent = connected ? "Change key" : "Connect admin"; }
+    function requestAdminKey() {
+      const key = prompt("Enter ARSTINLA Admin Key", currentKey());
+      if (!key) return "";
+      sessionStorage.setItem(ADMIN_KEY_NAME, key.trim());
+      refreshConnection();
+      return key.trim();
+    }
+
+    function renderLibrary() {
+      totalTracks.textContent = String(tracks.length).padStart(2, "0");
+      const used = tracks.reduce((sum, track) => sum + Number(track.size || 0), 0);
+      totalStorage.innerHTML = `${(used / 1024 / 1024).toFixed(1)}<span class="stat-unit">MB</span>`;
+
+      if (!tracks.length) {
+        libraryList.innerHTML = '<p class="empty">ยังไม่มีเพลง กรอกข้อมูลและเลือกไฟล์ MP3 เพื่อเพิ่มเพลงแรก</p>';
+        return;
+      }
+
+      libraryList.innerHTML = tracks.map((track, index) => `
+        <article class="track-card">
+          <span class="track-index">${String(index + 1).padStart(2, "0")}</span>
+          <div><h3 class="track-title">${escapeHtml(track.title)}</h3><p class="track-meta">${escapeHtml(track.artist || "ARSTINLA")} · ${formatSize(track.size)}</p><audio controls preload="none" src="${escapeHtml(track.file)}"></audio></div>
+          <div class="track-actions"><button class="delete-button" type="button" data-delete-id="${escapeHtml(track.id)}">Delete</button></div>
+        </article>
+      `).join("");
+    }
+
+    async function loadLibrary() {
+      try {
+        const response = await fetch(`/media-data.json?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error("โหลดรายการเพลงไม่สำเร็จ");
+        const data = await response.json();
+        tracks = Array.isArray(data.tracks) ? data.tracks : [];
+        renderLibrary();
+      }
+      catch (error) {
+        libraryList.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`;
+      }
+    }
+
+    connectButton.addEventListener("click", requestAdminKey);
+    audioInput.addEventListener("change", () => {
+      const file = audioInput.files?.[0];
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = "";
+
+      if (!file) {
+        fileSelected.innerHTML = "<strong>ยังไม่ได้เลือกไฟล์</strong>รองรับเฉพาะ .mp3";
+        previewWrap.classList.remove("active");
+        previewAudio.removeAttribute("src");
+        return;
+      }
+
+      fileSelected.innerHTML = `<strong>${escapeHtml(file.name)}</strong>${formatSize(file.size)}`;
+      previewUrl = URL.createObjectURL(file);
+      previewAudio.src = previewUrl;
+      previewWrap.classList.add("active");
+      if (!titleInput.value.trim()) titleInput.value = file.name.replace(/\.mp3$/i, "");
+    });
+
+    uploadForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      const file = audioInput.files?.[0];
+      if (!file || !/\.mp3$/i.test(file.name)) { setStatus("กรุณาเลือกไฟล์ .mp3", "error"); return; }
+      if (file.size > MAX_SIZE) { setStatus("ไฟล์ต้องมีขนาดไม่เกิน 20 MB", "error"); return; }
+      const key = currentKey() || requestAdminKey();
+      if (!key) return;
+
+      uploadButton.disabled = true;
+      uploadButton.textContent = "Uploading...";
+      setStatus("กำลังเพิ่มเพลงและอัปเดตเว็บไซต์...");
+
+      try {
+        const formData = new FormData();
+        formData.append("title", titleInput.value.trim());
+        formData.append("artist", artistInput.value.trim() || "ARSTINLA");
+        formData.append("audio", file);
+        const response = await fetch("/api/media", { method: "POST", headers: { "x-admin-key": key }, body: formData });
+        const result = await response.json();
+        if (response.status === 401) { sessionStorage.removeItem(ADMIN_KEY_NAME); refreshConnection(); throw new Error("Admin Key ไม่ถูกต้อง กรุณาเชื่อมต่อใหม่"); }
+        if (!response.ok) throw new Error(result.error || "เพิ่มเพลงไม่สำเร็จ");
+        tracks.push(result.track);
+        renderLibrary();
+        uploadForm.reset();
+        artistInput.value = "ARSTINLA";
+        audioInput.dispatchEvent(new Event("change"));
+        setStatus("เพิ่มเพลงเรียบร้อย เว็บไซต์จะอัปเดตภายในประมาณ 1–2 นาที", "success");
+      }
+      catch (error) { setStatus(error.message || "เพิ่มเพลงไม่สำเร็จ", "error"); }
+      finally { uploadButton.disabled = false; uploadButton.textContent = "Add music"; }
+    });
+
+    libraryList.addEventListener("click", async event => {
+      const button = event.target.closest("[data-delete-id]");
+      if (!button) return;
+      const track = tracks.find(item => item.id === button.dataset.deleteId);
+      if (!track || !confirm(`ลบเพลง “${track.title}” ใช่หรือไม่?`)) return;
+      const key = currentKey() || requestAdminKey();
+      if (!key) return;
+      button.disabled = true;
+
+      try {
+        const response = await fetch("/api/media", { method: "DELETE", headers: { "content-type": "application/json", "x-admin-key": key }, body: JSON.stringify({ id: track.id }) });
+        const result = await response.json();
+        if (response.status === 401) { sessionStorage.removeItem(ADMIN_KEY_NAME); refreshConnection(); throw new Error("Admin Key ไม่ถูกต้อง กรุณาเชื่อมต่อใหม่"); }
+        if (!response.ok) throw new Error(result.error || "ลบเพลงไม่สำเร็จ");
+        tracks = tracks.filter(item => item.id !== track.id);
+        renderLibrary();
+        setStatus(result.warning || "ลบเพลงเรียบร้อย", result.warning ? "error" : "success");
+      }
+      catch (error) { setStatus(error.message || "ลบเพลงไม่สำเร็จ", "error"); button.disabled = false; }
+    });
+
+    refreshConnection();
+    loadLibrary();
+  </script>
+</body>
+</html>
