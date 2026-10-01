@@ -22,7 +22,7 @@ body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font-th)
 button,a{font:inherit}button{color:inherit}a{color:inherit;text-decoration:none}
 .site-header{height:82px;padding:0 clamp(20px,4vw,62px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:relative;z-index:3}
 .brand{font-family:var(--font-en);font-weight:650;letter-spacing:.2em;font-size:15px}.brand span{font-weight:300;color:var(--muted);letter-spacing:.08em}
-.top-nav{display:flex;align-items:center;gap:24px}.top-nav a{color:var(--muted);font-family:var(--font-en);font-size:10px;letter-spacing:.14em;text-transform:uppercase}.top-nav a:hover{color:var(--text)}
+.top-nav{display:flex;align-items:center;justify-content:flex-end;gap:24px;flex-wrap:wrap}.top-nav a{color:var(--muted);font-family:var(--font-en);font-size:10px;letter-spacing:.14em;text-transform:uppercase}.top-nav a:hover{color:var(--text)}
 .hero{min-height:calc(100vh - 82px);display:grid;grid-template-columns:minmax(0,1.12fr) minmax(330px,.88fr);border-bottom:1px solid var(--line)}
 .hero-copy{padding:clamp(64px,9vw,142px) clamp(24px,7vw,110px);display:flex;flex-direction:column;justify-content:center}
 .eyebrow,.section-label{font-family:var(--font-en);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--sand)}
@@ -91,7 +91,7 @@ footer{padding:22px clamp(20px,4vw,62px);display:flex;justify-content:space-betw
     <a href="/tools/color-sequence/">Color Sequence</a>
     <a href="/tools/birthday/">Birthday Insight</a>
     <a href="/tools/image/">Image Tool</a>
-    <a href="/">Back to website</a>
+    <a href="/#tools">Back to Tools</a>
   </nav>
 </header>
 
@@ -214,7 +214,7 @@ footer{padding:22px clamp(20px,4vw,62px);display:flex;justify-content:space-betw
   </section>
 </main>
 
-<footer><span>© 2026 ARSTINLA Design &amp; Consult</span><nav><a href="/tools/schematic-planner/">Schematic Planner</a><a href="/tools/home-compass/">Home Compass</a><a href="/tools/color-sequence/">Color Sequence</a><a href="/tools/image/">Image Tool</a><a href="/tools/birthday/">Birthday Insight</a><a href="/">Main Website</a></nav></footer>
+<footer><span>© 2026 ARSTINLA Design &amp; Consult</span><nav><a href="/tools/schematic-planner/">Schematic Planner</a><a href="/tools/home-compass/">Home Compass</a><a href="/tools/color-sequence/">Color Sequence</a><a href="/tools/image/">Image Tool</a><a href="/tools/birthday/">Birthday Insight</a><a href="/#tools">Back to Tools</a></nav></footer>
 <div class="toast" id="toast" role="status"></div>
 
 <script>

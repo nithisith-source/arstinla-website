@@ -44,6 +44,9 @@ header{
 }
 .brand{font-weight:600;letter-spacing:.14em;font-size:13px;text-decoration:none;color:inherit}
 .brand span{color:var(--muted);font-weight:400}
+.top-nav{display:flex;align-items:center;justify-content:flex-end;gap:18px;flex-wrap:wrap}
+.top-nav a{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
+.top-nav a:hover{color:var(--text)}
 #installBtn{
   display:none;
   background:none;border:1px solid var(--line);color:var(--text);
@@ -80,6 +83,7 @@ main{
   display:flex;flex-direction:column;gap:26px;
 }
 @media(max-width:860px){.controls{border-right:none;border-bottom:1px solid var(--line)}}
+@media(max-width:720px){header{align-items:flex-start}.brand span{display:block;margin-top:4px}.top-nav{flex-direction:column;align-items:flex-end;gap:8px}}
 
 .drop{
   border:1px dashed var(--line);
@@ -214,14 +218,15 @@ footer a:hover{color:var(--sand)}
 
 <header>
   <a class="brand" href="/">ARSTINLA <span>/ Image Tool</span></a>
-  <div style="display:flex;align-items:center;gap:18px">
-    <a href="/tools/schematic-planner/" style="color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Schematic Planner</a>
-    <a href="/tools/home-compass/" style="color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Home Compass</a>
-    <a href="/tools/color-sequence/" style="color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Color Sequence</a>
-    <a href="/tools/enneagram/" style="color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Enneagram Compass</a>
-    <a href="/tools/birthday/" style="color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase">Birthday Insight</a>
+  <nav class="top-nav" aria-label="Tools navigation">
+    <a href="/tools/schematic-planner/">Schematic Planner</a>
+    <a href="/tools/home-compass/">Home Compass</a>
+    <a href="/tools/color-sequence/">Color Sequence</a>
+    <a href="/tools/enneagram/">Enneagram Compass</a>
+    <a href="/tools/birthday/">Birthday Insight</a>
+    <a href="/#tools">Back to Tools</a>
     <button id="installBtn" type="button">ติดตั้งลงเครื่อง</button>
-  </div>
+  </nav>
 </header>
 
 <section class="hero">
@@ -305,7 +310,7 @@ footer a:hover{color:var(--sand)}
 
 <footer>
   <span>ARSTINLA Design &amp; Consult — เครื่องมือฟรีสำหรับเจ้าของเว็บและช่างภาพงานสถาปัตย์</span>
-  <a href="/">กลับสู่ arstinla.com</a>
+  <a href="/#tools">กลับสู่ส่วน Tools</a>
 </footer>
 
 <script src="/tools/shared/download-gate.js"></script>
