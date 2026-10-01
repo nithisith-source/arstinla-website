@@ -862,6 +862,126 @@ export async function onRequestDelete({
       `${owner}/${repo}/contents/` +
       `${githubPath}`;
 
+    const publicPath =
+      `/assets/project-${projectNumber}/${fileName}`;
+
+    const dataPath = "project-data.js";
+
+    const dataUrl =
+      `https://api.github.com/repos/` +
+      `${owner}/${repo}/contents/${dataPath}`;
+
+    const dataResponse = await fetch(
+      `${dataUrl}?ref=${encodeURIComponent(branch)}`,
+      {
+        headers: githubHeaders
+      }
+    );
+
+    if (!dataResponse.ok) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Cannot update project image sections before deletion"
+        },
+        500
+      );
+    }
+
+    const dataFile = await dataResponse.json();
+    const source = decodeBase64(dataFile.content);
+    const projectRange = findProjectBlock(
+      source,
+      projectNumber
+    );
+
+    if (!projectRange) {
+      return json(
+        {
+          ok: false,
+          error:
+            `Project ${projectNumber} not found`
+        },
+        404
+      );
+    }
+
+    const imageFields = [
+      "renderImages",
+      "planImages",
+      "siteImages",
+      "constructionImages"
+    ];
+
+    let updatedBlock = projectRange.block;
+    let removedFromSection = false;
+
+    imageFields.forEach(fieldName => {
+      const currentImages = readProjectArray(
+        updatedBlock,
+        fieldName
+      );
+
+      const nextImages = currentImages.filter(
+        imagePath => imagePath !== publicPath
+      );
+
+      if (
+        nextImages.length !==
+        currentImages.length
+      ) {
+        removedFromSection = true;
+        updatedBlock = upsertProjectArray(
+          updatedBlock,
+          fieldName,
+          nextImages
+        );
+      }
+    });
+
+    if (removedFromSection) {
+      const updatedSource =
+        source.slice(0, projectRange.start) +
+        updatedBlock +
+        source.slice(projectRange.end);
+
+      const updateDataResponse = await fetch(
+        dataUrl,
+        {
+          method: "PUT",
+          headers: {
+            ...githubHeaders,
+            "content-type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            message:
+              `Remove Project ${projectNumber} image from section: ${fileName}`,
+            content:
+              textToBase64(updatedSource),
+            sha: dataFile.sha,
+            branch
+          })
+        }
+      );
+
+      if (!updateDataResponse.ok) {
+        const details =
+          await updateDataResponse.text();
+
+        return json(
+          {
+            ok: false,
+            error:
+              "Cannot remove image from project section",
+            details
+          },
+          500
+        );
+      }
+    }
+
 
     const response =
       await fetch(
@@ -908,7 +1028,8 @@ export async function onRequestDelete({
     return json({
       ok: true,
       projectNumber,
-      fileName
+      fileName,
+      removedFromSection
     });
 
   }

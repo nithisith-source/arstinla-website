@@ -193,12 +193,6 @@
   color: #d8d8d2;
 }
 
-.project-upload-note {
-  margin: 8px 0 0;
-  color: #8f9188;
-  font-size: 12px;
-}
-
   /* ADD PROJECT UI */
 
   .add-project-button {
@@ -231,6 +225,12 @@
     color: #fff;
     width: min(620px, calc(100% - 32px));
     padding: 0;
+  }
+
+  #editProjectDialog {
+    width: min(1180px, calc(100% - 32px));
+    max-height: calc(100vh - 32px);
+    overflow: auto;
   }
 
   .project-dialog::backdrop {
@@ -304,14 +304,120 @@
     line-height: 1.5;
   }
 
-  .admin-section-heading-grid {
+  .edit-project-section {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 20px;
+    padding: 24px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.015);
   }
 
-  .admin-section-heading-grid .admin-field {
+  .edit-project-section-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .edit-project-section-number {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(196,119,82,.6);
+    color: #d88a63;
+    font-size: 12px;
+    letter-spacing: .12em;
+  }
+
+  .edit-project-section-kicker {
+    margin: 0 0 5px;
+    color: #c47752;
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  .edit-project-section-title {
+    margin: 0;
+    font-size: clamp(21px, 2.5vw, 30px);
+    font-weight: 400;
+  }
+
+  .edit-project-section-description {
+    margin: 5px 0 0;
+    color: #85867f;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .edit-project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .edit-project-grid .admin-field--wide {
+    grid-column: 1 / -1;
+  }
+
+  .edit-section-images {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .edit-section-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 22px;
+    border: 1px dashed rgba(255,255,255,.15);
+    color: #777970;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .edit-section-image {
     min-width: 0;
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,.1);
+    background: #191a17;
+  }
+
+  .edit-section-image img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #0d0e0c;
+  }
+
+  .edit-section-image-name {
+    min-height: 34px;
+    margin: 8px 0;
+    color: #92948b;
+    font-size: 10px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .edit-section-image-delete {
+    width: 100%;
+    border: 1px solid rgba(159,78,69,.7);
+    background: transparent;
+    color: #e58b80;
+    padding: 8px 10px;
+    cursor: pointer;
+  }
+
+  .edit-section-image-delete:disabled {
+    cursor: wait;
+    opacity: .55;
+  }
+
+  .edit-section-upload {
+    padding-top: 4px;
+    border-top: 1px solid rgba(255,255,255,.08);
   }
 
   .admin-check {
@@ -426,53 +532,14 @@
       line-height: 1.65;
     }
 
-    .project-files {
-      display: none;
-
-      grid-template-columns:
-        repeat(
-          auto-fill,
-          minmax(180px, 1fr)
-        );
-
-      gap: 16px;
-
-      margin-top: 24px;
-      padding-top: 24px;
-
-      border-top:
-        1px solid rgba(255,255,255,.1);
-    }
-
-    .project-files.open {
-      display: grid;
-    }
-
-    .file {
-      background: #191a17;
-      padding: 10px;
-    }
-
-    .file img {
-      display: block;
-
-      width: 100%;
-      aspect-ratio: 4 / 3;
-
-      object-fit: cover;
-
-      margin-bottom: 10px;
-    }
-
-    .file-name {
-      font-size: 11px;
-      color: #aaa;
-      word-break: break-all;
-    }
-
     @media (max-width: 700px) {
-      .admin-section-heading-grid {
+      .edit-project-grid,
+      .edit-section-images {
         grid-template-columns: 1fr;
+      }
+
+      .edit-project-section {
+        padding: 18px;
       }
 
       .admin {
@@ -906,285 +973,208 @@
         type="hidden"
       >
 
-      <div class="admin-field">
-        <label for="editProjectTitle">
-          PROJECT TITLE
-        </label>
-
-        <input
-          id="editProjectTitle"
-          name="title"
-          type="text"
-          required
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectCategory">
-          CATEGORY
-        </label>
-
-        <select
-          id="editProjectCategory"
-          name="category"
-          required
-        >
-          <option value="residential">Residential</option>
-          <option value="renovation">Renovate</option>
-          <option value="tiny-house">Tiny House</option>
-          <option value="commercial">Commercial</option>
-          <option value="public">Public &amp; Institutional</option>
-          <option value="urban">Urban</option>
-          <option value="interior">Interior</option>
-          <option value="consult">Consult</option>
-        </select>
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectLocation">
-          LOCATION
-        </label>
-
-        <input
-          id="editProjectLocation"
-          name="location"
-          type="text"
-          placeholder="Bangkok, Thailand"
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectArea">
-          AREA
-        </label>
-
-        <input
-          id="editProjectArea"
-          name="area"
-          type="text"
-          placeholder="650 sq.m."
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectYear">
-          DESIGN YEAR
-        </label>
-
-        <input
-          id="editProjectYear"
-          name="year"
-          type="text"
-          inputmode="numeric"
-          maxlength="4"
-          placeholder="2026"
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectCompletion">
-          CONSTRUCTION / COMPLETION YEAR
-        </label>
-
-        <input
-          id="editProjectCompletion"
-          name="completion"
-          type="text"
-          inputmode="numeric"
-          maxlength="4"
-          placeholder="2027"
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectService">
-          SERVICE
-        </label>
-
-        <textarea
-          id="editProjectService"
-          name="service"
-          placeholder="Architecture / Design / Drawing"
-        ></textarea>
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectBriefTitle">
-          PROJECT STORY TITLE
-        </label>
-
-        <input
-          id="editProjectBriefTitle"
-          name="briefTitle"
-          type="text"
-          maxlength="180"
-          placeholder="A Home for the Next Chapter"
-        >
-
-        <p class="admin-field-hint">
-          หัวข้อหรือนิยามสั้น ๆ ของแนวคิดโครงการ
-        </p>
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectBrief">
-          PROJECT STORY
-        </label>
-
-        <textarea
-          class="admin-article-input"
-          id="editProjectBrief"
-          name="brief"
-          maxlength="12000"
-          placeholder="Write the project story, client brief, design idea or concept here..."
-        ></textarea>
-
-        <p class="admin-field-hint">
-          เขียนได้หลายย่อหน้า ระบบจะรักษาการขึ้นบรรทัดใหม่ไว้
-        </p>
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectConceptTitle">
-          DESIGN CONCEPT TITLE
-        </label>
-
-        <input
-          id="editProjectConceptTitle"
-          name="conceptTitle"
-          type="text"
-          maxlength="180"
-          placeholder="Angled Plan, Shared Courtyards"
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectConcept">
-          DESIGN CONCEPT
-        </label>
-
-        <textarea
-          class="admin-article-input"
-          id="editProjectConcept"
-          name="concept"
-          maxlength="12000"
-          placeholder="Explain the main planning and design concept..."
-        ></textarea>
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectArchitectureTitle">
-          ARCHITECTURAL LANGUAGE TITLE
-        </label>
-
-        <input
-          id="editProjectArchitectureTitle"
-          name="architectureTitle"
-          type="text"
-          maxlength="180"
-          placeholder="Contemporary Thai Gable House"
-        >
-      </div>
-
-      <div class="admin-field">
-        <label for="editProjectArchitectureDescription">
-          ARCHITECTURAL LANGUAGE
-        </label>
-
-        <textarea
-          class="admin-article-input"
-          id="editProjectArchitectureDescription"
-          name="architectureDescription"
-          maxlength="12000"
-          placeholder="Describe form, roof, materials, openings and spatial character..."
-        ></textarea>
-      </div>
-
-      <div class="admin-field">
-        <label>
-          PROJECT SECTION HEADINGS
-        </label>
-
-        <div class="admin-section-heading-grid">
-          <div class="admin-field">
-            <label for="editProjectRenderHeading">3D VISUALIZATION</label>
-            <input id="editProjectRenderHeading" name="renderHeading" type="text" maxlength="180" placeholder="Resort-like Living.">
-          </div>
-
-          <div class="admin-field">
-            <label for="editProjectPlanHeading">FLOOR PLANS</label>
-            <input id="editProjectPlanHeading" name="planHeading" type="text" maxlength="180" placeholder="Floor Plans.">
-          </div>
-
-          <div class="admin-field">
-            <label for="editProjectSiteHeading">THE SITE</label>
-            <input id="editProjectSiteHeading" name="siteHeading" type="text" maxlength="180" placeholder="The Site.">
-          </div>
-
-          <div class="admin-field">
-            <label for="editProjectConstructionHeading">CONSTRUCTION</label>
-            <input id="editProjectConstructionHeading" name="constructionHeading" type="text" maxlength="180" placeholder="From Drawing to Site.">
+      <section class="edit-project-section">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">00</span>
+          <div>
+            <p class="edit-project-section-kicker">Project information</p>
+            <h3 class="edit-project-section-title">ข้อมูลโครงการและภาพปก</h3>
+            <p class="edit-project-section-description">ข้อมูลส่วนนี้แสดงในส่วนแนะนำโครงการก่อนเริ่มลำดับเนื้อหา</p>
           </div>
         </div>
 
-        <p class="admin-field-hint">
-          หัวข้อจะแสดงแบบเดียวกับ Project 01 และจะแสดงเฉพาะส่วนที่มีรูป
-        </p>
-      </div>
+        <div class="edit-project-grid">
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectTitle">PROJECT TITLE</label>
+            <input id="editProjectTitle" name="title" type="text" required>
+          </div>
 
-      <div class="admin-field">
-        <label for="editProjectCover">
-          NEW COVER IMAGE (OPTIONAL)
-        </label>
+          <div class="admin-field">
+            <label for="editProjectCategory">CATEGORY</label>
+            <select id="editProjectCategory" name="category" required>
+              <option value="residential">Residential</option>
+              <option value="renovation">Renovate</option>
+              <option value="tiny-house">Tiny House</option>
+              <option value="commercial">Commercial</option>
+              <option value="public">Public &amp; Institutional</option>
+              <option value="urban">Urban</option>
+              <option value="interior">Interior</option>
+              <option value="consult">Consult</option>
+            </select>
+          </div>
 
-        <input
-          id="editProjectCover"
-          name="cover"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-        >
+          <div class="admin-field">
+            <label for="editProjectLocation">LOCATION</label>
+            <input id="editProjectLocation" name="location" type="text" placeholder="Bangkok, Thailand">
+          </div>
 
-        <p class="admin-field-hint" id="editProjectCoverHint"></p>
+          <div class="admin-field">
+            <label for="editProjectArea">AREA</label>
+            <input id="editProjectArea" name="area" type="text" placeholder="650 sq.m.">
+          </div>
 
-        <label class="admin-check">
-          <input
-            id="removeOldCover"
-            name="removeOldCover"
-            type="checkbox"
-            value="yes"
-          >
-          <span>Delete the old cover file after replacing it</span>
-        </label>
-      </div>
+          <div class="admin-field">
+            <label for="editProjectYear">DESIGN YEAR</label>
+            <input id="editProjectYear" name="year" type="text" inputmode="numeric" maxlength="4" placeholder="2026">
+          </div>
 
-      <div class="admin-field">
-        <label for="editProjectGallerySection">
-          ADD IMAGES UNDER HEADING
-        </label>
+          <div class="admin-field">
+            <label for="editProjectCompletion">CONSTRUCTION / COMPLETION YEAR</label>
+            <input id="editProjectCompletion" name="completion" type="text" inputmode="numeric" maxlength="4" placeholder="2027">
+          </div>
 
-        <select id="editProjectGallerySection">
-          <option value="design" selected>3D Visualization</option>
-          <option value="plans">Floor Plans</option>
-          <option value="site">The Site</option>
-          <option value="construction">Construction Progress</option>
-          <option value="additional">Additional Images</option>
-        </select>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectService">SERVICE</label>
+            <textarea id="editProjectService" name="service" placeholder="Architecture / Design / Drawing"></textarea>
+          </div>
 
-        <label for="editProjectGalleryImages">
-          PROJECT GALLERY IMAGES (OPTIONAL)
-        </label>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectCover">NEW COVER IMAGE (OPTIONAL)</label>
+            <input id="editProjectCover" name="cover" type="file" accept="image/jpeg,image/png,image/webp">
+            <p class="admin-field-hint" id="editProjectCoverHint"></p>
+            <label class="admin-check">
+              <input id="removeOldCover" name="removeOldCover" type="checkbox" value="yes">
+              <span>Delete the old cover file after replacing it</span>
+            </label>
+          </div>
+        </div>
+      </section>
 
-        <input
-          id="editProjectGalleryImages"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-        >
+      <section class="edit-project-section">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">01</span>
+          <div>
+            <p class="edit-project-section-kicker">Story &amp; concept</p>
+            <h3 class="edit-project-section-title">เรื่องราว แนวคิด และภาษาสถาปัตยกรรม</h3>
+            <p class="edit-project-section-description">ส่วนแรกของหน้าโครงการ ใช้อธิบายที่มา การพูดคุย และแนวทางการออกแบบ</p>
+          </div>
+        </div>
 
-        <p class="admin-field-hint">
-          เลือกหัวข้อก่อน แล้วเลือกได้หลายรูป ภาพจะเข้าใต้หัวข้อนั้นและไม่เปลี่ยนภาพปก
-        </p>
-      </div>
+        <div class="edit-project-grid">
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectBriefTitle">PROJECT STORY TITLE</label>
+            <input id="editProjectBriefTitle" name="briefTitle" type="text" maxlength="180" placeholder="A Home for the Next Chapter">
+          </div>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectBrief">PROJECT STORY</label>
+            <textarea class="admin-article-input" id="editProjectBrief" name="brief" maxlength="12000" placeholder="Write the project story, client brief, design idea or concept here..."></textarea>
+            <p class="admin-field-hint">เขียนได้หลายย่อหน้า ระบบจะรักษาการขึ้นบรรทัดใหม่ไว้</p>
+          </div>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectConceptTitle">DESIGN CONCEPT TITLE</label>
+            <input id="editProjectConceptTitle" name="conceptTitle" type="text" maxlength="180" placeholder="Angled Plan, Shared Courtyards">
+          </div>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectConcept">DESIGN CONCEPT</label>
+            <textarea class="admin-article-input" id="editProjectConcept" name="concept" maxlength="12000" placeholder="Explain the main planning and design concept..."></textarea>
+          </div>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectArchitectureTitle">ARCHITECTURAL LANGUAGE TITLE</label>
+            <input id="editProjectArchitectureTitle" name="architectureTitle" type="text" maxlength="180" placeholder="Contemporary Thai Gable House">
+          </div>
+          <div class="admin-field admin-field--wide">
+            <label for="editProjectArchitectureDescription">ARCHITECTURAL LANGUAGE</label>
+            <textarea class="admin-article-input" id="editProjectArchitectureDescription" name="architectureDescription" maxlength="12000" placeholder="Describe form, roof, materials, openings and spatial character..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="edit-project-section" data-edit-gallery-panel="design">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">02</span>
+          <div>
+            <p class="edit-project-section-kicker">Visualization</p>
+            <h3 class="edit-project-section-title">ภาพเรนเดอร์ 3D</h3>
+            <p class="edit-project-section-description">รูปในหัวข้อนี้จะแสดงต่อจากเรื่องราวและแนวคิดของโครงการ</p>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label for="editProjectRenderHeading">HEADING ON WEBSITE</label>
+          <input id="editProjectRenderHeading" name="renderHeading" type="text" maxlength="180" placeholder="Resort-like Living.">
+        </div>
+        <div class="edit-section-images" data-edit-section-images="design"></div>
+        <div class="admin-field edit-section-upload">
+          <label for="editProjectDesignImages">ADD 3D VISUALIZATION IMAGES</label>
+          <input id="editProjectDesignImages" data-edit-gallery-section="design" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+          <p class="admin-field-hint">เลือกเพิ่มได้หลายรูป ภาพปกของโครงการจะไม่เปลี่ยน</p>
+        </div>
+      </section>
+
+      <section class="edit-project-section" data-edit-gallery-panel="plans">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">03</span>
+          <div>
+            <p class="edit-project-section-kicker">Planning</p>
+            <h3 class="edit-project-section-title">แปลนพื้น</h3>
+            <p class="edit-project-section-description">หากมี 2 รูป ระบบจะแสดงเป็นรูปใหญ่เต็มแถวเรียงต่อกัน</p>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label for="editProjectPlanHeading">HEADING ON WEBSITE</label>
+          <input id="editProjectPlanHeading" name="planHeading" type="text" maxlength="180" placeholder="Floor Plans.">
+        </div>
+        <div class="edit-section-images" data-edit-section-images="plans"></div>
+        <div class="admin-field edit-section-upload">
+          <label for="editProjectPlanImages">ADD FLOOR PLAN IMAGES</label>
+          <input id="editProjectPlanImages" data-edit-gallery-section="plans" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+      </section>
+
+      <section class="edit-project-section" data-edit-gallery-panel="site">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">04</span>
+          <div>
+            <p class="edit-project-section-kicker">The site</p>
+            <h3 class="edit-project-section-title">รูปไซต์ก่อนก่อสร้าง</h3>
+            <p class="edit-project-section-description">ภาพสำรวจพื้นที่และสภาพแวดล้อมก่อนเริ่มโครงการ</p>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label for="editProjectSiteHeading">HEADING ON WEBSITE</label>
+          <input id="editProjectSiteHeading" name="siteHeading" type="text" maxlength="180" placeholder="The Site.">
+        </div>
+        <div class="edit-section-images" data-edit-section-images="site"></div>
+        <div class="admin-field edit-section-upload">
+          <label for="editProjectSiteImages">ADD SITE IMAGES</label>
+          <input id="editProjectSiteImages" data-edit-gallery-section="site" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+      </section>
+
+      <section class="edit-project-section" data-edit-gallery-panel="construction">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">05</span>
+          <div>
+            <p class="edit-project-section-kicker">Construction progress</p>
+            <h3 class="edit-project-section-title">ระหว่างการก่อสร้าง</h3>
+            <p class="edit-project-section-description">ภาพขั้นตอนการก่อสร้างจากแบบสู่หน้างานจริง</p>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label for="editProjectConstructionHeading">HEADING ON WEBSITE</label>
+          <input id="editProjectConstructionHeading" name="constructionHeading" type="text" maxlength="180" placeholder="From Drawing to Site.">
+        </div>
+        <div class="edit-section-images" data-edit-section-images="construction"></div>
+        <div class="admin-field edit-section-upload">
+          <label for="editProjectConstructionImages">ADD CONSTRUCTION IMAGES</label>
+          <input id="editProjectConstructionImages" data-edit-gallery-section="construction" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+      </section>
+
+      <section class="edit-project-section" data-edit-gallery-panel="additional">
+        <div class="edit-project-section-head">
+          <span class="edit-project-section-number">+</span>
+          <div>
+            <p class="edit-project-section-kicker">Optional gallery</p>
+            <h3 class="edit-project-section-title">รูปเพิ่มเติม</h3>
+            <p class="edit-project-section-description">รูปที่ยังไม่ได้จัดเข้าหัวข้อหลักจะแสดงในส่วนนี้</p>
+          </div>
+        </div>
+        <div class="edit-section-images" data-edit-section-images="additional"></div>
+        <div class="admin-field edit-section-upload">
+          <label for="editProjectAdditionalImages">ADD ADDITIONAL IMAGES</label>
+          <input id="editProjectAdditionalImages" data-edit-gallery-section="additional" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+      </section>
 
       <div class="admin-field">
         <label for="editAdminKey">
@@ -1382,26 +1372,22 @@
       }
     ];
 
-    const projects =
-      Object.values(
-        window.ARSTINLA_PROJECTS || {}
-      )
-        .sort((a, b) =>
-          String(a.number || "")
-            .localeCompare(
-              String(b.number || ""),
-              undefined,
-              { numeric: true }
-            )
-        );
+    const projects = Object.values(
+      window.ARSTINLA_PROJECTS || {}
+    ).sort(
+      (a, b) =>
+        String(a.number || "").localeCompare(
+          String(b.number || ""),
+          undefined,
+          { numeric: true }
+        )
+    );
 
 
     function collectImages(value) {
-
       const result = [];
 
       function walk(item) {
-
         if (
           typeof item === "string" &&
           /^\/assets\/.+\.(jpg|jpeg|png|webp)$/i
@@ -1420,23 +1406,17 @@
           item &&
           typeof item === "object"
         ) {
-          Object.values(item)
-            .forEach(walk);
+          Object.values(item).forEach(walk);
         }
-
       }
 
       walk(value);
 
       return [...new Set(result)];
-
     }
 
 
-    function renderProjects(
-      filter = "all"
-    ) {
-
+    function renderProjects(filter = "all") {
       projectsContainer.innerHTML = "";
 
       const categoriesToRender =
@@ -1447,90 +1427,76 @@
                 category.id === filter
             );
 
-      const categoryLists =
-        new Map();
+      const categoryLists = new Map();
 
-      categoriesToRender.forEach(
-        category => {
-          const categoryProjects =
-            projects.filter(
-              project =>
-                project.filterCategory ===
-                  category.id
-            );
-
-          const group =
-            document.createElement(
-              "section"
-            );
-
-          group.className =
-            "project-category-group";
-
-          group.dataset.category =
-            category.id;
-
-          const header =
-            document.createElement(
-              "div"
-            );
-
-          header.className =
-            "project-category-header";
-
-          const title =
-            document.createElement("h2");
-
-          title.className =
-            "project-category-title";
-
-          title.textContent =
-            category.label;
-
-          const count =
-            document.createElement("span");
-
-          count.className =
-            "project-category-count";
-
-          count.textContent =
-            `${String(categoryProjects.length).padStart(2, "0")} PROJECTS`;
-
-          const list =
-            document.createElement("div");
-
-          list.className =
-            "project-category-list";
-
-          header.append(title, count);
-          group.append(header, list);
-          projectsContainer.appendChild(group);
-
-          categoryLists.set(
-            category.id,
-            list
+      categoriesToRender.forEach(category => {
+        const categoryProjects =
+          projects.filter(
+            project =>
+              project.filterCategory ===
+              category.id
           );
 
-          if (!categoryProjects.length) {
-            const empty =
-              document.createElement("p");
+        const group =
+          document.createElement("section");
 
-            empty.className =
-              "project-category-empty";
+        group.className =
+          "project-category-group";
 
-            empty.textContent =
-              "ยังไม่มีโครงการในหมวดนี้";
+        group.dataset.category = category.id;
 
-            list.appendChild(empty);
-          }
+        const header =
+          document.createElement("div");
+
+        header.className =
+          "project-category-header";
+
+        const title =
+          document.createElement("h2");
+
+        title.className =
+          "project-category-title";
+
+        title.textContent = category.label;
+
+        const count =
+          document.createElement("span");
+
+        count.className =
+          "project-category-count";
+
+        count.textContent =
+          `${String(categoryProjects.length).padStart(2, "0")} PROJECTS`;
+
+        const list =
+          document.createElement("div");
+
+        list.className =
+          "project-category-list";
+
+        header.append(title, count);
+        group.append(header, list);
+        projectsContainer.appendChild(group);
+
+        categoryLists.set(category.id, list);
+
+        if (!categoryProjects.length) {
+          const empty =
+            document.createElement("p");
+
+          empty.className =
+            "project-category-empty";
+
+          empty.textContent =
+            "ยังไม่มีโครงการในหมวดนี้";
+
+          list.appendChild(empty);
         }
-      );
+      });
 
       projects.forEach(project => {
-
         const category =
-          project.filterCategory ||
-          "";
+          project.filterCategory || "";
 
         if (
           filter !== "all" &&
@@ -1546,34 +1512,23 @@
           return;
         }
 
-
-        const images =
-          collectImages(project);
-
-
         const article =
-          document.createElement(
-            "article"
-          );
+          document.createElement("article");
 
-        article.className =
-          "project-card";
+        article.className = "project-card";
 
+        const cover =
+          project.thumbnail || project.hero;
 
         article.innerHTML = `
           <div class="project-head">
-
             <img
               class="project-cover"
-              src="${
-  (project.thumbnail || project.hero)
-    ? `${project.thumbnail || project.hero}?v=${Date.now()}`
-    : ""
-}"
+              src="${cover ? `${cover}?v=${Date.now()}` : ""}"
+              alt=""
             >
 
             <div>
-
               <div class="project-title">
                 ${project.title || "Untitled"}
               </div>
@@ -1583,7 +1538,6 @@
                 ·
                 ${project.location || ""}
               </div>
-
             </div>
 
             <div class="project-actions">
@@ -1591,14 +1545,7 @@
                 class="edit-project-button"
                 type="button"
               >
-                Edit Project
-              </button>
-
-              <button
-                class="browse-button"
-                type="button"
-              >
-                Browse Files
+                Edit Project &amp; Images
               </button>
 
               <button
@@ -1608,468 +1555,24 @@
                 Delete Project
               </button>
             </div>
-
           </div>
-
-          <div class="project-files">
-<div class="project-upload">
-  <input
-    class="project-upload-input"
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    multiple
-  >
-
-  <button
-    class="project-upload-button"
-    type="button"
-  >
-    Upload Images
-  </button>
-
-  <p class="project-upload-note">
-    ภาพที่อัปโหลดจะเพิ่มในแกลเลอรีเท่านั้น และจะไม่เปลี่ยนภาพปกของโครงการ
-  </p>
-
-  <div class="project-upload-status"></div>
-</div>
-         
-          <div class="project-file-grid">
-
-  ${images.map(path => `
-    <div class="file">
-
-      <img
-        src="${path}"
-        alt=""
-        loading="lazy"
-      >
-
-      <div class="file-name">
-        ${path}
-      </div>
-
-    </div>
-  `).join("")}
-
-</div>
         `;
 
-
-        const browseButton =
-          article.querySelector(
-            ".browse-button"
+        article
+          .querySelector(".edit-project-button")
+          .addEventListener(
+            "click",
+            () => openEditProject(project)
           );
 
-        const editButton =
-          article.querySelector(
-            ".edit-project-button"
+        article
+          .querySelector(".delete-project-button")
+          .addEventListener(
+            "click",
+            () => openDeleteProject(project)
           );
 
-        const deleteButton =
-          article.querySelector(
-            ".delete-project-button"
-          );
-
-        const files =
-          article.querySelector(
-            ".project-files"
-          );
-
-
-editButton.addEventListener(
-  "click",
-  () => {
-    openEditProject(project);
-  }
-);
-
-
-deleteButton.addEventListener(
-  "click",
-  () => {
-    openDeleteProject(project);
-  }
-);
-
-
-browseButton.addEventListener(
-  "click",
-  async () => {
-
-    const isOpening =
-      !files.classList.contains(
-        "open"
-      );
-
-    files.classList.toggle(
-      "open"
-    );
-
-    browseButton.textContent =
-      files.classList.contains(
-        "open"
-      )
-        ? "Close Files"
-        : "Browse Files";
-
-
-    if (!isOpening) {
-      return;
-    }
-
-
-    let adminKey =
-      sessionStorage.getItem(
-        "ARSTINLA_ADMIN_KEY"
-      );
-
-    if (!adminKey) {
-
-      adminKey =
-        prompt(
-          "Enter ARSTINLA Admin Key"
-        );
-
-      if (!adminKey) {
-        return;
-      }
-
-      sessionStorage.setItem(
-        "ARSTINLA_ADMIN_KEY",
-        adminKey
-      );
-    }
-
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/project-files?projectNumber=${encodeURIComponent(project.number)}`,
-          {
-            headers: {
-              "x-admin-key":
-                adminKey
-            }
-          }
-        );
-
-
-      const result =
-        await response.json();
-
-
-      if (!response.ok) {
-        throw new Error(
-          result.error ||
-          "Cannot load project files"
-        );
-      }
-
-
-      const fileGrid =
-        files.querySelector(
-          ".project-file-grid"
-        );
-
-      if (fileGrid) {
-
-fileGrid.innerHTML =
-  result.files
-    .map(
-      file => `
-        <div class="file">
-
-          <img
-            src="${file.path}?v=${Date.now()}"
-            alt=""
-            loading="lazy"
-          >
-
-          <div class="file-name">
-            ${file.path}
-          </div>
-
-<button
-  type="button"
-  class="delete-project-file"
-  data-name="${file.name}"
-  data-sha="${file.sha}"
->
-  Delete
-</button>
-
-        </div>
-      `
-    )
-.join("");
-
-fileGrid
-  .querySelectorAll(
-    ".delete-project-file"
-  )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        async () => {
-
-          const fileName =
-            button.dataset.name;
-
-          const sha =
-            button.dataset.sha;
-
-          const confirmed =
-            confirm(
-              `Delete ${fileName}?`
-            );
-
-          if (!confirmed) {
-            return;
-          }
-
-          let adminKey =
-            sessionStorage.getItem(
-              "ARSTINLA_ADMIN_KEY"
-            );
-
-          if (!adminKey) {
-
-            adminKey =
-              prompt(
-                "Enter ARSTINLA Admin Key"
-              );
-
-            if (!adminKey) {
-              return;
-            }
-
-            sessionStorage.setItem(
-              "ARSTINLA_ADMIN_KEY",
-              adminKey
-            );
-          }
-
-          button.disabled = true;
-          button.textContent =
-            "Deleting...";
-
-          try {
-
-            const response =
-              await fetch(
-                "/api/project-files",
-                {
-                  method: "DELETE",
-
-                  headers: {
-                    "content-type":
-                      "application/json",
-
-                    "x-admin-key":
-                      adminKey
-                  },
-
-                  body:
-                    JSON.stringify({
-                      projectNumber:
-                        project.number,
-
-                      fileName,
-
-                      sha
-                    })
-                }
-              );
-
-            const result =
-              await response.json();
-
-            if (!response.ok) {
-              throw new Error(
-                result.error ||
-                "Delete failed"
-              );
-            }
-
-            button
-              .closest(".file")
-              ?.remove();
-
-          }
-          catch (error) {
-
-            alert(
-              error.message
-            );
-
-            button.disabled = false;
-            button.textContent =
-              "Delete";
-          }
-        }
-      );
-    }
-  );
-
-}
-
-    }
-    catch (error) {
-
-      alert(
-        error.message
-      );
-    }
-  }
-);
-
-  const uploadInput =
-  article.querySelector(
-    ".project-upload-input"
-  );
-
-const uploadButton =
-  article.querySelector(
-    ".project-upload-button"
-  );
-
-const uploadStatus =
-  article.querySelector(
-    ".project-upload-status"
-  );
-
-
-
-uploadButton.addEventListener(
-  "click",
-  async () => {
-
-    const selectedFiles =
-      Array.from(
-        uploadInput.files || []
-      );
-
-    if (!selectedFiles.length) {
-      alert(
-        "กรุณาเลือกรูปก่อน"
-      );
-      return;
-    }
-
-
-    let adminKey =
-      sessionStorage.getItem(
-        "ARSTINLA_ADMIN_KEY"
-      );
-
-    if (!adminKey) {
-
-      adminKey =
-        prompt(
-          "Enter ARSTINLA Admin Key"
-        );
-
-      if (!adminKey) {
-        return;
-      }
-
-      sessionStorage.setItem(
-        "ARSTINLA_ADMIN_KEY",
-        adminKey
-      );
-    }
-
-
-    uploadButton.disabled = true;
-
-    uploadStatus.textContent =
-      "Uploading...";
-
-    try {
-
-      const formData =
-        new FormData();
-
-      formData.append(
-        "projectNumber",
-        project.number
-      );
-
-
-      selectedFiles.forEach(
-        file => {
-          formData.append(
-            "files",
-            file
-          );
-        }
-      );
-
-
-      const response =
-        await fetch(
-          "/api/project-files",
-          {
-            method: "POST",
-
-            headers: {
-              "x-admin-key":
-                adminKey
-            },
-
-            body:
-              formData
-          }
-        );
-
-
-      const result =
-        await response.json();
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          result.error ||
-          "Upload failed"
-        );
-      }
-
-      uploadStatus.textContent =
-        `Uploaded ${result.uploaded.length} file(s) · Cover unchanged`;
-
-      alert(
-        "อัปโหลดรูปเข้าแกลเลอรีเรียบร้อย ภาพปกยังคงเดิม"
-      );
-
-    }
-    catch (error) {
-
-      uploadStatus.textContent =
-        "Upload failed";
-
-      alert(
-        error.message
-      );
-
-    }
-    finally {
-
-      uploadButton.disabled =
-        false;
-    }
-  }
-);
-
-
-        categoryList.appendChild(
-          article
-        );
-
+        categoryList.appendChild(article);
       });
 
     }
@@ -2356,9 +1859,11 @@ const editProjectCover =
     "editProjectCover"
   );
 
-const editProjectGalleryImages =
-  document.getElementById(
-    "editProjectGalleryImages"
+const editProjectGalleryInputs =
+  Array.from(
+    document.querySelectorAll(
+      "[data-edit-gallery-section]"
+    )
   );
 
 const removeOldCover =
@@ -2375,6 +1880,10 @@ const editProjectStatus =
   document.getElementById(
     "editProjectStatus"
   );
+
+let currentEditProject = null;
+
+let currentEditProjectFiles = [];
 
 const deleteProjectDialog =
   document.getElementById(
@@ -2494,9 +2003,402 @@ function closeDeleteProject() {
 }
 
 
+function uniqueProjectImagePaths(values) {
+  return Array.from(
+    new Set(
+      (Array.isArray(values) ? values : [])
+        .filter(
+          value =>
+            typeof value === "string" &&
+            value.trim()
+        )
+    )
+  );
+}
+
+
+function getEditProjectImageSections(
+  project,
+  liveFiles = []
+) {
+  const sectionPaths = {
+    design: uniqueProjectImagePaths(
+      project?.renderImages
+    ),
+    plans: uniqueProjectImagePaths(
+      project?.planImages
+    ),
+    site: uniqueProjectImagePaths(
+      project?.siteImages
+    ),
+    construction: uniqueProjectImagePaths(
+      project?.constructionImages
+    )
+  };
+
+  const fileByPath = new Map(
+    (Array.isArray(liveFiles) ? liveFiles : [])
+      .map(file => [file.path, file])
+  );
+
+  const assignedPaths = new Set(
+    Object.values(sectionPaths).flat()
+  );
+
+  const coverPaths = new Set(
+    [
+      project?.thumbnail,
+      project?.hero
+    ].filter(Boolean)
+  );
+
+  const sections = {};
+
+  Object.entries(sectionPaths)
+    .forEach(([section, paths]) => {
+      sections[section] = paths.map(
+        path =>
+          fileByPath.get(path) || {
+            path,
+            name: path.split("/").pop() || path,
+            sha: ""
+          }
+      );
+    });
+
+  const referencedAdditional =
+    collectImages(project || {})
+      .filter(
+        path =>
+          !assignedPaths.has(path) &&
+          !coverPaths.has(path)
+      );
+
+  const liveAdditional =
+    (Array.isArray(liveFiles) ? liveFiles : [])
+      .filter(
+        file =>
+          !assignedPaths.has(file.path) &&
+          !coverPaths.has(file.path)
+      );
+
+  const additionalByPath = new Map();
+
+  referencedAdditional.forEach(path => {
+    additionalByPath.set(
+      path,
+      fileByPath.get(path) || {
+        path,
+        name: path.split("/").pop() || path,
+        sha: ""
+      }
+    );
+  });
+
+  liveAdditional.forEach(file => {
+    additionalByPath.set(file.path, file);
+  });
+
+  sections.additional =
+    Array.from(additionalByPath.values());
+
+  return sections;
+}
+
+
+function renderEditProjectImages(
+  project,
+  liveFiles = []
+) {
+  const sections =
+    getEditProjectImageSections(
+      project,
+      liveFiles
+    );
+
+  Object.entries(sections)
+    .forEach(([section, files]) => {
+      const container =
+        editProjectForm.querySelector(
+          `[data-edit-section-images="${section}"]`
+        );
+
+      if (!container) {
+        return;
+      }
+
+      container.replaceChildren();
+
+      if (!files.length) {
+        const empty =
+          document.createElement("p");
+
+        empty.className =
+          "edit-section-empty";
+
+        empty.textContent =
+          section === "additional"
+            ? "ยังไม่มีรูปเพิ่มเติม หรือใส่ Admin Key เพื่อโหลดไฟล์ล่าสุด"
+            : "ยังไม่มีรูปในหัวข้อนี้";
+
+        container.appendChild(empty);
+        return;
+      }
+
+      files.forEach(file => {
+        const card =
+          document.createElement("article");
+
+        card.className =
+          "edit-section-image";
+
+        const image =
+          document.createElement("img");
+
+        image.src =
+          `${file.path}?v=${Date.now()}`;
+
+        image.alt = file.name || "";
+        image.loading = "lazy";
+
+        const name =
+          document.createElement("p");
+
+        name.className =
+          "edit-section-image-name";
+
+        name.textContent =
+          file.name || file.path;
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.className =
+          "edit-section-image-delete";
+
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete image";
+        deleteButton.dataset.path = file.path;
+        deleteButton.dataset.name =
+          file.name ||
+          file.path.split("/").pop() ||
+          "";
+        deleteButton.dataset.sha = file.sha || "";
+
+        deleteButton.addEventListener(
+          "click",
+          () => deleteEditProjectImage(
+            deleteButton
+          )
+        );
+
+        card.append(
+          image,
+          name,
+          deleteButton
+        );
+
+        container.appendChild(card);
+      });
+    });
+}
+
+
+async function loadEditProjectFiles(
+  project,
+  adminKey
+) {
+  const response = await fetch(
+    `/api/project-files?projectNumber=${encodeURIComponent(project.number)}`,
+    {
+      headers: {
+        "x-admin-key": adminKey
+      }
+    }
+  );
+
+  const result = await response.json();
+
+  if (response.status === 401) {
+    sessionStorage.removeItem(
+      "ARSTINLA_ADMIN_KEY"
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      result.error ||
+      "Cannot load project images"
+    );
+  }
+
+  if (
+    currentEditProject?.number !==
+    project.number
+  ) {
+    return result.files || [];
+  }
+
+  currentEditProjectFiles =
+    Array.isArray(result.files)
+      ? result.files
+      : [];
+
+  renderEditProjectImages(
+    project,
+    currentEditProjectFiles
+  );
+
+  return currentEditProjectFiles;
+}
+
+
+async function deleteEditProjectImage(
+  button
+) {
+  const project = currentEditProject;
+
+  if (!project) {
+    return;
+  }
+
+  const fileName = button.dataset.name;
+  const filePath = button.dataset.path;
+
+  if (
+    !confirm(`Delete ${fileName}?`)
+  ) {
+    return;
+  }
+
+  let adminKey =
+    editAdminKey.value.trim() ||
+    sessionStorage.getItem(
+      "ARSTINLA_ADMIN_KEY"
+    );
+
+  if (!adminKey) {
+    adminKey = prompt(
+      "Enter ARSTINLA Admin Key"
+    );
+  }
+
+  if (!adminKey) {
+    return;
+  }
+
+  editAdminKey.value = adminKey;
+
+  sessionStorage.setItem(
+    "ARSTINLA_ADMIN_KEY",
+    adminKey
+  );
+
+  button.disabled = true;
+  button.textContent = "Deleting...";
+
+  try {
+    let sha = button.dataset.sha;
+
+    if (!sha) {
+      const files = await loadEditProjectFiles(
+        project,
+        adminKey
+      );
+
+      const liveFile = files.find(
+        file => file.path === filePath
+      );
+
+      sha = liveFile?.sha || "";
+    }
+
+    if (!sha) {
+      throw new Error(
+        "ไม่พบข้อมูลไฟล์ล่าสุด กรุณาตรวจสอบว่าไฟล์ยังอยู่ในโครงการ"
+      );
+    }
+
+    const response = await fetch(
+      "/api/project-files",
+      {
+        method: "DELETE",
+        headers: {
+          "content-type":
+            "application/json",
+          "x-admin-key": adminKey
+        },
+        body: JSON.stringify({
+          projectNumber: project.number,
+          fileName,
+          sha
+        })
+      }
+    );
+
+    const result = await response.json();
+
+    if (response.status === 401) {
+      sessionStorage.removeItem(
+        "ARSTINLA_ADMIN_KEY"
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Delete failed"
+      );
+    }
+
+    [
+      "renderImages",
+      "planImages",
+      "siteImages",
+      "constructionImages"
+    ].forEach(field => {
+      if (Array.isArray(project[field])) {
+        project[field] = project[field]
+          .filter(path => path !== filePath);
+      }
+    });
+
+    currentEditProjectFiles =
+      currentEditProjectFiles.filter(
+        file => file.path !== filePath
+      );
+
+    renderEditProjectImages(
+      project,
+      currentEditProjectFiles
+    );
+
+    setEditProjectStatus(
+      "ลบรูปและนำออกจากหัวข้อเรียบร้อย",
+      "success"
+    );
+  }
+  catch (error) {
+    setEditProjectStatus(
+      error.message || "Delete failed",
+      "error"
+    );
+
+    alert(error.message || "Delete failed");
+
+    button.disabled = false;
+    button.textContent = "Delete image";
+  }
+}
+
+
 function openEditProject(project) {
 
   editProjectForm.reset();
+
+  currentEditProject = project;
+  currentEditProjectFiles = [];
+
+  renderEditProjectImages(project);
 
   document.getElementById(
     "editProjectNumber"
@@ -2595,10 +2497,6 @@ function openEditProject(project) {
     project.constructionHeading ||
     "From Drawing to Site.";
 
-  document.getElementById(
-    "editProjectGallerySection"
-  ).value = "design";
-
   const currentCover =
     project.thumbnail ||
     project.hero ||
@@ -2624,6 +2522,23 @@ function openEditProject(project) {
   setEditProjectStatus();
 
   editProjectDialog.showModal();
+
+  const savedAdminKey =
+    sessionStorage.getItem(
+      "ARSTINLA_ADMIN_KEY"
+    );
+
+  if (savedAdminKey) {
+    loadEditProjectFiles(
+      project,
+      savedAdminKey
+    ).catch(error => {
+      setEditProjectStatus(
+        `แสดงรูปจากข้อมูลเว็บไซต์แล้ว แต่โหลดรายการไฟล์ล่าสุดไม่สำเร็จ: ${error.message}`,
+        "error"
+      );
+    });
+  }
 }
 
 
@@ -2654,6 +2569,42 @@ editProjectCover.addEventListener(
     if (!hasNewCover) {
       removeOldCover.checked = false;
     }
+  }
+);
+
+
+editAdminKey.addEventListener(
+  "change",
+  () => {
+    const adminKey =
+      editAdminKey.value.trim();
+
+    if (!adminKey || !currentEditProject) {
+      return;
+    }
+
+    sessionStorage.setItem(
+      "ARSTINLA_ADMIN_KEY",
+      adminKey
+    );
+
+    loadEditProjectFiles(
+      currentEditProject,
+      adminKey
+    )
+      .then(() => {
+        setEditProjectStatus(
+          "โหลดรูปปัจจุบันครบทุกหัวข้อแล้ว",
+          "success"
+        );
+      })
+      .catch(error => {
+        setEditProjectStatus(
+          error.message ||
+          "โหลดรูปปัจจุบันไม่สำเร็จ",
+          "error"
+        );
+      });
   }
 );
 
@@ -3061,9 +3012,19 @@ editProjectForm.addEventListener(
     const selectedCover =
       editProjectCover.files?.[0];
 
+    const galleryUploadGroups =
+      editProjectGalleryInputs
+        .map(input => ({
+          section:
+            input.dataset.editGallerySection,
+          files:
+            Array.from(input.files || [])
+        }))
+        .filter(group => group.files.length);
+
     const selectedGalleryImages =
-      Array.from(
-        editProjectGalleryImages.files || []
+      galleryUploadGroups.flatMap(
+        group => group.files
       );
 
     if (
@@ -3188,7 +3149,7 @@ editProjectForm.addEventListener(
 
       let uploadedGalleryCount = 0;
 
-      if (selectedGalleryImages.length) {
+      for (const uploadGroup of galleryUploadGroups) {
         const galleryFormData =
           new FormData();
 
@@ -3201,12 +3162,10 @@ editProjectForm.addEventListener(
 
         galleryFormData.append(
           "section",
-          document.getElementById(
-            "editProjectGallerySection"
-          ).value
+          uploadGroup.section
         );
 
-        selectedGalleryImages.forEach(
+        uploadGroup.files.forEach(
           file => {
             galleryFormData.append(
               "files",
@@ -3268,10 +3227,10 @@ editProjectForm.addEventListener(
           );
         }
 
-        uploadedGalleryCount =
+        uploadedGalleryCount +=
           Array.isArray(galleryResult.uploaded)
             ? galleryResult.uploaded.length
-            : selectedGalleryImages.length;
+            : uploadGroup.files.length;
       }
 
       const warning =
@@ -3281,7 +3240,7 @@ editProjectForm.addEventListener(
 
       alert(
         uploadedGalleryCount
-          ? `บันทึกโครงการและเพิ่มรูป ${uploadedGalleryCount} รูปเข้าหัวข้อที่เลือกเรียบร้อย ภาพปกยังคงเดิม${warning}`
+          ? `บันทึกโครงการและเพิ่มรูป ${uploadedGalleryCount} รูปเข้าหัวข้อตามลำดับเว็บไซต์เรียบร้อย ภาพปกยังคงเดิม${warning}`
           : `บันทึกโครงการเรียบร้อย${warning}`
       );
 
