@@ -185,7 +185,11 @@ Resort-like Living ภายในบ้านพักอาศัย
 
       "/assets/project-01/plan-ground-floor.jpg",
 
-      "/assets/project-01/plan-upper-floor.jpg"
+      "/assets/project-01/plan-upper-floor.jpg",
+
+      "/assets/project-01/plan-Plan-1invers.jpg",
+
+      "/assets/project-01/plan-Plan-2invers.jpg"
 
     ],
 
