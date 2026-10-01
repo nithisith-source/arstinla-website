@@ -244,7 +244,9 @@ Resort-like Living ภายในบ้านพักอาศัย
 
       "/assets/project-01/construction-05.jpg",
 
-      "/assets/project-01/construction-06.jpg"
+      "/assets/project-01/construction-06.jpg",
+
+      "/assets/project-01/site-04.jpg"
 
     ],
 
