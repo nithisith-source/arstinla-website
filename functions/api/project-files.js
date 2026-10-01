@@ -34,6 +34,136 @@ function bytesToBase64(bytes) {
 }
 
 
+function textToBase64(value) {
+  return bytesToBase64(
+    new TextEncoder().encode(value)
+  );
+}
+
+
+function decodeBase64(value) {
+  const binary = atob(
+    String(value || "").replace(/\s/g, "")
+  );
+
+  return new TextDecoder().decode(
+    Uint8Array.from(
+      binary,
+      character => character.charCodeAt(0)
+    )
+  );
+}
+
+
+function findProjectBlock(
+  source,
+  projectNumber
+) {
+  const startPattern = new RegExp(
+    `^\\s*"${projectNumber}"\\s*:\\s*\\{`,
+    "m"
+  );
+  const startMatch = startPattern.exec(source);
+
+  if (!startMatch) return null;
+
+  const start = startMatch.index;
+  const afterStart = start + startMatch[0].length;
+  const nextMatch =
+    /^\s*"\d{2}"\s*:\s*\{/m.exec(
+      source.slice(afterStart)
+    );
+  const helperIndex = source.indexOf(
+    "PROJECT HELPER FUNCTIONS",
+    afterStart
+  );
+  const end = nextMatch
+    ? afterStart + nextMatch.index
+    : source.lastIndexOf(
+        "\n};",
+        helperIndex === -1
+          ? source.length
+          : helperIndex
+      );
+
+  if (end <= start) return null;
+
+  return {
+    start,
+    end,
+    block: source.slice(start, end)
+  };
+}
+
+
+function readProjectArray(block, fieldName) {
+  const pattern = new RegExp(
+    `\\n\\s*${fieldName}\\s*:\\s*\\[([\\s\\S]*?)\\]`
+  );
+  const match = pattern.exec(block);
+
+  if (!match) return [];
+
+  return Array.from(
+    match[1].matchAll(/"(?:\\.|[^"\\])*"/g),
+    item => {
+      try {
+        return JSON.parse(item[0]);
+      }
+      catch {
+        return "";
+      }
+    }
+  ).filter(Boolean);
+}
+
+
+function upsertProjectArray(
+  block,
+  fieldName,
+  values
+) {
+  const pattern = new RegExp(
+    `(\\n(\\s*)${fieldName}\\s*:\\s*)` +
+    `\\[[\\s\\S]*?\\]`
+  );
+
+  const renderArray = indentation =>
+    values.length
+      ? `[\n${values
+          .map(
+            value =>
+              `${indentation}  ${JSON.stringify(value)}`
+          )
+          .join(",\n")}\n${indentation}]`
+      : "[]";
+
+  if (pattern.test(block)) {
+    return block.replace(
+      pattern,
+      (match, prefix, indentation) =>
+        prefix + renderArray(indentation)
+    );
+  }
+
+  const anchor = /(\n)(\s*)previous\s*:/;
+
+  if (!anchor.test(block)) {
+    throw new Error(
+      `Project field not found: ${fieldName}`
+    );
+  }
+
+  return block.replace(
+    anchor,
+    (match, lineBreak, indentation) =>
+      `${lineBreak}${indentation}${fieldName}: ` +
+      `${renderArray(indentation)},` +
+      `${lineBreak}${indentation}previous:`
+  );
+}
+
+
 function cleanFileName(name) {
   return String(name || "image.jpg")
     .trim()
@@ -116,6 +246,35 @@ export async function onRequestPost({
         formData.get("projectNumber") || ""
       ).trim();
 
+    const section =
+      String(
+        formData.get("section") ||
+        "additional"
+      ).trim();
+
+    const sectionConfig = {
+      site: {
+        field: "siteImages",
+        prefix: "site"
+      },
+      plans: {
+        field: "planImages",
+        prefix: "plan"
+      },
+      design: {
+        field: "renderImages",
+        prefix: "design"
+      },
+      construction: {
+        field: "constructionImages",
+        prefix: "construction"
+      },
+      additional: {
+        field: "",
+        prefix: "gallery"
+      }
+    }[section];
+
 
     if (!/^\d{2}$/.test(projectNumber)) {
       return json(
@@ -123,6 +282,18 @@ export async function onRequestPost({
           ok: false,
           error:
             "Invalid project number"
+        },
+        400
+      );
+    }
+
+
+    if (!sectionConfig) {
+      return json(
+        {
+          ok: false,
+          error:
+            "Invalid project image section"
         },
         400
       );
@@ -153,10 +324,25 @@ export async function onRequestPost({
     const uploaded = [];
 
 
-    for (const file of uploadedFiles) {
+    for (const [fileIndex, file] of uploadedFiles.entries()) {
 
-      const fileName =
+      const cleanedName =
         cleanFileName(file.name);
+      const extensionMatch =
+        String(file.name).match(
+          /\.(jpe?g|png|webp)$/i
+        );
+      const extension = extensionMatch
+        ? `.${extensionMatch[1].toLowerCase()}`
+        : ".jpg";
+      const cleanedStem = cleanedName
+        .replace(/\.[^.]+$/, "")
+        .replace(/[._-]/g, "");
+      const safeName = cleanedStem
+        ? cleanedName
+        : `image-${Date.now()}-${fileIndex + 1}${extension}`;
+      const fileName =
+        `${sectionConfig.prefix}-${safeName}`;
 
       const githubPath =
         `assets/project-${projectNumber}/${fileName}`;
@@ -252,9 +438,104 @@ export async function onRequestPost({
     }
 
 
+    if (sectionConfig.field) {
+      const dataPath = "project-data.js";
+      const dataUrl =
+        `https://api.github.com/repos/` +
+        `${owner}/${repo}/contents/${dataPath}`;
+      const dataResponse = await fetch(
+        `${dataUrl}?ref=${encodeURIComponent(branch)}`,
+        { headers: githubHeaders }
+      );
+
+      if (!dataResponse.ok) {
+        return json(
+          {
+            ok: false,
+            error:
+              "Images uploaded but project section could not be updated"
+          },
+          500
+        );
+      }
+
+      const dataFile = await dataResponse.json();
+      const source = decodeBase64(dataFile.content);
+      const projectRange = findProjectBlock(
+        source,
+        projectNumber
+      );
+
+      if (!projectRange) {
+        return json(
+          {
+            ok: false,
+            error:
+              `Project ${projectNumber} not found after image upload`
+          },
+          404
+        );
+      }
+
+      const currentImages = readProjectArray(
+        projectRange.block,
+        sectionConfig.field
+      );
+      const sectionImages = Array.from(
+        new Set([
+          ...currentImages,
+          ...uploaded
+        ])
+      );
+      const updatedBlock = upsertProjectArray(
+        projectRange.block,
+        sectionConfig.field,
+        sectionImages
+      );
+      const updatedSource =
+        source.slice(0, projectRange.start) +
+        updatedBlock +
+        source.slice(projectRange.end);
+      const updateResponse = await fetch(
+        dataUrl,
+        {
+          method: "PUT",
+          headers: {
+            ...githubHeaders,
+            "content-type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            message:
+              `Assign Project ${projectNumber} images to ${section}`,
+            content:
+              textToBase64(updatedSource),
+            sha: dataFile.sha,
+            branch
+          })
+        }
+      );
+
+      if (!updateResponse.ok) {
+        const details =
+          await updateResponse.text();
+        return json(
+          {
+            ok: false,
+            error:
+              "Images uploaded but project section could not be saved",
+            details
+          },
+          500
+        );
+      }
+    }
+
+
     return json({
       ok: true,
       projectNumber,
+      section,
       uploaded
     });
 

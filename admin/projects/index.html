@@ -304,6 +304,16 @@
     line-height: 1.5;
   }
 
+  .admin-section-heading-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .admin-section-heading-grid .admin-field {
+    min-width: 0;
+  }
+
   .admin-check {
     display: flex;
     align-items: flex-start;
@@ -461,6 +471,10 @@
     }
 
     @media (max-width: 700px) {
+      .admin-section-heading-grid {
+        grid-template-columns: 1fr;
+      }
+
       .admin {
         width: min(calc(100% - 32px), 1500px);
         padding-top: 32px;
@@ -1031,6 +1045,38 @@
       </div>
 
       <div class="admin-field">
+        <label>
+          PROJECT SECTION HEADINGS
+        </label>
+
+        <div class="admin-section-heading-grid">
+          <div class="admin-field">
+            <label for="editProjectSiteHeading">THE SITE</label>
+            <input id="editProjectSiteHeading" name="siteHeading" type="text" maxlength="180" placeholder="The Site.">
+          </div>
+
+          <div class="admin-field">
+            <label for="editProjectPlanHeading">FLOOR PLANS</label>
+            <input id="editProjectPlanHeading" name="planHeading" type="text" maxlength="180" placeholder="Floor Plans.">
+          </div>
+
+          <div class="admin-field">
+            <label for="editProjectRenderHeading">DESIGN DEVELOPMENT</label>
+            <input id="editProjectRenderHeading" name="renderHeading" type="text" maxlength="180" placeholder="Resort-like Living.">
+          </div>
+
+          <div class="admin-field">
+            <label for="editProjectConstructionHeading">CONSTRUCTION</label>
+            <input id="editProjectConstructionHeading" name="constructionHeading" type="text" maxlength="180" placeholder="From Drawing to Site.">
+          </div>
+        </div>
+
+        <p class="admin-field-hint">
+          หัวข้อจะแสดงแบบเดียวกับ Project 01 และจะแสดงเฉพาะส่วนที่มีรูป
+        </p>
+      </div>
+
+      <div class="admin-field">
         <label for="editProjectCover">
           NEW COVER IMAGE (OPTIONAL)
         </label>
@@ -1056,6 +1102,18 @@
       </div>
 
       <div class="admin-field">
+        <label for="editProjectGallerySection">
+          ADD IMAGES UNDER HEADING
+        </label>
+
+        <select id="editProjectGallerySection">
+          <option value="site">The Site</option>
+          <option value="plans">Floor Plans</option>
+          <option value="design" selected>Design Development</option>
+          <option value="construction">Construction</option>
+          <option value="additional">Additional Images</option>
+        </select>
+
         <label for="editProjectGalleryImages">
           PROJECT GALLERY IMAGES (OPTIONAL)
         </label>
@@ -1068,7 +1126,7 @@
         >
 
         <p class="admin-field-hint">
-          เลือกได้หลายรูป ภาพเหล่านี้จะเพิ่มภายในโครงการและจะไม่เปลี่ยนภาพปก
+          เลือกหัวข้อก่อน แล้วเลือกได้หลายรูป ภาพจะเข้าใต้หัวข้อนั้นและไม่เปลี่ยนภาพปก
         </p>
       </div>
 
@@ -2435,6 +2493,35 @@ function openEditProject(project) {
     project.description ||
     "";
 
+  document.getElementById(
+    "editProjectSiteHeading"
+  ).value =
+    project.siteHeading ||
+    "The Site.";
+
+  document.getElementById(
+    "editProjectPlanHeading"
+  ).value =
+    project.planHeading ||
+    "Floor Plans.";
+
+  document.getElementById(
+    "editProjectRenderHeading"
+  ).value =
+    project.renderHeading ||
+    project.conceptTitle ||
+    "Design Development.";
+
+  document.getElementById(
+    "editProjectConstructionHeading"
+  ).value =
+    project.constructionHeading ||
+    "From Drawing to Site.";
+
+  document.getElementById(
+    "editProjectGallerySection"
+  ).value = "design";
+
   const currentCover =
     project.thumbnail ||
     project.hero ||
@@ -3035,6 +3122,13 @@ editProjectForm.addEventListener(
           ).value
         );
 
+        galleryFormData.append(
+          "section",
+          document.getElementById(
+            "editProjectGallerySection"
+          ).value
+        );
+
         selectedGalleryImages.forEach(
           file => {
             galleryFormData.append(
@@ -3110,7 +3204,7 @@ editProjectForm.addEventListener(
 
       alert(
         uploadedGalleryCount
-          ? `บันทึกโครงการและเพิ่มรูปภายใน ${uploadedGalleryCount} รูปเรียบร้อย ภาพปกยังคงเดิม${warning}`
+          ? `บันทึกโครงการและเพิ่มรูป ${uploadedGalleryCount} รูปเข้าหัวข้อที่เลือกเรียบร้อย ภาพปกยังคงเดิม${warning}`
           : `บันทึกโครงการเรียบร้อย${warning}`
       );
 

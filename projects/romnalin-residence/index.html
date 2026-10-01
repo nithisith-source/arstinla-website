@@ -797,7 +797,7 @@ nav.scrolled {
         03 / Existing Landscape
       </div>
 
-      <h2 class="section-title">
+      <h2 class="section-title" id="siteHeading">
         The Site.
       </h2>
 
@@ -824,7 +824,7 @@ nav.scrolled {
         04 / Planning
       </div>
 
-      <h2 class="section-title">
+      <h2 class="section-title" id="planHeading">
         Floor Plans.
       </h2>
 
@@ -848,7 +848,7 @@ nav.scrolled {
         05 / Design Development
       </div>
 
-      <h2 class="section-title">
+      <h2 class="section-title" id="renderHeading">
         Resort-like Living.
       </h2>
 
@@ -873,7 +873,7 @@ nav.scrolled {
       06 / Construction
     </div>
 
-    <h2 class="section-title">
+    <h2 class="section-title" id="constructionHeading">
       From Drawing<br>
       to Site.
     </h2>
@@ -966,6 +966,30 @@ const project =
   window.ARSTINLA_PROJECTS["01"];
 
 /* DATA */
+
+document.getElementById(
+  "siteHeading"
+).textContent =
+  project.siteHeading ||
+  "The Site.";
+
+document.getElementById(
+  "planHeading"
+).textContent =
+  project.planHeading ||
+  "Floor Plans.";
+
+document.getElementById(
+  "renderHeading"
+).textContent =
+  project.renderHeading ||
+  "Resort-like Living.";
+
+document.getElementById(
+  "constructionHeading"
+).textContent =
+  project.constructionHeading ||
+  "From Drawing to Site.";
 
 document.getElementById(
   "projectTitle"

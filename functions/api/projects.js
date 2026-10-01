@@ -537,6 +537,25 @@ export async function onRequestPut({
         formData.get("brief") || ""
       ).trim();
 
+    const sectionHeadingFields = [
+      "siteHeading",
+      "planHeading",
+      "renderHeading",
+      "constructionHeading"
+    ];
+
+    const sectionHeadings =
+      Object.fromEntries(
+        sectionHeadingFields.map(
+          field => [
+            field,
+            String(
+              formData.get(field) || ""
+            ).trim()
+          ]
+        )
+      );
+
     const cover =
       formData.get("cover");
 
@@ -589,7 +608,11 @@ export async function onRequestPut({
 
     if (
       briefTitle.length > 180 ||
-      brief.length > 12000
+      brief.length > 12000 ||
+      sectionHeadingFields.some(
+        field =>
+          sectionHeadings[field].length > 180
+      )
     ) {
       return json(
         {
@@ -817,6 +840,16 @@ export async function onRequestPut({
         updatedBlock,
         "brief",
         brief
+      );
+    }
+
+    for (const field of sectionHeadingFields) {
+      if (!formData.has(field)) continue;
+      updatedBlock = upsertProjectText(
+        updatedBlock,
+        field,
+        sectionHeadings[field],
+        "siteImages"
       );
     }
 
@@ -1534,9 +1567,19 @@ const source =
     assetFolder:
       ${safeString(assetFolder)},
 
+    siteHeading: "The Site.",
+
+    planHeading: "Floor Plans.",
+
+    renderHeading: "Design Development.",
+
+    constructionHeading: "From Drawing to Site.",
+
     siteImages: [],
 
     planImages: [],
+
+    renderImages: [],
 
     constructionImages: [],
 

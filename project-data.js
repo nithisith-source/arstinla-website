@@ -93,6 +93,18 @@ window.ARSTINLA_PROJECTS = {
      assetFolder:
   "/assets/project-01/",
 
+    siteHeading:
+      "The Site.",
+
+    planHeading:
+      "Floor Plans.",
+
+    renderHeading:
+      "Resort-like Living.",
+
+    constructionHeading:
+      "From Drawing to Site.",
+
     /* -----------------------------------------------------
        CLIENT BRIEF
        ----------------------------------------------------- */
