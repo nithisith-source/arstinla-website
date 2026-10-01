@@ -1589,14 +1589,6 @@ background-size: cover;
 
 
   .modal-gallery {
-
-    display: grid;
-
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
-    gap: 18px;
-
     margin-top: 72px;
 
     padding-top: 26px;
@@ -1614,7 +1606,7 @@ background-size: cover;
 
   .modal-gallery-heading,
   .modal-gallery-status {
-    grid-column: 1 / -1;
+    display: block;
   }
 
 
@@ -1644,6 +1636,29 @@ background-size: cover;
   }
 
 
+  .modal-gallery-section +
+  .modal-gallery-section {
+    margin-top: 72px;
+  }
+
+
+  .modal-gallery-grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-top: 18px;
+  }
+
+
+  .modal-gallery-grid--plans {
+    grid-template-columns: 1fr;
+  }
+
+
   .modal-gallery-image {
 
     width: 100%;
@@ -1656,7 +1671,9 @@ background-size: cover;
   }
 
 
-  .modal-gallery-image:first-of-type {
+  .modal-gallery-grid:not(
+    .modal-gallery-grid--plans
+  ) .modal-gallery-image:first-child {
 
     grid-column: 1 / -1;
 
@@ -2947,16 +2964,20 @@ background-size: cover;
 
 
     .modal-gallery {
-
-      grid-template-columns: 1fr;
-
-      gap: 14px;
-
       margin-top: 48px;
     }
 
 
-    .modal-gallery-image:first-of-type {
+    .modal-gallery-grid {
+      grid-template-columns: 1fr;
+
+      gap: 14px;
+    }
+
+
+    .modal-gallery-grid:not(
+      .modal-gallery-grid--plans
+    ) .modal-gallery-image:first-child {
 
       grid-column: auto;
 
@@ -6153,7 +6174,54 @@ data-contact-link
        project.briefDescription ||
        project.introDescription ||
        project.description ||
-       ""
+       "",
+
+     sectionOrder:
+       Array.isArray(project.sectionOrder)
+         ? [...project.sectionOrder]
+         : [
+             "story",
+             "render",
+             "plans",
+             "site",
+             "construction"
+           ],
+
+     renderHeading:
+       project.renderHeading ||
+       "3D Visualization.",
+
+     planHeading:
+       project.planHeading ||
+       "Floor Plans.",
+
+     siteHeading:
+       project.siteHeading ||
+       "The Site.",
+
+     constructionHeading:
+       project.constructionHeading ||
+       "Construction Progress.",
+
+     renderImages:
+       Array.isArray(project.renderImages)
+         ? [...project.renderImages]
+         : [],
+
+     planImages:
+       Array.isArray(project.planImages)
+         ? [...project.planImages]
+         : [],
+
+     siteImages:
+       Array.isArray(project.siteImages)
+         ? [...project.siteImages]
+         : [],
+
+     constructionImages:
+       Array.isArray(project.constructionImages)
+         ? [...project.constructionImages]
+         : []
 
    }));
 
@@ -6270,6 +6338,67 @@ data-contact-link
   }
 
 
+  function createModalGallerySection({
+    label,
+    heading,
+    paths,
+    kind,
+    title
+  }) {
+
+    const section =
+      document.createElement("section");
+
+    section.className =
+      "modal-gallery-section";
+
+    const sectionHeading =
+      document.createElement("div");
+
+    sectionHeading.className =
+      "modal-gallery-heading";
+
+    sectionHeading.textContent =
+      `${label} / ${heading}`;
+
+    const grid =
+      document.createElement("div");
+
+    grid.className =
+      kind === "plans"
+        ? "modal-gallery-grid modal-gallery-grid--plans"
+        : "modal-gallery-grid";
+
+    paths.forEach(
+      (path, imageIndex) => {
+
+        const image =
+          document.createElement("img");
+
+        image.className =
+          "modal-gallery-image";
+
+        image.src =
+          `${path}?v=${Date.now()}`;
+
+        image.alt =
+          `${title} — ${heading} ${imageIndex + 1}`;
+
+        image.loading = "lazy";
+
+        grid.appendChild(image);
+      }
+    );
+
+    section.append(
+      sectionHeading,
+      grid
+    );
+
+    return section;
+  }
+
+
   async function loadProjectGallery(
     data,
     requestId
@@ -6284,8 +6413,62 @@ data-contact-link
       "Loading project images..."
     );
 
-    try {
+    const sectionByKey = {
+      render: {
+        label: "02",
+        heading: data.renderHeading,
+        paths: data.renderImages,
+        kind: "render"
+      },
+      plans: {
+        label: "03",
+        heading: data.planHeading,
+        paths: data.planImages,
+        kind: "plans"
+      },
+      site: {
+        label: "04",
+        heading: data.siteHeading,
+        paths: data.siteImages,
+        kind: "site"
+      },
+      construction: {
+        label: "05",
+        heading: data.constructionHeading,
+        paths: data.constructionImages,
+        kind: "construction"
+      }
+    };
 
+    const orderedSections =
+      data.sectionOrder
+        .map(key => sectionByKey[key])
+        .filter(Boolean)
+        .map(section => ({
+          ...section,
+          paths: [
+            ...new Set(
+              section.paths.filter(
+                path =>
+                  typeof path === "string" &&
+                  path.trim()
+              )
+            )
+          ]
+        }));
+
+    const declaredPaths =
+      new Set([
+        data.image,
+        ...orderedSections.flatMap(
+          section => section.paths
+        )
+      ].filter(Boolean));
+
+    let additionalPaths = [];
+    let galleryUnavailable = false;
+
+    try {
       const response =
         await fetch(
           `/api/project-gallery?projectNumber=${encodeURIComponent(data.number)}&v=${Date.now()}`,
@@ -6302,85 +6485,69 @@ data-contact-link
         );
       }
 
-      if (
-        requestId !==
-        modalGalleryRequestId
-      ) {
-        return;
-      }
-
-      const galleryFiles =
+      additionalPaths =
         Array.isArray(result.files)
-          ? result.files.filter(
-              file =>
-                file &&
-                typeof file.path ===
-                  "string" &&
-                file.path !== data.image
-            )
+          ? result.files
+              .map(file => file?.path)
+              .filter(
+                path =>
+                  typeof path === "string" &&
+                  !declaredPaths.has(path)
+              )
           : [];
-
-      if (!galleryFiles.length) {
-        modalGallery.hidden = true;
-        modalGallery.replaceChildren();
-        return;
-      }
-
-      const fragment =
-        document.createDocumentFragment();
-
-      const heading =
-        document.createElement("div");
-
-      heading.className =
-        "modal-gallery-heading";
-
-      heading.textContent =
-        `Project Gallery / ${String(galleryFiles.length).padStart(2, "0")}`;
-
-      fragment.appendChild(heading);
-
-      galleryFiles.forEach(
-        (file, imageIndex) => {
-
-          const image =
-            document.createElement("img");
-
-          image.className =
-            "modal-gallery-image";
-
-          image.src =
-            `${file.path}?v=${Date.now()}`;
-
-          image.alt =
-            `${data.title} — Project image ${imageIndex + 1}`;
-
-          image.loading = "lazy";
-
-          fragment.appendChild(image);
-        }
-      );
-
-      modalGallery.replaceChildren(
-        fragment
-      );
-
-      modalGallery.hidden = false;
-
     }
     catch (error) {
-
-      if (
-        requestId !==
-        modalGalleryRequestId
-      ) {
-        return;
-      }
-
-      setModalGalleryStatus(
-        "Project images are temporarily unavailable."
-      );
+      galleryUnavailable = true;
     }
+
+    if (
+      requestId !==
+      modalGalleryRequestId
+    ) {
+      return;
+    }
+
+    const visibleSections =
+      orderedSections.filter(
+        section => section.paths.length
+      );
+
+    if (additionalPaths.length) {
+      visibleSections.push({
+        label: "06",
+        heading: "Additional Images.",
+        paths: additionalPaths,
+        kind: "additional"
+      });
+    }
+
+    if (!visibleSections.length) {
+      if (galleryUnavailable) {
+        setModalGalleryStatus(
+          "Project images are temporarily unavailable."
+        );
+      }
+      else {
+        modalGallery.hidden = true;
+        modalGallery.replaceChildren();
+      }
+      return;
+    }
+
+    const fragment =
+      document.createDocumentFragment();
+
+    visibleSections.forEach(section => {
+      fragment.appendChild(
+        createModalGallerySection({
+          ...section,
+          title: data.title
+        })
+      );
+    });
+
+    modalGallery.replaceChildren(fragment);
+    modalGallery.hidden = false;
   }
 
 

@@ -1010,7 +1010,7 @@
 
       <div class="admin-field">
         <label for="editProjectBriefTitle">
-          PROJECT STATEMENT / ARTICLE TITLE
+          PROJECT STORY &amp; CONCEPT TITLE
         </label>
 
         <input
@@ -1028,7 +1028,7 @@
 
       <div class="admin-field">
         <label for="editProjectBrief">
-          PROJECT STORY / ARTICLE
+          PROJECT STORY &amp; CONCEPT
         </label>
 
         <textarea
@@ -1051,8 +1051,8 @@
 
         <div class="admin-section-heading-grid">
           <div class="admin-field">
-            <label for="editProjectSiteHeading">THE SITE</label>
-            <input id="editProjectSiteHeading" name="siteHeading" type="text" maxlength="180" placeholder="The Site.">
+            <label for="editProjectRenderHeading">3D VISUALIZATION</label>
+            <input id="editProjectRenderHeading" name="renderHeading" type="text" maxlength="180" placeholder="Resort-like Living.">
           </div>
 
           <div class="admin-field">
@@ -1061,8 +1061,8 @@
           </div>
 
           <div class="admin-field">
-            <label for="editProjectRenderHeading">DESIGN DEVELOPMENT</label>
-            <input id="editProjectRenderHeading" name="renderHeading" type="text" maxlength="180" placeholder="Resort-like Living.">
+            <label for="editProjectSiteHeading">THE SITE</label>
+            <input id="editProjectSiteHeading" name="siteHeading" type="text" maxlength="180" placeholder="The Site.">
           </div>
 
           <div class="admin-field">
@@ -1107,10 +1107,10 @@
         </label>
 
         <select id="editProjectGallerySection">
-          <option value="site">The Site</option>
+          <option value="design" selected>3D Visualization</option>
           <option value="plans">Floor Plans</option>
-          <option value="design" selected>Design Development</option>
-          <option value="construction">Construction</option>
+          <option value="site">The Site</option>
+          <option value="construction">Construction Progress</option>
           <option value="additional">Additional Images</option>
         </select>
 

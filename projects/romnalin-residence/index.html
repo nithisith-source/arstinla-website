@@ -368,6 +368,10 @@ nav.scrolled {
   color: #54554f;
 }
 
+.story-part + .story-part {
+  margin-top: 90px;
+}
+
 
 /* IMAGE SECTION */
 
@@ -739,42 +743,32 @@ nav.scrolled {
   <div class="container story-grid">
 
     <div class="section-label reveal">
-      01 / Client Brief
+      01 / Project Story &amp; Concept
     </div>
 
     <div class="reveal">
 
-      <h2 id="briefTitle"></h2>
+      <div class="story-part">
 
-      <div
-        class="story-text"
-        id="briefText"
-      ></div>
+        <h2 id="briefTitle"></h2>
 
-    </div>
+        <div
+          class="story-text"
+          id="briefText"
+        ></div>
 
-  </div>
+      </div>
 
-</section>
+      <div class="story-part">
 
+        <h2 id="conceptTitle"></h2>
 
+        <div
+          class="story-text"
+          id="conceptText"
+        ></div>
 
-<section class="story">
-
-  <div class="container story-grid">
-
-    <div class="section-label reveal">
-      02 / Concept
-    </div>
-
-    <div class="reveal">
-
-      <h2 id="conceptTitle"></h2>
-
-      <div
-        class="story-text"
-        id="conceptText"
-      ></div>
+      </div>
 
     </div>
 
@@ -786,7 +780,6 @@ nav.scrolled {
 
 <section
   class="gallery-section"
-  id="siteSection"
 >
 
   <div class="container">
@@ -794,58 +787,7 @@ nav.scrolled {
     <div class="gallery-header reveal">
 
       <div class="section-label">
-        03 / Existing Landscape
-      </div>
-
-      <h2 class="section-title" id="siteHeading">
-        The Site.
-      </h2>
-
-    </div>
-
-    <div
-      class="render-grid"
-      id="siteGallery"
-    ></div>
-
-  </div>
-
-</section>
-
-
-
-<section class="plans">
-
-  <div class="container">
-
-    <div class="gallery-header reveal">
-
-      <div class="section-label">
-        04 / Planning
-      </div>
-
-      <h2 class="section-title" id="planHeading">
-        Floor Plans.
-      </h2>
-
-    </div>
-
-    <div id="planGallery"></div>
-
-  </div>
-
-</section>
-
-
-
-<section class="gallery-section">
-
-  <div class="container">
-
-    <div class="gallery-header reveal">
-
-      <div class="section-label">
-        05 / Design Development
+        02 / 3D Visualization
       </div>
 
       <h2 class="section-title" id="renderHeading">
@@ -865,12 +807,66 @@ nav.scrolled {
 
 
 
+<section class="plans">
+
+  <div class="container">
+
+    <div class="gallery-header reveal">
+
+      <div class="section-label">
+        03 / Floor Plans
+      </div>
+
+      <h2 class="section-title" id="planHeading">
+        Floor Plans.
+      </h2>
+
+    </div>
+
+    <div id="planGallery"></div>
+
+  </div>
+
+</section>
+
+
+
+<section
+  class="gallery-section"
+  id="siteSection"
+>
+
+  <div class="container">
+
+    <div class="gallery-header reveal">
+
+      <div class="section-label">
+        04 / The Site
+      </div>
+
+      <h2 class="section-title" id="siteHeading">
+        The Site.
+      </h2>
+
+    </div>
+
+    <div
+      class="render-grid"
+      id="siteGallery"
+    ></div>
+
+  </div>
+
+</section>
+
+
+
 <section class="construction">
 
   <div class="container">
 
     <div class="section-label">
-      06 / Construction
+      05 / Construction Progress
     </div>
 
     <h2 class="section-title" id="constructionHeading">
@@ -912,7 +908,7 @@ nav.scrolled {
     <div class="gallery-header reveal">
 
       <div class="section-label">
-        07 / Project Gallery
+        06 / Project Gallery
       </div>
 
       <h2 class="section-title">

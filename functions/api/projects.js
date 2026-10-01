@@ -1571,9 +1571,9 @@ const source =
 
     planHeading: "Floor Plans.",
 
-    renderHeading: "Design Development.",
+    renderHeading: "3D Visualization.",
 
-    constructionHeading: "From Drawing to Site.",
+    constructionHeading: "Construction Progress.",
 
     siteImages: [],
 

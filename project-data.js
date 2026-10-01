@@ -3502,6 +3502,54 @@ next: "05"
 
 
 /* =========================================================
+   STANDARD PROJECT SECTION ORDER
+   Applies to existing and future projects.
+   ========================================================= */
+
+window.ARSTINLA_PROJECT_SECTION_ORDER = [
+  "story",
+  "render",
+  "plans",
+  "site",
+  "construction"
+];
+
+window.ARSTINLA_PROJECT_SECTION_DEFAULTS = Object.freeze({
+  renderHeading: "3D Visualization.",
+  planHeading: "Floor Plans.",
+  siteHeading: "The Site.",
+  constructionHeading: "Construction Progress."
+});
+
+Object.values(
+  window.ARSTINLA_PROJECTS
+).forEach(project => {
+  project.sectionOrder = [
+    ...window.ARSTINLA_PROJECT_SECTION_ORDER
+  ];
+
+  Object.entries(
+    window.ARSTINLA_PROJECT_SECTION_DEFAULTS
+  ).forEach(([field, fallback]) => {
+    if (!String(project[field] || "").trim()) {
+      project[field] = fallback;
+    }
+  });
+
+  [
+    "renderImages",
+    "planImages",
+    "siteImages",
+    "constructionImages"
+  ].forEach(field => {
+    if (!Array.isArray(project[field])) {
+      project[field] = [];
+    }
+  });
+});
+
+
+/* =========================================================
    PROJECT HELPER FUNCTIONS
    ========================================================= */
 
