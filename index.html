@@ -1599,6 +1599,29 @@ background-size: cover;
   }
 
 
+  .modal-narrative-label {
+    margin-top: 30px;
+
+    color: var(--orange);
+
+    font-family: var(--font-en);
+
+    font-size: .68rem;
+
+    font-weight: 500;
+
+    letter-spacing: .2em;
+
+    text-transform: uppercase;
+  }
+
+
+  .modal-narrative-label +
+  .modal-story-title {
+    margin-top: 18px;
+  }
+
+
   .modal-gallery[hidden] {
     display: none;
   }
@@ -5296,6 +5319,13 @@ data-contact-link
           Project
         </h2>
 
+        <div
+          class="modal-narrative-label"
+          id="modalNarrativeLabel"
+        >
+          01 / Project Story &amp; Concept
+        </div>
+
 
         <h3
           class="modal-story-title"
@@ -5306,6 +5336,26 @@ data-contact-link
         <p
           class="modal-description"
           id="modalDescription"
+        ></p>
+
+        <h3
+          class="modal-story-title"
+          id="modalConceptTitle"
+        ></h3>
+
+        <p
+          class="modal-description"
+          id="modalConceptDescription"
+        ></p>
+
+        <h3
+          class="modal-story-title"
+          id="modalArchitectureTitle"
+        ></h3>
+
+        <p
+          class="modal-description"
+          id="modalArchitectureDescription"
         ></p>
 
         <a
@@ -6163,6 +6213,9 @@ data-contact-link
        project.hero ||
        "",
 
+     hero:
+       project.hero || "",
+
      storyTitle:
        project.briefTitle ||
        project.introTitle ||
@@ -6174,6 +6227,21 @@ data-contact-link
        project.briefDescription ||
        project.introDescription ||
        project.description ||
+       "",
+
+     conceptTitle:
+       project.conceptTitle || "",
+
+     conceptDescription:
+       project.concept ||
+       project.conceptDescription ||
+       "",
+
+     architectureTitle:
+       project.architectureTitle || "",
+
+     architectureDescription:
+       project.architectureDescription ||
        "",
 
      sectionOrder:
@@ -6300,6 +6368,36 @@ data-contact-link
   const modalGallery =
     document.getElementById(
       "modalGallery"
+    );
+
+
+  const modalNarrativeLabel =
+    document.getElementById(
+      "modalNarrativeLabel"
+    );
+
+
+  const modalConceptTitle =
+    document.getElementById(
+      "modalConceptTitle"
+    );
+
+
+  const modalConceptDescription =
+    document.getElementById(
+      "modalConceptDescription"
+    );
+
+
+  const modalArchitectureTitle =
+    document.getElementById(
+      "modalArchitectureTitle"
+    );
+
+
+  const modalArchitectureDescription =
+    document.getElementById(
+      "modalArchitectureDescription"
     );
 
 
@@ -6460,6 +6558,7 @@ data-contact-link
     const declaredPaths =
       new Set([
         data.image,
+        data.hero,
         ...orderedSections.flatMap(
           section => section.paths
         )
@@ -6577,6 +6676,33 @@ data-contact-link
 
     modalDescription.textContent =
       data.description;
+
+
+    modalConceptTitle.textContent =
+      data.conceptTitle;
+
+
+    modalConceptDescription.textContent =
+      data.conceptDescription;
+
+
+    modalArchitectureTitle.textContent =
+      data.architectureTitle;
+
+
+    modalArchitectureDescription.textContent =
+      data.architectureDescription;
+
+
+    modalNarrativeLabel.hidden =
+      ![
+        data.storyTitle,
+        data.description,
+        data.conceptTitle,
+        data.conceptDescription,
+        data.architectureTitle,
+        data.architectureDescription
+      ].some(value => String(value || "").trim());
 
 
     modalType.textContent =

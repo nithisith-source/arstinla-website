@@ -1010,7 +1010,7 @@
 
       <div class="admin-field">
         <label for="editProjectBriefTitle">
-          PROJECT STORY &amp; CONCEPT TITLE
+          PROJECT STORY TITLE
         </label>
 
         <input
@@ -1028,7 +1028,7 @@
 
       <div class="admin-field">
         <label for="editProjectBrief">
-          PROJECT STORY &amp; CONCEPT
+          PROJECT STORY
         </label>
 
         <textarea
@@ -1042,6 +1042,62 @@
         <p class="admin-field-hint">
           เขียนได้หลายย่อหน้า ระบบจะรักษาการขึ้นบรรทัดใหม่ไว้
         </p>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectConceptTitle">
+          DESIGN CONCEPT TITLE
+        </label>
+
+        <input
+          id="editProjectConceptTitle"
+          name="conceptTitle"
+          type="text"
+          maxlength="180"
+          placeholder="Angled Plan, Shared Courtyards"
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectConcept">
+          DESIGN CONCEPT
+        </label>
+
+        <textarea
+          class="admin-article-input"
+          id="editProjectConcept"
+          name="concept"
+          maxlength="12000"
+          placeholder="Explain the main planning and design concept..."
+        ></textarea>
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectArchitectureTitle">
+          ARCHITECTURAL LANGUAGE TITLE
+        </label>
+
+        <input
+          id="editProjectArchitectureTitle"
+          name="architectureTitle"
+          type="text"
+          maxlength="180"
+          placeholder="Contemporary Thai Gable House"
+        >
+      </div>
+
+      <div class="admin-field">
+        <label for="editProjectArchitectureDescription">
+          ARCHITECTURAL LANGUAGE
+        </label>
+
+        <textarea
+          class="admin-article-input"
+          id="editProjectArchitectureDescription"
+          name="architectureDescription"
+          maxlength="12000"
+          placeholder="Describe form, roof, materials, openings and spatial character..."
+        ></textarea>
       </div>
 
       <div class="admin-field">
@@ -2491,6 +2547,27 @@ function openEditProject(project) {
     project.briefDescription ||
     project.introDescription ||
     project.description ||
+    "";
+
+  document.getElementById(
+    "editProjectConceptTitle"
+  ).value = project.conceptTitle || "";
+
+  document.getElementById(
+    "editProjectConcept"
+  ).value =
+    project.concept ||
+    project.conceptDescription ||
+    "";
+
+  document.getElementById(
+    "editProjectArchitectureTitle"
+  ).value = project.architectureTitle || "";
+
+  document.getElementById(
+    "editProjectArchitectureDescription"
+  ).value =
+    project.architectureDescription ||
     "";
 
   document.getElementById(

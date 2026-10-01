@@ -537,6 +537,23 @@ export async function onRequestPut({
         formData.get("brief") || ""
       ).trim();
 
+    const narrativeFields = [
+      "conceptTitle",
+      "concept",
+      "architectureTitle",
+      "architectureDescription"
+    ];
+
+    const narrativeValues =
+      Object.fromEntries(
+        narrativeFields.map(field => [
+          field,
+          String(
+            formData.get(field) || ""
+          ).trim()
+        ])
+      );
+
     const sectionHeadingFields = [
       "siteHeading",
       "planHeading",
@@ -609,6 +626,10 @@ export async function onRequestPut({
     if (
       briefTitle.length > 180 ||
       brief.length > 12000 ||
+      narrativeValues.conceptTitle.length > 180 ||
+      narrativeValues.concept.length > 12000 ||
+      narrativeValues.architectureTitle.length > 180 ||
+      narrativeValues.architectureDescription.length > 12000 ||
       sectionHeadingFields.some(
         field =>
           sectionHeadings[field].length > 180
@@ -840,6 +861,16 @@ export async function onRequestPut({
         updatedBlock,
         "brief",
         brief
+      );
+    }
+
+    for (const field of narrativeFields) {
+      if (!formData.has(field)) continue;
+      updatedBlock = upsertProjectText(
+        updatedBlock,
+        field,
+        narrativeValues[field],
+        "thumbnail"
       );
     }
 
@@ -1554,6 +1585,14 @@ const source =
     briefTitle: "",
 
     brief: "",
+
+    conceptTitle: "",
+
+    concept: "",
+
+    architectureTitle: "",
+
+    architectureDescription: "",
 
     thumbnail:
       ${safeString(coverWebPath)},

@@ -770,6 +770,21 @@ nav.scrolled {
 
       </div>
 
+      <div
+        class="story-part"
+        id="architecturePart"
+        hidden
+      >
+
+        <h2 id="architectureTitle"></h2>
+
+        <div
+          class="story-text"
+          id="architectureText"
+        ></div>
+
+      </div>
+
     </div>
 
   </div>
@@ -1060,6 +1075,33 @@ document.getElementById(
   "conceptText"
 ).textContent =
   project.concept.trim();
+
+const architectureTitle =
+  String(
+    project.architectureTitle || ""
+  ).trim();
+
+const architectureDescription =
+  String(
+    project.architectureDescription || ""
+  ).trim();
+
+if (
+  architectureTitle ||
+  architectureDescription
+) {
+  document.getElementById(
+    "architectureTitle"
+  ).textContent = architectureTitle;
+
+  document.getElementById(
+    "architectureText"
+  ).textContent = architectureDescription;
+
+  document.getElementById(
+    "architecturePart"
+  ).hidden = false;
+}
 
 
 
