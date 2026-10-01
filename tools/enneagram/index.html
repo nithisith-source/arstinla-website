@@ -36,11 +36,14 @@ h1 em{font-family:var(--font-serif);font-weight:400;color:var(--sand)}
 .wheel-frame{width:min(78%,680px);aspect-ratio:1;position:relative;display:grid;place-items:center;filter:drop-shadow(0 24px 60px rgba(0,0,0,.24))}
 .wheel-frame::before,.wheel-frame::after{content:"";position:absolute;border-radius:50%;pointer-events:none}.wheel-frame::before{inset:3%;border:1px solid rgba(196,122,85,.28);box-shadow:0 0 70px rgba(196,122,85,.08),inset 0 0 70px rgba(196,122,85,.04)}.wheel-frame::after{inset:10%;border:1px solid rgba(243,240,233,.09)}
 .wheel-halo{position:absolute;inset:0;border:1px dashed rgba(196,122,85,.28);border-radius:50%;animation:haloSpin 54s linear infinite}.wheel-halo::before,.wheel-halo::after{content:"";position:absolute;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}.wheel-halo::before{width:8px;height:8px;background:var(--sand);box-shadow:0 0 22px rgba(196,122,85,.75);top:0}.wheel-halo::after{width:calc(100% - 36px);height:calc(100% - 36px);border:1px dotted rgba(243,240,233,.08)}
-.ennea-diagram{position:absolute;inset:8%;width:84%;height:84%;overflow:visible}.ennea-ring{fill:rgba(23,24,22,.28);stroke:rgba(243,240,233,.13);stroke-width:1}.ennea-grid{fill:none;stroke:rgba(243,240,233,.08);stroke-width:1;stroke-dasharray:3 8}.ennea-path{fill:none;stroke:url(#enneaStroke);stroke-width:1.5;vector-effect:non-scaling-stroke}.ennea-path--triangle{stroke-width:2;opacity:.78}.ennea-path--hexad{opacity:.56;stroke-dasharray:260 20;animation:pathFlow 16s linear infinite}.ennea-dot{fill:#171816;stroke:#c47a55;stroke-width:2;vector-effect:non-scaling-stroke}.ennea-dot--anchor{fill:#c47a55;filter:drop-shadow(0 0 8px rgba(196,122,85,.85))}
-.wheel-node{position:absolute;left:var(--x);top:var(--y);width:clamp(38px,4.2vw,54px);aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid rgba(196,122,85,.48);background:rgba(23,24,22,.9);border-radius:50%;display:grid;place-items:center;color:#d89973;font:clamp(20px,2vw,29px) var(--font-serif);z-index:3;box-shadow:0 8px 28px rgba(0,0,0,.28),inset 0 0 0 5px rgba(255,255,255,.015);transition:transform .35s ease,border-color .35s ease,background .35s ease,color .35s ease}.wheel-node::after{content:"";position:absolute;inset:-7px;border:1px solid rgba(243,240,233,.07);border-radius:50%}.wheel-node:hover{transform:translate(-50%,-50%) scale(1.13);border-color:var(--sand);background:#25221d;color:#fff}.wheel-node--anchor{background:var(--sand);color:#171816;border-color:#e0a17e;box-shadow:0 0 32px rgba(196,122,85,.34)}
-.wheel-center{position:absolute;left:50%;top:50%;width:clamp(150px,18vw,210px);aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid rgba(196,122,85,.42);border-radius:50%;display:grid;place-items:center;text-align:center;z-index:4;pointer-events:none;background:radial-gradient(circle at 40% 35%,#2c2721 0,#171816 68%);box-shadow:0 0 0 12px rgba(23,24,22,.55),0 0 0 13px rgba(243,240,233,.07),0 28px 70px rgba(0,0,0,.4)}.wheel-center::before{content:"";position:absolute;inset:12px;border:1px dashed rgba(196,122,85,.25);border-radius:50%}.wheel-center strong{display:block;font-family:var(--font-serif);font-size:clamp(48px,6vw,74px);font-weight:400;line-height:.82;color:#f3f0e9}.wheel-center span,.wheel-center small{display:block;font-family:var(--font-en);text-transform:uppercase}.wheel-center span{color:var(--sand);font-size:9px;letter-spacing:.25em;margin-top:10px}.wheel-center small{color:#6f7069;font-size:7px;letter-spacing:.18em;margin-top:7px}
+.wheel-rotor{--rotation:0deg;--counter-rotation:0deg;position:absolute;inset:0;transform:rotate(var(--rotation));transition:transform 6s cubic-bezier(.45,0,.55,1)}
+.ennea-diagram{position:absolute;inset:8%;width:84%;height:84%;overflow:visible}.ennea-ring{fill:rgba(23,24,22,.28);stroke:rgba(243,240,233,.13);stroke-width:1}.ennea-grid{fill:none;stroke:rgba(243,240,233,.08);stroke-width:1;stroke-dasharray:3 8}.ennea-path{fill:none;stroke:url(#enneaStroke);stroke-width:1.5;vector-effect:non-scaling-stroke}.ennea-path--triangle{stroke-width:2;opacity:.78}.ennea-path--hexad{opacity:.56;stroke-dasharray:260 20;animation:pathFlow 16s linear infinite}.ennea-dot{fill:#171816;stroke:#c47a55;stroke-width:2;vector-effect:non-scaling-stroke}
+.wheel-node{appearance:none;position:absolute;left:var(--x);top:var(--y);width:clamp(38px,4.2vw,54px);padding:0;aspect-ratio:1;transform:translate(-50%,-50%) rotate(var(--counter-rotation));border:1px solid rgba(196,122,85,.48);background:rgba(23,24,22,.9);border-radius:50%;display:grid;place-items:center;color:#d89973;font:clamp(20px,2vw,29px) var(--font-serif);z-index:3;cursor:pointer;box-shadow:0 8px 28px rgba(0,0,0,.28),inset 0 0 0 5px rgba(255,255,255,.015);transition:transform 6s cubic-bezier(.45,0,.55,1),border-color .35s ease,background .35s ease,color .35s ease,box-shadow .35s ease}.wheel-node::after{content:"";position:absolute;inset:-7px;border:1px solid rgba(243,240,233,.07);border-radius:50%}.wheel-node:hover,.wheel-node:active{border-color:#e0a17e;background:var(--sand);color:#171816;box-shadow:0 0 32px rgba(196,122,85,.34),inset 0 0 0 5px rgba(255,255,255,.08)}.wheel-node:focus-visible{outline:2px solid #f3f0e9;outline-offset:7px}
+.wheel-center{position:absolute;left:50%;top:50%;width:clamp(150px,18vw,210px);aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid rgba(196,122,85,.42);border-radius:50%;display:grid;place-items:center;text-align:center;z-index:4;pointer-events:none;background:radial-gradient(circle at 40% 35%,#2c2721 0,#171816 68%);box-shadow:0 0 0 12px rgba(23,24,22,.55),0 0 0 13px rgba(243,240,233,.07),0 28px 70px rgba(0,0,0,.4)}.wheel-center::before{content:"";position:absolute;inset:12px;border:1px dashed rgba(196,122,85,.25);border-radius:50%}.center-type{position:absolute;inset:4%;width:92%;height:92%;overflow:visible}.center-type text{font-family:var(--font-en);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;fill:var(--sand)}.center-type-row{transform-box:view-box;transform-origin:center}.center-type-row--outer{animation:centerOrbitClockwise 28s linear infinite}.center-type-row--inner{animation:centerOrbitCounter 22s linear infinite}.center-type-row--inner text{font-size:8.8px;letter-spacing:1.35px;fill:#a3a49c}.center-mark{position:absolute;left:50%;top:50%;width:11px;height:11px;transform:translate(-50%,-50%);border:1px solid var(--sand);border-radius:50%;box-shadow:0 0 20px rgba(196,122,85,.5)}.center-mark::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--sand)}
 @keyframes haloSpin{to{transform:rotate(360deg)}}
 @keyframes pathFlow{to{stroke-dashoffset:-280}}
+@keyframes centerOrbitClockwise{to{transform:rotate(360deg)}}
+@keyframes centerOrbitCounter{to{transform:rotate(-360deg)}}
 .intro{background:var(--paper);color:var(--ink);padding:clamp(72px,9vw,130px) clamp(24px,7vw,110px);display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr);gap:clamp(50px,8vw,130px)}
 .intro h2,.test-head h2,.result-hero h2{font-family:var(--font-en);font-weight:300;letter-spacing:-.055em;line-height:.95;margin:20px 0;font-size:clamp(44px,6vw,88px)}
 .intro h2 em,.result-hero h2 em{font-family:var(--font-serif);font-weight:400;color:var(--sand)}
@@ -75,8 +78,8 @@ h1 em{font-family:var(--font-serif);font-weight:400;color:var(--sand)}
 footer{padding:22px clamp(20px,4vw,62px);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-family:var(--font-en);font-size:11px;border-top:1px solid var(--line)}footer nav{display:flex;gap:22px}footer a:hover{color:var(--sand)}
 .toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#fff;color:#171816;padding:13px 19px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:900px){.hero,.intro,.result-hero,.result-grid{grid-template-columns:1fr}.wheel-stage{border-left:0;border-top:1px solid var(--line);min-height:650px}.wheel-frame{width:min(82vw,620px)}.intro{gap:30px}.test.active{grid-template-columns:1fr}.test-side{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);gap:40px}.test-main{min-height:70vh}.result-number{font-size:210px}}
-@media(max-width:600px){.site-header{height:auto;min-height:76px;align-items:flex-start;padding-top:21px;padding-bottom:21px}.brand span{display:block;margin-top:5px}.top-nav{gap:12px;flex-direction:column;align-items:flex-end}.hero{min-height:0}.hero-copy{padding-top:85px;padding-bottom:80px}.wheel-stage{min-height:455px}.wheel-stage::after{display:none}.wheel-frame{width:min(92vw,410px)}.wheel-node{width:38px;font-size:20px}.wheel-center{width:124px}.wheel-center strong{font-size:46px}.wheel-center small{display:none}.question{min-height:240px}.answers{gap:5px}.answer{min-height:76px;font-size:17px}.answer small{display:none}.scale-labels{font-size:10px}.score-row{grid-template-columns:28px 90px 1fr 38px;gap:8px}.score-name{font-size:11px}.result-number{font-size:160px}.hero-meta{gap:25px}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.wheel-halo,.ennea-path--hexad{animation:none}}
+@media(max-width:600px){.site-header{height:auto;min-height:76px;align-items:flex-start;padding-top:21px;padding-bottom:21px}.brand span{display:block;margin-top:5px}.top-nav{gap:12px;flex-direction:column;align-items:flex-end}.hero{min-height:0}.hero-copy{padding-top:85px;padding-bottom:80px}.wheel-stage{min-height:455px}.wheel-stage::after{display:none}.wheel-frame{width:min(92vw,410px)}.wheel-node{width:38px;font-size:20px}.wheel-center{width:142px}.center-type text{font-size:12px;letter-spacing:1.7px}.center-type-row--inner text{font-size:10px;letter-spacing:1.2px}.question{min-height:240px}.answers{gap:5px}.answer{min-height:76px;font-size:17px}.answer small{display:none}.scale-labels{font-size:10px}.score-row{grid-template-columns:28px 90px 1fr 38px;gap:8px}.score-name{font-size:11px}.result-number{font-size:160px}.hero-meta{gap:25px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.wheel-halo,.ennea-path--hexad,.center-type-row{animation:none}}
 </style>
 </head>
 <body>
@@ -104,36 +107,52 @@ footer{padding:22px clamp(20px,4vw,62px);display:flex;justify-content:space-betw
         <div><strong>7 min</strong><span>Quiet reflection</span></div>
       </div>
     </div>
-    <div class="wheel-stage" aria-hidden="true">
+    <div class="wheel-stage" aria-label="วง Enneagram แบบโต้ตอบ คลิกตัวเลขเพื่อหมุนขึ้นด้านบน">
       <div class="wheel-frame">
         <div class="wheel-halo"></div>
-        <svg class="ennea-diagram" viewBox="0 0 600 600" focusable="false">
-          <defs>
-            <linearGradient id="enneaStroke" x1="90" y1="90" x2="510" y2="510" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#f3f0e9" stop-opacity=".23"/>
-              <stop offset=".45" stop-color="#c47a55" stop-opacity=".95"/>
-              <stop offset="1" stop-color="#f3f0e9" stop-opacity=".18"/>
-            </linearGradient>
-          </defs>
-          <circle class="ennea-ring" cx="300" cy="300" r="252"/>
-          <circle class="ennea-grid" cx="300" cy="300" r="205"/>
-          <circle class="ennea-grid" cx="300" cy="300" r="126"/>
-          <path class="ennea-path" d="M300 72L446.6 125.3L524.5 260.4L497.5 414L378 514L222 514L102.5 414L75.5 260.4L153.4 125.3Z"/>
-          <path class="ennea-path ennea-path--triangle" d="M300 72L497.5 414L102.5 414Z"/>
-          <path class="ennea-path ennea-path--hexad" d="M446.6 125.3L378 514L524.5 260.4L153.4 125.3L222 514L75.5 260.4Z"/>
-          <circle class="ennea-dot ennea-dot--anchor" cx="300" cy="72" r="6"/>
-          <circle class="ennea-dot" cx="446.6" cy="125.3" r="5"/><circle class="ennea-dot" cx="524.5" cy="260.4" r="5"/><circle class="ennea-dot" cx="497.5" cy="414" r="5"/><circle class="ennea-dot" cx="378" cy="514" r="5"/><circle class="ennea-dot" cx="222" cy="514" r="5"/><circle class="ennea-dot" cx="102.5" cy="414" r="5"/><circle class="ennea-dot" cx="75.5" cy="260.4" r="5"/><circle class="ennea-dot" cx="153.4" cy="125.3" r="5"/>
-        </svg>
-        <span class="wheel-node wheel-node--anchor" style="--x:50%;--y:12%">9</span>
-        <span class="wheel-node" style="--x:74.4%;--y:20.9%">1</span>
-        <span class="wheel-node" style="--x:87.4%;--y:43.4%">2</span>
-        <span class="wheel-node" style="--x:82.9%;--y:69%">3</span>
-        <span class="wheel-node" style="--x:63%;--y:85.7%">4</span>
-        <span class="wheel-node" style="--x:37%;--y:85.7%">5</span>
-        <span class="wheel-node" style="--x:17.1%;--y:69%">6</span>
-        <span class="wheel-node" style="--x:12.6%;--y:43.4%">7</span>
-        <span class="wheel-node" style="--x:25.6%;--y:20.9%">8</span>
-        <div class="wheel-center"><div><strong>9</strong><span>Inner Compass</span><small>Nine paths · one self</small></div></div>
+        <div class="wheel-rotor" id="wheelRotor">
+          <svg class="ennea-diagram" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="enneaStroke" x1="90" y1="90" x2="510" y2="510" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#f3f0e9" stop-opacity=".23"/>
+                <stop offset=".45" stop-color="#c47a55" stop-opacity=".95"/>
+                <stop offset="1" stop-color="#f3f0e9" stop-opacity=".18"/>
+              </linearGradient>
+            </defs>
+            <circle class="ennea-ring" cx="300" cy="300" r="252"/>
+            <circle class="ennea-grid" cx="300" cy="300" r="205"/>
+            <circle class="ennea-grid" cx="300" cy="300" r="126"/>
+            <path class="ennea-path" d="M300 72L446.6 125.3L524.5 260.4L497.5 414L378 514L222 514L102.5 414L75.5 260.4L153.4 125.3Z"/>
+            <path class="ennea-path ennea-path--triangle" d="M300 72L497.5 414L102.5 414Z"/>
+            <path class="ennea-path ennea-path--hexad" d="M446.6 125.3L378 514L524.5 260.4L153.4 125.3L222 514L75.5 260.4Z"/>
+            <circle class="ennea-dot" cx="300" cy="72" r="5"/>
+            <circle class="ennea-dot" cx="446.6" cy="125.3" r="5"/><circle class="ennea-dot" cx="524.5" cy="260.4" r="5"/><circle class="ennea-dot" cx="497.5" cy="414" r="5"/><circle class="ennea-dot" cx="378" cy="514" r="5"/><circle class="ennea-dot" cx="222" cy="514" r="5"/><circle class="ennea-dot" cx="102.5" cy="414" r="5"/><circle class="ennea-dot" cx="75.5" cy="260.4" r="5"/><circle class="ennea-dot" cx="153.4" cy="125.3" r="5"/>
+          </svg>
+          <button class="wheel-node" type="button" data-type="9" data-angle="0" style="--x:50%;--y:12%" aria-label="หมุนลักษณ์ 9 ขึ้นด้านบน" aria-pressed="true">9</button>
+          <button class="wheel-node" type="button" data-type="1" data-angle="40" style="--x:74.4%;--y:20.9%" aria-label="หมุนลักษณ์ 1 ขึ้นด้านบน" aria-pressed="false">1</button>
+          <button class="wheel-node" type="button" data-type="2" data-angle="80" style="--x:87.4%;--y:43.4%" aria-label="หมุนลักษณ์ 2 ขึ้นด้านบน" aria-pressed="false">2</button>
+          <button class="wheel-node" type="button" data-type="3" data-angle="120" style="--x:82.9%;--y:69%" aria-label="หมุนลักษณ์ 3 ขึ้นด้านบน" aria-pressed="false">3</button>
+          <button class="wheel-node" type="button" data-type="4" data-angle="160" style="--x:63%;--y:85.7%" aria-label="หมุนลักษณ์ 4 ขึ้นด้านบน" aria-pressed="false">4</button>
+          <button class="wheel-node" type="button" data-type="5" data-angle="200" style="--x:37%;--y:85.7%" aria-label="หมุนลักษณ์ 5 ขึ้นด้านบน" aria-pressed="false">5</button>
+          <button class="wheel-node" type="button" data-type="6" data-angle="240" style="--x:17.1%;--y:69%" aria-label="หมุนลักษณ์ 6 ขึ้นด้านบน" aria-pressed="false">6</button>
+          <button class="wheel-node" type="button" data-type="7" data-angle="280" style="--x:12.6%;--y:43.4%" aria-label="หมุนลักษณ์ 7 ขึ้นด้านบน" aria-pressed="false">7</button>
+          <button class="wheel-node" type="button" data-type="8" data-angle="320" style="--x:25.6%;--y:20.9%" aria-label="หมุนลักษณ์ 8 ขึ้นด้านบน" aria-pressed="false">8</button>
+        </div>
+        <div class="wheel-center" aria-hidden="true">
+          <svg class="center-type" viewBox="0 0 220 220" focusable="false">
+            <defs>
+              <path id="centerArcOuter" d="M110 110m-82 0a82 82 0 1 1 164 0a82 82 0 1 1-164 0"/>
+              <path id="centerArcInner" d="M110 110m-59 0a59 59 0 1 1 118 0a59 59 0 1 1-118 0"/>
+            </defs>
+            <g class="center-type-row center-type-row--outer">
+              <text><textPath href="#centerArcOuter" textLength="515" lengthAdjust="spacing">INNER COMPASS · INNER COMPASS · INNER COMPASS · </textPath></text>
+            </g>
+            <g class="center-type-row center-type-row--inner">
+              <text><textPath href="#centerArcInner" textLength="370" lengthAdjust="spacing">NINE PATHS · ONE SELF · NINE PATHS · ONE SELF · </textPath></text>
+            </g>
+          </svg>
+          <i class="center-mark"></i>
+        </div>
       </div>
     </div>
   </section>
@@ -222,6 +241,17 @@ const questions=[
 const state={index:0,answers:Array(questions.length).fill(null)};
 const $=id=>document.getElementById(id);
 const test=$("test"),result=$("result"),intro=$("intro");
+const wheelRotor=$("wheelRotor"),wheelNodes=[...document.querySelectorAll(".wheel-node")];
+let wheelRotation=0;
+
+wheelNodes.forEach(node=>node.addEventListener("click",()=>{
+  const target=-Number(node.dataset.angle);
+  const shortest=((target-wheelRotation+540)%360)-180;
+  wheelRotation+=shortest;
+  wheelRotor.style.setProperty("--rotation",`${wheelRotation}deg`);
+  wheelRotor.style.setProperty("--counter-rotation",`${-wheelRotation}deg`);
+  wheelNodes.forEach(item=>item.setAttribute("aria-pressed",item===node?"true":"false"));
+}));
 
 function renderQuestion(){
   const [type,text]=questions[state.index];
