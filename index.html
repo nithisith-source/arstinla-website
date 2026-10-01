@@ -2063,6 +2063,22 @@ background-size: cover;
   }
 
 
+  .tools-title {
+    font-size:
+      clamp(
+        2.35rem,
+        4.65vw,
+        5.2rem
+      );
+  }
+
+
+  .tools-title-line {
+    display: block;
+    white-space: nowrap;
+  }
+
+
   .tools-description {
 
     max-width: 540px;
@@ -2095,17 +2111,25 @@ background-size: cover;
 
     color: white;
 
-    display: flex;
+    position: relative;
 
-    flex-direction: column;
+    overflow: hidden;
 
-    align-items: stretch;
+    display: grid;
 
-    justify-content: flex-start;
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(120px, 12vw, 180px);
 
-    gap: 34px;
+    grid-template-rows:
+      minmax(0, 1fr)
+      auto;
 
-    flex-wrap: nowrap;
+    column-gap: clamp(20px, 3vw, 42px);
+
+    row-gap: 34px;
+
+    isolation: isolate;
 
     transition:
       background .3s var(--ease),
@@ -2119,9 +2143,88 @@ background-size: cover;
   }
 
 
+  .knowledge-tool::before {
+    content: "";
+    position: absolute;
+    right: -90px;
+    top: -110px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background:
+      radial-gradient(
+        circle,
+        rgba(196, 91, 47, .13),
+        transparent 68%
+      );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+
   .knowledge-tool-copy {
     max-width: 720px;
     width: 100%;
+    min-width: 0;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+
+  .knowledge-tool-visual {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 100%;
+    aspect-ratio: 1;
+    align-self: start;
+    color: var(--orange);
+    opacity: .92;
+    transition:
+      transform .45s var(--ease),
+      opacity .3s var(--ease);
+  }
+
+
+  .knowledge-tool:hover .knowledge-tool-visual {
+    transform: translateY(-5px) rotate(2deg);
+    opacity: 1;
+  }
+
+
+  .knowledge-tool-visual .visual-line {
+    fill: none;
+    stroke: rgba(255,255,255,.32);
+    stroke-width: 1.25;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .knowledge-tool-visual .visual-faint {
+    fill: none;
+    stroke: rgba(255,255,255,.13);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .knowledge-tool-visual .visual-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .knowledge-tool-visual .visual-fill {
+    fill: currentColor;
+  }
+
+
+  .knowledge-tool-visual text {
+    fill: white;
+    font-family: var(--font-en);
+    font-weight: 300;
+    letter-spacing: -.06em;
   }
 
 
@@ -2159,7 +2262,9 @@ background-size: cover;
 
     align-self: flex-start;
 
-    margin-top: auto;
+    grid-column: 1;
+
+    grid-row: 2;
 
     font-family: var(--font-en);
 
@@ -2198,6 +2303,9 @@ background-size: cover;
 
     .knowledge-tool {
       min-height: 0;
+      grid-template-columns: minmax(0, 1fr) 96px;
+      column-gap: 14px;
+      padding: 26px;
     }
   }
 
@@ -4576,11 +4684,11 @@ background-repeat:
       </div>
 
       <h2
-        class="section-title th"
+        class="section-title th tools-title"
         style="margin-top:25px"
       >
-        เครื่องมือสำหรับเริ่มต้น<br>
-        แนวคิดของคุณ
+        <span class="tools-title-line">เครื่องมือสำหรับเริ่มต้น</span>
+        <span class="tools-title-line">แนวคิดของคุณ</span>
       </h2>
 
     </div>
@@ -4618,6 +4726,13 @@ background-repeat:
 
       </div>
 
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <path class="visual-faint" d="M8 20H92M8 40H92M8 60H92M8 80H92M20 8V92M40 8V92M60 8V92M80 8V92"/>
+        <path class="visual-line" d="M18 18H69V45H82V82H48V70H18Z M18 45H69 M48 45V82"/>
+        <circle class="visual-fill" cx="80" cy="18" r="6"/>
+        <path class="visual-accent" d="M9 69C21 60 29 78 42 68S64 62 78 69M13 78C25 70 34 86 48 77"/>
+      </svg>
+
       <span class="knowledge-tool-cta">
         Build a Schematic →
       </span>
@@ -4646,6 +4761,14 @@ background-repeat:
         </p>
 
       </div>
+
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle class="visual-faint" cx="50" cy="50" r="43"/>
+        <circle class="visual-accent" cx="50" cy="50" r="34" stroke-dasharray="2 5"/>
+        <path class="visual-line" d="M50 7V16M50 84V93M7 50H16M84 50H93M20 20L27 27M73 73L80 80M80 20L73 27M27 73L20 80"/>
+        <text x="50" y="60" text-anchor="middle" font-size="29">31</text>
+        <circle class="visual-fill" cx="50" cy="16" r="2.6"/>
+      </svg>
 
       <span class="knowledge-tool-cta">
         Read Your Day →
@@ -4676,6 +4799,17 @@ background-repeat:
 
       </div>
 
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <rect x="9" y="17" width="9" height="66" rx="4.5" fill="#d45b4a"/>
+        <rect x="21" y="12" width="9" height="76" rx="4.5" fill="#dc8d3a"/>
+        <rect x="33" y="22" width="9" height="56" rx="4.5" fill="#d9bb48"/>
+        <rect x="45" y="9" width="9" height="82" rx="4.5" fill="#6f9a69"/>
+        <rect x="57" y="19" width="9" height="62" rx="4.5" fill="#4d93a5"/>
+        <rect x="69" y="14" width="9" height="72" rx="4.5" fill="#696da8"/>
+        <rect x="81" y="24" width="9" height="52" rx="4.5" fill="#9b668e"/>
+        <path class="visual-line" d="M9 92H90"/>
+      </svg>
+
       <span class="knowledge-tool-cta">
         Choose Your Colors →
       </span>
@@ -4704,6 +4838,13 @@ background-repeat:
         </p>
 
       </div>
+
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle class="visual-faint" cx="50" cy="50" r="44"/>
+        <path class="visual-line" d="M50 6L78 16L94 42L89 72L66 92H34L11 72L6 42L22 16Z"/>
+        <path class="visual-accent" d="M50 6L66 92L6 42L89 72L22 16L34 92L94 42L11 72L78 16Z"/>
+        <circle class="visual-fill" cx="50" cy="50" r="4"/>
+      </svg>
 
       <span class="knowledge-tool-cta">
         Begin the Compass →
@@ -4734,6 +4875,15 @@ background-repeat:
 
       </div>
 
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <circle class="visual-faint" cx="50" cy="50" r="43"/>
+        <circle class="visual-line" cx="50" cy="50" r="31"/>
+        <path class="visual-line" d="M50 7V93M7 50H93M20 20L80 80M80 20L20 80"/>
+        <path class="visual-accent" d="M50 18L59 50L50 82L41 50Z"/>
+        <path class="visual-fill" d="M50 18L59 50L50 46L41 50Z"/>
+        <circle cx="50" cy="50" r="4" fill="#111310" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+
       <span class="knowledge-tool-cta">
         Find Your Direction →
       </span>
@@ -4762,6 +4912,14 @@ background-repeat:
         </p>
 
       </div>
+
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <rect class="visual-line" x="15" y="19" width="70" height="62" rx="2"/>
+        <path class="visual-faint" d="M22 27H78V73H22Z"/>
+        <circle class="visual-fill" cx="66" cy="36" r="6"/>
+        <path class="visual-accent" d="M22 69L38 51L49 61L59 49L78 69"/>
+        <path class="visual-accent" d="M8 29V12H25M75 12H92V29M8 71V88H25M75 88H92V71"/>
+      </svg>
 
       <span class="knowledge-tool-cta">
         Open Image Tool →
