@@ -3543,6 +3543,96 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "52": {
+
+    number: "52",
+
+    slug: "private-resort",
+
+    url:
+      "/projects/private-resort/",
+
+    title:
+      "์NOPPHARAT RESORT",
+
+    officialTitle:
+      "์NOPPHARAT RESORT",
+
+    category:
+      "Urban",
+
+    filterCategory:
+      "urban",
+
+    location:
+      "Klaeng, Rayong",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    conceptTitle: "",
+
+    concept: "",
+
+    architectureTitle: "",
+
+    architectureDescription: "",
+
+    thumbnail:
+      "/assets/project-52.jpg",
+
+    hero:
+      "/assets/project-52.jpg",
+
+    heroAlt:
+      "์NOPPHARAT RESORT",
+
+    assetFolder:
+      "/assets/project-52/",
+
+    siteHeading: "The Site.",
+
+    planHeading: "Floor Plans.",
+
+    renderHeading: "3D Visualization.",
+
+    constructionHeading: "Construction Progress.",
+
+    siteImages: [],
+
+    planImages: [],
+
+    renderImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
