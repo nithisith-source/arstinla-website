@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "arstinla-imgtool-";
-const CACHE = CACHE_PREFIX + "v3";
+const CACHE = CACHE_PREFIX + "v4";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg", "/tools/shared/download-gate.js"];
 
 self.addEventListener("install", e => {
@@ -15,6 +15,19 @@ self.addEventListener("activate", e => {
 });
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
+
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res.ok) {
+          caches.open(CACHE).then(c => c.put("./index.html", res.clone())).catch(() => {});
+        }
+        return res;
+      }).catch(() => caches.match("./index.html").then(hit => hit || caches.match("./")))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
       const copy = res.clone();
@@ -22,6 +35,6 @@ self.addEventListener("fetch", e => {
         caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
       }
       return res;
-    }).catch(() => e.request.mode === "navigate" ? caches.match("./index.html") : Response.error()))
+    }).catch(() => Response.error()))
   );
 });
