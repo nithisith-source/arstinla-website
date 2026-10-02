@@ -3633,6 +3633,96 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "53": {
+
+    number: "53",
+
+    slug: "private-resort",
+
+    url:
+      "/projects/private-resort/",
+
+    title:
+      "VARIT KIRI",
+
+    officialTitle:
+      "VARIT KIRI",
+
+    category:
+      "Urban",
+
+    filterCategory:
+      "urban",
+
+    location:
+      "Khoakor, Petchaboon",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    conceptTitle: "",
+
+    concept: "",
+
+    architectureTitle: "",
+
+    architectureDescription: "",
+
+    thumbnail:
+      "/assets/project-53.jpg",
+
+    hero:
+      "/assets/project-53.jpg",
+
+    heroAlt:
+      "VARIT KIRI",
+
+    assetFolder:
+      "/assets/project-53/",
+
+    siteHeading: "The Site.",
+
+    planHeading: "Floor Plans.",
+
+    renderHeading: "3D Visualization.",
+
+    constructionHeading: "Construction Progress.",
+
+    siteImages: [],
+
+    planImages: [],
+
+    renderImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
