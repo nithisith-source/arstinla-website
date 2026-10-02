@@ -3556,7 +3556,7 @@ next: "05"
       "/projects/private-resort/",
 
     title:
-      "์NOPPHARAT RESORT",
+      "NOPPHARAT RESORT",
 
     officialTitle:
       "์NOPPHARAT RESORT",
