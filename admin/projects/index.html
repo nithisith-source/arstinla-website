@@ -492,7 +492,55 @@
     .project-actions {
       display: grid;
       gap: 10px;
-      min-width: 142px;
+      min-width: 190px;
+    }
+
+    .project-order-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .project-order-position {
+      grid-column: 1 / -1;
+      color: #777970;
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-align: center;
+    }
+
+    .project-order-button {
+      border: 1px solid rgba(255,255,255,.22);
+      background: #191a17;
+      color: #f3f1eb;
+      padding: 10px 8px;
+      cursor: pointer;
+    }
+
+    .project-order-button:hover:not(:disabled) {
+      border-color: #c47752;
+      color: #d88a63;
+    }
+
+    .project-order-button:disabled {
+      cursor: not-allowed;
+      opacity: .3;
+    }
+
+    .project-order-status {
+      min-height: 22px;
+      margin: -24px 0 32px;
+      color: #85867f;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .project-order-status[data-state="error"] {
+      color: #e79a77;
+    }
+
+    .project-order-status[data-state="success"] {
+      color: #91b58a;
     }
 
     .edit-project-button {
@@ -767,6 +815,14 @@
       </button>
 
     </div>
+
+    <p
+      class="project-order-status"
+      id="projectOrderStatus"
+      aria-live="polite"
+    >
+      ใช้ปุ่ม UP / DOWN ในแต่ละโครงการเพื่อจัดลำดับภายในหมวด ลำดับใหม่จะแสดงบนหน้าเว็บไซต์
+    </p>
 
 
     <section
@@ -1372,16 +1428,75 @@
       }
     ];
 
-    const projects = Object.values(
-      window.ARSTINLA_PROJECTS || {}
-    ).sort(
-      (a, b) =>
-        String(a.number || "").localeCompare(
-          String(b.number || ""),
+    const projectCategoryOrder =
+      window.ARSTINLA_PROJECT_CATEGORY_ORDER || {};
+
+    window.ARSTINLA_PROJECT_CATEGORY_ORDER =
+      projectCategoryOrder;
+
+    const projectOrderStatus =
+      document.getElementById(
+        "projectOrderStatus"
+      );
+
+    let activeProjectFilter = "all";
+    let isReorderingProjects = false;
+
+
+    function compareProjectOrder(left, right) {
+      const leftCategory = String(
+        left?.filterCategory || "residential"
+      );
+
+      const rightCategory = String(
+        right?.filterCategory || "residential"
+      );
+
+      if (leftCategory === rightCategory) {
+        const categoryOrder = Array.isArray(
+          projectCategoryOrder[leftCategory]
+        )
+          ? projectCategoryOrder[leftCategory]
+          : [];
+
+        const leftIndex = categoryOrder.indexOf(
+          String(left?.number || "")
+        );
+
+        const rightIndex = categoryOrder.indexOf(
+          String(right?.number || "")
+        );
+
+        if (
+          leftIndex !== -1 ||
+          rightIndex !== -1
+        ) {
+          if (leftIndex === -1) {
+            return 1;
+          }
+
+          if (rightIndex === -1) {
+            return -1;
+          }
+
+          if (leftIndex !== rightIndex) {
+            return leftIndex - rightIndex;
+          }
+        }
+      }
+
+      return String(left?.number || "")
+        .localeCompare(
+          String(right?.number || ""),
           undefined,
           { numeric: true }
-        )
-    );
+        );
+    }
+
+
+    const projects = Object.values(
+      window.ARSTINLA_PROJECTS || {}
+    ).sort(compareProjectOrder);
 
 
     function collectImages(value) {
@@ -1416,7 +1531,195 @@
     }
 
 
+    function setProjectOrderStatus(
+      message = "",
+      state = ""
+    ) {
+      projectOrderStatus.textContent = message;
+
+      if (state) {
+        projectOrderStatus.dataset.state = state;
+      }
+      else {
+        delete projectOrderStatus.dataset.state;
+      }
+    }
+
+
+    function getProjectOrderAdminKey() {
+      let adminKey = "";
+
+      try {
+        adminKey =
+          sessionStorage.getItem(
+            "ARSTINLA_ADMIN_KEY"
+          ) || "";
+      }
+      catch {
+        adminKey = "";
+      }
+
+      if (!adminKey) {
+        adminKey = String(
+          window.prompt(
+            "Enter Admin Key เพื่อบันทึกลำดับโครงการ"
+          ) || ""
+        ).trim();
+
+        if (adminKey) {
+          try {
+            sessionStorage.setItem(
+              "ARSTINLA_ADMIN_KEY",
+              adminKey
+            );
+          }
+          catch {
+            // Continue even when browser storage is unavailable.
+          }
+        }
+      }
+
+      return adminKey;
+    }
+
+
+    async function moveProject(
+      project,
+      direction
+    ) {
+      if (isReorderingProjects) {
+        return;
+      }
+
+      const adminKey =
+        getProjectOrderAdminKey();
+
+      if (!adminKey) {
+        setProjectOrderStatus(
+          "ยังไม่ได้จัดลำดับ เพราะไม่ได้ใส่ Admin Key",
+          "error"
+        );
+        return;
+      }
+
+      isReorderingProjects = true;
+
+      document
+        .querySelectorAll(
+          ".project-order-button"
+        )
+        .forEach(button => {
+          button.disabled = true;
+        });
+
+      setProjectOrderStatus(
+        `กำลังเลื่อน ${project.title || "โครงการ"} ` +
+        `${direction === "up" ? "ขึ้น" : "ลง"}...`
+      );
+
+      try {
+        const response = await fetch(
+          "/api/projects",
+          {
+            method: "PATCH",
+            headers: {
+              "content-type":
+                "application/json",
+              "x-admin-key": adminKey
+            },
+            body: JSON.stringify({
+              projectNumber: project.number,
+              direction
+            })
+          }
+        );
+
+        const responseText =
+          await response.text();
+
+        let result = {};
+
+        try {
+          result = responseText
+            ? JSON.parse(responseText)
+            : {};
+        }
+        catch {
+          result = {
+            error:
+              "ระบบตอบกลับไม่สมบูรณ์ กรุณาลองใหม่อีกครั้ง"
+          };
+        }
+
+        if (response.status === 401) {
+          try {
+            sessionStorage.removeItem(
+              "ARSTINLA_ADMIN_KEY"
+            );
+          }
+          catch {
+            // Keep the page usable when storage is unavailable.
+          }
+
+          throw new Error(
+            "Admin Key ไม่ถูกต้อง กรุณาลองใหม่"
+          );
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            [
+              result.error,
+              result.status
+                ? `GitHub status: ${result.status}`
+                : "",
+              result.details || ""
+            ]
+              .filter(Boolean)
+              .join("\n") ||
+              "จัดลำดับโครงการไม่สำเร็จ"
+          );
+        }
+
+        if (
+          result.category &&
+          Array.isArray(result.order)
+        ) {
+          projectCategoryOrder[
+            result.category
+          ] = result.order.map(String);
+        }
+
+        projects.sort(compareProjectOrder);
+
+        setProjectOrderStatus(
+          result.changed === false
+            ? "โครงการอยู่สุดลำดับในทิศทางนี้แล้ว"
+            : `บันทึกลำดับ ${project.title || "โครงการ"} เรียบร้อย`,
+          "success"
+        );
+      }
+      catch (error) {
+        setProjectOrderStatus(
+          error.message ||
+            "จัดลำดับโครงการไม่สำเร็จ",
+          "error"
+        );
+
+        window.alert(
+          error.message ||
+            "จัดลำดับโครงการไม่สำเร็จ"
+        );
+      }
+      finally {
+        isReorderingProjects = false;
+        renderProjects(activeProjectFilter);
+      }
+    }
+
+
     function renderProjects(filter = "all") {
+      activeProjectFilter = filter || "all";
       projectsContainer.innerHTML = "";
 
       const categoriesToRender =
@@ -1428,6 +1731,7 @@
             );
 
       const categoryLists = new Map();
+      const categoryProjectsById = new Map();
 
       categoriesToRender.forEach(category => {
         const categoryProjects =
@@ -1479,6 +1783,10 @@
         projectsContainer.appendChild(group);
 
         categoryLists.set(category.id, list);
+        categoryProjectsById.set(
+          category.id,
+          categoryProjects
+        );
 
         if (!categoryProjects.length) {
           const empty =
@@ -1520,6 +1828,19 @@
         const cover =
           project.thumbnail || project.hero;
 
+        const categoryProjects =
+          categoryProjectsById.get(category) || [];
+
+        const projectIndex =
+          categoryProjects.indexOf(project);
+
+        const isFirstProject =
+          projectIndex <= 0;
+
+        const isLastProject =
+          projectIndex ===
+          categoryProjects.length - 1;
+
         article.innerHTML = `
           <div class="project-head">
             <img
@@ -1541,6 +1862,31 @@
             </div>
 
             <div class="project-actions">
+              <div
+                class="project-order-controls"
+                aria-label="จัดลำดับ ${project.title || "โครงการ"}"
+              >
+                <button
+                  class="project-order-button project-order-up"
+                  type="button"
+                  ${isFirstProject || isReorderingProjects ? "disabled" : ""}
+                >
+                  UP
+                </button>
+
+                <button
+                  class="project-order-button project-order-down"
+                  type="button"
+                  ${isLastProject || isReorderingProjects ? "disabled" : ""}
+                >
+                  DOWN
+                </button>
+
+                <span class="project-order-position">
+                  ลำดับ ${projectIndex + 1} / ${categoryProjects.length}
+                </span>
+              </div>
+
               <button
                 class="edit-project-button"
                 type="button"
@@ -1557,6 +1903,20 @@
             </div>
           </div>
         `;
+
+        article
+          .querySelector(".project-order-up")
+          .addEventListener(
+            "click",
+            () => moveProject(project, "up")
+          );
+
+        article
+          .querySelector(".project-order-down")
+          .addEventListener(
+            "click",
+            () => moveProject(project, "down")
+          );
 
         article
           .querySelector(".edit-project-button")

@@ -89,17 +89,34 @@ function findProjectBlock(
     end = afterStart + nextMatch.index;
   }
   else {
-    const helperIndex =
+    const sectionOrderLabel =
+      source.indexOf(
+        "STANDARD PROJECT SECTION ORDER",
+        afterStart
+      );
+
+    const helperLabel =
       source.indexOf(
         "PROJECT HELPER FUNCTIONS",
         afterStart
       );
 
+    const boundaryLabel =
+      sectionOrderLabel !== -1
+        ? sectionOrderLabel
+        : helperLabel;
+
+    const boundary =
+      boundaryLabel === -1
+        ? source.length
+        : source.lastIndexOf(
+            "/*",
+            boundaryLabel
+          );
+
     end = source.lastIndexOf(
       "\n};",
-      helperIndex === -1
-        ? source.length
-        : helperIndex
+      boundary
     );
   }
 
@@ -137,6 +154,293 @@ function readProjectString(
   catch {
     return "";
   }
+}
+
+
+const PROJECT_CATEGORY_ORDER_START =
+  "/* ARSTINLA PROJECT CATEGORY ORDER START */";
+
+const PROJECT_CATEGORY_ORDER_END =
+  "/* ARSTINLA PROJECT CATEGORY ORDER END */";
+
+
+function readProjectCategoryOrder(source) {
+  const start = source.indexOf(
+    PROJECT_CATEGORY_ORDER_START
+  );
+
+  if (start === -1) {
+    return {};
+  }
+
+  const end = source.indexOf(
+    PROJECT_CATEGORY_ORDER_END,
+    start
+  );
+
+  if (end === -1) {
+    return {};
+  }
+
+  const assignment = source.indexOf(
+    "window.ARSTINLA_PROJECT_CATEGORY_ORDER",
+    start
+  );
+
+  const objectStart = source.indexOf(
+    "{",
+    assignment
+  );
+
+  const objectEnd = source.lastIndexOf(
+    "}",
+    end
+  );
+
+  if (
+    assignment === -1 ||
+    objectStart === -1 ||
+    objectEnd <= objectStart
+  ) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(
+      source.slice(
+        objectStart,
+        objectEnd + 1
+      )
+    );
+
+    return parsed &&
+      typeof parsed === "object"
+        ? parsed
+        : {};
+  }
+  catch {
+    return {};
+  }
+}
+
+
+function collectProjectOrderRecords(source) {
+  const projectPattern =
+    /^\s*"(\d{2})"\s*:\s*\{/gm;
+
+  const records = [];
+  let match;
+
+  while (
+    (match = projectPattern.exec(source))
+  ) {
+    const number = match[1];
+    const range = findProjectBlock(
+      source,
+      number
+    );
+
+    if (!range) {
+      continue;
+    }
+
+    records.push({
+      number,
+      category:
+        readProjectString(
+          range.block,
+          "filterCategory"
+        ) || "residential",
+      title:
+        readProjectString(
+          range.block,
+          "title"
+        ) || `Project ${number}`
+    });
+  }
+
+  return records;
+}
+
+
+function normalizeProjectCategoryOrder(
+  records,
+  savedOrder
+) {
+  const byCategory = {};
+
+  records.forEach(record => {
+    if (!byCategory[record.category]) {
+      byCategory[record.category] = [];
+    }
+
+    byCategory[record.category].push(
+      record.number
+    );
+  });
+
+  Object.entries(byCategory)
+    .forEach(([category, numbers]) => {
+      const available = new Set(numbers);
+      const ordered = [];
+
+      const saved = Array.isArray(
+        savedOrder?.[category]
+      )
+        ? savedOrder[category]
+        : [];
+
+      saved.forEach(number => {
+        const normalized = String(number);
+
+        if (
+          available.has(normalized) &&
+          !ordered.includes(normalized)
+        ) {
+          ordered.push(normalized);
+        }
+      });
+
+      numbers.forEach(number => {
+        if (!ordered.includes(number)) {
+          ordered.push(number);
+        }
+      });
+
+      byCategory[category] = ordered;
+    });
+
+  return byCategory;
+}
+
+
+function writeProjectCategoryOrder(
+  source,
+  categoryOrder
+) {
+  const block = [
+    PROJECT_CATEGORY_ORDER_START,
+    "window.ARSTINLA_PROJECT_CATEGORY_ORDER = " +
+      JSON.stringify(
+        categoryOrder,
+        null,
+        2
+      ) +
+      ";",
+    PROJECT_CATEGORY_ORDER_END
+  ].join("\n");
+
+  const existingStart = source.indexOf(
+    PROJECT_CATEGORY_ORDER_START
+  );
+
+  if (existingStart !== -1) {
+    const existingEndMarker =
+      source.indexOf(
+        PROJECT_CATEGORY_ORDER_END,
+        existingStart
+      );
+
+    if (existingEndMarker !== -1) {
+      const existingEnd =
+        existingEndMarker +
+        PROJECT_CATEGORY_ORDER_END.length;
+
+      return (
+        source.slice(0, existingStart) +
+        block +
+        source.slice(existingEnd)
+      );
+    }
+  }
+
+  const endOfDataLabel =
+    source.indexOf(
+      "END OF PROJECT DATA"
+    );
+
+  const insertionPoint =
+    endOfDataLabel === -1
+      ? source.length
+      : Math.max(
+          0,
+          source.lastIndexOf(
+            "/*",
+            endOfDataLabel
+          )
+        );
+
+  return (
+    source.slice(0, insertionPoint) +
+    block +
+    "\n\n\n" +
+    source.slice(insertionPoint)
+  );
+}
+
+
+function reorderProjectSource(
+  source,
+  projectNumber,
+  direction
+) {
+  const records =
+    collectProjectOrderRecords(source);
+
+  const project = records.find(
+    record =>
+      record.number === projectNumber
+  );
+
+  if (!project) {
+    return null;
+  }
+
+  const categoryOrder =
+    normalizeProjectCategoryOrder(
+      records,
+      readProjectCategoryOrder(source)
+    );
+
+  const order =
+    categoryOrder[project.category] || [];
+
+  const currentIndex =
+    order.indexOf(projectNumber);
+
+  const targetIndex =
+    direction === "up"
+      ? currentIndex - 1
+      : currentIndex + 1;
+
+  if (
+    currentIndex === -1 ||
+    targetIndex < 0 ||
+    targetIndex >= order.length
+  ) {
+    return {
+      source,
+      changed: false,
+      category: project.category,
+      title: project.title,
+      order
+    };
+  }
+
+  [order[currentIndex], order[targetIndex]] =
+    [order[targetIndex], order[currentIndex]];
+
+  return {
+    source:
+      writeProjectCategoryOrder(
+        source,
+        categoryOrder
+      ),
+    changed: true,
+    category: project.category,
+    title: project.title,
+    order
+  };
 }
 
 
@@ -1132,6 +1436,271 @@ export async function onRequestPut({
         coverWebPath || oldThumbnail,
       oldCoverDeleted,
       warning
+    });
+  }
+  catch (error) {
+    return json(
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Unknown error"
+      },
+      500
+    );
+  }
+}
+
+
+export async function onRequestPatch({
+  request,
+  env
+}) {
+  try {
+    const adminKey =
+      request.headers.get(
+        "x-admin-key"
+      );
+
+    if (
+      !env.ADMIN_KEY ||
+      adminKey !== env.ADMIN_KEY
+    ) {
+      return json(
+        {
+          ok: false,
+          error: "Unauthorized"
+        },
+        401
+      );
+    }
+
+    const body = await request.json();
+
+    const projectNumber = String(
+      body?.projectNumber || ""
+    ).trim();
+
+    const direction = String(
+      body?.direction || ""
+    ).trim();
+
+    if (
+      !/^\d{2}$/.test(projectNumber) ||
+      !["up", "down"].includes(direction)
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "ข้อมูลการจัดลำดับโครงการไม่ถูกต้อง"
+        },
+        400
+      );
+    }
+
+    const owner = env.GITHUB_OWNER;
+    const repo = env.GITHUB_REPO;
+    const branch =
+      env.GITHUB_BRANCH || "main";
+    const token = env.GITHUB_TOKEN;
+
+    if (
+      !owner ||
+      !repo ||
+      !token
+    ) {
+      return json(
+        {
+          ok: false,
+          error:
+            "GitHub environment variables missing"
+        },
+        500
+      );
+    }
+
+    const githubHeaders = {
+      Authorization: `Bearer ${token}`,
+      Accept:
+        "application/vnd.github+json",
+      "X-GitHub-Api-Version":
+        "2022-11-28",
+      "User-Agent":
+        "ARSTINLA-Project-Manager"
+    };
+
+    const dataUrl =
+      `https://api.github.com/repos/` +
+      `${owner}/${repo}/contents/` +
+      `project-data.js`;
+
+    const readProjectData = async () => {
+      const response = await fetch(
+        `${dataUrl}?ref=${encodeURIComponent(branch)}`,
+        {
+          headers: githubHeaders
+        }
+      );
+
+      if (!response.ok) {
+        return {
+          response,
+          dataFile: null,
+          source: ""
+        };
+      }
+
+      const dataFile =
+        await response.json();
+
+      return {
+        response,
+        dataFile,
+        source: decodeBase64(
+          dataFile.content
+        )
+      };
+    };
+
+    const updateProjectData = async (
+      dataFile,
+      result
+    ) =>
+      fetch(
+        dataUrl,
+        {
+          method: "PUT",
+          headers: {
+            ...githubHeaders,
+            "content-type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            message:
+              `Reorder ${result.category}: ` +
+              `${result.title} ${direction}`,
+            content: bytesToBase64(
+              new TextEncoder()
+                .encode(result.source)
+            ),
+            sha: dataFile.sha,
+            branch
+          })
+        }
+      );
+
+    let current =
+      await readProjectData();
+
+    if (!current.response.ok) {
+      const details =
+        await current.response.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "Cannot read project-data.js",
+          status: current.response.status,
+          details
+        },
+        500
+      );
+    }
+
+    let result = reorderProjectSource(
+      current.source,
+      projectNumber,
+      direction
+    );
+
+    if (!result) {
+      return json(
+        {
+          ok: false,
+          error:
+            "ไม่พบโครงการที่ต้องการจัดลำดับ"
+        },
+        404
+      );
+    }
+
+    if (!result.changed) {
+      return json({
+        ok: true,
+        changed: false,
+        projectNumber,
+        direction,
+        category: result.category,
+        order: result.order
+      });
+    }
+
+    let updateResponse =
+      await updateProjectData(
+        current.dataFile,
+        result
+      );
+
+    if (
+      !updateResponse.ok &&
+      [409, 422].includes(
+        updateResponse.status
+      )
+    ) {
+      current = await readProjectData();
+
+      if (current.response.ok) {
+        result = reorderProjectSource(
+          current.source,
+          projectNumber,
+          direction
+        );
+
+        if (result?.changed) {
+          updateResponse =
+            await updateProjectData(
+              current.dataFile,
+              result
+            );
+        }
+        else if (result) {
+          return json({
+            ok: true,
+            changed: false,
+            projectNumber,
+            direction,
+            category: result.category,
+            order: result.order
+          });
+        }
+      }
+    }
+
+    if (!updateResponse.ok) {
+      const details =
+        await updateResponse.text();
+
+      return json(
+        {
+          ok: false,
+          error:
+            "จัดลำดับโครงการไม่สำเร็จ",
+          status: updateResponse.status,
+          details
+        },
+        500
+      );
+    }
+
+    return json({
+      ok: true,
+      changed: true,
+      projectNumber,
+      direction,
+      category: result.category,
+      order: result.order
     });
   }
   catch (error) {

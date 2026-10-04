@@ -5795,19 +5795,70 @@ data-contact-link
   ====================================================== */
 
 
+  const homeProjectCategoryOrder =
+    window.ARSTINLA_PROJECT_CATEGORY_ORDER || {};
+
+
+  function compareHomeProjectOrder(
+    left,
+    right
+  ) {
+    const leftCategory = String(
+      left?.filterCategory || "residential"
+    );
+
+    const rightCategory = String(
+      right?.filterCategory || "residential"
+    );
+
+    if (leftCategory === rightCategory) {
+      const categoryOrder = Array.isArray(
+        homeProjectCategoryOrder[leftCategory]
+      )
+        ? homeProjectCategoryOrder[leftCategory]
+        : [];
+
+      const leftIndex = categoryOrder.indexOf(
+        String(left?.number || "")
+      );
+
+      const rightIndex = categoryOrder.indexOf(
+        String(right?.number || "")
+      );
+
+      if (
+        leftIndex !== -1 ||
+        rightIndex !== -1
+      ) {
+        if (leftIndex === -1) {
+          return 1;
+        }
+
+        if (rightIndex === -1) {
+          return -1;
+        }
+
+        if (leftIndex !== rightIndex) {
+          return leftIndex - rightIndex;
+        }
+      }
+    }
+
+    return String(left?.number || "")
+      .localeCompare(
+        String(right?.number || ""),
+        undefined,
+        { numeric: true }
+      );
+  }
+
+
   const homeProjectData =
     Object.values(
       window.ARSTINLA_PROJECTS || {}
     )
       .filter(Boolean)
-      .sort((left, right) =>
-        String(left.number || "")
-          .localeCompare(
-            String(right.number || ""),
-            undefined,
-            { numeric: true }
-          )
-      );
+      .sort(compareHomeProjectOrder);
 
 
   const homeProjectsGrid =
