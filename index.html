@@ -2100,6 +2100,62 @@ background-size: cover;
   }
 
 
+  .tool-group-heading {
+
+    grid-column: 1 / -1;
+
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(260px, .75fr);
+
+    gap: clamp(28px, 6vw, 90px);
+
+    align-items: end;
+
+    padding: 0 0 24px;
+
+    border-bottom: 1px solid var(--line);
+  }
+
+
+  .tool-group-heading--insight {
+    margin-top: 62px;
+    padding-top: 62px;
+    border-top: 1px solid var(--line);
+  }
+
+
+  .tool-group-heading--resources {
+    margin-top: 62px;
+    padding-top: 62px;
+    border-top: 1px solid var(--line);
+  }
+
+
+  .tool-group-kicker {
+    color: var(--orange);
+  }
+
+
+  .tool-group-heading h3 {
+    margin-top: 13px;
+    font-family: var(--font-th);
+    font-size: clamp(1.9rem, 3.25vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.18;
+    letter-spacing: -.04em;
+  }
+
+
+  .tool-group-heading p {
+    max-width: 510px;
+    color: #5c5d57;
+    line-height: 1.8;
+  }
+
+
   .knowledge-tool {
 
     min-height: 320px;
@@ -2134,6 +2190,11 @@ background-size: cover;
     transition:
       background .3s var(--ease),
       transform .3s var(--ease);
+  }
+
+
+  .knowledge-tool--resource {
+    background: var(--dark-soft);
   }
 
 
@@ -2284,7 +2345,7 @@ background-size: cover;
 
   @media (min-width: 761px) {
 
-    .knowledge-tool:last-child:nth-child(odd) {
+    .knowledge-tool--resource:last-child {
       grid-column: 1 / -1;
     }
   }
@@ -2301,8 +2362,20 @@ background-size: cover;
       grid-template-columns: 1fr;
     }
 
+    .tool-group-heading {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .tool-group-heading--insight,
+    .tool-group-heading--resources {
+      margin-top: 36px;
+      padding-top: 42px;
+    }
+
     .knowledge-tool {
       min-height: 0;
+      grid-column: auto;
       grid-template-columns: minmax(0, 1fr) 96px;
       column-gap: 14px;
       padding: 26px;
@@ -4694,18 +4767,29 @@ background-repeat:
     </div>
 
     <p class="body-large tools-description reveal reveal-delay-1">
-      ทดลอง วางแผน และสำรวจโจทย์เบื้องต้น
-      ผ่านเครื่องมือดิจิทัลของ ARSTINLA
-      ก่อนนำแนวคิดไปพัฒนาร่วมกับผู้ออกแบบ
+      เลือกใช้เครื่องมือออกแบบ พื้นที่ดูดวงและสำรวจตัวตน
+      รวมถึงไฟล์ดาวน์โหลด เช็กลิสต์ และแอปช่วยตรวจสอบ
+      ก่อนเริ่มสร้างหรือส่งมอบบ้าน
     </p>
 
   </div>
 
   <div class="container knowledge-tools">
 
+    <div class="tool-group-heading tool-group-heading--design reveal">
+      <div>
+        <div class="label tool-group-kicker">01 / Design Tools</div>
+        <h3>เครื่องมือออกแบบและจัดเตรียมงาน</h3>
+      </div>
+      <p>
+        วางผังเบื้องต้น อ่านทิศแดดลม และจัดการไฟล์ภาพ
+        สำหรับพัฒนาแนวคิดหรือนำเสนอผลงาน
+      </p>
+    </div>
+
     <a
       href="/tools/schematic-planner/"
-      class="knowledge-tool reveal"
+      class="knowledge-tool knowledge-tool--design reveal"
       aria-label="Open ARSTINLA Schematic Planner"
     >
 
@@ -4740,8 +4824,56 @@ background-repeat:
     </a>
 
     <a
+      href="/tools/image/"
+      class="knowledge-tool knowledge-tool--design reveal"
+      aria-label="Open ARSTINLA Image Tool"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Free Tool
+        </div>
+
+        <h3>
+          ARSTINLA Image Tool
+        </h3>
+
+        <p>
+          ย่อและแปลงรูปหลายไฟล์เป็น WebP, JPEG หรือ PNG
+          ได้ในเบราว์เซอร์ รูปทั้งหมดอยู่บนเครื่องของคุณ
+        </p>
+
+      </div>
+
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <rect class="visual-line" x="15" y="19" width="70" height="62" rx="2"/>
+        <path class="visual-faint" d="M22 27H78V73H22Z"/>
+        <circle class="visual-fill" cx="66" cy="36" r="6"/>
+        <path class="visual-accent" d="M22 69L38 51L49 61L59 49L78 69"/>
+        <path class="visual-accent" d="M8 29V12H25M75 12H92V29M8 71V88H25M75 88H92V71"/>
+      </svg>
+
+      <span class="knowledge-tool-cta">
+        Open Image Tool →
+      </span>
+
+    </a>
+
+    <div class="tool-group-heading tool-group-heading--insight reveal">
+      <div>
+        <div class="label tool-group-kicker">02 / Insight &amp; Prediction</div>
+        <h3>ดูดวง คำทำนาย และสำรวจตัวตน</h3>
+      </div>
+      <p>
+        อ่านวันเกิด สี บุคลิกภายใน และทิศทางที่สอดคล้องกับคุณ
+        เพื่อใช้เป็นมุมมองประกอบการใช้ชีวิตและการออกแบบ
+      </p>
+    </div>
+
+    <a
       href="/tools/birthday/"
-      class="knowledge-tool reveal"
+      class="knowledge-tool knowledge-tool--insight reveal"
       aria-label="Open ARSTINLA Birthday Insight"
     >
 
@@ -4778,7 +4910,7 @@ background-repeat:
 
     <a
       href="/tools/color-sequence/"
-      class="knowledge-tool reveal"
+      class="knowledge-tool knowledge-tool--insight reveal"
       aria-label="Open ARSTINLA Color Sequence"
     >
 
@@ -4818,7 +4950,7 @@ background-repeat:
 
     <a
       href="/tools/enneagram/"
-      class="knowledge-tool reveal"
+      class="knowledge-tool knowledge-tool--insight reveal"
       aria-label="Open ARSTINLA Enneagram Compass"
     >
 
@@ -4854,7 +4986,7 @@ background-repeat:
 
     <a
       href="/tools/home-compass/"
-      class="knowledge-tool reveal"
+      class="knowledge-tool knowledge-tool--insight reveal"
       aria-label="Open ARSTINLA Home Compass"
     >
 
@@ -4890,39 +5022,121 @@ background-repeat:
 
     </a>
 
+    <div class="tool-group-heading tool-group-heading--resources reveal">
+      <div>
+        <div class="label tool-group-kicker">03 / Downloads, Checklists &amp; Apps</div>
+        <h3>ดาวน์โหลด เช็กลิสต์ และแอปก่อนสร้าง</h3>
+      </div>
+      <p>
+        รวมแบบตรวจสอบที่ใช้ได้จริง ไฟล์สำหรับดาวน์โหลด
+        และเครื่องมือช่วยเช็กข้อมูลสำคัญก่อนสร้างและก่อนรับบ้าน
+      </p>
+    </div>
+
     <a
-      href="/tools/image/"
-      class="knowledge-tool reveal"
-      aria-label="Open ARSTINLA Image Tool"
+      href="/knowledge/site-checklist/"
+      class="knowledge-tool knowledge-tool--resource reveal"
+      aria-label="Open Check Before Build app"
     >
 
       <div class="knowledge-tool-copy">
 
         <div class="label">
-          Free Tool
+          Check Before Build App
         </div>
 
         <h3>
-          ARSTINLA Image Tool
+          Check before you build.
         </h3>
 
         <p>
-          ย่อและแปลงรูปหลายไฟล์เป็น WebP, JPEG หรือ PNG
-          ได้ในเบราว์เซอร์ รูปทั้งหมดอยู่บนเครื่องของคุณ
+          เช็กที่ดิน ทางเข้า ผังเมือง แดด ลม น้ำ และบริบทโดยรอบ
+          ก่อนเลือกแบบบ้านหรือเริ่มออกแบบ
         </p>
 
       </div>
 
       <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-        <rect class="visual-line" x="15" y="19" width="70" height="62" rx="2"/>
-        <path class="visual-faint" d="M22 27H78V73H22Z"/>
-        <circle class="visual-fill" cx="66" cy="36" r="6"/>
-        <path class="visual-accent" d="M22 69L38 51L49 61L59 49L78 69"/>
-        <path class="visual-accent" d="M8 29V12H25M75 12H92V29M8 71V88H25M75 88H92V71"/>
+        <path class="visual-line" d="M16 20H84V80H16Z M28 34L48 25L72 39L64 70L37 76L22 56Z"/>
+        <path class="visual-faint" d="M16 40H84M16 60H84M36 20V80M58 20V80"/>
+        <path class="visual-accent" d="M50 17V83M17 50H83"/>
+        <circle class="visual-fill" cx="50" cy="50" r="5"/>
       </svg>
 
       <span class="knowledge-tool-cta">
-        Open Image Tool →
+        Open Check Before Build →
+      </span>
+
+    </a>
+
+    <a
+      href="/knowledge/home-inspection-checklist/"
+      class="knowledge-tool knowledge-tool--resource reveal"
+      aria-label="Open Home Inspection Checklist"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Home Inspection Checklist
+        </div>
+
+        <h3>
+          Inspect before handover.
+        </h3>
+
+        <p>
+          ตรวจรับบ้านครบ 11 หมวด บันทึกรายการผ่านและจุดแก้ไข
+          พร้อมหมายเหตุและพิมพ์เป็น PDF
+        </p>
+
+      </div>
+
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <rect class="visual-line" x="23" y="13" width="54" height="74" rx="2"/>
+        <path class="visual-faint" d="M38 31H67M38 49H67M38 67H67"/>
+        <path class="visual-accent" d="M28 29L31 33L36 25M28 47L31 51L36 43M28 65L31 69L36 61"/>
+        <path class="visual-fill" d="M42 8H58V18H42Z"/>
+      </svg>
+
+      <span class="knowledge-tool-cta">
+        Open Checklist →
+      </span>
+
+    </a>
+
+    <a
+      href="/stories/jamjuree-village/#library"
+      class="knowledge-tool knowledge-tool--resource reveal"
+      aria-label="Open ARSTINLA Download Library"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Download Library
+        </div>
+
+        <h3>
+          Download &amp; read anywhere.
+        </h3>
+
+        <p>
+          ดาวน์โหลดหนังสือ EPUB จากหมู่บ้านจามจุรี
+          เก็บไว้อ่านบนโทรศัพท์ แท็บเล็ต หรือแอปอ่านหนังสือ
+        </p>
+
+      </div>
+
+      <svg class="knowledge-tool-visual" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+        <path class="visual-line" d="M16 21H43C48 21 50 25 50 30V82C50 76 46 73 40 73H16Z M84 21H57C52 21 50 25 50 30V82C50 76 54 73 60 73H84Z"/>
+        <path class="visual-faint" d="M23 32H40M23 41H40M60 32H77M60 41H77"/>
+        <path class="visual-accent" d="M50 10V55M40 45L50 55L60 45"/>
+        <circle class="visual-fill" cx="50" cy="11" r="3"/>
+      </svg>
+
+      <span class="knowledge-tool-cta">
+        Open Download Library →
       </span>
 
     </a>
