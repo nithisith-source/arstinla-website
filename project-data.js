@@ -3723,6 +3723,96 @@ next: "05"
 
     next: null
 
+  },
+
+
+  "54": {
+
+    number: "54",
+
+    slug: "renovate-residence",
+
+    url:
+      "/projects/renovate-residence/",
+
+    title:
+      "ฺBaan Manthana Lake",
+
+    officialTitle:
+      "ฺBaan Manthana Lake",
+
+    category:
+      "Residential",
+
+    filterCategory:
+      "residential",
+
+    location:
+      "Saimai, Bangkok",
+
+    province: "",
+
+    country:
+      "Thailand",
+
+    year: "",
+
+    completion: "",
+
+    area: "",
+
+    areaNumber: 0,
+
+    status:
+      "Draft",
+
+    service:
+      "Architecture / Design",
+
+    briefTitle: "",
+
+    brief: "",
+
+    conceptTitle: "",
+
+    concept: "",
+
+    architectureTitle: "",
+
+    architectureDescription: "",
+
+    thumbnail:
+      "/assets/project-54.jpg",
+
+    hero:
+      "/assets/project-54.jpg",
+
+    heroAlt:
+      "ฺBaan Manthana Lake",
+
+    assetFolder:
+      "/assets/project-54/",
+
+    siteHeading: "The Site.",
+
+    planHeading: "Floor Plans.",
+
+    renderHeading: "3D Visualization.",
+
+    constructionHeading: "Construction Progress.",
+
+    siteImages: [],
+
+    planImages: [],
+
+    renderImages: [],
+
+    constructionImages: [],
+
+    previous: null,
+
+    next: null
+
   }
 
 };
