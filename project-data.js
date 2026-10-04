@@ -3758,10 +3758,10 @@ next: "05"
       "ฺBaan Manthana Lake",
 
     category:
-      "Residential",
+      "Renovation",
 
     filterCategory:
-      "residential",
+      "renovation",
 
     location:
       "Saimai, Bangkok",
