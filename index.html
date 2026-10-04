@@ -2064,17 +2064,21 @@ background-size: cover;
 
 
   .tools-title {
+    font-family: var(--font-en);
+
     font-size:
       clamp(
-        2.35rem,
-        4.65vw,
-        5.2rem
+        2.3rem,
+        3.75vw,
+        4.75rem
       );
+
+    letter-spacing: -.045em;
   }
 
 
   .tools-title-line {
-    display: block;
+    display: inline;
     white-space: nowrap;
   }
 
@@ -2141,11 +2145,12 @@ background-size: cover;
 
   .tool-group-heading h3 {
     margin-top: 13px;
-    font-family: var(--font-th);
-    font-size: clamp(1.9rem, 3.25vw, 3.5rem);
+    font-family: var(--font-en);
+    font-size: clamp(1.65rem, 2.2vw, 2.85rem);
     font-weight: 300;
     line-height: 1.18;
-    letter-spacing: -.04em;
+    letter-spacing: -.035em;
+    white-space: nowrap;
   }
 
 
@@ -2365,6 +2370,11 @@ background-size: cover;
     .tool-group-heading {
       grid-template-columns: 1fr;
       gap: 16px;
+    }
+
+    .tools-title-line,
+    .tool-group-heading h3 {
+      white-space: normal;
     }
 
     .tool-group-heading--insight,
@@ -4726,11 +4736,10 @@ background-repeat:
       </div>
 
       <h2
-        class="section-title th tools-title"
+        class="section-title tools-title"
         style="margin-top:25px"
       >
-        <span class="tools-title-line">เครื่องมือสำหรับเริ่มต้น</span>
-        <span class="tools-title-line">แนวคิดของคุณ</span>
+        <span class="tools-title-line">Tools to Start Your Ideas</span>
       </h2>
 
     </div>
@@ -4748,7 +4757,7 @@ background-repeat:
     <div class="tool-group-heading tool-group-heading--design reveal">
       <div>
         <div class="label tool-group-kicker">01 / Design Tools</div>
-        <h3>เครื่องมือออกแบบและจัดเตรียมงาน</h3>
+        <h3>Design &amp; Project Planning Tools</h3>
       </div>
       <p>
         วางผังเบื้องต้น อ่านทิศแดดลม และจัดการไฟล์ภาพ
@@ -4832,7 +4841,7 @@ background-repeat:
     <div class="tool-group-heading tool-group-heading--insight reveal">
       <div>
         <div class="label tool-group-kicker">02 / Insight &amp; Prediction</div>
-        <h3>ดูดวง คำทำนาย และสำรวจตัวตน</h3>
+        <h3>Insight, Prediction &amp; Self-Discovery</h3>
       </div>
       <p>
         อ่านวันเกิด สี บุคลิกภายใน และทิศทางที่สอดคล้องกับคุณ
@@ -4994,7 +5003,7 @@ background-repeat:
     <div class="tool-group-heading tool-group-heading--resources reveal">
       <div>
         <div class="label tool-group-kicker">03 / Downloads, Checklists &amp; Apps</div>
-        <h3>ดาวน์โหลด เช็กลิสต์ และแอปก่อนสร้าง</h3>
+        <h3>Downloads, Checklists &amp; Pre-Build Apps</h3>
       </div>
       <p>
         รวมแบบตรวจสอบที่ใช้ได้จริง ไฟล์สำหรับดาวน์โหลด
