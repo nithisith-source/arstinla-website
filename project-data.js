@@ -3233,6 +3233,14 @@ next: "05"
 
     brief: "",
 
+    conceptTitle: "",
+
+    concept: "",
+
+    architectureTitle: "",
+
+    architectureDescription: "",
+
     thumbnail:
       "/assets/project-47.jpg",
 
@@ -3244,6 +3252,14 @@ next: "05"
 
     assetFolder:
       "/assets/project-47/",
+
+    siteHeading: "The Site.",
+
+    planHeading: "Floor Plans.",
+
+    renderHeading: "3D Visualization.",
+
+    constructionHeading: "Construction Progress.",
 
     siteImages: [],
 
