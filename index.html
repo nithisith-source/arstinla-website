@@ -3442,6 +3442,325 @@ background-repeat:
   }
 
 }
+/* FLOATING SOUND + LIVE CHAT */
+
+.site-sound,
+.site-chat {
+  position: fixed;
+  bottom: 24px;
+  z-index: 9200;
+  font-family: var(--font-en), var(--font-th);
+}
+
+.site-sound {
+  left: 24px;
+  width: min(270px, calc(100vw - 48px));
+  border: 1px solid rgba(255, 255, 255, .17);
+  background: rgba(18, 19, 17, .94);
+  color: #f3f1eb;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(16px);
+}
+
+.site-sound[hidden] {
+  display: none;
+}
+
+.ambient-toggle {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 13px;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px 11px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sound-mark {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 42px;
+  padding: 10px 9px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 50%;
+}
+
+.sound-mark span {
+  display: block;
+  width: 3px;
+  height: 9px;
+  background: #c47752;
+  transform-origin: bottom;
+  animation: ambientPulse 1.05s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.sound-mark span:nth-child(2) {
+  height: 16px;
+  animation-delay: -.38s;
+}
+
+.sound-mark span:nth-child(3) {
+  height: 12px;
+  animation-delay: -.7s;
+}
+
+.site-sound.is-playing .sound-mark span {
+  animation-play-state: running;
+}
+
+@keyframes ambientPulse {
+  from { transform: scaleY(.45); opacity: .5; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+.sound-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.sound-copy strong {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .17em;
+}
+
+.sound-copy small {
+  overflow: hidden;
+  color: rgba(243, 241, 235, .58);
+  font-family: var(--font-th);
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ambient-volume {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 0 16px 13px 71px;
+  color: rgba(243, 241, 235, .52);
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.ambient-volume input {
+  width: 100%;
+  height: 2px;
+  accent-color: #c47752;
+  cursor: pointer;
+}
+
+.site-chat {
+  right: 24px;
+}
+
+.live-chat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 12px 18px;
+  border: 1px solid rgba(23, 24, 22, .18);
+  background: rgba(247, 244, 237, .96);
+  color: #171816;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, .16);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+
+.live-chat-dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #48a462;
+  box-shadow: 0 0 0 5px rgba(72, 164, 98, .12);
+}
+
+.live-chat-dot::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 1px solid rgba(72, 164, 98, .35);
+  border-radius: inherit;
+  animation: chatPing 2.2s ease-out infinite;
+}
+
+@keyframes chatPing {
+  0%, 45% { transform: scale(.75); opacity: 0; }
+  65% { opacity: 1; }
+  100% { transform: scale(1.65); opacity: 0; }
+}
+
+.live-chat-copy {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+
+.live-chat-copy strong {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .16em;
+}
+
+.live-chat-copy small {
+  color: rgba(23, 24, 22, .58);
+  font-family: var(--font-th);
+  font-size: 11px;
+}
+
+.live-chat-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 12px);
+  width: min(360px, calc(100vw - 48px));
+  padding: 26px;
+  border: 1px solid rgba(255, 255, 255, .15);
+  background: #171816;
+  color: #f3f1eb;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .28);
+}
+
+.live-chat-panel[hidden] {
+  display: none;
+}
+
+.live-chat-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.live-chat-label {
+  color: #c47752;
+  font-size: 10px;
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.live-chat-panel h2 {
+  margin: 10px 0 0;
+  font-family: var(--font-th);
+  font-size: 27px;
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+.live-chat-panel p {
+  margin: 16px 0 22px;
+  color: rgba(243, 241, 235, .62);
+  font-family: var(--font-th);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.live-chat-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: transparent;
+  color: #f3f1eb;
+  cursor: pointer;
+}
+
+.live-chat-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.live-chat-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  color: #f3f1eb;
+  font-size: 11px;
+  letter-spacing: .11em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.live-chat-action--line {
+  border-color: #4ba563;
+  background: #4ba563;
+  color: #fff;
+}
+
+.live-chat-action:hover {
+  border-color: #c47752;
+}
+
+@media (max-width: 760px) {
+  .site-sound,
+  .site-chat {
+    bottom: 14px;
+  }
+
+  .site-sound {
+    left: 14px;
+    width: 186px;
+  }
+
+  .site-chat {
+    right: 14px;
+  }
+
+  .ambient-toggle {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 9px;
+    padding: 10px 11px 8px;
+  }
+
+  .sound-mark {
+    width: 34px;
+    height: 34px;
+    padding: 8px 7px;
+  }
+
+  .sound-copy small {
+    font-size: 9px;
+  }
+
+  .ambient-volume {
+    padding: 0 11px 10px 54px;
+  }
+
+  .live-chat-toggle {
+    min-height: 54px;
+    padding: 10px 13px;
+  }
+
+  .live-chat-copy small {
+    display: none;
+  }
+
+  .live-chat-panel {
+    right: 0;
+    width: min(340px, calc(100vw - 28px));
+    padding: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sound-mark span,
+  .live-chat-dot::after {
+    animation: none;
+  }
+}
+
 </style>
 
 </head>
@@ -5618,6 +5937,125 @@ data-contact-link
 </footer>
 
 
+<!-- =======================================================
+     BACKGROUND SOUND + LIVE CHAT
+======================================================= -->
+
+<div
+  class="site-sound"
+  id="siteSound"
+  hidden
+>
+  <button
+    class="ambient-toggle"
+    id="ambientToggle"
+    type="button"
+    aria-pressed="false"
+    aria-label="เปิดหรือปิดเพลงพื้นหลัง"
+  >
+    <span class="sound-mark" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+
+    <span class="sound-copy">
+      <strong id="ambientState">SOUND OFF</strong>
+      <small id="ambientCaption">รอเพิ่มเพลงใหม่</small>
+    </span>
+  </button>
+
+  <label class="ambient-volume" for="ambientVolume">
+    <span>VOL</span>
+    <input
+      id="ambientVolume"
+      type="range"
+      min="0"
+      max="100"
+      value="22"
+      aria-label="ระดับเสียงเพลงพื้นหลัง"
+    >
+    <span id="ambientVolumeValue">22</span>
+  </label>
+
+  <audio
+    id="ambientAudio"
+    preload="none"
+    loop
+    playsinline
+  ></audio>
+</div>
+
+<div
+  class="site-chat"
+  id="siteChat"
+>
+  <section
+    class="live-chat-panel"
+    id="liveChatPanel"
+    aria-label="ช่องทางถามทีม ARSTINLA"
+    hidden
+  >
+    <div class="live-chat-panel-header">
+      <div>
+        <div class="live-chat-label">ARSTINLA LIVE</div>
+        <h2>มีคำถามเรื่องบ้าน<br>คุยกับเราได้ครับ</h2>
+      </div>
+
+      <button
+        class="live-chat-close"
+        id="liveChatClose"
+        type="button"
+        aria-label="ปิดหน้าต่างแชท"
+      >
+        ×
+      </button>
+    </div>
+
+    <p>
+      ส่งข้อความผ่าน LINE เพื่อคุยกับทีม ARSTINLA
+      หรือกรอกรายละเอียดโครงการไว้ในเว็บไซต์
+    </p>
+
+    <div class="live-chat-actions">
+      <a
+        class="live-chat-action live-chat-action--line"
+        href="https://line.me/R/ti/p/%40arstinla"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span>Chat on LINE · @arstinla</span>
+        <span>↗</span>
+      </a>
+
+      <a
+        class="live-chat-action"
+        href="#contact"
+        data-contact-link
+        id="liveChatContactLink"
+      >
+        <span>Send project details</span>
+        <span>→</span>
+      </a>
+    </div>
+  </section>
+
+  <button
+    class="live-chat-toggle"
+    id="liveChatToggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="liveChatPanel"
+  >
+    <span class="live-chat-dot" aria-hidden="true"></span>
+    <span class="live-chat-copy">
+      <strong>LIVE CHAT</strong>
+      <small>ถามทีม ARSTINLA</small>
+    </span>
+  </button>
+</div>
+
+
 
 <!-- =======================================================
      PROJECT MODAL
@@ -7526,6 +7964,290 @@ const submitButton =
 
     },
     true
+  );
+
+})();
+</script>
+
+<script>
+(() => {
+
+  const siteSound =
+    document.getElementById("siteSound");
+
+  const ambientAudio =
+    document.getElementById("ambientAudio");
+
+  const ambientToggle =
+    document.getElementById("ambientToggle");
+
+  const ambientState =
+    document.getElementById("ambientState");
+
+  const ambientCaption =
+    document.getElementById("ambientCaption");
+
+  const ambientVolume =
+    document.getElementById("ambientVolume");
+
+  const ambientVolumeValue =
+    document.getElementById("ambientVolumeValue");
+
+  const siteChat =
+    document.getElementById("siteChat");
+
+  const liveChatToggle =
+    document.getElementById("liveChatToggle");
+
+  const liveChatPanel =
+    document.getElementById("liveChatPanel");
+
+  const liveChatClose =
+    document.getElementById("liveChatClose");
+
+  const liveChatContactLink =
+    document.getElementById("liveChatContactLink");
+
+  if (
+    !siteSound ||
+    !ambientAudio ||
+    !ambientToggle
+  ) {
+    return;
+  }
+
+  const SOUND_KEY =
+    "ARSTINLA_BACKGROUND_SOUND";
+
+  const VOLUME_KEY =
+    "ARSTINLA_BACKGROUND_VOLUME";
+
+  const readStorage = (key, fallback = "") => {
+    try {
+      return localStorage.getItem(key) ?? fallback;
+    }
+    catch {
+      return fallback;
+    }
+  };
+
+  const writeStorage = (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+    }
+    catch {
+      /* Sound controls remain usable without storage. */
+    }
+  };
+
+  const savedVolume =
+    Number(readStorage(VOLUME_KEY, "22"));
+
+  const safeVolume =
+    Number.isFinite(savedVolume)
+      ? Math.min(100, Math.max(0, savedVolume))
+      : 22;
+
+  const hasAmbientSource =
+    Boolean(
+      ambientAudio
+        .getAttribute("src")
+        ?.trim()
+    );
+
+  let wantsSound =
+    hasAmbientSource &&
+    readStorage(SOUND_KEY, "on") !== "off";
+
+  let resumeAfterVisibility = false;
+
+  const ambientTrackTitle =
+    ambientAudio.dataset.title ||
+    "Background sound";
+
+  ambientAudio.volume = safeVolume / 100;
+  ambientVolume.value = String(safeVolume);
+  ambientVolumeValue.textContent = String(safeVolume);
+
+  function updateSoundUi() {
+    const playing = !ambientAudio.paused;
+
+    siteSound.classList.toggle(
+      "is-playing",
+      playing
+    );
+
+    ambientToggle.setAttribute(
+      "aria-pressed",
+      String(playing)
+    );
+
+    ambientState.textContent =
+      playing ? "SOUND ON" : "SOUND OFF";
+
+    ambientCaption.textContent =
+      playing
+        ? `${ambientTrackTitle} · กำลังเล่น`
+        : `${ambientTrackTitle} · แตะเพื่อเปิดเพลง`;
+  }
+
+  async function playAmbient({ remember = true } = {}) {
+    wantsSound = true;
+
+    try {
+      await ambientAudio.play();
+
+      if (remember) {
+        writeStorage(SOUND_KEY, "on");
+      }
+    }
+    catch {
+      ambientCaption.textContent =
+        "แตะ SOUND อีกครั้งเพื่อเปิดเพลง";
+    }
+
+    updateSoundUi();
+  }
+
+  function pauseAmbient({ remember = true } = {}) {
+    ambientAudio.pause();
+    wantsSound = false;
+
+    if (remember) {
+      writeStorage(SOUND_KEY, "off");
+    }
+
+    updateSoundUi();
+  }
+
+  ambientToggle.addEventListener(
+    "click",
+    () => {
+      if (ambientAudio.paused) {
+        playAmbient();
+      }
+      else {
+        pauseAmbient();
+      }
+    }
+  );
+
+  ambientVolume.addEventListener(
+    "input",
+    () => {
+      const value = Math.min(
+        100,
+        Math.max(0, Number(ambientVolume.value))
+      );
+
+      ambientAudio.volume = value / 100;
+      ambientVolumeValue.textContent = String(value);
+      writeStorage(VOLUME_KEY, String(value));
+    }
+  );
+
+  function unlockAmbient(event) {
+    if (
+      !wantsSound ||
+      !ambientAudio.paused ||
+      event.target.closest("#ambientToggle")
+    ) {
+      return;
+    }
+
+    playAmbient({ remember: false });
+  }
+
+  document.addEventListener(
+    "pointerdown",
+    unlockAmbient,
+    { once: true, capture: true }
+  );
+
+  document.addEventListener(
+    "keydown",
+    unlockAmbient,
+    { once: true, capture: true }
+  );
+
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      if (document.hidden) {
+        resumeAfterVisibility =
+          wantsSound && !ambientAudio.paused;
+
+        if (resumeAfterVisibility) {
+          ambientAudio.pause();
+          updateSoundUi();
+        }
+      }
+      else if (resumeAfterVisibility && wantsSound) {
+        resumeAfterVisibility = false;
+        playAmbient({ remember: false });
+      }
+    }
+  );
+
+  ambientAudio.addEventListener(
+    "play",
+    updateSoundUi
+  );
+
+  ambientAudio.addEventListener(
+    "pause",
+    updateSoundUi
+  );
+
+  updateSoundUi();
+
+  function setChatOpen(open) {
+    if (!liveChatPanel || !liveChatToggle) return;
+
+    liveChatPanel.hidden = !open;
+
+    liveChatToggle.setAttribute(
+      "aria-expanded",
+      String(open)
+    );
+  }
+
+  liveChatToggle?.addEventListener(
+    "click",
+    () => {
+      setChatOpen(liveChatPanel.hidden);
+    }
+  );
+
+  liveChatClose?.addEventListener(
+    "click",
+    () => setChatOpen(false)
+  );
+
+  liveChatContactLink?.addEventListener(
+    "click",
+    () => setChatOpen(false)
+  );
+
+  document.addEventListener(
+    "pointerdown",
+    event => {
+      if (
+        liveChatPanel?.hidden === false &&
+        !siteChat?.contains(event.target)
+      ) {
+        setChatOpen(false);
+      }
+    }
+  );
+
+  document.addEventListener(
+    "keydown",
+    event => {
+      if (event.key === "Escape") {
+        setChatOpen(false);
+      }
+    }
   );
 
 })();
