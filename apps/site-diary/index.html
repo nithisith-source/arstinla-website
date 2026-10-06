@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>บันทึกหน้างานประจำวัน — เช็คก่อนสร้าง</title>
+<meta name="theme-color" content="#0F6E6A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="../shared/pwa-install.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* สีหลัก — เปลี่ยน 3 ค่าแรกให้ตรงกับ arstinla.com ได้ */
+:root{
+  --brand:#0F6E6A; --brand-ink:#ffffff; --brand-soft:#DCEDEB;
+  --bg:#EDEFEE; --surface:#FFFFFF; --ink:#1E2A2D; --muted:#5F6D70; --line:#CDD3D2;
+  --rain:#2D5F9A; --rain-soft:#DFE9F5; --sun:#A86A00; --sun-soft:#FBEFD6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#4DB6AE; --brand-ink:#0B1F1E; --brand-soft:#173634;
+  --bg:#141A1B; --surface:#1D2526; --ink:#E6ECEB; --muted:#9AA8A9; --line:#334042;
+  --rain:#8DB6E8; --rain-soft:#1B2A3C; --sun:#E3B04B; --sun-soft:#3A2F17;
+}}
+:root[data-theme="dark"]{
+  --brand:#4DB6AE; --brand-ink:#0B1F1E; --brand-soft:#173634;
+  --bg:#141A1B; --surface:#1D2526; --ink:#E6ECEB; --muted:#9AA8A9; --line:#334042;
+  --rain:#8DB6E8; --rain-soft:#1B2A3C; --sun:#E3B04B; --sun-soft:#3A2F17;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",Tahoma,"Leelawadee UI",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 48px}
+header{padding:20px 0 12px}
+header h1{margin:0;font-size:1.5rem;line-height:1.3;font-weight:700}
+header p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+h2{font-size:1.1rem;margin:26px 0 10px}
+label.f{display:block;font-size:.9rem;font-weight:600;margin-bottom:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:76px;line-height:1.5}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn.sm{padding:5px 10px;font-size:.9rem}
+.btn[disabled]{opacity:.6;cursor:progress}
+.hint{color:var(--muted);font-size:.9rem;margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+details.proj{margin-bottom:14px}
+details.proj summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:8px}
+details.proj summary::-webkit-details-marker{display:none}
+details.proj summary span{color:var(--muted);font-weight:400;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+@media (max-width:480px){.pgrid{grid-template-columns:1fr}}
+
+/* แถบวันที่ — จุดเด่นของหน้า */
+.daybar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center;border-bottom:2px solid var(--ink)}
+.daybar button.nav{height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.3rem;cursor:pointer}
+.daybar .mid{text-align:center;position:relative}
+.daybar .big{font-size:1.35rem;font-weight:700;line-height:1.2}
+.daybar .small{font-size:.85rem;color:var(--muted)}
+.daybar input[type=date]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.today{display:inline-block;margin-left:6px;font-size:.75rem;background:var(--brand);color:var(--brand-ink);border-radius:10px;padding:0 8px;vertical-align:2px}
+
+.wrow{display:grid;grid-template-columns:44px 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.wrow b{font-weight:600;font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{font:inherit;font-size:.9rem;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.chips button[aria-pressed="true"]{font-weight:600}
+.chips button[aria-pressed="true"][data-w="sun"],.chips button[aria-pressed="true"][data-w="cloud"]{background:var(--sun-soft);border-color:var(--sun);color:var(--sun)}
+.chips button[aria-pressed="true"][data-w="lrain"],.chips button[aria-pressed="true"][data-w="hrain"]{background:var(--rain-soft);border-color:var(--rain);color:var(--rain)}
+.stop{display:flex;gap:8px;align-items:center;margin-top:6px;font-size:.95rem}
+.stop input{width:80px;text-align:center}
+
+.labor{display:grid;gap:0}
+.lrow{display:grid;grid-template-columns:1fr auto;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:0}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.1rem;cursor:pointer}
+.step input{width:52px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums;padding:6px 4px}
+.ltotal{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:2px solid var(--ink);font-weight:700}
+.ltotal .n{font-size:1.4rem;font-variant-numeric:tabular-nums}
+.addt{display:flex;gap:6px;margin-top:10px}
+.fields{display:grid;gap:12px}
+
+.addph{display:inline-block;font-size:.95rem;padding:8px 14px;border-radius:8px;border:1px dashed var(--muted);color:var(--ink);cursor:pointer}
+.addph:focus-within{outline:3px solid var(--brand);outline-offset:2px}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.photos:not(:empty){margin-top:12px}
+.ph{position:relative}
+.ph .th{padding:0;border:0;background:none;cursor:zoom-in;display:block}
+.ph img{width:84px;height:84px;object-fit:cover;border-radius:6px;display:block;border:1px solid var(--line)}
+.ph .x{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);background:var(--ink);color:var(--surface);font-size:14px;line-height:1;padding:0;cursor:pointer}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20;display:grid;place-items:center;padding:16px}
+#lb[hidden]{display:none}
+#lb img{max-width:100%;max-height:85vh;border-radius:6px}
+#lb .btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px}
+
+.saved{font-size:.85rem;color:var(--muted);text-align:right;margin-top:8px;min-height:1.4em}
+.hist{list-style:none;padding:0;margin:0}
+.hist li button{width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:6px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 10px}
+.hist li button[aria-current="date"]{border-color:var(--brand);box-shadow:inset 3px 0 0 var(--brand)}
+.hist .d{font-weight:600}
+.hist .m{font-size:.85rem;color:var(--muted);grid-column:1 / 3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist .n{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.range{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.foot{margin-top:28px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>บันทึกหน้างานประจำวัน</h1>
+  <p>จดสภาพอากาศ แรงงาน งานที่ทำ และรูปถ่ายทุกวัน แล้วสรุปเป็น PDF ส่งเจ้าของบ้าน</p>
+</header>
+
+<details class="proj card" id="projBox">
+  <summary>ข้อมูลโครงการ <span id="projSum"></span></summary>
+  <div class="pgrid">
+    <div><label class="f" for="p-name">โครงการ / บ้านเลขที่</label><input id="p-name" data-p="name"></div>
+    <div><label class="f" for="p-owner">เจ้าของบ้าน</label><input id="p-owner" data-p="owner"></div>
+    <div><label class="f" for="p-con">ผู้รับเหมา</label><input id="p-con" data-p="con"></div>
+    <div><label class="f" for="p-rec">ผู้บันทึก</label><input id="p-rec" data-p="rec"></div>
+  </div>
+</details>
+
+<div class="daybar">
+  <button class="nav" id="prev" aria-label="วันก่อนหน้า">‹</button>
+  <div class="mid"><div class="big" id="dBig"></div><div class="small" id="dSmall"></div>
+    <input type="date" id="dPick" aria-label="เลือกวันที่"></div>
+  <button class="nav" id="next" aria-label="วันถัดไป">›</button>
+</div>
+
+<h2>สภาพอากาศ</h2>
+<div class="card">
+  <div class="wrow"><b>เช้า</b><div class="chips" data-wk="wm"></div></div>
+  <div class="wrow"><b>บ่าย</b><div class="chips" data-wk="wa"></div></div>
+  <label class="stop">หยุดงานเพราะฝน <input id="stop" inputmode="decimal" placeholder="0"> ชั่วโมง</label>
+</div>
+
+<h2>แรงงานวันนี้</h2>
+<div class="card">
+  <div class="labor" id="labor"></div>
+  <div class="ltotal"><span>รวม</span><span><span class="n" id="ltot">0</span> คน</span></div>
+  <div class="addt"><input id="newTrade" placeholder="เพิ่มประเภทช่าง เช่น ช่างกระเบื้อง"><button class="btn" id="addTrade">เพิ่ม</button></div>
+  <button class="btn ghost sm" id="copyPrev" style="margin-top:10px">ใช้จำนวนเดียวกับวันที่บันทึกล่าสุด</button>
+</div>
+
+<h2>รายละเอียดงาน</h2>
+<div class="fields">
+  <div><label class="f" for="f-work">งานที่ทำวันนี้</label><textarea id="f-work" data-f="work" placeholder="เช่น ผูกเหล็กคานชั้น 2 แนว A–C, ตั้งแบบเสาชั้น 2"></textarea></div>
+  <div><label class="f" for="f-mat">วัสดุเข้าหน้างาน</label><textarea id="f-mat" data-f="mat" placeholder="เช่น เหล็ก DB12 จำนวน 80 เส้น, ทราย 1 คันรถ"></textarea></div>
+  <div><label class="f" for="f-issue">ปัญหา / อุปสรรค</label><textarea id="f-issue" data-f="issue" placeholder="ถ้าไม่มี เว้นว่างไว้"></textarea></div>
+  <div><label class="f" for="f-plan">แผนงานวันถัดไป</label><textarea id="f-plan" data-f="plan"></textarea></div>
+</div>
+
+<h2>รูปถ่าย</h2>
+<div class="card">
+  <label class="addph" id="addph">ถ่ายรูป / เลือกรูป<input type="file" id="phIn" accept="image/*" multiple hidden></label>
+  <div class="photos" id="photos"></div>
+</div>
+<div class="saved" id="saved" aria-live="polite"></div>
+
+<h2>บันทึกที่ผ่านมา</h2>
+<ul class="hist" id="hist"></ul>
+
+<h2>สร้างรายงาน PDF ส่งเจ้าของ</h2>
+<div class="card" style="display:grid;gap:12px">
+  <div class="quick">
+    <button class="btn ghost sm" data-q="0">เฉพาะวันที่เลือก</button>
+    <button class="btn ghost sm" data-q="7">7 วันล่าสุด</button>
+    <button class="btn ghost sm" data-q="month">เดือนนี้</button>
+  </div>
+  <div class="range">
+    <div><label class="f" for="r-from">ตั้งแต่</label><input type="date" id="r-from"></div>
+    <div><label class="f" for="r-to">ถึง</label><input type="date" id="r-to"></div>
+  </div>
+  <button class="btn" id="exBtn">สร้าง PDF</button>
+  <p class="hint" id="exMsg" aria-live="polite">รายงานมีสรุปแรงงาน วันฝนตก และบันทึกรายวันพร้อมรูปถ่าย</p>
+</div>
+
+<div class="foot"><span>ข้อมูลและรูปเก็บไว้ในเครื่องนี้เท่านั้น</span><button class="btn ghost sm" id="clearDay">ลบบันทึกของวันที่เลือก</button></div>
+</div>
+
+<div id="lb" hidden role="dialog" aria-label="ดูรูป"><img alt=""><button class="btn">ปิด</button></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const thLong=s=>new Date(s+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'});
+const thWeek=s=>new Date(s+'T00:00:00').toLocaleDateString('th-TH',{weekday:'long'});
+const thShort=s=>new Date(s+'T00:00:00').toLocaleDateString('th-TH',{weekday:'short',day:'numeric',month:'short',year:'2-digit'});
+const TODAY=iso(new Date());
+
+const WEATHER=[['sun','แดดจัด'],['cloud','มีเมฆ'],['lrain','ฝนเล็กน้อย'],['hrain','ฝนหนัก']];
+const WL=Object.fromEntries(WEATHER);
+const isRain=w=>w==='lrain'||w==='hrain';
+
+const P=load('sd-proj',{});
+if(!P.trades)P.trades=['หัวหน้าช่าง','ช่างปูน','ช่างไม้','ช่างเหล็ก','ช่างไฟฟ้า','ช่างประปา','ช่างสี','กรรมกร'];
+const saveP=()=>save('sd-proj',P);
+let E=load('sd-entries',{});
+const saveE=()=>{save('sd-entries',E);flashSaved()};
+let cur=TODAY;
+const entry=()=>E[cur]||(E[cur]={labor:{},p:[]});
+const laborTotal=e=>Object.values(e.labor||{}).reduce((a,b)=>a+(+b||0),0);
+const hasContent=e=>e&&(e.wm||e.wa||laborTotal(e)||e.work||e.mat||e.issue||e.plan||(e.p&&e.p.length)||+e.stop);
+let st;function flashSaved(){$('#saved').textContent='บันทึกแล้ว';clearTimeout(st);st=setTimeout(()=>$('#saved').textContent='',1500)}
+
+/* ----- ข้อมูลโครงการ ----- */
+function projSum(){$('#projSum').textContent=P.name||'ยังไม่ได้กรอก'}
+document.querySelectorAll('[data-p]').forEach(el=>{el.value=P[el.dataset.p]||'';el.oninput=()=>{P[el.dataset.p]=el.value;saveP();projSum()}});
+projSum();if(!P.name)$('#projBox').open=true;
+
+/* ----- รูป (IndexedDB) ----- */
+let dbp=null;const mem=new Map(),urls=new Map();
+function idb(){if(!dbp)dbp=new Promise((res,rej)=>{const r=indexedDB.open('sd-photos',1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});return dbp}
+async function putPhoto(k,b){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('p','readwrite');t.objectStore('p').put(b,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch(e){mem.set(k,b)}}
+async function getPhoto(k){if(mem.has(k))return mem.get(k);try{const d=await idb();return await new Promise((res,rej)=>{const r=d.transaction('p').objectStore('p').get(k);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error)})}catch(e){return null}}
+async function delPhoto(k){mem.delete(k);if(urls.has(k)){URL.revokeObjectURL(urls.get(k));urls.delete(k)}try{const d=await idb();d.transaction('p','readwrite').objectStore('p').delete(k)}catch(e){}}
+async function photoURL(k){if(urls.has(k))return urls.get(k);const b=await getPhoto(k);if(!b)return null;const u=URL.createObjectURL(b);urls.set(k,u);return u}
+function compress(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{const sc=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',0.72)};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('x'))};im.src=u})}
+const toDataURL=b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r(null);fr.readAsDataURL(b)});
+
+async function renderPhotos(){
+  const day=cur,list=(E[cur]&&E[cur].p)||[];
+  const parts=await Promise.all(list.map(async k=>{const u=await photoURL(k);return u?`<div class="ph"><button class="th" data-k="${k}" aria-label="ดูรูปขยาย"><img src="${u}" alt=""></button><button class="x" data-x="${k}" aria-label="ลบรูป">×</button></div>`:''}));
+  if(day!==cur)return;
+  const box=$('#photos');box.innerHTML=parts.join('');
+  box.querySelectorAll('.th').forEach(b=>b.onclick=()=>{$('#lb img').src=urls.get(b.dataset.k);$('#lb').hidden=false;$('#lb .btn').focus()});
+  box.querySelectorAll('.x').forEach(b=>b.onclick=async()=>{if(!confirm('ลบรูปนี้?'))return;const e=entry();e.p=e.p.filter(k=>k!==b.dataset.x);saveE();await delPhoto(b.dataset.x);renderPhotos();renderHist()});
+}
+$('#phIn').onchange=async()=>{
+  const fi=$('#phIn'),files=[...fi.files];fi.value='';if(!files.length)return;
+  const lab=$('#addph');lab.firstChild.textContent='กำลังบันทึกรูป…';
+  const day=cur,e=entry();e.p=e.p||[];
+  for(let i=0;i<files.length;i++){try{const b=await compress(files[i]);const k=day+'_'+Date.now()+'_'+i;await putPhoto(k,b);e.p.push(k)}catch(err){alert('เปิดรูป '+files[i].name+' ไม่ได้ ลองใช้ไฟล์ JPG หรือ PNG')}}
+  saveE();lab.firstChild.textContent='ถ่ายรูป / เลือกรูป';renderPhotos();renderHist();
+};
+$('#lb').onclick=ev=>{if(ev.target.tagName!=='IMG')$('#lb').hidden=true};
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape')$('#lb').hidden=true});
+
+/* ----- สภาพอากาศ ----- */
+document.querySelectorAll('.chips[data-wk]').forEach(box=>{
+  box.innerHTML=WEATHER.map(([k,l])=>`<button data-w="${k}" aria-pressed="false">${l}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const e=entry(),wk=box.dataset.wk;e[wk]=e[wk]===b.dataset.w?'':b.dataset.w;paintWeather();saveE();renderHist()});
+});
+function paintWeather(){const e=E[cur]||{};document.querySelectorAll('.chips[data-wk]').forEach(box=>box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',e[box.dataset.wk]===b.dataset.w)))}
+$('#stop').oninput=ev=>{entry().stop=ev.target.value;saveE()};
+
+/* ----- แรงงาน ----- */
+function renderLabor(){
+  const e=E[cur]||{labor:{}};
+  $('#labor').innerHTML=P.trades.map((t,i)=>`<div class="lrow"><span>${esc(t)}</span><div class="step">
+    <button data-d="-1" data-t="${i}" aria-label="ลด ${esc(t)}">−</button>
+    <input inputmode="numeric" data-t="${i}" aria-label="จำนวน ${esc(t)}" value="${(e.labor&&e.labor[t])||''}" placeholder="0">
+    <button data-d="1" data-t="${i}" aria-label="เพิ่ม ${esc(t)}">+</button></div></div>`).join('');
+  $('#labor').querySelectorAll('button').forEach(b=>b.onclick=()=>{const t=P.trades[+b.dataset.t],en=entry();en.labor=en.labor||{};const v=Math.max(0,(+en.labor[t]||0)+(+b.dataset.d));if(v)en.labor[t]=v;else delete en.labor[t];b.parentNode.querySelector('input').value=v||'';updTotal();saveE();renderHist()});
+  $('#labor').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{const t=P.trades[+inp.dataset.t],en=entry();en.labor=en.labor||{};const v=Math.max(0,parseInt(inp.value,10)||0);if(v)en.labor[t]=v;else delete en.labor[t];updTotal();saveE();renderHist()});
+  updTotal();
+}
+function updTotal(){$('#ltot').textContent=laborTotal(E[cur]||{})}
+$('#addTrade').onclick=()=>{const v=$('#newTrade').value.trim();if(!v||P.trades.includes(v))return;P.trades.push(v);saveP();$('#newTrade').value='';renderLabor()};
+$('#newTrade').onkeydown=ev=>{if(ev.key==='Enter')$('#addTrade').click()};
+$('#copyPrev').onclick=()=>{
+  const prev=Object.keys(E).filter(d=>d<cur&&laborTotal(E[d])).sort().pop();
+  if(!prev){alert('ยังไม่มีวันก่อนหน้าที่บันทึกแรงงานไว้');return}
+  const e=entry();e.labor={...E[prev].labor};Object.keys(e.labor).forEach(t=>{if(!P.trades.includes(t))P.trades.push(t)});saveP();saveE();renderLabor();renderHist();
+};
+
+/* ----- ช่องข้อความ ----- */
+document.querySelectorAll('[data-f]').forEach(el=>el.oninput=()=>{entry()[el.dataset.f]=el.value;saveE();renderHist()});
+
+/* ----- เปลี่ยนวัน ----- */
+function cleanup(){Object.keys(E).forEach(d=>{if(!hasContent(E[d]))delete E[d]});save('sd-entries',E)}
+function setDay(d){
+  cleanup();cur=d;
+  $('#dBig').innerHTML=esc(thLong(d))+(d===TODAY?'<span class="today">วันนี้</span>':'');
+  $('#dSmall').textContent=thWeek(d)+' · แตะเพื่อเลือกวัน';
+  $('#dPick').value=d;
+  const e=E[d]||{};
+  $('#stop').value=e.stop||'';
+  document.querySelectorAll('[data-f]').forEach(el=>el.value=e[el.dataset.f]||'');
+  paintWeather();renderLabor();renderPhotos();renderHist();
+}
+$('#prev').onclick=()=>setDay(addDays(cur,-1));
+$('#next').onclick=()=>setDay(addDays(cur,1));
+$('#dPick').onchange=ev=>{if(ev.target.value)setDay(ev.target.value)};
+
+function renderHist(){
+  const days=Object.keys(E).filter(d=>hasContent(E[d])).sort().reverse().slice(0,14);
+  $('#hist').innerHTML=days.length?days.map(d=>{const e=E[d];const w=[e.wm,e.wa].filter(Boolean).map(x=>WL[x]);const uw=[...new Set(w)].join(' → ');
+    return `<li><button data-d="${d}" ${d===cur?'aria-current="date"':''}><span class="d">${esc(thShort(d))}</span><span class="n">${laborTotal(e)} คน${e.p&&e.p.length?' · '+e.p.length+' รูป':''}</span><span class="m">${esc([uw,(e.work||'').split('\n')[0]].filter(Boolean).join(' · ')||'—')}</span></button></li>`}).join('')
+    :'<li class="hint">ยังไม่มีบันทึก เริ่มกรอกของวันนี้ได้เลย</li>';
+  $('#hist').querySelectorAll('button').forEach(b=>b.onclick=()=>{setDay(b.dataset.d);window.scrollTo({top:0})});
+}
+$('#clearDay').onclick=async()=>{if(!E[cur]||!hasContent(E[cur])){return}if(!confirm('ลบบันทึกและรูปของ '+thLong(cur)+'?'))return;for(const k of (E[cur].p||[]))await delPhoto(k);delete E[cur];save('sd-entries',E);setDay(cur)};
+
+/* ----- ช่วงรายงาน ----- */
+function setRange(q){
+  if(q==='0'){$('#r-from').value=cur;$('#r-to').value=cur}
+  else if(q==='7'){$('#r-from').value=addDays(cur,-6);$('#r-to').value=cur}
+  else{$('#r-from').value=cur.slice(0,8)+'01';$('#r-to').value=cur}
+}
+document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>setRange(b.dataset.q));
+setRange('7');
+
+/* ----- PDF ----- */
+const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
+async function buildReport(from,to){
+  const days=Object.keys(E).filter(d=>d>=from&&d<=to&&hasContent(E[d])).sort();
+  if(!days.length)return null;
+  let man=0,rainDays=0,stopH=0;const byTrade={};
+  days.forEach(d=>{const e=E[d];man+=laborTotal(e);if(isRain(e.wm)||isRain(e.wa))rainDays++;stopH+=parseFloat(e.stop)||0;Object.entries(e.labor||{}).forEach(([t,n])=>byTrade[t]=(byTrade[t]||0)+(+n||0))});
+  const tradeRows=Object.entries(byTrade).filter(([t,n])=>n).map(([t,n])=>`<tr><td>${esc(t)}</td><td class="r">${n}</td><td class="r">${(n/days.length).toFixed(1)}</td></tr>`).join('');
+  let blocks='';
+  for(const d of days){
+    const e=E[d];const w=[e.wm?'เช้า '+WL[e.wm]:'',e.wa?'บ่าย '+WL[e.wa]:''].filter(Boolean).join(' · ')||'-';
+    const lab=Object.entries(e.labor||{}).filter(([t,n])=>n).map(([t,n])=>`${esc(t)} ${n}`).join(', ');
+    let imgs='';for(const k of (e.p||[])){const b=await getPhoto(k);const u=b&&await toDataURL(b);if(u)imgs+=`<img src="${u}">`}
+    const sec=(t,v)=>v?`<div class="sec"><b>${t}</b><div>${esc(v).replace(/\n/g,'<br>')}</div></div>`:'';
+    blocks+=`<div class="day"><div class="dh"><span>${esc(thWeek(d))} ${esc(thLong(d))}</span><span>${laborTotal(e)} คน</span></div>
+      <div class="meta">อากาศ: ${esc(w)}${+e.stop?` · หยุดงานเพราะฝน ${esc(e.stop)} ชม.`:''}${lab?`<br>แรงงาน: ${lab}`:''}</div>
+      ${sec('งานที่ทำ',e.work)}${sec('วัสดุเข้าหน้างาน',e.mat)}${e.issue?`<div class="sec iss"><b>ปัญหา / อุปสรรค</b><div>${esc(e.issue).replace(/\n/g,'<br>')}</div></div>`:''}${sec('แผนงานวันถัดไป',e.plan)}
+      ${imgs?`<div class="ims">${imgs}</div>`:''}</div>`;
+  }
+  const period=from===to?thLong(from):`${thLong(from)} – ${thLong(to)}`;
+  const el=document.createElement('div');
+  el.innerHTML=`<div class="rpt"><style>
+  .rpt{font-family:"IBM Plex Sans Thai",Tahoma,sans-serif;color:#1E2A2D;background:#fff;width:190mm;font-size:10.5pt;line-height:1.55}
+  .rpt h1{font-size:17pt;margin:0;color:#0F6E6A}.rpt .sub{color:#5F6D70;margin:0 0 10px}
+  .rpt table{border-collapse:collapse;width:100%;margin-bottom:10px}.rpt td,.rpt th{padding:4px 8px;border:1px solid #CDD3D2;text-align:left;vertical-align:top}
+  .rpt .info td:first-child{width:28%;background:#F3F5F4;font-weight:600}.rpt th{background:#F3F5F4}.rpt .r{text-align:right}
+  .rpt .kpi{display:flex;gap:3mm;margin:4px 0 12px}.rpt .kpi div{flex:1;border:1px solid #CDD3D2;border-radius:4px;padding:6px;text-align:center}
+  .rpt .kpi b{display:block;font-size:15pt;color:#0F6E6A;line-height:1.2}.rpt .kpi span{font-size:9pt;color:#5F6D70}
+  .rpt h2{font-size:12pt;margin:12px 0 6px}
+  .rpt .day{border-top:2px solid #1E2A2D;padding:6px 0 10px;margin-top:8px}
+  .rpt .dh{display:flex;justify-content:space-between;font-weight:700;font-size:11.5pt}
+  .rpt .meta{color:#5F6D70;font-size:9.5pt;margin-bottom:4px}
+  .rpt .sec{margin-top:4px}.rpt .sec b{font-weight:600;color:#0F6E6A}.rpt .iss b{color:#B0402C}
+  .rpt .ims{display:flex;flex-wrap:wrap;gap:2mm;margin-top:6px}.rpt .ims img{width:61mm;border-radius:3px;border:1px solid #CDD3D2}
+  .rpt .sig{display:flex;gap:16mm;margin-top:16mm}.rpt .sig div{flex:1;text-align:center;color:#5F6D70}.rpt .sig b{display:block;border-top:1px solid #1E2A2D;margin-bottom:4px;padding-top:4px;color:#1E2A2D;font-weight:600}
+  .rpt .ft{margin-top:10mm;font-size:8.5pt;color:#9AA8A9;text-align:center}</style>
+  <h1>รายงานความคืบหน้างานก่อสร้าง</h1><p class="sub">${esc(period)}</p>
+  <table class="info"><tr><td>โครงการ</td><td>${esc(P.name||'-')}</td></tr><tr><td>เจ้าของบ้าน</td><td>${esc(P.owner||'-')}</td></tr><tr><td>ผู้รับเหมา</td><td>${esc(P.con||'-')}</td></tr><tr><td>ผู้บันทึก</td><td>${esc(P.rec||'-')}</td></tr></table>
+  <div class="kpi"><div><b>${days.length}</b><span>วันที่มีบันทึก</span></div><div><b>${man}</b><span>แรงงานรวม (คน-วัน)</span></div><div><b>${(man/days.length).toFixed(1)}</b><span>เฉลี่ยคนต่อวัน</span></div><div><b>${rainDays}</b><span>วันที่ฝนตก${stopH?` · หยุด ${stopH} ชม.`:''}</span></div></div>
+  ${tradeRows&&days.length>1?`<h2>สรุปแรงงานตามประเภทช่าง</h2><table><tr><th>ประเภท</th><th class="r">คน-วัน</th><th class="r">เฉลี่ย/วัน</th></tr>${tradeRows}</table>`:''}
+  <h2>บันทึกรายวัน</h2>${blocks}
+  <div class="sig"><div><b>ผู้บันทึก</b>วันที่ ............................</div><div><b>เจ้าของบ้าน / ผู้แทน</b>วันที่ ............................</div></div>
+  <div class="ft">จัดทำด้วยแอปเช็คก่อนสร้าง · arstinla.com</div></div>`;
+  return el.firstElementChild;
+}
+$('#exBtn').onclick=async()=>{
+  const btn=$('#exBtn'),msg=$('#exMsg');let from=$('#r-from').value,to=$('#r-to').value;
+  if(!from||!to){msg.textContent='เลือกวันเริ่มและวันสิ้นสุดก่อน';return}
+  if(from>to)[from,to]=[to,from];
+  if(!window.html2pdf){msg.textContent='โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจการเชื่อมต่ออินเทอร์เน็ตแล้วเปิดหน้านี้ใหม่';return}
+  btn.disabled=true;msg.textContent='กำลังสร้าง PDF…';
+  try{
+    const el=await buildReport(from,to);
+    if(!el){msg.textContent='ช่วงวันที่เลือกยังไม่มีบันทึก';return}
+    const nm=(P.name||'หน้างาน').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
+    const filename=`รายงานหน้างาน-${nm}-${from===to?from:from+'_'+to}.pdf`;
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.85},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.dh','.meta','.sec','.ims img','.kpi','.sig','tr']}}).from(el).outputPdf('blob');
+    const dl=await dlP;
+    if(dl){
+      try{await dl.save({filename,data:blob});msg.textContent='บันทึก PDF แล้ว ส่งให้เจ้าของบ้านทางไลน์หรืออีเมลได้เลย'}
+      catch(e){msg.textContent=e&&e.code==='declined'?'ยกเลิกการบันทึก PDF':'บันทึก PDF ไม่สำเร็จ ลองอีกครั้ง'}
+    }else{
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+      msg.textContent='ดาวน์โหลด PDF แล้ว';
+    }
+  }catch(e){msg.textContent='สร้าง PDF ไม่สำเร็จ ลองเลือกช่วงวันที่สั้นลง'}
+  finally{btn.disabled=false}
+};
+
+setDay(TODAY);
+})();
+</script>
+<script src="../shared/pwa-install.js"></script>
+</body>
+</html>

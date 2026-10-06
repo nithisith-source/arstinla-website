@@ -2348,9 +2348,160 @@ background-size: cover;
   }
 
 
+  .app-downloads {
+    grid-column: 1 / -1;
+    margin-top: 30px;
+    padding-top: 42px;
+    border-top: 1px solid var(--line);
+  }
+
+
+  .app-downloads-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, .75fr);
+    gap: clamp(28px, 6vw, 90px);
+    align-items: end;
+    margin-bottom: 24px;
+  }
+
+
+  .app-downloads-header h4 {
+    margin-top: 13px;
+    font-family: var(--font-en);
+    font-size: clamp(1.65rem, 2.2vw, 2.85rem);
+    font-weight: 300;
+    line-height: 1.18;
+    letter-spacing: -.035em;
+  }
+
+
+  .app-downloads-header p {
+    max-width: 510px;
+    color: #5c5d57;
+    line-height: 1.8;
+  }
+
+
+  .app-download-list {
+    display: grid;
+    gap: 12px;
+  }
+
+
+  .app-download-row {
+    min-height: 120px;
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(20px, 3vw, 36px);
+    padding: 22px clamp(22px, 3vw, 34px);
+    background: var(--dark-soft);
+    color: white;
+    border: 1px solid rgba(255,255,255,.1);
+    transition:
+      background .3s var(--ease),
+      transform .3s var(--ease),
+      border-color .3s var(--ease);
+  }
+
+
+  .app-download-row:hover {
+    background: var(--dark);
+    border-color: rgba(196, 91, 47, .55);
+    transform: translateX(4px);
+  }
+
+
+  .app-download-icon {
+    width: 72px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    color: var(--orange);
+    background: rgba(196, 91, 47, .1);
+    border: 1px solid rgba(196, 91, 47, .42);
+  }
+
+
+  .app-download-icon svg {
+    width: 42px;
+    height: 42px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+
+  .app-download-copy h5 {
+    font-family: var(--font-en);
+    font-size: clamp(1.2rem, 1.7vw, 1.65rem);
+    font-weight: 400;
+    letter-spacing: -.025em;
+  }
+
+
+  .app-download-copy p {
+    margin-top: 5px;
+    color: #b9bab4;
+    line-height: 1.55;
+  }
+
+
+  .app-download-meta {
+    display: block;
+    margin-top: 7px;
+    font-family: var(--font-en);
+    color: #8f908a;
+    font-size: .63rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+
+
+  .app-download-action {
+    min-width: 132px;
+    padding: 15px 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--font-en);
+    font-size: .7rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--orange);
+    border: 1px solid currentColor;
+    transition:
+      color .3s var(--ease),
+      background .3s var(--ease);
+  }
+
+
+  .app-download-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+
+  .app-download-action:hover,
+  .app-download-action:focus-visible,
+  .app-download-action--open {
+    color: white;
+    background: var(--orange);
+  }
+
+
+  .app-download-action--open:hover,
+  .app-download-action--open:focus-visible {
+    background: #a94722;
+  }
+
+
   @media (min-width: 761px) {
 
-    .knowledge-tool--resource:last-child {
+    .knowledge-tool--wide {
       grid-column: 1 / -1;
     }
   }
@@ -2389,6 +2540,41 @@ background-size: cover;
       grid-template-columns: minmax(0, 1fr) 96px;
       column-gap: 14px;
       padding: 26px;
+    }
+
+    .app-downloads {
+      margin-top: 18px;
+      padding-top: 34px;
+    }
+
+    .app-downloads-header {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .app-download-row {
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .app-download-icon {
+      width: 58px;
+    }
+
+    .app-download-icon svg {
+      width: 34px;
+      height: 34px;
+    }
+
+    .app-download-actions {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .app-download-action {
+      min-width: 0;
+      flex: 1;
     }
   }
 
@@ -5404,7 +5590,7 @@ background-repeat:
 
     <a
       href="/stories/jamjuree-village/#library"
-      class="knowledge-tool knowledge-tool--resource reveal"
+      class="knowledge-tool knowledge-tool--resource knowledge-tool--wide reveal"
       aria-label="Open ARSTINLA Download Library"
     >
 
@@ -5437,6 +5623,99 @@ background-repeat:
       </span>
 
     </a>
+
+    <div class="app-downloads reveal" aria-labelledby="app-downloads-title">
+
+      <div class="app-downloads-header">
+        <div>
+          <div class="label tool-group-kicker">App Downloads</div>
+          <h4 id="app-downloads-title">Downloadable Apps</h4>
+        </div>
+        <p>
+          เลือก Open App เพื่อใช้งานและติดตั้งลงอุปกรณ์
+          หรือ Download ZIP เพื่อเก็บไฟล์สำหรับใช้งานและพัฒนาต่อ
+        </p>
+      </div>
+
+      <div class="app-download-list">
+
+        <article class="app-download-row">
+          <span class="app-download-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M8 10h11v28H8zM29 10h11v28H29z"/>
+              <path d="M11 17h5M11 23h5M11 29h5M32 17h5M32 23h5M32 29h5"/>
+              <path d="M20 24h8M24 20v8"/>
+            </svg>
+          </span>
+          <span class="app-download-copy">
+            <h5>Quote Compare</h5>
+            <p>เปรียบเทียบใบเสนอราคาผู้รับเหมา รายการงาน และยอดรวมในหน้าจอเดียว</p>
+            <span class="app-download-meta">ZIP · Standalone HTML App</span>
+          </span>
+          <span class="app-download-actions">
+            <a class="app-download-action app-download-action--open" href="/apps/quote-compare/">Open App →</a>
+            <a class="app-download-action" href="/downloads/apps/arstinla-quote-compare.zip" download="arstinla-quote-compare.zip">Download .ZIP ↓</a>
+          </span>
+        </article>
+
+        <article class="app-download-row">
+          <span class="app-download-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M12 7h24v34H12zM18 7V4h12v3"/>
+              <path d="m17 17 3 3 6-7M17 27l3 3 6-7M29 17h4M29 27h4M17 36h16"/>
+            </svg>
+          </span>
+          <span class="app-download-copy">
+            <h5>Stage Checklist</h5>
+            <p>ตรวจรับงานแต่ละงวด บันทึกผล รูปถ่าย และสรุปรายงานสำหรับหน้างาน</p>
+            <span class="app-download-meta">ZIP · Standalone HTML App</span>
+          </span>
+          <span class="app-download-actions">
+            <a class="app-download-action app-download-action--open" href="/apps/stage-checklist/">Open App →</a>
+            <a class="app-download-action" href="/downloads/apps/arstinla-stage-checklist.zip" download="arstinla-stage-checklist.zip">Download .ZIP ↓</a>
+          </span>
+        </article>
+
+        <article class="app-download-row">
+          <span class="app-download-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M10 8h28v32H10zM16 5v7M32 5v7M10 16h28"/>
+              <path d="M16 23h16M16 29h16M16 35h10"/>
+            </svg>
+          </span>
+          <span class="app-download-copy">
+            <h5>Site Diary</h5>
+            <p>บันทึกงานประจำวัน กำลังคน สภาพอากาศ ความคืบหน้า และภาพถ่ายโครงการ</p>
+            <span class="app-download-meta">ZIP · Standalone HTML App</span>
+          </span>
+          <span class="app-download-actions">
+            <a class="app-download-action app-download-action--open" href="/apps/site-diary/">Open App →</a>
+            <a class="app-download-action" href="/downloads/apps/arstinla-site-diary.zip" download="arstinla-site-diary.zip">Download .ZIP ↓</a>
+          </span>
+        </article>
+
+        <article class="app-download-row">
+          <span class="app-download-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path d="M8 8h32v32H8zM14 32l7-8 6 4 8-11"/>
+              <path d="M14 14v5M21 11v8M28 21v8M35 13v8"/>
+              <path d="M12 36h24"/>
+            </svg>
+          </span>
+          <span class="app-download-copy">
+            <h5>Mai Tor Mai — TFEX Trading Journal</h5>
+            <p>จดบันทึก สรุปผล และทบทวนวินัยการเทรด TFEX พร้อมแพ็กเกจสำหรับพัฒนาเป็น PWA และ Android</p>
+            <span class="app-download-meta">ZIP · PWA / Source Package · Setup Required</span>
+          </span>
+          <span class="app-download-actions">
+            <a class="app-download-action app-download-action--open" href="/apps/mai-tor-mai/">Open App →</a>
+            <a class="app-download-action" href="/downloads/apps/arstinla-mai-tor-mai-tfex-journal.zip" download="arstinla-mai-tor-mai-tfex-journal.zip">Download .ZIP ↓</a>
+          </span>
+        </article>
+
+      </div>
+
+    </div>
 
   </div>
 
