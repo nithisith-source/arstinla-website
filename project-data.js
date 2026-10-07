@@ -3954,8 +3954,8 @@ window.ARSTINLA_PROJECT_CATEGORY_ORDER = {
   "residential": [
     "39",
     "02",
-    "01",
     "03",
+    "01",
     "04",
     "29",
     "32",
