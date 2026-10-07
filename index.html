@@ -6525,6 +6525,25 @@ data-contact-link
     window.ARSTINLA_PROJECT_CATEGORY_ORDER || {};
 
 
+  const homeProjectCategories = [
+    { id: "residential", label: "Residential" },
+    { id: "renovation", label: "Renovate" },
+    { id: "tiny-house", label: "Tiny House" },
+    { id: "commercial", label: "Commercial" },
+    { id: "public", label: "Public & Institutional" },
+    { id: "urban", label: "Urban" },
+    { id: "interior", label: "Interior" },
+    { id: "consult", label: "Consult" }
+  ];
+
+
+  const homeProjectCategoryRank = new Map(
+    homeProjectCategories.map(
+      (category, index) => [category.id, index]
+    )
+  );
+
+
   function compareHomeProjectOrder(
     left,
     right
@@ -6537,36 +6556,52 @@ data-contact-link
       right?.filterCategory || "residential"
     );
 
-    if (leftCategory === rightCategory) {
-      const categoryOrder = Array.isArray(
-        homeProjectCategoryOrder[leftCategory]
-      )
-        ? homeProjectCategoryOrder[leftCategory]
-        : [];
+    if (leftCategory !== rightCategory) {
+      const leftRank =
+        homeProjectCategoryRank.get(leftCategory) ??
+        Number.MAX_SAFE_INTEGER;
 
-      const leftIndex = categoryOrder.indexOf(
-        String(left?.number || "")
+      const rightRank =
+        homeProjectCategoryRank.get(rightCategory) ??
+        Number.MAX_SAFE_INTEGER;
+
+      if (leftRank !== rightRank) {
+        return leftRank - rightRank;
+      }
+
+      return leftCategory.localeCompare(
+        rightCategory
       );
+    }
 
-      const rightIndex = categoryOrder.indexOf(
-        String(right?.number || "")
-      );
+    const categoryOrder = Array.isArray(
+      homeProjectCategoryOrder[leftCategory]
+    )
+      ? homeProjectCategoryOrder[leftCategory]
+      : [];
 
-      if (
-        leftIndex !== -1 ||
-        rightIndex !== -1
-      ) {
-        if (leftIndex === -1) {
-          return 1;
-        }
+    const leftIndex = categoryOrder.indexOf(
+      String(left?.number || "")
+    );
 
-        if (rightIndex === -1) {
-          return -1;
-        }
+    const rightIndex = categoryOrder.indexOf(
+      String(right?.number || "")
+    );
 
-        if (leftIndex !== rightIndex) {
-          return leftIndex - rightIndex;
-        }
+    if (
+      leftIndex !== -1 ||
+      rightIndex !== -1
+    ) {
+      if (leftIndex === -1) {
+        return 1;
+      }
+
+      if (rightIndex === -1) {
+        return -1;
+      }
+
+      if (leftIndex !== rightIndex) {
+        return leftIndex - rightIndex;
       }
     }
 
@@ -6591,18 +6626,6 @@ data-contact-link
     document.querySelector(
       ".projects-grid"
     );
-
-
-  const homeProjectCategories = [
-    { id: "residential", label: "Residential" },
-    { id: "renovation", label: "Renovate" },
-    { id: "tiny-house", label: "Tiny House" },
-    { id: "commercial", label: "Commercial" },
-    { id: "public", label: "Public & Institutional" },
-    { id: "urban", label: "Urban" },
-    { id: "interior", label: "Interior" },
-    { id: "consult", label: "Consult" }
-  ];
 
 
   const indexedHomeProjects =

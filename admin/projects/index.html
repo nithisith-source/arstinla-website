@@ -1431,6 +1431,12 @@
     const projectCategoryOrder =
       window.ARSTINLA_PROJECT_CATEGORY_ORDER || {};
 
+    const projectCategoryRank = new Map(
+      projectCategories.map(
+        (category, index) => [category.id, index]
+      )
+    );
+
     window.ARSTINLA_PROJECT_CATEGORY_ORDER =
       projectCategoryOrder;
 
@@ -1452,36 +1458,52 @@
         right?.filterCategory || "residential"
       );
 
-      if (leftCategory === rightCategory) {
-        const categoryOrder = Array.isArray(
-          projectCategoryOrder[leftCategory]
-        )
-          ? projectCategoryOrder[leftCategory]
-          : [];
+      if (leftCategory !== rightCategory) {
+        const leftRank =
+          projectCategoryRank.get(leftCategory) ??
+          Number.MAX_SAFE_INTEGER;
 
-        const leftIndex = categoryOrder.indexOf(
-          String(left?.number || "")
+        const rightRank =
+          projectCategoryRank.get(rightCategory) ??
+          Number.MAX_SAFE_INTEGER;
+
+        if (leftRank !== rightRank) {
+          return leftRank - rightRank;
+        }
+
+        return leftCategory.localeCompare(
+          rightCategory
         );
+      }
 
-        const rightIndex = categoryOrder.indexOf(
-          String(right?.number || "")
-        );
+      const categoryOrder = Array.isArray(
+        projectCategoryOrder[leftCategory]
+      )
+        ? projectCategoryOrder[leftCategory]
+        : [];
 
-        if (
-          leftIndex !== -1 ||
-          rightIndex !== -1
-        ) {
-          if (leftIndex === -1) {
-            return 1;
-          }
+      const leftIndex = categoryOrder.indexOf(
+        String(left?.number || "")
+      );
 
-          if (rightIndex === -1) {
-            return -1;
-          }
+      const rightIndex = categoryOrder.indexOf(
+        String(right?.number || "")
+      );
 
-          if (leftIndex !== rightIndex) {
-            return leftIndex - rightIndex;
-          }
+      if (
+        leftIndex !== -1 ||
+        rightIndex !== -1
+      ) {
+        if (leftIndex === -1) {
+          return 1;
+        }
+
+        if (rightIndex === -1) {
+          return -1;
+        }
+
+        if (leftIndex !== rightIndex) {
+          return leftIndex - rightIndex;
         }
       }
 
