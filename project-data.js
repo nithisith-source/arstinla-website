@@ -3953,8 +3953,8 @@ window.ARSTINLA_getAllProjects = function() {
 window.ARSTINLA_PROJECT_CATEGORY_ORDER = {
   "residential": [
     "39",
-    "01",
     "02",
+    "01",
     "03",
     "04",
     "29",
