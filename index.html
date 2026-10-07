@@ -2294,6 +2294,127 @@ background-size: cover;
   }
 
 
+  .massing-tool-visual {
+    overflow: visible;
+    filter: drop-shadow(0 18px 22px rgba(0, 0, 0, .22));
+  }
+
+
+  .massing-tool-visual .massing-grid,
+  .massing-tool-visual .massing-axis {
+    fill: none;
+    stroke: rgba(255, 255, 255, .11);
+    stroke-width: .8;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .massing-tool-visual .massing-axis {
+    stroke: rgba(255, 255, 255, .22);
+    stroke-dasharray: 2.5 3.5;
+  }
+
+
+  .massing-tool-visual .massing-shadow {
+    fill: rgba(0, 0, 0, .28);
+  }
+
+
+  .massing-tool-visual .massing-face {
+    stroke: rgba(255, 255, 255, .4);
+    stroke-width: 1;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .massing-tool-visual .massing-layer--base .massing-face {
+    fill: rgba(255, 255, 255, .1);
+  }
+
+
+  .massing-tool-visual .massing-layer--middle .massing-face {
+    fill: rgba(255, 255, 255, .18);
+  }
+
+
+  .massing-tool-visual .massing-layer--top .massing-face {
+    fill: url(#massing-accent-gradient);
+    stroke: rgba(216, 116, 72, .9);
+  }
+
+
+  .massing-tool-visual .massing-cut {
+    fill: var(--black);
+    stroke: rgba(255, 255, 255, .28);
+    stroke-width: .8;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .massing-tool-visual .massing-node {
+    fill: var(--black);
+    stroke: var(--orange);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .massing-tool-visual .massing-orbit {
+    fill: none;
+    stroke: rgba(196, 91, 47, .38);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .massing-tool-visual .massing-sun {
+    fill: var(--orange);
+    filter: drop-shadow(0 0 9px rgba(196, 91, 47, .65));
+  }
+
+
+  .massing-tool-visual .massing-sun-ray {
+    stroke: rgba(196, 91, 47, .72);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .massing-tool-visual .massing-sun-group {
+    transform-origin: 60px 61px;
+    animation: massing-sun-orbit 18s linear infinite;
+  }
+
+
+  .massing-tool-visual .massing-layer--top {
+    transform-origin: center;
+    animation: massing-layer-float 4.8s ease-in-out infinite alternate;
+  }
+
+
+  .knowledge-tool:hover .massing-tool-visual .massing-layer--middle {
+    transform: translateY(2px);
+  }
+
+
+  .knowledge-tool:hover .massing-tool-visual .massing-layer--top {
+    animation-play-state: paused;
+    transform: translateY(-4px);
+  }
+
+
+  @keyframes massing-sun-orbit {
+    to { transform: rotate(360deg); }
+  }
+
+
+  @keyframes massing-layer-float {
+    to { transform: translateY(-2.5px); }
+  }
+
+
   .knowledge-tool .label {
     color: var(--orange);
   }
@@ -3942,7 +4063,9 @@ background-repeat:
 
 @media (prefers-reduced-motion: reduce) {
   .sound-mark span,
-  .live-chat-dot::after {
+  .live-chat-dot::after,
+  .massing-tool-visual .massing-sun-group,
+  .massing-tool-visual .massing-layer--top {
     animation: none;
   }
 }
@@ -5307,6 +5430,82 @@ background-repeat:
     </a>
 
     <a
+      href="/tools/massing-studio/"
+      class="knowledge-tool knowledge-tool--design reveal"
+      aria-label="Open ARSTINLA Massing Studio"
+    >
+
+      <div class="knowledge-tool-copy">
+
+        <div class="label">
+          Massing Studio
+        </div>
+
+        <h3>
+          Build mass before form.
+        </h3>
+
+        <p>
+          ขึ้นรูปมวลอาคารหลายชั้น กำหนดความสูงและหลังคา
+          พร้อมดูเงาแดดแบบ Isometric ก่อนพัฒนาแบบจริง
+        </p>
+
+      </div>
+
+      <svg class="knowledge-tool-visual massing-tool-visual" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="massing-accent-gradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#d47a51" stop-opacity=".9"/>
+            <stop offset="1" stop-color="#9d3f1f" stop-opacity=".7"/>
+          </linearGradient>
+        </defs>
+
+        <path class="massing-orbit" d="M14 55A47 47 0 1 1 105 71"/>
+        <g class="massing-sun-group">
+          <line class="massing-sun-ray" x1="60" y1="8" x2="60" y2="16"/>
+          <line class="massing-sun-ray" x1="51" y1="11" x2="55" y2="18"/>
+          <line class="massing-sun-ray" x1="69" y1="11" x2="65" y2="18"/>
+          <circle class="massing-sun" cx="60" cy="21" r="5"/>
+        </g>
+
+        <g class="massing-grid">
+          <path d="M9 89L58 113L111 86L62 62Z"/>
+          <path d="M21 83L69 107M34 76L82 101M47 70L95 95M22 95L75 68M38 103L91 76M55 111L108 84"/>
+        </g>
+
+        <path class="massing-shadow" d="M25 88L66 108L101 90L59 71Z"/>
+        <path class="massing-axis" d="M30 36V91M61 19V106M91 39V91"/>
+
+        <g class="massing-layer massing-layer--base">
+          <path class="massing-face" d="M24 75L57 91L96 71L63 55Z"/>
+          <path class="massing-face" d="M24 75V87L57 103V91L96 71V83L57 103"/>
+          <path class="massing-cut" d="M49 79L61 85L75 78L63 72Z"/>
+        </g>
+
+        <g class="massing-layer massing-layer--middle">
+          <path class="massing-face" d="M31 55L59 68L89 53L61 40Z"/>
+          <path class="massing-face" d="M31 55V66L59 80V68L89 53V64L59 80"/>
+          <path class="massing-cut" d="M39 54L50 59L59 54L48 49Z"/>
+        </g>
+
+        <g class="massing-layer massing-layer--top">
+          <path class="massing-face" d="M43 34L61 24L81 34L62 44Z"/>
+          <path class="massing-face" d="M43 34V43L62 53V44L81 34V43L62 53"/>
+          <path class="massing-cut" d="M55 34L62 30L69 34L62 38Z"/>
+        </g>
+
+        <circle class="massing-node" cx="30" cy="91" r="2.4"/>
+        <circle class="massing-node" cx="61" cy="106" r="2.4"/>
+        <circle class="massing-node" cx="91" cy="91" r="2.4"/>
+      </svg>
+
+      <span class="knowledge-tool-cta">
+        Open Massing Studio →
+      </span>
+
+    </a>
+
+    <a
       href="/tools/image/"
       class="knowledge-tool knowledge-tool--design reveal"
       aria-label="Open ARSTINLA Image Tool"
@@ -6159,6 +6358,10 @@ data-contact-link
 
   <a href="/tools/home-compass/">
     HOME COMPASS
+  </a>
+
+  <a href="/tools/massing-studio/">
+    MASSING STUDIO
   </a>
 
   <a href="/tools/schematic-planner/">

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Massing Studio — ARSTINLA</title>
+<meta name="description" content="ARSTINLA Massing Studio — วางห้องหลายชั้น กำหนดความสูงผนังและหลังคา ดูมวลอาคารแบบ Isometric พร้อมเงาแดด">
+<meta name="theme-color" content="#171816">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,300..700&family=Instrument+Serif:ital@0;1&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: ARSTINLA tool shell — dark control rail on the left, paper drawing sheet on the right (same system as Schematic Planner) */
+:root{--ink:#171816;--paper:#f2efe8;--sheet:#f7f4ed;--text:#f4f1ea;--muted:#888980;--line:#373833;--pale:#c9c4b9;--sand:#c47a55;--field:#20211e;--field-line:#484943;
+  --font-en:"Instrument Sans",system-ui,sans-serif;--font-serif:"Instrument Serif",Georgia,serif;--font-th:"Noto Sans Thai","Leelawadee UI",Tahoma,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ink);color:var(--text);font-family:var(--font-th);font-weight:300}
+button,input,select{font:inherit}button{cursor:pointer;color:inherit}a{color:inherit;text-decoration:none}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--sand);outline-offset:2px}
+.site-header{min-height:72px;padding:12px clamp(16px,3.4vw,52px);display:flex;align-items:center;justify-content:space-between;gap:22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{font-family:var(--font-en);font-weight:650;letter-spacing:.19em;font-size:14px}.brand span{font-weight:300;color:var(--muted);letter-spacing:.07em}
+.top-nav{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.top-nav a{font:10px var(--font-en);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.top-nav a:hover{color:var(--text)}
+.planner-shell{display:grid;grid-template-columns:330px minmax(0,1fr);min-height:calc(100% - 72px)}
+.control-panel{border-right:1px solid var(--line);padding:30px 24px 38px;overflow:auto;max-height:calc(100svh - 72px)}
+.eyebrow{font:600 9px var(--font-en);letter-spacing:.19em;text-transform:uppercase;color:var(--sand)}
+.control-panel h1{font:300 45px/1 var(--font-en);letter-spacing:-.055em;margin:12px 0 10px;text-wrap:balance}
+.control-panel h1 em{font-family:var(--font-serif);font-weight:400;letter-spacing:-.02em}
+.control-intro{margin:0;color:#a2a39c;font-size:12px;line-height:1.7}
+.control-section{border-top:1px solid var(--line);padding-top:19px;margin-top:22px}
+.control-section h2{font:500 10px var(--font-en);letter-spacing:.16em;text-transform:uppercase;margin:0 0 13px}
+.field{display:grid;gap:6px;margin-top:10px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.field label{font-size:10px;color:#aaa9a2}
+.field input,.field select{width:100%;height:43px;border:1px solid var(--field-line);background:var(--field);color:#fff;padding:0 11px;border-radius:0}
+.field input:focus,.field select:focus{outline:1px solid var(--sand);border-color:var(--sand)}
+.unit-input{position:relative}.unit-input input{padding-right:34px}.unit-input span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#77786f;font:9px var(--font-en);pointer-events:none}
+.field-hint{margin:0;color:#77786f;font-size:9px;line-height:1.5}
+.add-room{width:100%;height:44px;border:1px solid var(--sand);background:var(--sand);color:#fff;margin-top:12px;font:600 9px var(--font-en);letter-spacing:.14em;text-transform:uppercase}.add-room:hover{background:#a85f3d}
+.room-list{display:grid;gap:7px;margin-top:13px}
+.room-list-item{display:grid;grid-template-columns:1fr auto;align-items:center;border:1px solid #3f403b;background:#1d1e1b}
+.room-list-item>button:first-child{border:0;background:transparent;text-align:left;padding:10px 11px}
+.room-list-item strong{display:block;font-size:12px;font-weight:400}.room-list-item small{color:#7f8079;font:9px var(--font-en);letter-spacing:.05em}
+.room-list-item.active{border-color:var(--sand)}
+.room-list-item .quick-delete{width:34px;height:100%;min-height:40px;border:0;border-left:1px solid #3f403b;background:transparent;color:#777}
+.room-list-item .quick-delete:hover{color:#fff;background:#733f31}
+.selected-editor{border:1px solid #6c523f;padding:13px;margin-top:12px;background:#1c1d1a}.selected-editor .field{margin-top:8px}
+.delete-room{width:100%;height:38px;border:1px solid #69483c;background:transparent;color:#c78d73;margin-top:11px;font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase}.delete-room:hover{background:#733f31;color:#fff}
+.toggle-list{display:grid;gap:9px}.toggle{display:flex;align-items:center;justify-content:space-between;gap:15px;font-size:11px;color:#aaa}.toggle input{accent-color:var(--sand);width:17px;height:17px}
+.reset-btn{width:100%;height:40px;border:1px solid #4a4b45;background:transparent;margin-top:16px;font:600 9px var(--font-en);letter-spacing:.13em;text-transform:uppercase;color:#aaa}.reset-btn:hover{color:#fff;border-color:#888}
+.workspace{background:var(--paper);color:var(--ink);min-width:0;padding:24px clamp(16px,3vw,48px) 44px;overflow:auto;max-height:calc(100svh - 72px)}
+.stage-bar{max-width:1200px;margin:0 auto 18px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.stage-title strong{display:block;font:500 11px var(--font-en);letter-spacing:.14em;text-transform:uppercase}.stage-title span{font-size:10px;color:#77786f}
+.stage-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stage-actions>button{height:38px;padding:0 15px;border:1px solid #aaa69b;background:transparent;font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.stage-actions>button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stage-actions button:hover{background:var(--sand);border-color:var(--sand);color:#fff}
+.client-sheet{max-width:1200px;margin:auto;border:1px solid var(--pale);background:var(--sheet);padding:clamp(16px,2.4vw,34px)}
+.sheet-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:20px;flex-wrap:wrap}
+.sheet-head h2{font:300 clamp(30px,4vw,60px)/1 var(--font-en);letter-spacing:-.05em;margin:8px 0 0;text-wrap:balance}
+.sheet-meta{text-align:right;font:10px/1.8 var(--font-en);letter-spacing:.08em;text-transform:uppercase;color:#6f7069}
+.plan-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.plan-wrap{position:relative;padding:24px 4px 4px}
+.plan-board{position:relative;width:100%;max-width:100%;background-color:#eee9df;border:1px solid #8d887e;touch-action:none;
+  background-image:linear-gradient(to right,#8d887e55 1px,transparent 1px),linear-gradient(to bottom,#8d887e55 1px,transparent 1px);background-size:var(--gx) var(--gy)}
+.plan-board.grid-off{background-image:none}
+.room-block{position:absolute;background:var(--room-color);border:var(--wall) solid var(--ink);cursor:grab;overflow:hidden;touch-action:none;z-index:1}
+.room-block.selected{outline:3px solid var(--sand);outline-offset:-1px;z-index:2}
+.room-block:active{cursor:grabbing}
+.room-content{padding:6px 8px;display:grid;gap:1px;pointer-events:none}
+.room-content strong{font:500 12px/1.3 var(--font-th);color:var(--ink)}
+.room-content small{font:9px/1.4 var(--font-en);color:#3e403b;letter-spacing:.03em}
+.plan-north{position:absolute;right:6px;top:-2px;font:600 10px var(--font-en);letter-spacing:.14em;color:#6f7069}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font:10px var(--font-en);letter-spacing:.06em;text-transform:uppercase;color:#6f7069}
+.method-note{margin:18px 0 0;font-size:11px;line-height:1.7;color:#6f7069;max-width:72ch}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 16px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:50;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:860px){.planner-shell{grid-template-columns:1fr}.control-panel{max-height:none;border-right:0;border-bottom:1px solid var(--line)}.workspace{max-height:none}.sheet-meta{text-align:left}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media print{.site-header,.control-panel,.stage-bar,.toast{display:none!important}.planner-shell{display:block}.workspace{padding:0;max-height:none;overflow:visible}.client-sheet{border:0}body{background:#fff}}
+</style>
+
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">ARSTINLA <span>/ Massing Studio</span></a>
+  <nav class="top-nav" aria-label="Tools navigation"><a href="/tools/schematic-planner/">Schematic Planner</a><a href="/tools/home-compass/">Home Compass</a><a href="/tools/color-sequence/">Color Sequence</a><a href="/tools/enneagram/">Enneagram Compass</a><a href="/tools/birthday/">Birthday Insight</a><a href="/tools/image/">Image Tool</a><a href="/#tools">Back to Tools</a></nav>
+</header>
+
+<div class="planner-shell">
+<aside class="control-panel">
+  <div class="eyebrow">ARSTINLA DIGITAL TOOL / 07</div>
+  <h1>Mass before <em>the form.</em></h1>
+  <p class="control-intro">ขึ้นรูปมวลอาคารหลายชั้น กำหนดความสูงผนังและหลังคา แล้วดูเงาแดดในมุม Isometric เพื่อคุยกับลูกค้าก่อนเริ่มออกแบบจริง</p>
+
+  <section class="control-section">
+    <h2>Project &amp; site</h2>
+    <div class="field"><label for="projectName">ชื่อโครงการ</label><input id="projectName" value="Concept House 02"></div>
+    <div class="field"><label for="region">ภูมิภาค</label><select id="region">
+      <option value="central">กรุงเทพฯ / ภาคกลาง</option><option value="north">ภาคเหนือ</option><option value="northeast">ภาคตะวันออกเฉียงเหนือ</option><option value="east">ภาคตะวันออก</option><option value="south">ภาคใต้</option></select></div>
+    <div class="field"><label for="studyDate">วันที่ใช้ดูเงาแดด</label><input id="studyDate" type="date"></div>
+    <div class="field-row">
+      <div class="field"><label for="siteWidth">กว้างผัง</label><div class="unit-input"><input id="siteWidth" type="number" min="8" max="30" step="1" value="16"><span>ม.</span></div></div>
+      <div class="field"><label for="siteDepth">ยาวผัง</label><div class="unit-input"><input id="siteDepth" type="number" min="8" max="30" step="1" value="12"><span>ม.</span></div></div>
+    </div>
+    <div class="field"><label for="northAngle">มุมทิศเหนือ</label><div class="unit-input"><input id="northAngle" type="number" step="1" value="0"><span>°</span></div></div>
+    <p class="field-hint" style="margin-top:7px">0° = ด้านบนผัง · หมุนตามเข็มนาฬิกา</p>
+    <button class="reset-btn" id="importPlanner" type="button">นำเข้าผังจาก Schematic Planner</button>
+  </section>
+
+  <section class="control-section">
+    <h2>Add a room</h2>
+    <div class="field"><label for="newRoomType">ประเภทห้อง</label><select id="newRoomType"></select></div>
+    <div class="field"><label for="newRoomName">ชื่อห้อง</label><input id="newRoomName" placeholder="เช่น ห้องนั่งเล่น"></div>
+    <div class="field-row">
+      <div class="field"><label for="newRoomWidth">กว้าง</label><div class="unit-input"><input id="newRoomWidth" type="number" min="1" step="0.1" value="4.00"><span>ม.</span></div></div>
+      <div class="field"><label for="newRoomDepth">ยาว</label><div class="unit-input"><input id="newRoomDepth" type="number" min="1" step="0.1" value="4.00"><span>ม.</span></div></div>
+    </div>
+    <button class="add-room" id="addRoom" type="button">Add room to current floor +</button>
+    <div class="room-list" id="roomList"></div>
+  </section>
+
+  <section class="control-section selected-editor" id="selectedEditor" hidden>
+    <h2>Edit selected room</h2>
+    <div class="field"><label for="selectedName">ชื่อห้อง</label><input id="selectedName"></div>
+    <div class="field"><label for="selectedType">ประเภท</label><select id="selectedType"></select></div>
+    <div class="field-row">
+      <div class="field"><label for="selectedWidth">กว้าง</label><div class="unit-input"><input id="selectedWidth" type="number" min="1" step="0.1"><span>ม.</span></div></div>
+      <div class="field"><label for="selectedDepth">ยาว</label><div class="unit-input"><input id="selectedDepth" type="number" min="1" step="0.1"><span>ม.</span></div></div>
+    </div>
+    <button class="delete-room" id="deleteSelected" type="button">Remove selected room</button>
+  </section>
+
+  <section class="control-section">
+    <h2>Walls &amp; layers</h2>
+    <div class="field-row">
+      <div class="field"><label for="wallThickness">ความหนาผนัง</label><select id="wallThickness"><option value="0.10">0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.20" selected>0.20 ม.</option></select></div>
+      <div class="field"><label for="wallAlignment">ตำแหน่งผนัง</label><select id="wallAlignment"><option value="inside">ชิดใน</option><option value="center" selected>กึ่งกลาง</option><option value="outside">ชิดนอก</option></select></div>
+    </div>
+    <div class="toggle-list" style="margin-top:14px">
+      <label class="toggle">เงาแดด <input id="showSun" type="checkbox" checked></label>
+      <label class="toggle">Planning grid <input id="showGrid" type="checkbox" checked></label>
+      <input id="showColumns" type="checkbox" hidden>
+    </div>
+    <button class="reset-btn" id="resetPlan" type="button">Reset sample house</button>
+  </section>
+</aside>
+
+<main class="workspace">
+  <div class="stage-bar">
+    <div class="stage-title"><strong>Client Preview · Massing</strong><span>Plan: ลากห้องหรือป้ายหลังคาเพื่อย้าย · ลูกศรขยับทีละ 0.10 ม.</span></div>
+    <div class="stage-actions"><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
+  </div>
+  <section class="client-sheet">
+    <div class="sheet-head">
+      <div><div class="eyebrow">Massing study / environmental review</div><h2 id="sheetProjectName">Concept House 02</h2></div>
+      <div class="sheet-meta"><span id="sheetRegion"></span><br><span id="sheetSize"></span><br><span id="sheetNorth"></span></div>
+    </div>
+    <div class="plan-layout">
+      <div>
+        <div class="plan-wrap"><span class="plan-north" id="planNorth">N ↑</span><div class="plan-board" id="planBoard" aria-label="แปลนชั้นที่เลือก"><div id="roomLayer"></div></div></div>
+        <div class="legend"><span>1.00 m grid</span><span id="wallLegend"></span><span>Dashed = floor below · ⌂ = roof outline</span></div>
+      </div>
+    </div>
+    <p class="method-note">เครื่องมือนี้ใช้สื่อสารแนวคิดมวลอาคารเบื้องต้น ไม่ใช่แบบก่อสร้าง ความสูง หลังคา และเงาเป็นค่าประมาณ ตำแหน่งดวงอาทิตย์คำนวณจากสมการ Solar Position ของ NOAA ควรตรวจกฎหมาย โครงสร้าง และสภาพหน้างานก่อนพัฒนาแบบจริง</p>
+  </section>
+</main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ---------- host: plan editing (shared vocabulary with Schematic Planner) ---------- */
+const $=id=>document.getElementById(id);
+const directions=["N","NE","E","SE","S","SW","W","NW"];
+const directionThai={N:"เหนือ",NE:"ตะวันออกเฉียงเหนือ",E:"ตะวันออก",SE:"ตะวันออกเฉียงใต้",S:"ใต้",SW:"ตะวันตกเฉียงใต้",W:"ตะวันตก",NW:"ตะวันตกเฉียงเหนือ",C:"กลางผัง"};
+const regions={central:{label:"Bangkok / Central",lat:13.7563,lon:100.5018},north:{label:"Northern Thailand",lat:18.7883,lon:98.9853},northeast:{label:"Northeastern Thailand",lat:16.4322,lon:102.8236},east:{label:"Eastern Thailand",lat:12.6814,lon:101.2816},south:{label:"Southern Thailand",lat:9.1382,lon:99.3217}};
+const roomTypes={living:{label:"Living / Family",thai:"ห้องนั่งเล่น",color:"#bbc2ae"},bedroom:{label:"Bedroom",thai:"ห้องนอน",color:"#c8bcae"},kitchen:{label:"Kitchen",thai:"ครัว",color:"#c8a88e"},dining:{label:"Dining",thai:"รับประทานอาหาร",color:"#c9c39c"},work:{label:"Work / Study",thai:"ทำงาน",color:"#aab9bb"},bathroom:{label:"Bathroom",thai:"ห้องน้ำ",color:"#aab4ad"},service:{label:"Service",thai:"บริการ / ซักล้าง",color:"#aaa69e"},stair:{label:"Stair / Hall",thai:"บันได / โถง",color:"#b8b1a5"},terrace:{label:"Terrace",thai:"เฉลียง",color:"#b8c3aa"},parking:{label:"Parking",thai:"ที่จอดรถ",color:"#aaa9a4"},custom:{label:"Custom",thai:"กำหนดเอง",color:"#c1b7a7"}};
+const SAMPLE_ROOMS=[
+ {id:"living-1",name:"Living Room",type:"living",x:8,y:1,w:7,d:4,level:0},{id:"stair-1",name:"Stair",type:"stair",x:5,y:1,w:3,d:4,level:0},
+ {id:"dining-1",name:"Dining",type:"dining",x:8,y:5,w:4,d:3,level:0},{id:"kitchen-1",name:"Kitchen",type:"kitchen",x:12,y:5,w:3,d:3,level:0},
+ {id:"bed-g",name:"Guest Bedroom",type:"bedroom",x:1,y:5,w:4,d:4,level:0},{id:"bath-1",name:"Bathroom",type:"bathroom",x:5,y:5,w:3,d:3,level:0},
+ {id:"park-1",name:"Parking",type:"parking",x:1,y:1,w:4,d:4,level:0,h:0},
+ {id:"bed-1",name:"Master Bedroom",type:"bedroom",x:8,y:1,w:7,d:4,level:1},{id:"stair-2",name:"Stair Hall",type:"stair",x:5,y:1,w:3,d:4,level:1},
+ {id:"bed-2",name:"Bedroom 02",type:"bedroom",x:1,y:5,w:4,d:4,level:1},{id:"bath-2",name:"Bath 2F",type:"bathroom",x:5,y:5,w:3,d:3,level:1}];
+const SAMPLE_ISO={view:"iso",rot:0,hour:15,active:0,floors:[{h:3},{h:3}],roofs:[
+ {id:"roof-s1",level:0,type:"flat",x:5,y:1,w:10,d:7,pitch:0,eave:.3,dir:0,color:"#5e625c"},
+ {id:"roof-s2",level:0,type:"shed",x:1,y:1,w:4,d:4,pitch:10,eave:.6,dir:3,color:"#5e625c"},
+ {id:"roof-s3",level:1,type:"hip",x:5,y:1,w:10,d:4,pitch:30,eave:.8,dir:0,color:"#5e625c"},
+ {id:"roof-s4",level:1,type:"gable",x:1,y:5,w:7,d:4,pitch:30,eave:.6,dir:0,color:"#9a5a3f"}]};
+const KEY="arstinla-massing",ISO_KEY="arstinla-massing-iso";
+let rooms=[],columns=[],selectedId=null,selectedColumnId=null,toastTimer;
+function clamp(v,a,b){return Math.min(b,Math.max(a,v))}
+function snap(v){return Math.round((v+Number.EPSILON)*10)/10}
+function round2(v){return Math.round((v+Number.EPSILON)*100)/100}
+function format2(v){return round2(Number(v)||0).toFixed(2)}
+function escapeHtml(v){return String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function site(){return{w:clamp(Number($("siteWidth").value)||16,8,30),d:clamp(Number($("siteDepth").value)||12,8,30)}}
+function wallThickness(){return Number($("wallThickness").value)||.2}
+function northAngle(){const v=Number($("northAngle").value);return((Number.isFinite(v)?v:0)%360+360)%360}
+function toPlanAzimuth(a){return(a+northAngle())%360}
+function compassName(a){return directions[Math.round(a/45)%8]}
+function defaultDate(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function selectedDate(){const p=($("studyDate").value||defaultDate()).split("-").map(Number);return new Date(p[0],p[1]-1,p[2],12)}
+function dayOfYear(d){return Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/86400000)}
+function solarPosition(date,hour,lat,lon){
+  const days=((date.getFullYear()%4===0&&date.getFullYear()%100!==0)||date.getFullYear()%400===0)?366:365;
+  const gamma=2*Math.PI/days*(dayOfYear(date)-1+(hour-12)/24);
+  const eqtime=229.18*(.000075+.001868*Math.cos(gamma)-.032077*Math.sin(gamma)-.014615*Math.cos(2*gamma)-.040849*Math.sin(2*gamma));
+  const decl=.006918-.399912*Math.cos(gamma)+.070257*Math.sin(gamma)-.006758*Math.cos(2*gamma)+.000907*Math.sin(2*gamma)-.002697*Math.cos(3*gamma)+.00148*Math.sin(3*gamma);
+  const ha=((hour*60+eqtime+4*lon-420)/4-180)*Math.PI/180,lr=lat*Math.PI/180;
+  const cz=Math.sin(lr)*Math.sin(decl)+Math.cos(lr)*Math.cos(decl)*Math.cos(ha),zen=Math.acos(clamp(cz,-1,1));
+  return{azimuth:(Math.atan2(Math.sin(ha),Math.cos(ha)*Math.sin(lr)-Math.tan(decl)*Math.cos(lr))*180/Math.PI+180+360)%360,elevation:90-zen*180/Math.PI,hour,declination:decl*180/Math.PI};
+}
+function toast(m){clearTimeout(toastTimer);$("toast").textContent=m;$("toast").classList.add("show");toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2400)}
+function populateTypes(sel){sel.innerHTML=Object.entries(roomTypes).map(([v,t])=>`<option value="${v}">${t.label} · ${t.thai}</option>`).join("")}
+function renderHeader(){const s=site(),a=northAngle();$("sheetProjectName").textContent=$("projectName").value.trim()||"Untitled Project";$("sheetRegion").textContent=regions[$("region").value].label;$("sheetSize").textContent=`${s.w} × ${s.d} m`;$("sheetNorth").textContent=a===0?"North is up":`North ${a}° clockwise from top`;$("planNorth").textContent=a===0?"N ↑":`N ${a}°`}
+function renderRooms(){
+  const s=site(),b=$("planBoard");b.style.aspectRatio=`${s.w} / ${s.d}`;b.style.setProperty("--gx",`${100/s.w}%`);b.style.setProperty("--gy",`${100/s.d}%`);b.classList.toggle("grid-off",!$("showGrid").checked);
+  const wallPx=Math.max(1,b.clientWidth/s.w*wallThickness());b.style.setProperty("--wall",`${wallPx.toFixed(1)}px`);
+  rooms.forEach(r=>{r.w=clamp(r.w,1,s.w);r.d=clamp(r.d,1,s.d);r.x=clamp(r.x,0,s.w-r.w);r.y=clamp(r.y,0,s.d-r.d)});
+  $("roomLayer").innerHTML=rooms.map(r=>`<div class="room-block ${r.id===selectedId?"selected":""}" data-id="${r.id}" tabindex="0" style="--room-color:${roomTypes[r.type].color};left:${r.x/s.w*100}%;top:${r.y/s.d*100}%;width:${r.w/s.w*100}%;height:${r.d/s.d*100}%"><div class="room-content"><strong>${escapeHtml(r.name)}</strong><small>${format2(r.w)} × ${format2(r.d)} m · ${format2(r.w*r.d)} sq.m.</small></div></div>`).join("");
+  document.querySelectorAll(".room-block").forEach(el=>{el.addEventListener("pointerdown",startDrag);el.addEventListener("keydown",moveWithKeyboard)});
+  $("wallLegend").textContent=`Wall ${format2(wallThickness())} m · ${$("wallAlignment").selectedOptions[0].text}`;
+}
+function renderRoomList(){
+  $("roomList").innerHTML=rooms.map(r=>`<div class="room-list-item ${r.id===selectedId?"active":""}"><button type="button" data-select="${r.id}"><strong>${escapeHtml(r.name)}</strong><small>${format2(r.w)} × ${format2(r.d)} m · ${format2(r.w*r.d)} sq.m.</small></button><button class="quick-delete" type="button" data-delete="${r.id}" aria-label="ลบ ${escapeHtml(r.name)}">×</button></div>`).join("");
+  document.querySelectorAll("[data-select]").forEach(b=>b.addEventListener("click",()=>selectRoom(b.dataset.select)));
+  document.querySelectorAll("[data-delete]").forEach(b=>b.addEventListener("click",()=>removeRoom(b.dataset.delete)));
+}
+function renderEditor(){const r=rooms.find(i=>i.id===selectedId);$("selectedEditor").hidden=!r;if(!r)return;$("selectedName").value=r.name;$("selectedType").value=r.type;$("selectedWidth").value=format2(r.w);$("selectedDepth").value=format2(r.d)}
+function renderAll(save=true,preserveEditor=false){renderHeader();renderRooms();renderRoomList();if(!preserveEditor)renderEditor();if(save)saveState()}
+function selectRoom(id){selectedId=id;renderAll()}
+function removeRoom(id){rooms=rooms.filter(r=>r.id!==id);if(selectedId===id)selectedId=null;renderAll();toast("ลบห้องแล้ว")}
+function uniqueName(type){const base=roomTypes[type].thai;let n=1,name=base;while(rooms.some(r=>r.name===name)){n++;name=`${base} ${String(n).padStart(2,"0")}`}return name}
+function addRoom(){const s=site(),type=$("newRoomType").value,w=round2(clamp(Number($("newRoomWidth").value)||4,1,s.w)),d=round2(clamp(Number($("newRoomDepth").value)||4,1,s.d)),id=`room-${Date.now()}`;
+  rooms.push({id,name:$("newRoomName").value.trim()||uniqueName(type),type,x:snap(Math.max(0,(s.w-w)/2)),y:snap(Math.max(0,(s.d-d)/2)),w,d});selectedId=id;$("newRoomName").value="";renderAll();toast("เพิ่มห้องแล้ว ลากไปวางตำแหน่งที่ต้องการได้เลย")}
+let drag=null;
+function startDrag(e){if(e.button!==0)return;const el=e.currentTarget,r=rooms.find(i=>i.id===el.dataset.id);if(!r)return;
+  if(selectedId!==r.id){selectedId=r.id;document.querySelectorAll(".room-block").forEach(b=>b.classList.toggle("selected",b===el));renderRoomList();renderEditor()}
+  drag={r,el,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y,rect:$("planBoard").getBoundingClientRect()};el.setPointerCapture(e.pointerId);el.addEventListener("pointermove",dragMove);el.addEventListener("pointerup",endDrag,{once:true})}
+function dragMove(e){if(!drag)return;const s=site(),{r,el}=drag;r.x=clamp(snap(drag.x+(e.clientX-drag.sx)/drag.rect.width*s.w),0,s.w-r.w);r.y=clamp(snap(drag.y+(e.clientY-drag.sy)/drag.rect.height*s.d),0,s.d-r.d);el.style.left=`${r.x/s.w*100}%`;el.style.top=`${r.y/s.d*100}%`}
+function endDrag(e){e.currentTarget.removeEventListener("pointermove",dragMove);drag=null;renderAll()}
+function moveWithKeyboard(e){const d={ArrowUp:[0,-.1],ArrowDown:[0,.1],ArrowLeft:[-.1,0],ArrowRight:[.1,0]}[e.key];if(!d)return;e.preventDefault();const r=rooms.find(i=>i.id===e.currentTarget.dataset.id),s=site();r.x=clamp(round2(r.x+d[0]),0,s.w-r.w);r.y=clamp(round2(r.y+d[1]),0,s.d-r.d);selectedId=r.id;renderAll();document.querySelector(`.room-block[data-id="${r.id}"]`)?.focus()}
+function updateSelected(preserve){const r=rooms.find(i=>i.id===selectedId);if(!r)return;const s=site();r.name=$("selectedName").value.trim()||roomTypes[$("selectedType").value].thai;r.type=$("selectedType").value;r.w=round2(clamp(Number($("selectedWidth").value)||1,1,s.w));r.d=round2(clamp(Number($("selectedDepth").value)||1,1,s.d));renderAll(true,preserve)}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:northAngle(),showSun:$("showSun").checked,showGrid:$("showGrid").checked,wallThickness:$("wallThickness").value,wallAlignment:$("wallAlignment").value,rooms}))}catch(e){}}
+function applySaved(s){$("projectName").value=s.projectName||"Concept House 02";$("region").value=regions[s.region]?s.region:"central";$("studyDate").value=s.studyDate||defaultDate();$("siteWidth").value=s.siteWidth||16;$("siteDepth").value=s.siteDepth||12;$("northAngle").value=s.northAngle??0;
+  if("showSun"in s)$("showSun").checked=s.showSun!==false;if("showGrid"in s)$("showGrid").checked=s.showGrid!==false;
+  if(s.wallThickness&&[...$("wallThickness").options].some(o=>o.value===String(s.wallThickness)))$("wallThickness").value=String(s.wallThickness);
+  if(["inside","center","outside"].includes(s.wallAlignment))$("wallAlignment").value=s.wallAlignment;rooms=s.rooms.map(r=>({...r}))}
+function loadState(){
+  try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.rooms)&&s.rooms.length){applySaved(s);return}}catch(e){}
+  rooms=SAMPLE_ROOMS.map(r=>({...r}));$("studyDate").value=defaultDate();
+  window.ISO_DEFAULT=SAMPLE_ISO;
+}
+populateTypes($("newRoomType"));populateTypes($("selectedType"));loadState();renderAll(false);
+</script>
+
+<script src="../shared/download-gate.js"></script>
+<script>
+(function(){
+"use strict";
+if(typeof renderAll!=="function"||typeof rooms==="undefined"||typeof site!=="function"){console.warn("[iso] schematic planner not found");return}
+if(window.__arstinlaIso)return;window.__arstinlaIso=true;
+
+/* ---------- state ---------- */
+const KEY="arstinla-massing-iso";
+const ROOF={flat:{th:"หลังคาแบน / ดาดฟ้า",short:"แบน",pitch:0,eave:.3},gable:{th:"จั่ว",short:"จั่ว",pitch:30,eave:.6},hip:{th:"ปั้นหยา",short:"ปั้นหยา",pitch:30,eave:.6},shed:{th:"เพิงหมาแหงน",short:"เพิง",pitch:10,eave:.6},butterfly:{th:"ผีเสื้อ (Butterfly)",short:"ผีเสื้อ",pitch:8,eave:.6}};
+const ROOF_COLORS=[["เทาเข้ม","#5e625c"],["ดินเผา","#9a5a3f"],["เขียวหม่น","#5d6b5c"],["ขาวเทา","#c9c6bd"]];
+const S=Object.assign({view:"iso",rot:0,cut:false,hour:15,labels:true,active:0,upTo:-1,roofOn:true,selRoof:null},(()=>{try{const v=JSON.parse(localStorage.getItem(KEY));if(v)return v}catch(e){}return JSON.parse(JSON.stringify(window.ISO_DEFAULT||{}))})());
+if(!Array.isArray(S.floors)||!S.floors.length)S.floors=[{h:round2(Number(S.height)||3)}];
+S.floors.forEach(f=>{f.h=clamp(Number(f.h)||3,2,12)});
+delete S.height;
+const saveS=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const NS="http://www.w3.org/2000/svg",C30=Math.cos(Math.PI/6),S30=.5,SC=40,SLAB=.15,EPS=1e-6;
+const VIEW_AZ=[135,45,315,225];
+const nF=()=>S.floors.length;
+const lvl=r=>clamp(Math.floor(Number(r.level)||0),0,nF()-1);
+const base=L=>S.floors.slice(0,L).reduce((s,f)=>s+f.h,0);
+const hasOwnH=r=>!(r.h===undefined||r.h===null||r.h==="");
+const roomH=r=>hasOwnH(r)?clamp(Number(r.h)||0,0,12):S.floors[lvl(r)].h;
+const fl=L=>`ชั้น ${L+1}`;
+const onLevel=L=>rooms.filter(r=>lvl(r)===L);
+function bboxOf(rs){if(!rs.length)return null;const x=Math.min(...rs.map(r=>r.x)),y=Math.min(...rs.map(r=>r.y));return{x,y,w:Math.max(...rs.map(r=>r.x+r.w))-x,d:Math.max(...rs.map(r=>r.y+r.d))-y}}
+function makeRoof(level,type,area){const s=site(),a=area||bboxOf(onLevel(level))||{x:snap(s.w/2-3),y:snap(s.d/2-3),w:6,d:6};
+  return{id:`roof-${Date.now()}-${Math.round(Math.random()*1e4)}`,level,type,x:round2(a.x),y:round2(a.y),w:round2(a.w),d:round2(a.d),pitch:ROOF[type].pitch,eave:ROOF[type].eave,dir:0,color:"#5e625c"}}
+if(!Array.isArray(S.roofs)){ // first run or migration from v2 (one roof per floor)
+  S.roofs=[];S.floors.forEach((f,i)=>{const old=f.roof,type=old?old.type:(i===0?"gable":null);if(type&&ROOF[type]&&onLevel(i).length){const r=makeRoof(i,type);if(old)Object.assign(r,{pitch:old.pitch??r.pitch,eave:old.eave??r.eave,dir:old.dir||0,color:old.color||r.color});S.roofs.push(r)}});
+}
+S.floors.forEach(f=>delete f.roof);
+S.roofs.forEach(r=>{if(!ROOF[r.type])r.type="gable"});
+S.active=clamp(S.active|0,0,nF()-1);
+const seen=new Set(rooms.map(r=>r.id));
+const selRoof=()=>S.roofs.find(r=>r.id===S.selRoof)||null;
+const roofLevel=r=>clamp(r.level|0,0,nF()-1);
+function roofBase(L){if(L<nF()-1&&onLevel(L+1).length)return base(L+1);const rs=onLevel(L);return base(L)+(rs.length?Math.max(...rs.map(roomH)):S.floors[L].h)}
+
+/* ---------- styles ---------- */
+document.head.insertAdjacentHTML("beforeend",`<style id="isoStyle">
+.iso-switch,.iso-floors{display:inline-flex;border:1px solid #aaa69b}
+.iso-floors[hidden]{display:none}
+.stage-actions .iso-switch button,.stage-actions .iso-floors button{border:0;height:36px}
+.stage-actions .iso-floors button{padding:0 11px;font-family:var(--font-th);letter-spacing:0;text-transform:none;font-size:11px}
+.stage-actions .iso-switch button[aria-pressed="true"],.stage-actions .iso-floors button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.iso-wrap{position:relative;padding:4px 0 0}.iso-wrap[hidden]{display:none}
+.iso-tools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:10px;font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase;color:#6f7069}
+.iso-tools .grp{display:flex;align-items:center;gap:7px}
+.iso-tools button,.iso-tools select{height:32px;min-width:32px;padding:0 10px;border:1px solid #aaa69b;background:transparent;color:var(--ink);font:600 9px var(--font-en);letter-spacing:.12em;text-transform:uppercase}
+.iso-tools select{font:400 11px var(--font-th);letter-spacing:0;text-transform:none}
+.iso-tools select[hidden]{display:none}
+.iso-tools button.ico{font-size:15px;padding:0;letter-spacing:0}
+.iso-tools button.th{font:500 11px var(--font-th);letter-spacing:0;text-transform:none}
+.iso-tools button:hover{background:var(--sand);border-color:var(--sand);color:#fff}
+.iso-tools button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.iso-tools input[type=range]{width:140px;accent-color:var(--sand)}
+.iso-tools output{min-width:40px;color:var(--ink);font-variant-numeric:tabular-nums}
+.iso-board{display:block;width:100%;height:auto;background:#f7f4ed;user-select:none}
+.iso-board .rm,.iso-board .rf{cursor:pointer}.iso-board text{font-family:"Noto Sans Thai",var(--font-en),sans-serif}
+.iso-note{margin:10px 0 0;font:10px/1.7 var(--font-en);letter-spacing:.06em;text-transform:uppercase;color:#6f7069}.iso-note b{color:var(--ink);font-weight:600}
+body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout>div:first-child>.legend{display:none}
+#roomLayer .room-block.iso-ghost{opacity:.28;pointer-events:none;border-style:dashed;z-index:0}
+.iso-floor-badge{position:absolute;right:25px;top:6px;font:600 9px var(--font-en);letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
+.iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
+.iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
+.iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
+.iso-roof-outline.sel{border-style:solid;background:#c47a5514}
+.iso-roof-chip{position:absolute;left:-2px;top:-2px;transform:translateY(-100%);pointer-events:auto;cursor:grab;touch-action:none;border:0;background:#c47a55;color:#fff;font:600 10px var(--font-th);padding:3px 8px;white-space:nowrap}
+.iso-roof-outline.sel .iso-roof-chip{background:#171816}
+.iso-roof-chip:active{cursor:grabbing}
+.iso-floor-row{grid-template-columns:1fr 84px 34px!important}
+.iso-floor-row .unit-input input{width:100%;height:100%;min-height:44px;border:0;border-left:1px solid #3f403b;background:transparent;color:#fff;padding:0 30px 0 10px}
+.iso-floor-row .unit-input input:focus{outline:1px solid var(--sand)}
+#isoSection h3{font:500 10px var(--font-en);letter-spacing:.16em;text-transform:uppercase;margin:20px 0 4px}
+#isoSection .field[hidden],#isoSection .field-row[hidden],#isoRoofEditor[hidden]{display:none}
+.iso-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media print{.iso-tools,.iso-switch,.iso-floors,.iso-roof-chip{display:none!important}body.iso-mode .iso-board{width:240mm}}
+</style>`);
+
+/* ---------- UI ---------- */
+const actions=document.querySelector(".stage-actions");
+const sw=document.createElement("div");sw.className="iso-switch";sw.setAttribute("role","group");sw.setAttribute("aria-label","มุมมอง");
+sw.innerHTML=`<button type="button" data-iv="plan">Plan</button><button type="button" data-iv="iso">Isometric</button>`;
+const chips=document.createElement("div");chips.className="iso-floors";chips.id="isoFloorChips";chips.setAttribute("role","group");chips.setAttribute("aria-label","ชั้น");
+actions.prepend(chips);actions.prepend(sw);
+
+const board=$("planBoard");
+const roofLayer=document.createElement("div");roofLayer.className="iso-roof-layer";roofLayer.id="isoRoofLayer";board.appendChild(roofLayer);
+const planWrap=board.closest(".plan-wrap");
+planWrap.insertAdjacentHTML("beforeend",`<span class="iso-floor-badge" id="isoFloorBadge"></span>`);
+const wrap=document.createElement("div");wrap.className="iso-wrap";wrap.id="isoWrap";wrap.hidden=true;
+wrap.innerHTML=`<div class="iso-tools">
+  <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
+  <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
+  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button></div>
+</div>
+<svg class="iso-board" id="isoBoard" xmlns="${NS}" role="img" aria-label="Isometric schematic"></svg>
+<p class="iso-note" id="isoNote"></p>`;
+planWrap.after(wrap);
+const svg=$("isoBoard");
+
+const numField=(id,label,unit,attrs)=>`<div class="field"><label for="${id}">${label}</label><div class="unit-input"><input id="${id}" type="number" ${attrs}><span>${unit}</span></div></div>`;
+$("showGrid").closest(".control-section").insertAdjacentHTML("beforebegin",`<section class="control-section" id="isoSection">
+  <h2>Floors / ชั้น</h2>
+  <div class="room-list" id="isoFloorList"></div>
+  <button class="add-room" id="isoAddFloor" type="button">Add floor +</button>
+  <p class="field-hint" style="margin-top:8px">ความสูงชั้น = ระดับพื้นถึงพื้นชั้นถัดไป · แปลนแสดงชั้นที่เลือก และชั้นล่างเป็นเส้นจาง</p>
+  <h3>Roofs / หลังคา</h3>
+  <div class="room-list" id="isoRoofList"></div>
+  <button class="add-room" id="isoAddRoof" type="button">Add roof +</button>
+  <p class="field-hint" style="margin-top:8px">หลังคาใหม่จะคลุมห้องทั้งหมดของชั้นที่เลือก · ลากป้ายหลังคาบนแปลนเพื่อย้ายตำแหน่ง</p>
+  <div class="selected-editor" id="isoRoofEditor" hidden>
+    <h2>Edit selected roof</h2>
+    <div class="field"><label for="isoRoofType">รูปแบบหลังคา</label><select id="isoRoofType">${Object.entries(ROOF).map(([k,v])=>`<option value="${k}">${v.th}</option>`).join("")}</select></div>
+    <div class="field"><label for="isoRoofLevel">วางบน</label><select id="isoRoofLevel"></select></div>
+    <div class="field-row">${numField("isoRoofX","X จากซ้าย","ม.",'step="0.1"')}${numField("isoRoofY","Y จากบน","ม.",'step="0.1"')}</div>
+    <div class="field-row">${numField("isoRoofW","กว้าง","ม.",'min="1" step="0.1"')}${numField("isoRoofD","ยาว","ม.",'min="1" step="0.1"')}</div>
+    <div class="field-row"><div id="isoPitchWrap">${numField("isoPitch","ความชัน","°",'min="1" max="60" step="1"')}</div>${numField("isoEave","ชายคายื่น","ม.",'min="0" max="3" step="0.1"')}</div>
+    <div class="field" id="isoDirField"><label for="isoRoofDir" id="isoRoofDirLabel">แนวสัน</label><select id="isoRoofDir"></select></div>
+    <div class="field"><label for="isoRoofColor">สีหลังคา</label><select id="isoRoofColor">${ROOF_COLORS.map(([n,c])=>`<option value="${c}">${n}</option>`).join("")}</select></div>
+    <p class="field-hint" style="margin-top:8px">X / Y / กว้าง / ยาว คือแนวผนังที่หลังคาคลุม ชายคายื่นออกจากแนวนี้</p>
+    <div class="iso-btn-row"><button class="reset-btn" id="isoRoofFit" type="button">คลุมห้องทั้งชั้น</button><button class="delete-room" id="isoRoofDelete" type="button" style="margin-top:16px">Remove roof</button></div>
+  </div>
+  <div class="toggle-list" style="margin-top:14px"><label class="toggle">ชื่อห้องในมุมมอง Isometric <input id="isoLabelsChk" type="checkbox"></label></div>
+  <button class="reset-btn" id="isoResetH" type="button">ทุกห้องใช้ความสูงตามชั้น</button>
+</section>`);
+
+$("selectedEditor").querySelector(".field-row").insertAdjacentHTML("afterend",`<div class="field-row">
+  <div class="field"><label for="selectedLevel">ชั้น</label><select id="selectedLevel"></select></div>
+  <div class="field"><label for="selectedHeight">ความสูงผนัง</label><div class="unit-input"><input id="selectedHeight" type="number" min="0" max="12" step="0.05"><span>ม.</span></div></div>
+</div><p class="field-hint" style="margin-top:6px">ความสูงเว้นว่าง = ใช้ความสูงชั้น · 0 = ไม่มีผนัง เช่น ลานโล่ง ที่จอดรถ</p>`);
+
+/* ---------- geometry ---------- */
+function T(x,y,W,D,k){switch(k){case 1:return[D-y,x];case 2:return[W-x,D-y];case 3:return[y,W-x];default:return[x,y]}}
+function TV(dx,dy,k){switch(k){case 1:return[-dy,dx];case 2:return[-dx,-dy];case 3:return[dy,-dx];default:return[dx,dy]}}
+function TR(x0,y0,x1,y1,W,D,k){const a=T(x0,y0,W,D,k),b=T(x1,y1,W,D,k);return[Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.max(a[0],b[0]),Math.max(a[1],b[1])]}
+const P=(x,y,z=0)=>[(x-y)*C30*SC,(x+y)*S30*SC-z*SC];
+const pts=a=>a.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+function hull(p){p=p.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
+  for(const q of p){while(lo.length>1&&cr(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}
+  for(let i=p.length-1;i>=0;i--){const q=p[i];while(up.length>1&&cr(up[up.length-2],up[up.length-1],q)<=0)up.pop();up.push(q)}
+  up.pop();lo.pop();return lo.concat(up)}
+function order(o){ // painter's order for boxes, viewer at +X +Y +Z
+  // screen overlap of two iso boxes = overlap of their ranges in (x-y), (x-z), (y-z)
+  const ovl=(a0,a1,b0,b1)=>a0<b1-EPS&&b0<a1-EPS;
+  const scr=(a,b)=>ovl(a.x0-a.y1,a.x1-a.y0,b.x0-b.y1,b.x1-b.y0)&&ovl(a.x0-a.z1,a.x1-a.z0,b.x0-b.z1,b.x1-b.z0)&&ovl(a.y0-a.z1,a.y1-a.z0,b.y0-b.z1,b.y1-b.z0);
+  const n=o.length,ahead=(a,b)=>scr(a,b)&&(a.x1<=b.x0+EPS||a.y1<=b.y0+EPS||a.z1<=b.z0+EPS);
+  const indeg=new Array(n).fill(0),out=o.map(()=>[]);
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(i!==j&&ahead(o[i],o[j])&&!ahead(o[j],o[i])){out[i].push(j);indeg[j]++}
+  const key=b=>b.x0+b.x1+b.y0+b.y1+b.z0*.01,done=new Array(n).fill(false),res=[];
+  while(res.length<n){let best=-1;for(let i=0;i<n;i++)if(!done[i]&&indeg[i]===0&&(best<0||key(o[i])<key(o[best])))best=i;
+    if(best<0){for(let i=0;i<n;i++)if(!done[i]&&(best<0||key(o[i])<key(o[best])))best=i}
+    done[best]=true;res.push(o[best]);out[best].forEach(j=>indeg[j]--)}
+  return res}
+const shade=(hex,f)=>{const n=parseInt(hex.slice(1),16),c=[n>>16,(n>>8)&255,n&255].map(v=>Math.round(clamp(v*f,0,255)));return"#"+c.map(v=>v.toString(16).padStart(2,"0")).join("")};
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const norm=a=>{const l=Math.hypot(...a)||1;return a.map(v=>v/l)};
+
+/* roof faces in plan coords; kind: slope (roof skin) | wall (gable end / high side) */
+function roofFaces(r,X0,Y0,X1,Y1,z){
+  const tn=Math.tan(clamp(r.pitch,1,60)*Math.PI/180),F=[];
+  let alongX=r.dir%2===0;if(r.type==="hip")alongX=(X1-X0)>=(Y1-Y0);
+  const u0=alongX?X0:Y0,u1=alongX?X1:Y1,v0=alongX?Y0:X0,v1=alongX?Y1:X1,vm=(v0+v1)/2;
+  const M=(u,v,h)=>alongX?[u,v,z+h]:[v,u,z+h],f=(kind,...p)=>F.push({kind,p:p.map(q=>M(...q))});
+  if(r.type==="gable"){const H=(v1-v0)/2*tn;
+    f("slope",[u0,v0,0],[u1,v0,0],[u1,vm,H],[u0,vm,H]);f("slope",[u0,v1,0],[u1,v1,0],[u1,vm,H],[u0,vm,H]);
+    f("wall",[u0,v0,0],[u0,v1,0],[u0,vm,H]);f("wall",[u1,v0,0],[u1,v1,0],[u1,vm,H]);return{F,H}}
+  if(r.type==="hip"){const half=(v1-v0)/2,H=half*tn,a=u0+half,b=Math.max(a,u1-half);
+    f("slope",[u0,v0,0],[u1,v0,0],[b,vm,H],[a,vm,H]);f("slope",[u0,v1,0],[u1,v1,0],[b,vm,H],[a,vm,H]);
+    f("slope",[u0,v0,0],[u0,v1,0],[a,vm,H]);f("slope",[u1,v0,0],[u1,v1,0],[b,vm,H]);return{F,H}}
+  if(r.type==="shed"){// dir = low side: 0 top(y0) 1 right(x1) 2 bottom(y1) 3 left(x0)
+    const lowAtV1=r.dir===1||r.dir===2,H=(v1-v0)*tn,hv=v=>lowAtV1?(v1-v)*tn:(v-v0)*tn,vh=lowAtV1?v0:v1;
+    f("slope",[u0,v0,hv(v0)],[u1,v0,hv(v0)],[u1,v1,hv(v1)],[u0,v1,hv(v1)]);
+    f("wall",[u0,vh,0],[u1,vh,0],[u1,vh,H],[u0,vh,H]);
+    f("wall",[u0,v0,0],[u0,v1,0],[u0,v1,hv(v1)],[u0,v0,hv(v0)]);f("wall",[u1,v0,0],[u1,v1,0],[u1,v1,hv(v1)],[u1,v0,hv(v0)]);return{F,H}}
+  if(r.type==="butterfly"){const H=(v1-v0)/2*tn;
+    f("slope",[u0,v0,H],[u1,v0,H],[u1,vm,0],[u0,vm,0]);f("slope",[u0,v1,H],[u1,v1,H],[u1,vm,0],[u0,vm,0]);
+    f("wall",[u0,v0,0],[u0,v0,H],[u0,vm,0],[u0,v1,H],[u0,v1,0]);f("wall",[u1,v0,0],[u1,v0,H],[u1,vm,0],[u1,v1,H],[u1,v1,0]);
+    f("wall",[u0,v0,0],[u1,v0,0],[u1,v0,H],[u0,v0,H]);f("wall",[u0,v1,0],[u1,v1,0],[u1,v1,H],[u0,v1,H]);return{F,H}}
+  return{F,H:0};
+}
+function sunNow(){const reg=regions[$("region").value];return solarPosition(selectedDate(),S.hour,reg.lat,reg.lon)}
+const hhmm=h=>`${String(Math.floor(h)).padStart(2,"0")}:${String(Math.round((h%1)*60)).padStart(2,"0")}`;
+const sideName=az=>compassName((az-northAngle()+360)%360);
+
+/* ---------- scene ---------- */
+let last=null;
+const WALL=["#fbf9f4","#ddd8cc","#c6c1b5"],WSEL=["#c47a55","#e8cdbb","#d9b49c"],COL=["#4a4e49","#343834","#2a2d2a"],SLABC=["#e2ded4","#c9c4b8","#b3aea2"];
+function scene(){
+  const size=site(),W=size.w,D=size.d,k=S.rot,Wr=k%2?D:W,Dr=k%2?W:D;
+  const t=wallThickness(),al=$("wallAlignment").value,e=al==="inside"?0:al==="center"?t/2:t;
+  const top=S.upTo<0?nF()-1:Math.min(S.upTo,nF()-1);
+  const objs=[],ground=[],labels=[];let zmax=0;
+  const put=o=>{if(o.x1-o.x0>1e-4&&o.y1-o.y0>1e-4&&o.z1-o.z0>1e-4){objs.push(o);zmax=Math.max(zmax,o.z1)}};
+  const shown=S.roofOn?S.roofs.filter(r=>{const L=roofLevel(r);return L<top||(L===top&&top===nF()-1)}):[];
+  const covers=(rf,x,y,w,d)=>rf.x<=x+EPS&&rf.y<=y+EPS&&rf.x+rf.w>=x+w-EPS&&rf.y+rf.d>=y+d-EPS;
+  rooms.forEach(r=>{
+    const L=lvl(r);if(L>top)return;
+    const b=base(L),sl=L>0?SLAB:0,h=roomH(r),sel=r.id===selectedId,col=roomTypes[r.type].color;
+    const[X0,Y0,X1,Y1]=TR(r.x,r.y,r.x+r.w,r.y+r.d,W,D,k);
+    const onFlat=L>0&&shown.some(rf=>rf.type==="flat"&&roofLevel(rf)===L-1&&covers(rf,r.x,r.y,r.w,r.d));
+    if(L===0)ground.push({id:r.id,sel,x0:X0,y0:Y0,x1:X1,y1:Y1,color:col});
+    else if(onFlat){const ii=t-e;put({id:r.id,x0:X0-e+ii,y0:Y0-e+ii,x1:X1+e-ii,y1:Y1+e-ii,z0:b+sl,z1:b+sl+.02,c:[col,col,col],sel})}
+    else put({id:r.id,x0:X0-e,y0:Y0-e,x1:X1+e,y1:Y1+e,z0:b,z1:b+sl,c:[col,SLABC[1],SLABC[2]],sel});
+    const cx=r.x+r.w/2,cy=r.y+r.d/2,roofed=shown.some(rf=>roofLevel(rf)===L&&cx>rf.x&&cx<rf.x+rf.w&&cy>rf.y&&cy<rf.y+rf.d);
+    if(S.labels&&L===top&&!roofed)labels.push({x:(X0+X1)/2,y:(Y0+Y1)/2,z:b+sl,name:r.name,sub:`${fl(L)} · h ${format2(h)} m`});
+    if(h-sl<=0)return;
+    const z0=b+sl,z1=b+h,zc=S.cut?Math.min(z1,z0+1):z1,c=sel?WSEL:WALL,a0=X0-e,b0=Y0-e,a1=X1+e,b1=Y1+e;
+    const add=(x0,y0,x1,y1,zt)=>put({id:r.id,x0,y0,x1,y1,z0,z1:zt,zs:z1,c,sel});
+    add(a0,b0,a1,b0+t,z1);add(a0,b1-t,a1,b1,zc);add(a0,b0+t,a0+t,b1-t,z1);add(a1-t,b0+t,a1,b1-t,zc);
+  });
+  if($("showColumns").checked){const ztop=base(top)+S.floors[top].h;columns.forEach(c=>{const[x0,y0,x1,y1]=TR(c.x-c.w/2,c.y-c.d/2,c.x+c.w/2,c.y+c.d/2,W,D,k);put({col:true,x0,y0,x1,y1,z0:0,z1:ztop,c:COL})})}
+  // roofs: each one covers its own outline (plus eave), sitting on top of its floor
+  shown.forEach(R=>{
+    const L=roofLevel(R),sel=R.id===S.selRoof,ev=e+clamp(Number(R.eave)||0,0,3),px0=R.x-ev,py0=R.y-ev,px1=R.x+R.w+ev,py1=R.y+R.d+ev;
+    const zt=roofBase(L),[x0,y0,x1,y1]=TR(px0,py0,px1,py1,W,D,k),color=sel?"#c47a55":R.color;
+    if(R.type==="flat"){const rc=[shade(color,1.35),shade(color,1.12),shade(color,1)],pt=.15,ph=.5,zp=zt+SLAB;
+      put({rid:R.id,x0,y0,x1,y1,z0:zt,z1:zp,c:rc});
+      [[x0,y0,x1,y0+pt],[x0,y1-pt,x1,y1],[x0,y0+pt,x0+pt,y1-pt],[x1-pt,y0+pt,x1,y1-pt]].forEach(([a,b,c,d])=>put({rid:R.id,x0:a,y0:b,x1:c,y1:d,z0:zp,z1:zp+ph,c:rc}));return}
+    const{F,H}=roofFaces(R,px0,py0,px1,py1,zt),allP=F.flatMap(f=>f.p);
+    const cen=allP.reduce((s,p)=>[s[0]+p[0],s[1]+p[1],s[2]+p[2]],[0,0,0]).map(v=>v/allP.length),vc=T(cen[0],cen[1],W,D,k),c3=[vc[0],vc[1],cen[2]];
+    const faces=F.map(f=>{const vp=f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]});
+      const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
+      let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
+      if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
+      return{kind:f.kind,vp,n,depth:fc[0]+fc[1]+fc[2]*.5}}).filter(f=>dot(f.n,[1,1,1])>1e-3).sort((a,b)=>a.depth-b.depth);
+    put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
+  });
+  if(!zmax)zmax=S.floors[0].h;
+  return{W,D,Wr,Dr,k,t,top,objs:order(objs),ground,labels,zmax};
+}
+
+/* ---------- draw ---------- */
+const LIGHT=norm([-.35,.25,1]);
+function draw(){
+  const sc=scene(),{Wr,Dr,k}=sc,parts=[];
+  const ext=[[-2,-2],[Wr+3.5,-2],[Wr+3.5,Dr+2],[-2,Dr+2]],pp=[];ext.forEach(([x,y])=>{pp.push(P(x,y,0));pp.push(P(x,y,sc.zmax+.6))});
+  const minX=Math.min(...pp.map(p=>p[0])),maxX=Math.max(...pp.map(p=>p[0])),minY=Math.min(...pp.map(p=>p[1])),maxY=Math.max(...pp.map(p=>p[1]));
+  const vb={x:minX,y:minY,w:maxX-minX,h:maxY-minY};svg.setAttribute("viewBox",`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+  parts.push(`<rect x="${vb.x}" y="${vb.y}" width="${vb.w}" height="${vb.h}" fill="#f7f4ed"/>`);
+  parts.push(`<polygon points="${pts([P(0,0),P(Wr,0),P(Wr,Dr),P(0,Dr)])}" fill="#eee9df" stroke="#8d887e" stroke-width="1" vector-effect="non-scaling-stroke"/>`);
+  if($("showGrid").checked){let g="";for(let i=1;i<Wr;i++){const a=P(i,0),b=P(i,Dr);g+=`M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`}
+    for(let j=1;j<Dr;j++){const a=P(0,j),b=P(Wr,j);g+=`M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`}
+    parts.push(`<path d="${g}" stroke="#cfc9bd" stroke-width=".6" fill="none" vector-effect="non-scaling-stroke"/>`)}
+  sc.ground.forEach(f=>parts.push(`<polygon class="rm" data-id="${f.id}" points="${pts([P(f.x0,f.y0),P(f.x1,f.y0),P(f.x1,f.y1),P(f.x0,f.y1)])}" fill="${f.color}"${f.sel?' stroke="#c47a55" stroke-width="2.5" vector-effect="non-scaling-stroke"':""}/>`));
+  // shadows on the ground
+  let sun=null;
+  if($("showSun").checked){sun=sunNow();if(sun.elevation>2){const a=toPlanAzimuth(sun.azimuth)*Math.PI/180,[vx,vy]=TV(Math.sin(a),-Math.cos(a),k),L=1/Math.tan(sun.elevation*Math.PI/180),dx=-vx*L,dy=-vy*L,pr=([x,y,z])=>[x+dx*z,y+dy*z];
+    const sh=sc.objs.map(o=>{const v=o.roof?o.all:(()=>{const zs=o.zs||o.z1,c=[[o.x0,o.y0],[o.x1,o.y0],[o.x1,o.y1],[o.x0,o.y1]];return c.map(([x,y])=>[x,y,o.z0]).concat(c.map(([x,y])=>[x,y,zs]))})();return hull(v.map(pr)).map(([x,y])=>P(x,y,0))});
+    parts.push(`<clipPath id="isoClip"><polygon points="${pts([P(-2,-2),P(Wr+2,-2),P(Wr+2,Dr+2),P(-2,Dr+2)])}"/></clipPath><g clip-path="url(#isoClip)" opacity=".17">${sh.map(p=>`<polygon points="${pts(p)}" fill="#171816"/>`).join("")}</g>`)}}
+  // objects
+  const stroke=`stroke="#171816" stroke-width=".7" stroke-linejoin="round"`,ve=`vector-effect="non-scaling-stroke"`;
+  sc.objs.forEach(o=>{
+    const tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:"";
+    if(o.roof){parts.push(`<g${tag} ${stroke}>${o.faces.map(f=>{const col=f.kind==="slope"?shade(o.color,.78+.42*Math.max(0,dot(f.n,LIGHT))):shade("#ece8df",.86+.14*Math.max(0,dot(f.n,LIGHT)));return`<polygon points="${pts(f.vp.map(p=>P(...p)))}" fill="${col}" ${ve}/>`}).join("")}</g>`);return}
+    const{x0,y0,x1,y1,z0,z1}=o,[top,fy,fx]=o.c;
+    parts.push(`<g${tag} ${stroke}>`+
+      `<polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/>`+
+      `<polygon points="${pts([P(x1,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x1,y0,z1)])}" fill="${fx}" ${ve}/>`+
+      `<polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`)});
+  // north arrow
+  const na=northAngle()*Math.PI/180,[nx,ny]=TV(Math.sin(na),-Math.cos(na),k),cx=Wr+1.9,cy=1.2,tip=P(cx+nx*1.1,cy+ny*1.1),tl=P(cx-nx*.8,cy-ny*.8),l=P(cx-nx*.2-ny*.35,cy-ny*.2+nx*.35),r=P(cx-nx*.2+ny*.35,cy-ny*.2-nx*.35),lab=P(cx+nx*1.7,cy+ny*1.7);
+  parts.push(`<g id="isoNorth"><line x1="${tl[0]}" y1="${tl[1]}" x2="${tip[0]}" y2="${tip[1]}" stroke="#171816" stroke-width="1.2" ${ve}/><polygon points="${pts([tip,l,r])}" fill="#171816"/><text x="${lab[0]}" y="${lab[1]+5}" text-anchor="middle" font-size="15" font-weight="600" fill="#171816" font-family="Instrument Sans, sans-serif">N</text></g>`);
+  // labels
+  const lab2=sc.labels.map(L=>{const p=P(L.x,L.y,L.z);return{x:p[0],y:p[1],name:L.name,sub:L.sub}});
+  parts.push(`<g id="isoLabels" pointer-events="none">${lab2.map(L=>`<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-size="16" font-weight="500" fill="#171816" stroke="#f7f4ed" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${escapeHtml(L.name)}<tspan x="${L.x.toFixed(1)}" dy="17" font-size="12" font-weight="400" fill="#5d5e57">${L.sub}</tspan></text>`).join("")}</g>`);
+  svg.innerHTML=parts.join("");
+  last={vb,labels:lab2};
+  // toolbar + note
+  const viewAz=(VIEW_AZ[k]-northAngle()+360)%360;
+  $("isoRotLabel").textContent=`View from ${compassName(viewAz)}`;
+  $("isoHour").value=S.hour;$("isoHourOut").textContent=hhmm(S.hour);
+  $("isoCut").setAttribute("aria-pressed",String(!!S.cut));$("isoRoofBtn").setAttribute("aria-pressed",String(!!S.roofOn));
+  $("isoUpTo").innerHTML=`<option value="-1">แสดงทุกชั้น</option>`+S.floors.slice(0,-1).map((f,i)=>`<option value="${i}">แสดงถึง${fl(i)}</option>`).join("");
+  $("isoUpTo").value=String(S.upTo>=0&&S.upTo<nF()-1?S.upTo:-1);$("isoUpTo").hidden=nF()<2;
+  const date=new Intl.DateTimeFormat("th-TH",{day:"numeric",month:"short",year:"numeric"}).format(selectedDate());
+  const sunTxt=!$("showSun").checked?"ปิดชั้นแดดอยู่ (เปิดที่ Diagram layers เพื่อดูเงา)":sun&&sun.elevation>2?`เงา ${date} ${hhmm(S.hour)} · ดวงอาทิตย์ทิศ <b>${compassName(sun.azimuth)}</b> ${Math.round(sun.azimuth)}° · มุมสูง <b>${Math.round(sun.elevation)}°</b>`:`${hhmm(S.hour)} ดวงอาทิตย์อยู่ต่ำหรือตกแล้ว`;
+  $("isoNote").innerHTML=`มองจากทิศ <b>${directionThai[compassName(viewAz)]}</b> · <b>${nF()}</b> ชั้น สูงรวม <b>${format2(base(nF()))}</b> ม. ไม่รวมหลังคา · หลังคา ${S.roofs.length} ชุด · ผนังหนา ${format2(sc.t)} ม.${S.cut?" · ผนังด้านหน้าตัดที่ 1.00 ม.":""}<br>${sunTxt}`;
+}
+
+/* ---------- roof outlines on the plan ---------- */
+function renderRoofOverlay(){
+  const s=site();
+  roofLayer.innerHTML=S.roofs.filter(r=>roofLevel(r)===S.active).map(r=>{const ev=clamp(Number(r.eave)||0,0,3),pc=v=>v*100;
+    return`<div class="iso-roof-outline ${r.id===S.selRoof?"sel":""}" data-roof="${r.id}" style="left:${pc(r.x/s.w)}%;top:${pc(r.y/s.d)}%;width:${pc(r.w/s.w)}%;height:${pc(r.d/s.d)}%">
+      <span class="eave" style="left:${-pc(ev/r.w)}%;top:${-pc(ev/r.d)}%;right:${-pc(ev/r.w)}%;bottom:${-pc(ev/r.d)}%"></span>
+      <button type="button" class="iso-roof-chip" data-roof="${r.id}" title="ลากเพื่อย้าย · คลิกเพื่อแก้ไข">⌂ หลังคา${ROOF[r.type].short} · ${format2(r.w)}×${format2(r.d)}</button></div>`}).join("");
+  roofLayer.querySelectorAll(".iso-roof-chip").forEach(b=>b.addEventListener("pointerdown",startRoofDrag));
+}
+let rdrag=null;
+function startRoofDrag(ev){
+  if(ev.button!==0)return;ev.preventDefault();ev.stopPropagation();
+  const r=S.roofs.find(i=>i.id===ev.currentTarget.dataset.roof);if(!r)return;
+  rdrag={r,sx:ev.clientX,sy:ev.clientY,x:r.x,y:r.y,rect:board.getBoundingClientRect(),moved:false};
+  window.addEventListener("pointermove",roofDragMove);window.addEventListener("pointerup",endRoofDrag,{once:true});
+}
+function roofDragMove(ev){
+  if(!rdrag)return;const s=site(),{r}=rdrag,dx=(ev.clientX-rdrag.sx)/rdrag.rect.width*s.w,dy=(ev.clientY-rdrag.sy)/rdrag.rect.height*s.d;
+  if(Math.abs(ev.clientX-rdrag.sx)+Math.abs(ev.clientY-rdrag.sy)>3)rdrag.moved=true;
+  r.x=clamp(snap(rdrag.x+dx),0,Math.max(0,s.w-r.w));r.y=clamp(snap(rdrag.y+dy),0,Math.max(0,s.d-r.d));
+  const el=roofLayer.querySelector(`.iso-roof-outline[data-roof="${r.id}"]`);if(el){el.style.left=`${r.x/s.w*100}%`;el.style.top=`${r.y/s.d*100}%`}
+}
+function endRoofDrag(){window.removeEventListener("pointermove",roofDragMove);if(!rdrag)return;const r=rdrag.r;rdrag=null;S.selRoof=r.id;saveS();renderAll(false);$("isoRoofEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}
+
+/* ---------- floors & roofs panel ---------- */
+function roofDirOptions(R){
+  if(R.type==="shed")return[[0,"บน"],[1,"ขวา"],[2,"ล่าง"],[3,"ซ้าย"]].map(([v,s])=>[v,`ลาดลงด้าน${s}ของผัง · ทิศ ${sideName(v*90)}`]);
+  return[[0,"ขนานแนวนอนของผัง (ซ้าย–ขวา)"],[1,"ขนานแนวตั้งของผัง (บน–ล่าง)"]];
+}
+const busy=el=>el.contains(document.activeElement);
+function renderPanel(){
+  S.active=clamp(S.active,0,nF()-1);
+  chips.innerHTML=S.floors.map((f,i)=>`<button type="button" data-fl="${i}" aria-pressed="${i===S.active}">${fl(i)}</button>`).join("");
+  chips.hidden=nF()<2;
+  chips.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>setActive(+b.dataset.fl)));
+  const list=$("isoFloorList");
+  if(!busy(list)){
+    list.innerHTML=S.floors.map((f,i)=>{const rs=onLevel(i),area=rs.reduce((s,r)=>s+r.w*r.d,0);
+      return`<div class="room-list-item iso-floor-row ${i===S.active?"active":""}"><button type="button" data-fsel="${i}"><strong>${fl(i)}</strong><small>${rs.length} ห้อง · ${format2(area)} ตร.ม.</small></button><div class="unit-input"><input type="number" min="2" max="12" step="0.1" data-fh="${i}" value="${format2(f.h)}" aria-label="ความสูง${fl(i)}"><span>ม.</span></div>${nF()>1?`<button class="quick-delete" type="button" data-fdel="${i}" aria-label="ลบ${fl(i)}">×</button>`:"<span></span>"}</div>`}).join("");
+    list.querySelectorAll("[data-fsel]").forEach(b=>b.addEventListener("click",()=>setActive(+b.dataset.fsel)));
+    list.querySelectorAll("[data-fh]").forEach(inp=>{inp.addEventListener("input",()=>{const v=Number(inp.value);if(v>=2&&v<=12){S.floors[+inp.dataset.fh].h=round2(v);saveS();refresh()}});inp.addEventListener("blur",()=>{inp.value=format2(S.floors[+inp.dataset.fh].h);refresh()})});
+    list.querySelectorAll("[data-fdel]").forEach(b=>b.addEventListener("click",()=>removeFloor(+b.dataset.fdel)));
+  }
+  $("isoRoofList").innerHTML=S.roofs.map(r=>`<div class="room-list-item ${r.id===S.selRoof?"active":""}"><button type="button" data-rsel="${r.id}"><strong>หลังคา${ROOF[r.type].short} · ${fl(roofLevel(r))}</strong><small>${format2(r.w)} × ${format2(r.d)} ม. · X ${format2(r.x)} / Y ${format2(r.y)}</small></button><button class="quick-delete" type="button" data-rdel="${r.id}" aria-label="ลบหลังคา">×</button></div>`).join("")||`<p class="field-hint">ยังไม่มีหลังคา</p>`;
+  $("isoRoofList").querySelectorAll("[data-rsel]").forEach(b=>b.addEventListener("click",()=>selectRoof(b.dataset.rsel)));
+  $("isoRoofList").querySelectorAll("[data-rdel]").forEach(b=>b.addEventListener("click",()=>removeRoof(b.dataset.rdel)));
+  const R=selRoof(),ed=$("isoRoofEditor");ed.hidden=!R;
+  if(R&&!busy(ed)){
+    $("isoRoofType").value=R.type;
+    $("isoRoofLevel").innerHTML=S.floors.map((f,i)=>`<option value="${i}">หลังคา${fl(i)}</option>`).join("");$("isoRoofLevel").value=String(roofLevel(R));
+    $("isoRoofX").value=format2(R.x);$("isoRoofY").value=format2(R.y);$("isoRoofW").value=format2(R.w);$("isoRoofD").value=format2(R.d);
+    $("isoPitch").value=R.pitch;$("isoEave").value=format2(R.eave);$("isoRoofColor").value=R.color;
+  }
+  if(R){const pitched=R.type!=="flat";$("isoPitchWrap").hidden=!pitched;$("isoDirField").hidden=!pitched||R.type==="hip";
+    $("isoRoofDirLabel").textContent=R.type==="shed"?"ทิศที่หลังคาลาดลง":R.type==="butterfly"?"แนวรางน้ำกลาง":"แนวสันหลังคา";
+    const opts=roofDirOptions(R);if(!opts.some(([v])=>v===R.dir))R.dir=opts[0][0];
+    if(!busy($("isoDirField"))){$("isoRoofDir").innerHTML=opts.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");$("isoRoofDir").value=String(R.dir)}}
+  $("isoFloorBadge").textContent=nF()>1?`${fl(S.active)} · Floor ${String(S.active+1).padStart(2,"0")} plan`:"";
+}
+function refresh(){renderAll(true,true)}
+function setActive(L){S.active=clamp(L,0,nF()-1);const sel=rooms.find(r=>r.id===selectedId);if(sel&&lvl(sel)!==S.active)selectedId=null;const rf=selRoof();if(rf&&roofLevel(rf)!==S.active)S.selRoof=null;saveS();renderAll(false)}
+function selectRoof(id){const r=S.roofs.find(i=>i.id===id);if(!r)return;S.selRoof=id;S.active=roofLevel(r);selectedId=null;if(typeof selectedColumnId!=="undefined")selectedColumnId=null;saveS();renderAll(false);$("isoRoofEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}
+function removeRoof(id){S.roofs=S.roofs.filter(r=>r.id!==id);if(S.selRoof===id)S.selRoof=null;saveS();renderAll();typeof toast==="function"&&toast("ลบหลังคาแล้ว")}
+function addRoof(){const r=makeRoof(S.active,"gable");S.roofs.push(r);S.selRoof=r.id;S.roofOn=true;saveS();renderAll();typeof toast==="function"&&toast(`เพิ่มหลังคาบน${fl(S.active)}แล้ว ลากป้ายบนแปลนหรือแก้ขนาดได้`);$("isoRoofEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}
+function addFloor(){const prevTop=nF()-1;S.floors.push({h:S.floors[prevTop].h});S.roofs.forEach(r=>{if(roofLevel(r)===prevTop&&r.type!=="flat")r.level=nF()-1});S.active=nF()-1;selectedId=null;saveS();renderAll(false);typeof toast==="function"&&toast(`เพิ่ม${fl(S.active)}แล้ว หลังคาทรงสูงถูกย้ายขึ้นมาไว้บนชั้นนี้`)}
+let pendingDel=null;
+function removeFloor(L){
+  const rs=onLevel(L);
+  if(rs.length&&pendingDel!==L){pendingDel=L;typeof toast==="function"&&toast(`กด × อีกครั้งเพื่อลบ${fl(L)} พร้อม ${rs.length} ห้อง`);setTimeout(()=>{pendingDel=null},4000);return}pendingDel=null;
+  const ids=new Set(rs.map(r=>r.id)),wasTop=L===nF()-1;
+  rooms=rooms.filter(r=>!ids.has(r.id));
+  rooms.forEach(r=>{if((Number(r.level)||0)>L)r.level=(Number(r.level)||0)-1});
+  S.roofs=S.roofs.filter(r=>wasTop||roofLevel(r)!==L);S.roofs.forEach(r=>{if(r.level>L||(wasTop&&r.level===L))r.level=Math.max(0,r.level-1)});
+  if(ids.has(selectedId))selectedId=null;
+  S.floors.splice(L,1);
+  S.active=clamp(S.active>L?S.active-1:S.active,0,nF()-1);if(S.upTo>=nF()-1)S.upTo=-1;saveS();renderAll();
+}
+function applyFloorFilter(){
+  document.querySelectorAll("#roomLayer .room-block").forEach(el=>{const r=rooms.find(i=>i.id===el.dataset.id),L=r?lvl(r):0;
+    el.classList.toggle("iso-ghost",L===S.active-1);el.style.display=(L===S.active||L===S.active-1)?"":"none"});
+  document.querySelectorAll("#roomList [data-select]").forEach(b=>{const r=rooms.find(i=>i.id===b.dataset.select);b.parentElement.style.display=r&&lvl(r)!==S.active?"none":""});
+}
+
+/* ---------- view switching ---------- */
+function setView(v){S.view=v==="iso"?"iso":"plan";saveS();document.body.classList.toggle("iso-mode",S.view==="iso");wrap.hidden=S.view!=="iso";
+  sw.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.iv===S.view)));
+  requestAnimationFrame(()=>renderAll(false))}
+sw.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.iv)));
+
+/* ---------- hooks into the original planner ---------- */
+const _renderAll=window.renderAll;
+window.renderAll=function(...a){
+  rooms.forEach(r=>{if(!seen.has(r.id)){seen.add(r.id);if(r.level===undefined)r.level=S.active}});
+  const out=_renderAll.apply(this,a);
+  try{applyFloorFilter();renderRoofOverlay();renderPanel();if(nF()>1)$("sheetSize").textContent+=` · ${nF()} floors`;if(S.view==="iso")draw()}catch(err){console.error("[iso]",err)}
+  return out};
+const _renderEditor=window.renderEditor;
+window.renderEditor=function(...a){const out=_renderEditor.apply(this,a);const room=rooms.find(i=>i.id===selectedId);
+  if(room){$("selectedLevel").innerHTML=S.floors.map((f,i)=>`<option value="${i}">${fl(i)}</option>`).join("");$("selectedLevel").value=String(lvl(room));
+    $("selectedHeight").value=hasOwnH(room)?format2(room.h):"";$("selectedHeight").placeholder=format2(S.floors[lvl(room)].h)}return out};
+const _selectRoom=window.selectRoom;
+window.selectRoom=function(id,...a){const r=rooms.find(i=>i.id===id);if(r){S.active=lvl(r);S.selRoof=null;saveS()}return _selectRoom.call(this,id,...a)};
+const _download=window.downloadPng;
+window.downloadPng=async function(...a){
+  return isoPng()};
+
+/* ---------- controls ---------- */
+$("isoRotL").addEventListener("click",()=>{S.rot=(S.rot+3)%4;saveS();draw()});
+$("isoRotR").addEventListener("click",()=>{S.rot=(S.rot+1)%4;saveS();draw()});
+$("isoHour").addEventListener("input",e=>{S.hour=Number(e.target.value);saveS();draw()});
+$("isoCut").addEventListener("click",()=>{S.cut=!S.cut;saveS();draw()});
+$("isoRoofBtn").addEventListener("click",()=>{S.roofOn=!S.roofOn;saveS();draw()});
+$("isoUpTo").addEventListener("change",e=>{S.upTo=Number(e.target.value);saveS();draw()});
+$("isoAddFloor").addEventListener("click",addFloor);
+$("isoAddRoof").addEventListener("click",addRoof);
+const withRoof=fn=>e=>{const r=selRoof();if(!r)return;if(fn(r,e.target.value)!==false){saveS();refresh()}};
+$("isoRoofType").addEventListener("change",withRoof((r,v)=>{r.type=v;r.pitch=ROOF[v].pitch||r.pitch;r.eave=ROOF[v].eave;r.dir=0}));
+$("isoRoofLevel").addEventListener("change",withRoof((r,v)=>{r.level=Number(v);S.active=r.level}));
+const num=(v,min,max)=>{const n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max?round2(n):null};
+const s0=()=>site();
+$("isoRoofX").addEventListener("input",withRoof((r,v)=>{const n=num(v,-3,s0().w);if(n===null)return false;r.x=n}));
+$("isoRoofY").addEventListener("input",withRoof((r,v)=>{const n=num(v,-3,s0().d);if(n===null)return false;r.y=n}));
+$("isoRoofW").addEventListener("input",withRoof((r,v)=>{const n=num(v,1,s0().w+6);if(n===null)return false;r.w=n}));
+$("isoRoofD").addEventListener("input",withRoof((r,v)=>{const n=num(v,1,s0().d+6);if(n===null)return false;r.d=n}));
+$("isoPitch").addEventListener("input",withRoof((r,v)=>{const n=num(v,1,60);if(n===null)return false;r.pitch=n}));
+$("isoEave").addEventListener("input",withRoof((r,v)=>{const n=num(v,0,3);if(n===null)return false;r.eave=n}));
+$("isoRoofDir").addEventListener("change",withRoof((r,v)=>{r.dir=Number(v)}));
+$("isoRoofColor").addEventListener("change",withRoof((r,v)=>{r.color=v}));
+$("isoRoofFit").addEventListener("click",()=>{const r=selRoof();if(!r)return;const b=bboxOf(onLevel(roofLevel(r)));if(!b){typeof toast==="function"&&toast("ชั้นนี้ยังไม่มีห้อง");return}Object.assign(r,{x:round2(b.x),y:round2(b.y),w:round2(b.w),d:round2(b.d)});saveS();renderAll()});
+$("isoRoofDelete").addEventListener("click",()=>{const r=selRoof();if(r)removeRoof(r.id)});
+["isoRoofX","isoRoofY","isoRoofW","isoRoofD","isoEave"].forEach(id=>$(id).addEventListener("blur",()=>renderAll()));
+$("isoLabelsChk").checked=!!S.labels;$("isoLabelsChk").addEventListener("change",e=>{S.labels=e.target.checked;saveS();draw()});
+$("isoResetH").addEventListener("click",()=>{rooms.forEach(r=>{delete r.h});renderAll();typeof toast==="function"&&toast("ทุกห้องใช้ความสูงตามชั้นแล้ว")});
+const hIn=$("selectedHeight");
+function setRoomH(final){const room=rooms.find(i=>i.id===selectedId);if(!room)return;const v=hIn.value.trim();if(v==="")delete room.h;else{const n=Number(v);if(!Number.isFinite(n))return;room.h=round2(clamp(n,0,12))}renderAll(true,!final)}
+hIn.addEventListener("input",()=>setRoomH(false));hIn.addEventListener("blur",()=>setRoomH(true));
+$("selectedLevel").addEventListener("change",e=>{const room=rooms.find(i=>i.id===selectedId);if(!room)return;room.level=Number(e.target.value);S.active=room.level;saveS();renderAll()});
+svg.addEventListener("click",e=>{const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
+  const el=e.target.closest("[data-id]");if(el&&typeof selectRoom==="function"){selectRoom(el.dataset.id);$("selectedEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}});
+
+/* ---------- PNG export (isometric) ---------- */
+async function isoCanvas(){
+  const keep=S.selRoof;S.selRoof=null;draw();S.selRoof=keep;await document.fonts.ready;
+  const canvas=document.createElement("canvas");canvas.width=1800;canvas.height=1250;const ctx=canvas.getContext("2d");
+  ctx.fillStyle="#f7f4ed";ctx.fillRect(0,0,1800,1250);
+  ctx.fillStyle="#171816";ctx.font="600 18px Instrument Sans";ctx.fillText("ARSTINLA · SCHEMATIC DESIGN · ISOMETRIC",80,65);
+  ctx.font="300 54px Instrument Sans";ctx.fillText($("sheetProjectName").textContent,80,125);
+  ctx.fillStyle="#6f7069";ctx.font="16px Instrument Sans";ctx.fillText(`${$("sheetRegion").textContent} · ${$("sheetSize").textContent} · ${$("isoRotLabel").textContent.toUpperCase()}`,80,160);
+  ctx.font="15px Noto Sans Thai";ctx.fillText($("isoNote").textContent.replace(/\s+/g," "),80,188);
+  const clone=svg.cloneNode(true);clone.querySelector("#isoLabels")?.remove();clone.querySelector("#isoNorth text")?.remove();
+  const{vb,labels}=last,bx=80,by=215,bw=1640,bh=880,s=Math.min(bw/vb.w,bh/vb.h),ox=bx+(bw-vb.w*s)/2,oy=by+(bh-vb.h*s)/2;
+  clone.setAttribute("width",Math.round(vb.w*s));clone.setAttribute("height",Math.round(vb.h*s));
+  const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:"image/svg+xml"}));
+  await new Promise((res,rej)=>{const img=new Image();img.onload=()=>{ctx.drawImage(img,ox,oy,vb.w*s,vb.h*s);URL.revokeObjectURL(url);res()};img.onerror=rej;img.src=url});
+  draw();
+  const map=(x,y)=>[ox+(x-vb.x)*s,oy+(y-vb.y)*s];
+  ctx.textAlign="center";ctx.lineJoin="round";
+  labels.forEach(L=>{const[x,y]=map(L.x,L.y);ctx.font="500 18px Noto Sans Thai";ctx.lineWidth=5;ctx.strokeStyle="#f7f4ed";ctx.strokeText(L.name,x,y);ctx.fillStyle="#171816";ctx.fillText(L.name,x,y);
+    ctx.font="14px Noto Sans Thai";ctx.strokeText(L.sub,x,y+20);ctx.fillStyle="#5d5e57";ctx.fillText(L.sub,x,y+20)});
+  const nt=svg.querySelector("#isoNorth text");if(nt){const[x,y]=map(+nt.getAttribute("x"),+nt.getAttribute("y"));ctx.fillStyle="#171816";ctx.font="600 20px Instrument Sans";ctx.fillText("N",x,y)}
+  ctx.textAlign="left";ctx.fillStyle="#6f7069";ctx.font="14px Noto Sans Thai";
+  ctx.fillText("แนวคิดเบื้องต้นสำหรับการพูดคุย ไม่ใช่แบบก่อสร้าง ความสูง หลังคา และเงาเป็นค่าประมาณ ควรตรวจหน้างาน กฎหมาย และโครงสร้างก่อนพัฒนาแบบจริง",80,1140);
+  ctx.strokeStyle="#c9c4b9";ctx.beginPath();ctx.moveTo(80,1182);ctx.lineTo(1720,1182);ctx.stroke();
+  ctx.fillStyle="#171816";ctx.font="600 15px Instrument Sans";ctx.fillText("ARSTINLA DESIGN & CONSULT · arstinla.com · LINE @arstinla",80,1218);
+  return canvas;
+}
+async function isoPng(){
+  const canvas=await isoCanvas();
+  const a=document.createElement("a");a.download=`${($("projectName").value||"schematic-plan").replace(/[^a-zA-Z0-9ก-๙]+/g,"-")}-isometric.png`;a.href=canvas.toDataURL("image/png");a.click();
+  typeof toast==="function"&&toast("ดาวน์โหลดภาพ Isometric แล้ว");
+}
+
+window.ARSTINLA_ISO={state:S,draw,setView,addFloor,addRoof,selectRoof,canvas:isoCanvas,save:saveS,png:isoPng};
+/* ---------- start ---------- */
+setView(S.view);
+})();
+</script>
+<script>
+/* ---------- host wiring ---------- */
+(function(){
+const A=window.ARSTINLA_ISO;if(!A)return;
+$("addRoom").addEventListener("click",addRoom);
+$("newRoomType").addEventListener("change",()=>{$("newRoomName").placeholder=`เช่น ${roomTypes[$("newRoomType").value].thai}`});
+$("deleteSelected").addEventListener("click",()=>selectedId&&removeRoom(selectedId));
+$("selectedName").addEventListener("input",()=>updateSelected(true));
+$("selectedType").addEventListener("change",()=>updateSelected(false));
+[$("selectedWidth"),$("selectedDepth")].forEach(i=>{i.addEventListener("input",()=>updateSelected(true));i.addEventListener("blur",()=>updateSelected(false))});
+[$("newRoomWidth"),$("newRoomDepth")].forEach(i=>i.addEventListener("blur",()=>{i.value=format2(i.value)}));
+["projectName","siteWidth","siteDepth","northAngle"].forEach(id=>$(id).addEventListener("input",()=>renderAll()));
+["region","studyDate","showSun","showGrid","wallThickness","wallAlignment"].forEach(id=>$(id).addEventListener("change",()=>renderAll()));
+window.addEventListener("resize",()=>renderRooms());
+$("resetPlan").addEventListener("click",()=>{
+  try{localStorage.removeItem(KEY);localStorage.removeItem(ISO_KEY)}catch(e){}
+  rooms=SAMPLE_ROOMS.map(r=>({...r}));selectedId=null;
+  Object.assign(A.state,JSON.parse(JSON.stringify(SAMPLE_ISO)),{selRoof:null,upTo:-1,cut:false,roofOn:true});
+  $("projectName").value="Concept House 02";$("siteWidth").value=16;$("siteDepth").value=12;$("northAngle").value=0;$("region").value="central";
+  A.save();renderAll();toast("กลับสู่บ้านตัวอย่าง 2 ชั้นแล้ว")});
+$("importPlanner").addEventListener("click",()=>{
+  let s=null,iso=null;try{s=JSON.parse(localStorage.getItem("arstinla-schematic"));iso=JSON.parse(localStorage.getItem("arstinla-schematic-iso"))}catch(e){}
+  if(!s||!Array.isArray(s.rooms)||!s.rooms.length){toast("ยังไม่พบผังจาก Schematic Planner ในเบราว์เซอร์นี้ เปิด Schematic Planner บนเว็บเดียวกันแล้ววางห้องก่อน");return}
+  applySaved({...s,rooms:s.rooms.map(r=>({...r,level:Number(r.level)||0}))});selectedId=null;
+  if(iso&&Array.isArray(iso.floors)&&iso.floors.length){A.state.floors=iso.floors.map(f=>({h:f.h}));A.state.roofs=Array.isArray(iso.roofs)?JSON.parse(JSON.stringify(iso.roofs)):[]}
+  else{A.state.floors=[{h:3}];A.state.roofs=[]}
+  A.state.active=0;A.state.selRoof=null;A.state.upTo=-1;
+  if(!A.state.roofs.length){renderAll(false);A.addRoof();A.state.selRoof=null}
+  A.save();renderAll();toast(`นำเข้า ${rooms.length} ห้องจาก Schematic Planner แล้ว`)});
+$("downloadBtn").addEventListener("click",async()=>{
+  const gate=window.ARSTINLA_DOWNLOAD_GATE;
+  if(gate&&typeof gate.request==="function"){const ok=await gate.request({tool:"ARSTINLA Massing Studio",file:`${$("projectName").value||"Massing"} PNG`,buttonLabel:"ดาวน์โหลด Isometric PNG",shareText:`ดูมวลอาคาร ${$("projectName").value||""} จาก ARSTINLA\n${location.href}`});if(!ok)return}
+  downloadPng()});
+renderAll(false);
+})();
+</script>
+</body>
+</html>
+
