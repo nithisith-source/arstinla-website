@@ -369,6 +369,18 @@
     font-size: 1.2rem;
 
     line-height: 1;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 14px;
+  }
+
+
+  .logo-wordmark {
+    display: block;
+    flex: 0 0 auto;
   }
 
 
@@ -385,6 +397,96 @@
     margin-top: 7px;
 
     opacity: .72;
+  }
+
+
+  .logo-motion-mark {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 auto;
+    display: block;
+    position: relative;
+    overflow: visible;
+    background: transparent;
+    animation: brand-photo-float 6s ease-in-out infinite;
+    perspective: 420px;
+  }
+
+
+  .logo-pyramid {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+
+  .logo-pyramid .pyramid-guide {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: .75;
+    stroke-dasharray: 2.4 3.4;
+    opacity: .18;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .logo-pyramid .pyramid-axis {
+    fill: none;
+    stroke: #c45b2f;
+    stroke-width: .9;
+    stroke-dasharray: 2 2.8;
+    opacity: .56;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .logo-pyramid .pyramid-shadow {
+    fill: rgba(0, 0, 0, .22);
+  }
+
+
+  .logo-pyramid .pyramid-face {
+    stroke: rgba(255, 255, 255, .26);
+    stroke-width: .55;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .logo-pyramid .pyramid-face--accent {
+    stroke: rgba(196, 91, 47, .7);
+  }
+
+
+  .logo-pyramid .pyramid-edge {
+    stroke: currentColor;
+    stroke-width: 1.35;
+    stroke-linecap: round;
+    opacity: .94;
+    vector-effect: non-scaling-stroke;
+  }
+
+
+  .logo-pyramid .pyramid-node {
+    fill: #c45b2f;
+    filter: drop-shadow(0 0 4px rgba(196, 91, 47, .65));
+  }
+
+
+  .nav.scrolled .logo-pyramid .pyramid-face {
+    stroke: rgba(23, 24, 22, .2);
+  }
+
+
+  .logo:hover .logo-motion-mark {
+    animation-duration: 2.8s;
+  }
+
+
+  @keyframes brand-photo-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2.5px); }
   }
 
 
@@ -3260,11 +3362,18 @@ background-size: cover;
 
     .logo {
       font-size: 1rem;
+      gap: 9px;
     }
 
 
     .logo-sub {
       display: none;
+    }
+
+
+    .logo-motion-mark {
+      width: 42px;
+      height: 42px;
     }
 
 
@@ -4065,7 +4174,8 @@ background-repeat:
   .sound-mark span,
   .live-chat-dot::after,
   .massing-tool-visual .massing-sun-group,
-  .massing-tool-visual .massing-layer--top {
+  .massing-tool-visual .massing-layer--top,
+  .logo-motion-mark {
     animation: none;
   }
 }
@@ -4098,10 +4208,42 @@ background-repeat:
       class="logo"
     >
 
-      ARSTINLA
+      <span class="logo-wordmark">
+        ARSTINLA
 
-      <span class="logo-sub">
-        DESIGN & CONSULT
+        <span class="logo-sub">
+          DESIGN & CONSULT
+        </span>
+      </span>
+
+      <span class="logo-motion-mark" aria-hidden="true">
+        <svg
+          class="logo-pyramid"
+          id="brandPyramid"
+          viewBox="0 0 100 100"
+          focusable="false"
+        >
+          <ellipse class="pyramid-shadow" cx="50" cy="76" rx="28" ry="7"/>
+          <ellipse class="pyramid-guide" cx="50" cy="53" rx="39" ry="28"/>
+          <line class="pyramid-axis" x1="50" y1="7" x2="50" y2="91"/>
+          <circle class="pyramid-node" cx="50" cy="11" r="2.5"/>
+
+          <g class="pyramid-faces">
+            <polygon class="pyramid-face" data-pyramid-face="0"/>
+            <polygon class="pyramid-face" data-pyramid-face="1"/>
+            <polygon class="pyramid-face pyramid-face--accent" data-pyramid-face="2"/>
+            <polygon class="pyramid-face" data-pyramid-face="3"/>
+          </g>
+
+          <g class="pyramid-edges">
+            <line class="pyramid-edge" data-pyramid-edge="0"/>
+            <line class="pyramid-edge" data-pyramid-edge="1"/>
+            <line class="pyramid-edge" data-pyramid-edge="2"/>
+            <line class="pyramid-edge" data-pyramid-edge="3"/>
+            <line class="pyramid-edge" data-pyramid-edge="4"/>
+            <line class="pyramid-edge" data-pyramid-edge="5"/>
+          </g>
+        </svg>
       </span>
 
     </a>
@@ -8719,6 +8861,154 @@ const submitButton =
     }
   );
 
+})();
+</script>
+<!-- ROTATING TRIANGULAR PYRAMID BRAND MARK -->
+<script>
+(() => {
+  const svg = document.getElementById("brandPyramid");
+  if (!svg) return;
+
+  const facesGroup = svg.querySelector(".pyramid-faces");
+  const faceElements = [
+    ...svg.querySelectorAll("[data-pyramid-face]")
+  ];
+  const edgeElements = [
+    ...svg.querySelectorAll("[data-pyramid-edge]")
+  ];
+
+  const vertices = [
+    [0, -1.28, 0],
+    [0, .72, 1],
+    [-.866, .72, -.5],
+    [.866, .72, -.5]
+  ];
+
+  const faceIndices = [
+    [0, 2, 3],
+    [0, 3, 1],
+    [0, 1, 2],
+    [1, 3, 2]
+  ];
+
+  const edgeIndices = [
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [1, 2],
+    [2, 3],
+    [3, 1]
+  ];
+
+  const tilt = -.17;
+  const cosTilt = Math.cos(tilt);
+  const sinTilt = Math.sin(tilt);
+
+  function rotateAndProject(vertex, angle) {
+    const [x, y, z] = vertex;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const rotatedX = x * cos + z * sin;
+    const rotatedZ = -x * sin + z * cos;
+    const tiltedY = y * cosTilt - rotatedZ * sinTilt;
+    const tiltedZ = y * sinTilt + rotatedZ * cosTilt;
+    const perspective = 3.2 / (3.2 - tiltedZ);
+
+    return {
+      x: 50 + rotatedX * 29 * perspective,
+      y: 49 + tiltedY * 29 * perspective,
+      z: tiltedZ
+    };
+  }
+
+  function render(angle) {
+    const projected = vertices.map(
+      vertex => rotateAndProject(vertex, angle)
+    );
+
+    const orderedFaces = faceIndices.map(
+      (indices, index) => {
+        const points = indices.map(
+          vertexIndex => projected[vertexIndex]
+        );
+        const depth = points.reduce(
+          (total, point) => total + point.z,
+          0
+        ) / points.length;
+
+        return {
+          element: faceElements[index],
+          index,
+          points,
+          depth
+        };
+      }
+    ).sort((a, b) => a.depth - b.depth);
+
+    orderedFaces.forEach(face => {
+      face.element.setAttribute(
+        "points",
+        face.points.map(
+          point => `${point.x.toFixed(2)},${point.y.toFixed(2)}`
+        ).join(" ")
+      );
+
+      const light = Math.max(
+        0,
+        Math.min(1, (face.depth + 1.1) / 2.2)
+      );
+      const alpha = .06 + light * .2;
+      const isAccent = face.index === 2;
+
+      face.element.style.fill = isAccent
+        ? `rgba(196, 91, 47, ${(.08 + light * .2).toFixed(3)})`
+        : `rgba(255, 255, 255, ${alpha.toFixed(3)})`;
+
+      facesGroup.appendChild(face.element);
+    });
+
+    edgeIndices.forEach((indices, index) => {
+      const start = projected[indices[0]];
+      const end = projected[indices[1]];
+      const edge = edgeElements[index];
+
+      edge.setAttribute("x1", start.x.toFixed(2));
+      edge.setAttribute("y1", start.y.toFixed(2));
+      edge.setAttribute("x2", end.x.toFixed(2));
+      edge.setAttribute("y2", end.y.toFixed(2));
+    });
+  }
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  );
+
+  if (reducedMotion.matches) {
+    render(.55);
+    return;
+  }
+
+  let angle = .25;
+  let previousTime = performance.now();
+
+  function animate(currentTime) {
+    const elapsed = Math.min(
+      80,
+      currentTime - previousTime
+    );
+    previousTime = currentTime;
+
+    const speed = svg.closest(".logo")?.matches(":hover")
+      ? 2.2
+      : 1;
+
+    angle += elapsed * (Math.PI * 2 / 14000) * speed;
+    render(angle);
+    requestAnimationFrame(animate);
+  }
+
+  render(angle);
+  requestAnimationFrame(animate);
 })();
 </script>
 <!-- PROJECT FILTER SCRIPT -->
