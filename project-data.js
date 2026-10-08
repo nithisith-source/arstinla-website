@@ -468,6 +468,14 @@ Resort-like Living ภายในบ้านพักอาศัย
     service:
       "Architecture / Design",
 
+    conceptTitle: "",
+
+    concept: "",
+
+    architectureTitle: "",
+
+    architectureDescription: "",
+
     thumbnail:
       "/assets/project-03.jpg",
 
@@ -479,6 +487,14 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     assetFolder:
       "/assets/project-03/",
+
+    siteHeading: "The Site.",
+
+    planHeading: "Floor Plans.",
+
+    renderHeading: "3D Visualization.",
+
+    constructionHeading: "Construction Progress.",
 
     siteImages: [],
 
