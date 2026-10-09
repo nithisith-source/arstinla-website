@@ -512,8 +512,6 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     constructionImages: [
 
-      "/assets/project-03/construction-269820_0.jpg",
-
       "/assets/project-03/construction-20250507_125923.jpg",
 
       "/assets/project-03/construction-LINE_ALBUM_-9-12-67_241212_3.jpg",
