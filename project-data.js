@@ -496,7 +496,17 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     constructionHeading: "Construction Progress.",
 
-    siteImages: [],
+    siteImages: [
+
+      "/assets/project-03/site-LINE_ALBUM__230313_11---Copy.jpg",
+
+      "/assets/project-03/site-LINE_ALBUM__230313_12.jpg",
+
+      "/assets/project-03/site-LINE_ALBUM__230313_13.jpg",
+
+      "/assets/project-03/site-LINE_ALBUM__230313_15.jpg"
+
+    ],
 
     planImages: [],
 
