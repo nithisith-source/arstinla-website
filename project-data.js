@@ -502,6 +502,12 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     constructionImages: [],
 
+    renderImages: [
+
+      "/assets/project-03/design-project-03.jpg"
+
+    ],
+
     previous: null,
 
     next: null
