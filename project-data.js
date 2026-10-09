@@ -510,7 +510,35 @@ Resort-like Living ภายในบ้านพักอาศัย
 
     planImages: [],
 
-    constructionImages: [],
+    constructionImages: [
+
+      "/assets/project-03/construction-268934_0.jpg",
+
+      "/assets/project-03/construction-269820_0.jpg",
+
+      "/assets/project-03/construction-20250507_125923.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-9-12-67_241212_3.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-9-12-67_241212_4.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-9-12-67_241212_11.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-9-12-67_241212_12.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-10-3-2568_250311_11.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-10-3-2568_250311_12.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-10-3-2568_250311_27.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-10-3-2568_250311_28.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-10-3-2568_250311_32.jpg",
+
+      "/assets/project-03/construction-LINE_ALBUM_-10-3-2568_250311_34.jpg"
+
+    ],
 
     renderImages: [
 
