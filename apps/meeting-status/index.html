@@ -735,7 +735,7 @@ async function savePDF(el,filename,msgEl){
   if(!window.html2pdf){msgEl.textContent='โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วเปิดหน้านี้ใหม่';return}
   msgEl.textContent='กำลังสร้าง PDF…';
   try{
-    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.9},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr','.box','.sig','h2','.ims img']}}).from(el).outputPdf('blob');
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.9},html2canvas:{scale:2,backgroundColor:'#ffffff',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr','.box','.sig','h2','.ims img']}}).from(el).outputPdf('blob');
     const r=await saveBlob(blob,filename);
     msgEl.textContent=r==='saved'?'บันทึก PDF แล้ว':r==='declined'?'ยกเลิกการบันทึก':r==='error'?'บันทึก PDF ไม่สำเร็จ':'ดาวน์โหลด PDF แล้ว';
   }catch(e){msgEl.textContent='สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง'}
