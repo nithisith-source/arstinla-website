@@ -1,0 +1,17 @@
+{
+  "name": "ARSTINLA Design & Consult",
+  "short_name": "ARSTINLA",
+  "description": "สถาปนิกออกแบบบ้าน ARSTINLA Design & Consult — ผลงาน บริการ ความรู้ และเครื่องมือสำหรับคนสร้างบ้าน",
+  "lang": "th",
+  "id": "/",
+  "start_url": "/?source=homescreen",
+  "scope": "/",
+  "display": "minimal-ui",
+  "background_color": "#171816",
+  "theme_color": "#171816",
+  "icons": [
+    {"src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "/assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
