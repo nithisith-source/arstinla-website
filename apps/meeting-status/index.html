@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>บันทึกประชุม & สถานะงาน — ARSTINLA</title>
+<meta name="description" content="บันทึกการประชุมกับลูกค้าและทีม ติดตามงานที่ต้องทำ สถานะโครงการ และสร้างรายงานการประชุมเป็น PDF">
+<meta name="theme-color" content="#9A5A35">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="../shared/pwa-install.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#9A5A35; --brand-ink:#ffffff; --brand-soft:#F3E6DD;
+  --bg:#F1EFEC; --surface:#FFFFFF; --ink:#26211E; --muted:#6B625C; --line:#D6CFC9;
+  --doing:#2D5F9A; --doing-soft:#E0EAF5; --wait:#9A6A00; --wait-soft:#FBEFD6;
+  --done:#2E7D4F; --done-soft:#DFF1E6; --late:#B0402C; --late-soft:#F8E1DC;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#E0A27A; --brand-ink:#24170F; --brand-soft:#3A2A20;
+  --bg:#171412; --surface:#221E1B; --ink:#EEE8E3; --muted:#A99F98; --line:#3D3631;
+  --doing:#8DB6E8; --doing-soft:#1B2A3C; --wait:#E3B04B; --wait-soft:#3A2F17;
+  --done:#7FCB9C; --done-soft:#17301F; --late:#F0907C; --late-soft:#3D1F19;
+}}
+:root[data-theme="dark"]{
+  --brand:#E0A27A; --brand-ink:#24170F; --brand-soft:#3A2A20;
+  --bg:#171412; --surface:#221E1B; --ink:#EEE8E3; --muted:#A99F98; --line:#3D3631;
+  --doing:#8DB6E8; --doing-soft:#1B2A3C; --wait:#E3B04B; --wait-soft:#3A2F17;
+  --done:#7FCB9C; --done-soft:#17301F; --late:#F0907C; --late-soft:#3D1F19;
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",Tahoma,"Leelawadee UI",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:820px;margin:0 auto;padding:0 16px 56px}
+header{padding:20px 0 10px}
+header h1{padding-right:130px}
+@media (display-mode:standalone){header h1{padding-right:0}}
+header h1{margin:0;font-size:1.5rem;line-height:1.3;font-weight:700}
+header p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+h2{font-size:1.1rem;margin:24px 0 10px}
+label.f{display:block;font-size:.9rem;font-weight:600;margin-bottom:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:76px;line-height:1.5}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--late);border:1px solid var(--late)}
+.btn.sm{padding:5px 10px;font-size:.9rem}
+.btn[disabled]{opacity:.6;cursor:progress}
+.hint{color:var(--muted);font-size:.9rem;margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+@media (max-width:560px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* แถบบนสุด: เลือกโครงการ + แท็บ */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0 0;border-bottom:2px solid var(--ink)}
+.psel{display:grid;grid-template-columns:1fr auto;gap:8px}
+.psel select{font-weight:600}
+.tabs{display:flex;gap:4px;margin-top:8px}
+.tabs button{flex:1;font:inherit;font-weight:600;padding:9px 6px;border:0;background:transparent;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brand)}
+.tabs .n{display:inline-block;min-width:20px;font-size:.75rem;background:var(--late);color:#fff;border-radius:10px;padding:0 6px;margin-left:4px;vertical-align:2px}
+.tabs .n:empty{display:none}
+
+/* KPI */
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.kpi button{font:inherit;color:var(--ink);text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+.kpi button[aria-pressed="true"]{border-color:var(--brand);box-shadow:inset 0 -3px 0 var(--brand)}
+.kpi b{display:block;font-size:1.6rem;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.85rem;color:var(--muted)}
+.kpi .late b{color:var(--late)}.kpi .wait b{color:var(--wait)}.kpi .done b{color:var(--done)}
+@media (max-width:560px){.kpi{grid-template-columns:1fr 1fr}}
+
+/* เพิ่มงานด่วน */
+.quick{display:grid;grid-template-columns:1fr auto;gap:8px}
+.quick-more{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+@media (max-width:560px){.quick-more{grid-template-columns:1fr 1fr}.quick-more>:first-child{grid-column:1/3}}
+
+/* รายการงาน */
+.tasks{list-style:none;margin:0;padding:0}
+.task{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)}
+.task:last-child{border-bottom:0}
+.task .t{font:inherit;color:var(--ink);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-weight:600;line-height:1.45}
+.task.is-done .t{text-decoration:line-through;color:var(--muted);font-weight:500}
+.task .m{grid-column:2;font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 10px}
+.task .m .late{color:var(--late);font-weight:600}
+.task .m .soon{color:var(--wait);font-weight:600}
+.pill{font:inherit;font-size:.82rem;font-weight:600;border-radius:14px;padding:3px 8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);width:auto;cursor:pointer}
+.pill[data-s="doing"]{background:var(--doing-soft);border-color:var(--doing);color:var(--doing)}
+.pill[data-s="wait"]{background:var(--wait-soft);border-color:var(--wait);color:var(--wait)}
+.pill[data-s="done"]{background:var(--done-soft);border-color:var(--done);color:var(--done)}
+.group-h{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin:16px 0 0}
+
+/* ประชุม */
+.mlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.mlist button{width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;gap:2px 14px;align-items:center}
+.mdate{grid-row:1/3;text-align:center;border-right:1px solid var(--line);padding-right:14px;min-width:54px}
+.mdate b{display:block;font-size:1.4rem;line-height:1.1}
+.mdate span{font-size:.78rem;color:var(--muted)}
+.mtitle{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msub{grid-column:2;font-size:.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcount{grid-row:1/3;grid-column:3;font-size:.85rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+
+/* โครงการ */
+.plist{display:grid;gap:12px}
+.pcard h3{margin:0;font-size:1.1rem}
+.pcard .sub{color:var(--muted);font-size:.9rem;margin:0}
+.phases{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin:12px 0 4px}
+.phases i{height:8px;border-radius:2px;background:var(--line)}
+.phases i.on{background:var(--brand)}
+.phase-l{font-size:.9rem}
+.phase-l b{color:var(--brand)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:10px 0 4px}
+.bar i{display:block;height:100%;background:var(--done)}
+.pstat{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;color:var(--muted)}
+.pstat .late{color:var(--late);font-weight:600}
+.pcard .row{margin-top:12px}
+
+.empty{text-align:center;padding:28px 14px;color:var(--muted)}
+.empty .btn{margin-top:10px}
+
+/* dialog */
+dialog{border:0;border-radius:12px;padding:0;background:var(--surface);color:var(--ink);width:min(680px,calc(100vw - 24px));max-height:calc(100dvh - 24px)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.dlg{display:flex;flex-direction:column;max-height:calc(100dvh - 24px)}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.dlg-h h2{margin:0}
+.dlg-b{padding:16px;overflow:auto;display:grid;gap:12px}
+.dlg-f{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--line)}
+.dlg-f .row{gap:8px}
+@media (max-width:560px){dialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0;margin:0}.dlg{max-height:100dvh;height:100%}.dlg-b{flex:1}}
+.x{font:inherit;font-size:1.3rem;width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;line-height:1}
+
+.ai{display:grid;gap:8px}
+.ai-row{display:grid;grid-template-columns:1fr 130px 140px 36px;gap:6px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.ai-row .x{width:36px;height:36px;font-size:1.1rem}
+@media (max-width:560px){.ai-row{grid-template-columns:1fr 1fr 36px}.ai-row>:first-child{grid-column:1/3}.ai-row>.x{grid-row:1;grid-column:3}}
+.ai-row select{padding:6px}
+
+.saved{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 14px;border-radius:16px;font-size:.88rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.saved.on{opacity:1}
+.foot{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;align-items:center}
+.foot .row{gap:6px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>บันทึกประชุม & สถานะงาน</h1>
+  <p>จดการประชุมกับลูกค้าและทีม แตกเป็นงานที่ต้องทำ แล้วติดตามสถานะทุกโครงการในที่เดียว</p>
+</header>
+
+<div class="top">
+  <div class="psel">
+    <select id="pSel" aria-label="เลือกโครงการ"></select>
+    <button class="btn ghost" id="pAdd">+ โครงการ</button>
+  </div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="status" aria-selected="true">สถานะงาน<span class="n" id="nLate"></span></button>
+    <button role="tab" data-tab="meet" aria-selected="false">การประชุม</button>
+    <button role="tab" data-tab="proj" aria-selected="false">โครงการ</button>
+  </div>
+</div>
+
+<!-- ===== สถานะงาน ===== -->
+<section id="v-status">
+  <div class="kpi" id="kpi"></div>
+
+  <h2>เพิ่มงาน</h2>
+  <div class="card">
+    <div class="quick">
+      <input id="qTitle" placeholder="งานที่ต้องทำ เช่น ส่งแบบร่างผังพื้นชั้น 2 ให้ลูกค้า">
+      <button class="btn" id="qAdd">เพิ่ม</button>
+    </div>
+    <div class="quick-more">
+      <select id="qProj" aria-label="โครงการ"></select>
+      <input id="qOwner" placeholder="ผู้รับผิดชอบ" aria-label="ผู้รับผิดชอบ" list="owners">
+      <input type="date" id="qDue" aria-label="กำหนดเสร็จ">
+    </div>
+  </div>
+
+  <div class="row" style="justify-content:space-between;margin-top:22px">
+    <h2 style="margin:0" id="listTitle">งานที่ค้าง</h2>
+    <button class="btn ghost sm" id="rptBtn">รายงานสถานะ PDF</button>
+  </div>
+  <div class="card" style="margin-top:10px;padding-top:4px;padding-bottom:4px">
+    <ul class="tasks" id="tasks"></ul>
+  </div>
+  <p class="hint" id="rptMsg" aria-live="polite" style="margin-top:8px"></p>
+</section>
+
+<!-- ===== การประชุม ===== -->
+<section id="v-meet" hidden>
+  <div class="row" style="justify-content:space-between;margin:20px 0 12px">
+    <h2 style="margin:0">บันทึกการประชุม</h2>
+    <button class="btn" id="mNew">+ บันทึกการประชุมใหม่</button>
+  </div>
+  <ul class="mlist" id="mlist"></ul>
+</section>
+
+<!-- ===== โครงการ ===== -->
+<section id="v-proj" hidden>
+  <div class="row" style="justify-content:space-between;margin:20px 0 12px">
+    <h2 style="margin:0">โครงการทั้งหมด</h2>
+    <button class="btn" id="pAdd2">+ เพิ่มโครงการ</button>
+  </div>
+  <div class="plist" id="plist"></div>
+</section>
+
+<datalist id="owners"></datalist>
+
+<div class="foot">
+  <span>ข้อมูลเก็บไว้ในเครื่องนี้เท่านั้น สำรองไว้เป็นไฟล์ได้</span>
+  <div class="row">
+    <button class="btn ghost sm" id="bkOut">สำรองข้อมูล</button>
+    <label class="btn ghost sm" style="cursor:pointer">นำเข้า<input type="file" id="bkIn" accept=".json,application/json" hidden></label>
+  </div>
+</div>
+</div>
+
+<!-- ===== dialog: โครงการ ===== -->
+<dialog id="dP"><form class="dlg" method="dialog">
+  <div class="dlg-h"><h2 id="dPT">โครงการ</h2><button class="x" value="cancel" formnovalidate aria-label="ปิด">×</button></div>
+  <div class="dlg-b">
+    <div><label class="f" for="pf-name">ชื่อโครงการ *</label><input id="pf-name" required placeholder="เช่น บ้านคุณรมญ์นลิน"></div>
+    <div class="grid2">
+      <div><label class="f" for="pf-client">ลูกค้า / เจ้าของ</label><input id="pf-client"></div>
+      <div><label class="f" for="pf-loc">ที่ตั้ง</label><input id="pf-loc"></div>
+    </div>
+    <div><label class="f" for="pf-phase">ขั้นตอนปัจจุบัน</label><select id="pf-phase"></select></div>
+    <div><label class="f" for="pf-note">หมายเหตุสถานะ</label><textarea id="pf-note" placeholder="เช่น รอลูกค้ายืนยันวัสดุหลังคา"></textarea></div>
+  </div>
+  <div class="dlg-f">
+    <button class="btn danger" type="button" id="pDel">ลบโครงการ</button>
+    <div class="row"><button class="btn ghost" value="cancel" formnovalidate>ยกเลิก</button><button class="btn" value="ok" id="pSave">บันทึก</button></div>
+  </div>
+</form></dialog>
+
+<!-- ===== dialog: งาน ===== -->
+<dialog id="dT"><form class="dlg" method="dialog">
+  <div class="dlg-h"><h2>แก้ไขงาน</h2><button class="x" value="cancel" formnovalidate aria-label="ปิด">×</button></div>
+  <div class="dlg-b">
+    <div><label class="f" for="tf-title">งาน *</label><input id="tf-title" required></div>
+    <div class="grid2">
+      <div><label class="f" for="tf-proj">โครงการ</label><select id="tf-proj"></select></div>
+      <div><label class="f" for="tf-status">สถานะ</label><select id="tf-status"></select></div>
+      <div><label class="f" for="tf-owner">ผู้รับผิดชอบ</label><input id="tf-owner" list="owners"></div>
+      <div><label class="f" for="tf-due">กำหนดเสร็จ</label><input type="date" id="tf-due"></div>
+    </div>
+    <div><label class="f" for="tf-note">หมายเหตุ</label><textarea id="tf-note"></textarea></div>
+    <p class="hint" id="tf-src"></p>
+  </div>
+  <div class="dlg-f">
+    <button class="btn danger" type="button" id="tDel">ลบงาน</button>
+    <div class="row"><button class="btn ghost" value="cancel" formnovalidate>ยกเลิก</button><button class="btn" value="ok">บันทึก</button></div>
+  </div>
+</form></dialog>
+
+<!-- ===== dialog: ประชุม ===== -->
+<dialog id="dM"><form class="dlg" method="dialog">
+  <div class="dlg-h"><h2 id="dMT">บันทึกการประชุม</h2><button class="x" value="cancel" formnovalidate aria-label="ปิด">×</button></div>
+  <div class="dlg-b">
+    <div class="grid2">
+      <div><label class="f" for="mf-proj">โครงการ *</label><select id="mf-proj" required></select></div>
+      <div><label class="f" for="mf-title">หัวข้อ</label><input id="mf-title" placeholder="เช่น ประชุมแบบร่าง ครั้งที่ 2"></div>
+    </div>
+    <div class="grid3">
+      <div><label class="f" for="mf-place">สถานที่ / ช่องทาง</label><input id="mf-place" placeholder="ออฟฟิศ / หน้างาน / Zoom / LINE call"></div>
+      <div><label class="f" for="mf-date">วันที่</label><input type="date" id="mf-date"></div>
+      <div><label class="f" for="mf-time">เวลา</label><input type="time" id="mf-time"></div>
+    </div>
+    <div><label class="f" for="mf-att">ผู้เข้าร่วม</label><textarea id="mf-att" style="min-height:56px" placeholder="คนละบรรทัด หรือคั่นด้วยจุลภาค"></textarea></div>
+    <div><label class="f" for="mf-notes">เรื่องที่ประชุม / รายละเอียด</label><textarea id="mf-notes" style="min-height:120px" placeholder="1. ลูกค้าขอขยายห้องนอนใหญ่ไปทางทิศตะวันออก 1 ม.&#10;2. ..."></textarea></div>
+    <div><label class="f" for="mf-dec">ข้อสรุป / มติ</label><textarea id="mf-dec" placeholder="สิ่งที่ตกลงกันแล้ว"></textarea></div>
+    <div>
+      <label class="f">งานที่ต้องทำต่อ (จะไปอยู่ในแท็บสถานะงาน)</label>
+      <div class="ai" id="aiList"></div>
+      <button class="btn ghost sm" type="button" id="aiAdd" style="margin-top:8px">+ เพิ่มงาน</button>
+    </div>
+    <div class="grid2">
+      <div><label class="f" for="mf-next">นัดประชุมครั้งถัดไป</label><input type="date" id="mf-next"></div>
+      <div><label class="f" for="mf-rec">ผู้จดบันทึก</label><input id="mf-rec" list="owners"></div>
+    </div>
+    <p class="hint" id="mMsg" aria-live="polite"></p>
+  </div>
+  <div class="dlg-f">
+    <div class="row">
+      <button class="btn danger" type="button" id="mDel">ลบ</button>
+      <button class="btn ghost" type="button" id="mLine">คัดลอกส่ง LINE</button>
+      <button class="btn ghost" type="button" id="mPdf">PDF</button>
+    </div>
+    <div class="row"><button class="btn ghost" value="cancel" formnovalidate>ยกเลิก</button><button class="btn" value="ok">บันทึก</button></div>
+  </div>
+</form></dialog>
+
+<div class="saved" id="saved" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nl=s=>esc(s).replace(/\n/g,'<br>');
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const TODAY=iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const thLong=s=>s?new Date(s+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
+const thShort=s=>s?new Date(s+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}):'';
+const thWeek=s=>new Date(s+'T00:00:00').toLocaleDateString('th-TH',{weekday:'long'});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+const STATUS=[['todo','ยังไม่เริ่ม'],['doing','กำลังทำ'],['wait','รอลูกค้า/ผู้อื่น'],['done','เสร็จแล้ว']];
+const SL=Object.fromEntries(STATUS);
+const PHASES=['รับบรีฟ / สำรวจ','ออกแบบเบื้องต้น','พัฒนาแบบ','แบบก่อสร้าง','ยื่นขออนุญาต','ก่อสร้าง','ส่งมอบ'];
+
+/* ---------- ข้อมูล ---------- */
+const KEY='ms-data';
+const D=load(KEY,null)||{projects:[],meetings:[],tasks:[]};
+['projects','meetings','tasks'].forEach(k=>{if(!Array.isArray(D[k]))D[k]=[]});
+let st;
+function persist(msg){
+  const ok=store(KEY,D);
+  const el=$('#saved');el.textContent=ok?(msg||'บันทึกแล้ว'):'บันทึกไม่สำเร็จ — พื้นที่ในเบราว์เซอร์เต็มหรือถูกปิดไว้';
+  el.classList.add('on');clearTimeout(st);st=setTimeout(()=>el.classList.remove('on'),ok?1400:4000);
+}
+const UI=load('ms-ui',{pf:'all',tab:'status',sf:'open'});
+const saveUI=()=>store('ms-ui',UI);
+if(UI.pf!=='all'&&!D.projects.some(p=>p.id===UI.pf))UI.pf='all';
+
+const proj=id=>D.projects.find(p=>p.id===id);
+const pname=id=>(proj(id)||{}).name||'ไม่ระบุโครงการ';
+const inScope=x=>UI.pf==='all'||x.pid===UI.pf;
+const isLate=t=>t.status!=='done'&&t.due&&t.due<TODAY;
+const isSoon=t=>t.status!=='done'&&t.due&&t.due>=TODAY&&t.due<=addDays(TODAY,3);
+const projOrder=()=>[...D.projects].sort((a,b)=>(b.updated||'').localeCompare(a.updated||''));
+function touch(pid){const p=proj(pid);if(p)p.updated=new Date().toISOString()}
+
+/* ---------- เลือกโครงการ ---------- */
+function projOptions(sel,withAll,cur){
+  const opts=projOrder().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  sel.innerHTML=(withAll?`<option value="all">ทุกโครงการ (${D.projects.length})</option>`:(D.projects.length?'':'<option value="">— ยังไม่มีโครงการ —</option>'))+opts;
+  if(cur!=null&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
+}
+function renderTop(){
+  projOptions($('#pSel'),true,UI.pf);
+  projOptions($('#qProj'),false,UI.pf!=='all'?UI.pf:(D.projects[0]&&projOrder()[0].id));
+  $('#qProj').hidden=UI.pf!=='all';
+  $('#qProj').parentNode.style.gridTemplateColumns=UI.pf!=='all'?'1fr 1fr':'';
+  const late=D.tasks.filter(t=>inScope(t)&&isLate(t)).length;
+  $('#nLate').textContent=late||'';
+  const owners=[...new Set(D.tasks.map(t=>t.owner).concat(D.meetings.map(m=>m.rec)).filter(Boolean))];
+  $('#owners').innerHTML=owners.map(o=>`<option value="${esc(o)}">`).join('');
+}
+$('#pSel').onchange=e=>{UI.pf=e.target.value;saveUI();render()};
+
+/* ---------- แท็บ ---------- */
+function setTab(t){
+  UI.tab=t;saveUI();
+  $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
+  $('#v-status').hidden=t!=='status';$('#v-meet').hidden=t!=='meet';$('#v-proj').hidden=t!=='proj';
+  render();
+}
+$$('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+
+/* ---------- สถานะงาน ---------- */
+const FILTERS={
+  open:['งานที่ค้าง',t=>t.status!=='done'],
+  late:['เลยกำหนด',isLate],
+  wait:['รอลูกค้า / ผู้อื่น',t=>t.status==='wait'],
+  done:['เสร็จแล้ว',t=>t.status==='done']
+};
+function sortTasks(list){
+  return list.sort((a,b)=>{
+    if(a.status==='done'&&b.status==='done')return (b.doneAt||'').localeCompare(a.doneAt||'');
+    if((a.status==='done')!==(b.status==='done'))return a.status==='done'?1:-1;
+    const ad=a.due||'9999',bd=b.due||'9999';
+    return ad===bd?(a.created||'').localeCompare(b.created||''):ad.localeCompare(bd);
+  });
+}
+function statusSelect(t){
+  return `<select class="pill" data-s="${t.status}" data-id="${t.id}" aria-label="สถานะของ ${esc(t.title)}">${STATUS.map(([k,l])=>`<option value="${k}"${k===t.status?' selected':''}>${l}</option>`).join('')}</select>`;
+}
+function taskMeta(t,showProj){
+  const bits=[];
+  if(showProj)bits.push(esc(pname(t.pid)));
+  if(t.owner)bits.push('👤 '+esc(t.owner));
+  if(t.due){
+    const cls=isLate(t)?'late':isSoon(t)?'soon':'';
+    const lab=isLate(t)?'เลยกำหนด '+thShort(t.due):t.due===TODAY&&t.status!=='done'?'ครบกำหนดวันนี้':'กำหนด '+thShort(t.due);
+    bits.push(`<span class="${cls}">${lab}</span>`);
+  }
+  if(t.status==='done'&&t.doneAt)bits.push('เสร็จ '+thShort(t.doneAt.slice(0,10)));
+  if(t.mid){const m=D.meetings.find(x=>x.id===t.mid);if(m)bits.push('จากประชุม '+thShort(m.date))}
+  return bits.map(b=>`<span>${b}</span>`).join('');
+}
+function renderStatus(){
+  const scoped=D.tasks.filter(inScope);
+  const weekAgo=addDays(TODAY,-7);
+  const k={
+    open:scoped.filter(FILTERS.open[1]).length,
+    late:scoped.filter(isLate).length,
+    wait:scoped.filter(FILTERS.wait[1]).length,
+    done:scoped.filter(t=>t.status==='done'&&(t.doneAt||'').slice(0,10)>=weekAgo).length
+  };
+  $('#kpi').innerHTML=`
+    <button data-f="open" aria-pressed="${UI.sf==='open'}"><b>${k.open}</b><span>งานค้างทั้งหมด</span></button>
+    <button data-f="late" class="late" aria-pressed="${UI.sf==='late'}"><b>${k.late}</b><span>เลยกำหนด</span></button>
+    <button data-f="wait" class="wait" aria-pressed="${UI.sf==='wait'}"><b>${k.wait}</b><span>รอลูกค้า / ผู้อื่น</span></button>
+    <button data-f="done" class="done" aria-pressed="${UI.sf==='done'}"><b>${k.done}</b><span>เสร็จใน 7 วัน</span></button>`;
+  $$('#kpi button').forEach(b=>b.onclick=()=>{UI.sf=b.dataset.f;saveUI();renderStatus()});
+
+  const [title,fn]=FILTERS[UI.sf]||FILTERS.open;
+  $('#listTitle').textContent=title+(UI.pf!=='all'?' · '+pname(UI.pf):'');
+  const list=sortTasks(scoped.filter(fn));
+  const showProj=UI.pf==='all';
+  if(!list.length){
+    $('#tasks').innerHTML=`<li class="empty">${!D.projects.length?'เริ่มจากเพิ่มโครงการแรก แล้วจดงานหรือบันทึกการประชุมได้เลย<br><button class="btn" id="firstProj">+ เพิ่มโครงการแรก</button>':UI.sf==='open'?'ไม่มีงานค้าง 🎉':'ไม่มีงานในหมวดนี้'}</li>`;
+    const fp=$('#firstProj');if(fp)fp.onclick=()=>openProject();
+    return;
+  }
+  let html='',lastG='';
+  list.forEach(t=>{
+    let g='';
+    if(UI.sf==='open'){g=isLate(t)?'เลยกำหนด':t.due&&t.due<=addDays(TODAY,7)?'ภายใน 7 วัน':t.due?'ถัดไป':'ไม่มีกำหนด'}
+    if(g&&g!==lastG){html+=`<li class="group-h">${g}</li>`;lastG=g}
+    html+=`<li class="task${t.status==='done'?' is-done':''}">${statusSelect(t)}<button class="t" data-id="${t.id}">${esc(t.title)}</button><div class="m">${taskMeta(t,showProj)}</div></li>`;
+  });
+  $('#tasks').innerHTML=html;
+  $$('#tasks select.pill').forEach(s=>s.onchange=()=>{setStatus(s.dataset.id,s.value);renderStatus();renderTop()});
+  $$('#tasks .t').forEach(b=>b.onclick=()=>openTask(b.dataset.id));
+}
+function setStatus(id,s){
+  const t=D.tasks.find(x=>x.id===id);if(!t)return;
+  t.status=s;t.doneAt=s==='done'?(t.doneAt||new Date().toISOString()):'';
+  touch(t.pid);persist(s==='done'?'ทำเครื่องหมายเสร็จแล้ว':'อัปเดตสถานะแล้ว');
+}
+$('#qAdd').onclick=()=>{
+  const title=$('#qTitle').value.trim();
+  if(!title){$('#qTitle').focus();return}
+  const pid=UI.pf!=='all'?UI.pf:$('#qProj').value;
+  if(!pid){alert('เพิ่มโครงการก่อน แล้วค่อยเพิ่มงาน');openProject();return}
+  D.tasks.push({id:uid(),pid,title,owner:$('#qOwner').value.trim(),due:$('#qDue').value,status:'todo',note:'',created:new Date().toISOString()});
+  touch(pid);persist('เพิ่มงานแล้ว');
+  $('#qTitle').value='';$('#qDue').value='';
+  if(UI.sf==='done'){UI.sf='open';saveUI()}
+  renderTop();renderStatus();$('#qTitle').focus();
+};
+$('#qTitle').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#qAdd').click()}};
+
+/* dialog งาน */
+let editT=null;
+$('#tf-status').innerHTML=STATUS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+function openTask(id){
+  const t=D.tasks.find(x=>x.id===id);if(!t)return;editT=t;
+  projOptions($('#tf-proj'),false,t.pid);
+  $('#tf-title').value=t.title;$('#tf-status').value=t.status;$('#tf-owner').value=t.owner||'';$('#tf-due').value=t.due||'';$('#tf-note').value=t.note||'';
+  const m=t.mid&&D.meetings.find(x=>x.id===t.mid);
+  $('#tf-src').textContent=m?`มาจากการประชุม ${thLong(m.date)}${m.title?' — '+m.title:''}`:'';
+  $('#dT').showModal();
+}
+$('#dT').addEventListener('close',()=>{
+  if($('#dT').returnValue!=='ok'||!editT)return;
+  const t=editT;const title=$('#tf-title').value.trim();if(!title)return;
+  Object.assign(t,{title,pid:$('#tf-proj').value||t.pid,owner:$('#tf-owner').value.trim(),due:$('#tf-due').value,note:$('#tf-note').value});
+  setStatus(t.id,$('#tf-status').value);render();
+});
+$('#tDel').onclick=()=>{if(!editT||!confirm('ลบงานนี้?'))return;D.tasks=D.tasks.filter(x=>x!==editT);persist('ลบงานแล้ว');editT=null;$('#dT').close();render()};
+
+/* ---------- การประชุม ---------- */
+function renderMeet(){
+  const list=D.meetings.filter(inScope).sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||'')));
+  if(!list.length){
+    $('#mlist').innerHTML=`<li class="card empty">ยังไม่มีบันทึกการประชุม${UI.pf!=='all'?'ของโครงการนี้':''}<br><button class="btn" id="firstMeet">+ บันทึกการประชุมแรก</button></li>`;
+    $('#firstMeet').onclick=()=>openMeeting();return;
+  }
+  $('#mlist').innerHTML=list.map(m=>{
+    const d=new Date(m.date+'T00:00:00');
+    const ts=D.tasks.filter(t=>t.mid===m.id);const open=ts.filter(t=>t.status!=='done').length;
+    const sub=[UI.pf==='all'?pname(m.pid):'',m.place,(m.dec||m.notes||'').split('\n')[0]].filter(Boolean).join(' · ');
+    return `<li><button data-id="${m.id}">
+      <span class="mdate"><b>${d.getDate()}</b><span>${d.toLocaleDateString('th-TH',{month:'short',year:'2-digit'})}</span></span>
+      <span class="mtitle">${esc(m.title||'ประชุม '+pname(m.pid))}</span>
+      <span class="msub">${esc(sub)||'—'}</span>
+      <span class="mcount">${ts.length?`${open} ค้าง<br>${ts.length} งาน`:''}</span></button></li>`;
+  }).join('');
+  $$('#mlist button[data-id]').forEach(b=>b.onclick=()=>openMeeting(b.dataset.id));
+}
+$('#mNew').onclick=()=>openMeeting();
+
+let editM=null,draftAI=[];
+const aiStatusOpts=s=>STATUS.map(([k,l])=>`<option value="${k}"${k===s?' selected':''}>${l}</option>`).join('');
+function renderAI(){
+  $('#aiList').innerHTML=draftAI.length?draftAI.map((a,i)=>`<div class="ai-row">
+    <input data-i="${i}" data-k="title" value="${esc(a.title)}" placeholder="งาน" aria-label="งาน">
+    <input data-i="${i}" data-k="owner" value="${esc(a.owner)}" placeholder="ผู้รับผิดชอบ" aria-label="ผู้รับผิดชอบ" list="owners">
+    <input type="date" data-i="${i}" data-k="due" value="${esc(a.due)}" aria-label="กำหนดเสร็จ">
+    <button type="button" class="x" data-rm="${i}" aria-label="ลบงานนี้">×</button>
+    ${a.id?`<select data-i="${i}" data-k="status" aria-label="สถานะ" style="grid-column:1/-1">${aiStatusOpts(a.status)}</select>`:''}
+  </div>`).join(''):'<p class="hint">ยังไม่มีงาน กด + เพิ่มงาน</p>';
+  $$('#aiList [data-k]').forEach(el=>el.oninput=el.onchange=()=>{draftAI[+el.dataset.i][el.dataset.k]=el.value});
+  $$('#aiList [data-rm]').forEach(b=>b.onclick=()=>{draftAI.splice(+b.dataset.rm,1);renderAI()});
+}
+$('#aiAdd').onclick=()=>{draftAI.push({title:'',owner:'',due:'',status:'todo'});renderAI();const ins=$$('#aiList input[data-k="title"]');ins[ins.length-1].focus()};
+
+function openMeeting(id){
+  if(!D.projects.length){alert('เพิ่มโครงการก่อน แล้วค่อยบันทึกการประชุม');openProject();return}
+  const m=id?D.meetings.find(x=>x.id===id):null;editM=m;
+  $('#dMT').textContent=m?'บันทึกการประชุม':'บันทึกการประชุมใหม่';
+  projOptions($('#mf-proj'),false,m?m.pid:(UI.pf!=='all'?UI.pf:projOrder()[0].id));
+  const v=m||{date:TODAY,time:'',place:'',title:'',att:'',notes:'',dec:'',next:'',rec:load('ms-rec','')};
+  $('#mf-title').value=v.title||'';$('#mf-place').value=v.place||'';$('#mf-date').value=v.date||TODAY;$('#mf-time').value=v.time||'';
+  $('#mf-att').value=v.att||'';$('#mf-notes').value=v.notes||'';$('#mf-dec').value=v.dec||'';$('#mf-next').value=v.next||'';$('#mf-rec').value=v.rec||'';
+  draftAI=m?D.tasks.filter(t=>t.mid===m.id).map(t=>({id:t.id,title:t.title,owner:t.owner||'',due:t.due||'',status:t.status})):[];
+  renderAI();$('#mDel').hidden=!m;$('#mMsg').textContent='';
+  $('#dM').showModal();
+}
+function readMeetingForm(){
+  return {pid:$('#mf-proj').value,title:$('#mf-title').value.trim(),place:$('#mf-place').value.trim(),date:$('#mf-date').value||TODAY,time:$('#mf-time').value,
+    att:$('#mf-att').value,notes:$('#mf-notes').value,dec:$('#mf-dec').value,next:$('#mf-next').value,rec:$('#mf-rec').value.trim()};
+}
+function commitMeeting(){
+  const v=readMeetingForm();if(!v.pid)return null;
+  let m=editM;
+  if(!m){m={id:uid(),created:new Date().toISOString()};D.meetings.push(m);editM=m}
+  Object.assign(m,v);store('ms-rec',v.rec);
+  const keep=new Set();
+  draftAI.filter(a=>a.title.trim()).forEach(a=>{
+    let t=a.id&&D.tasks.find(x=>x.id===a.id);
+    if(!t){t={id:uid(),mid:m.id,status:'todo',note:'',created:new Date().toISOString()};D.tasks.push(t);a.id=t.id}
+    Object.assign(t,{pid:m.pid,title:a.title.trim(),owner:a.owner.trim(),due:a.due});
+    if(a.status&&a.status!==t.status){t.status=a.status;t.doneAt=a.status==='done'?new Date().toISOString():''}
+    keep.add(t.id);
+  });
+  D.tasks=D.tasks.filter(t=>t.mid!==m.id||keep.has(t.id));
+  touch(m.pid);persist('บันทึกการประชุมแล้ว');
+  return m;
+}
+$('#dM').addEventListener('close',()=>{if($('#dM').returnValue==='ok')commitMeeting();editM=null;render()});
+$('#mDel').onclick=()=>{
+  if(!editM)return;
+  const n=D.tasks.filter(t=>t.mid===editM.id).length;
+  if(!confirm('ลบบันทึกการประชุมนี้?'+(n?`\nงานที่มาจากการประชุมนี้ ${n} งานจะยังอยู่ในสถานะงาน`:'')))return;
+  D.tasks.forEach(t=>{if(t.mid===editM.id)delete t.mid});
+  D.meetings=D.meetings.filter(x=>x!==editM);persist('ลบแล้ว');editM=null;$('#dM').returnValue='';$('#dM').close();render();
+};
+
+function meetingText(m){
+  const ts=D.tasks.filter(t=>t.mid===m.id);
+  const L=[`📋 สรุปการประชุม — ${pname(m.pid)}`];
+  if(m.title)L.push(m.title);
+  L.push(`🗓 ${thWeek(m.date)} ${thLong(m.date)}${m.time?' เวลา '+m.time+' น.':''}${m.place?' · '+m.place:''}`);
+  const att=(m.att||'').split(/\n|,/).map(s=>s.trim()).filter(Boolean);
+  if(att.length)L.push('👥 ผู้เข้าร่วม: '+att.join(', '));
+  if(m.notes.trim())L.push('','เรื่องที่ประชุม',m.notes.trim());
+  if(m.dec.trim())L.push('','✅ ข้อสรุป',m.dec.trim());
+  if(ts.length){L.push('','📌 งานที่ต้องทำ');ts.forEach(t=>L.push(`• ${t.title}${t.owner?' — '+t.owner:''}${t.due?' (ภายใน '+thShort(t.due)+')':''}`))}
+  if(m.next)L.push('','➡️ นัดครั้งถัดไป: '+thLong(m.next));
+  L.push('','— ARSTINLA Design & Consult');
+  return L.join('\n');
+}
+async function copyText(s){
+  try{await navigator.clipboard.writeText(s);return true}catch(e){
+    const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+    let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok;
+  }
+}
+$('#mLine').onclick=async()=>{
+  const m=commitMeeting();if(!m){$('#mMsg').textContent='เลือกโครงการก่อน';return}
+  $('#mDel').hidden=false;
+  const ok=await copyText(meetingText(m));
+  $('#mMsg').textContent=ok?'คัดลอกแล้ว — เปิด LINE แล้ววางได้เลย':'คัดลอกไม่สำเร็จ ลองอีกครั้ง';
+};
+
+/* ---------- PDF ---------- */
+const PDF_CSS=`.rpt{font-family:"IBM Plex Sans Thai",Tahoma,sans-serif;color:#26211E;background:#fff;width:190mm;font-size:10.5pt;line-height:1.55}
+.rpt h1{font-size:17pt;margin:0;color:#9A5A35}.rpt .sub{color:#6B625C;margin:0 0 10px}
+.rpt h2{font-size:12pt;margin:14px 0 6px;color:#26211E}
+.rpt table{border-collapse:collapse;width:100%;margin-bottom:8px}.rpt td,.rpt th{padding:4px 8px;border:1px solid #D6CFC9;text-align:left;vertical-align:top}
+.rpt th{background:#F4EFEB;font-weight:600}.rpt .info td:first-child{width:26%;background:#F4EFEB;font-weight:600}
+.rpt .box{border:1px solid #D6CFC9;border-radius:4px;padding:6px 10px}
+.rpt .late{color:#B0402C;font-weight:600}.rpt .c{text-align:center}
+.rpt .proj{border-top:2px solid #26211E;margin-top:10px;padding-top:6px}
+.rpt .proj h2{margin-top:2px}.rpt .ph{color:#6B625C;margin:0 0 6px}
+.rpt .sig{display:flex;gap:16mm;margin-top:16mm}.rpt .sig div{flex:1;text-align:center;color:#6B625C}.rpt .sig b{display:block;border-top:1px solid #26211E;margin-bottom:4px;padding-top:4px;color:#26211E;font-weight:600}
+.rpt .ft{margin-top:10mm;font-size:8.5pt;color:#A99F98;text-align:center}`;
+const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
+async function savePDF(el,filename,msgEl){
+  if(!window.html2pdf){msgEl.textContent='โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วเปิดหน้านี้ใหม่';return}
+  msgEl.textContent='กำลังสร้าง PDF…';
+  try{
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.9},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr','.box','.sig','h2']}}).from(el).outputPdf('blob');
+    const dl=await dlP;
+    if(dl){try{await dl.save({filename,data:blob});msgEl.textContent='บันทึก PDF แล้ว'}catch(e){msgEl.textContent=e&&e.code==='declined'?'ยกเลิกการบันทึก':'บันทึก PDF ไม่สำเร็จ'}return}
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+    msgEl.textContent='ดาวน์โหลด PDF แล้ว';
+  }catch(e){msgEl.textContent='สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง'}
+}
+const fileSafe=s=>String(s||'').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
+const wrapRpt=inner=>{const el=document.createElement('div');el.innerHTML=`<div class="rpt"><style>${PDF_CSS}</style>${inner}<div class="ft">จัดทำด้วยแอปบันทึกประชุม & สถานะงาน · arstinla.com</div></div>`;return el.firstElementChild};
+
+$('#mPdf').onclick=async()=>{
+  const m=commitMeeting();if(!m){$('#mMsg').textContent='เลือกโครงการก่อน';return}
+  $('#mDel').hidden=false;
+  const p=proj(m.pid)||{};const ts=D.tasks.filter(t=>t.mid===m.id);
+  const att=(m.att||'').split(/\n|,/).map(s=>s.trim()).filter(Boolean);
+  const el=wrapRpt(`<h1>รายงานการประชุม</h1><p class="sub">${esc(m.title||p.name||'')}</p>
+    <table class="info">
+      <tr><td>โครงการ</td><td>${esc(p.name||'-')}</td></tr>
+      ${p.client?`<tr><td>ลูกค้า / เจ้าของ</td><td>${esc(p.client)}</td></tr>`:''}
+      <tr><td>วันที่ / เวลา</td><td>${esc(thWeek(m.date)+' '+thLong(m.date))}${m.time?' เวลา '+esc(m.time)+' น.':''}</td></tr>
+      ${m.place?`<tr><td>สถานที่</td><td>${esc(m.place)}</td></tr>`:''}
+      ${att.length?`<tr><td>ผู้เข้าร่วม</td><td>${att.map(esc).join('<br>')}</td></tr>`:''}
+    </table>
+    ${m.notes.trim()?`<h2>เรื่องที่ประชุม</h2><div class="box">${nl(m.notes.trim())}</div>`:''}
+    ${m.dec.trim()?`<h2>ข้อสรุป / มติที่ประชุม</h2><div class="box">${nl(m.dec.trim())}</div>`:''}
+    ${ts.length?`<h2>งานที่ต้องดำเนินการ</h2><table><tr><th class="c" style="width:8%">ลำดับ</th><th>รายการ</th><th style="width:22%">ผู้รับผิดชอบ</th><th style="width:18%">กำหนดเสร็จ</th></tr>
+      ${ts.map((t,i)=>`<tr><td class="c">${i+1}</td><td>${esc(t.title)}</td><td>${esc(t.owner||'-')}</td><td>${esc(thShort(t.due)||'-')}</td></tr>`).join('')}</table>`:''}
+    ${m.next?`<p><b>นัดประชุมครั้งถัดไป:</b> ${esc(thLong(m.next))}</p>`:''}
+    <div class="sig"><div><b>ผู้จดบันทึก${m.rec?' — '+esc(m.rec):''}</b>วันที่ ............................</div><div><b>ผู้รับรองบันทึก</b>วันที่ ............................</div></div>`);
+  await savePDF(el,`รายงานการประชุม-${fileSafe(p.name)}-${m.date}.pdf`,$('#mMsg'));
+};
+
+$('#rptBtn').onclick=async()=>{
+  const ps=UI.pf==='all'?projOrder():[proj(UI.pf)].filter(Boolean);
+  if(!ps.length){$('#rptMsg').textContent='ยังไม่มีโครงการ';return}
+  const since=addDays(TODAY,-14);
+  const blocks=ps.map(p=>{
+    const ts=D.tasks.filter(t=>t.pid===p.id);
+    const open=sortTasks(ts.filter(t=>t.status!=='done'));
+    const done=sortTasks(ts.filter(t=>t.status==='done'&&(t.doneAt||'').slice(0,10)>=since));
+    const lastM=D.meetings.filter(m=>m.pid===p.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    const nextM=D.meetings.filter(m=>m.pid===p.id&&m.next&&m.next>=TODAY).map(m=>m.next).sort()[0];
+    return `<div class="proj"><h2>${esc(p.name)}</h2>
+      <p class="ph">ขั้นตอน: <b>${esc(PHASES[p.phase||0])}</b> (${(p.phase||0)+1}/${PHASES.length})${p.client?' · ลูกค้า '+esc(p.client):''}${lastM?' · ประชุมล่าสุด '+esc(thShort(lastM.date)):''}${nextM?' · นัดถัดไป '+esc(thShort(nextM)):''}</p>
+      ${p.note?`<div class="box" style="margin-bottom:6px">${nl(p.note)}</div>`:''}
+      ${open.length?`<table><tr><th>งานค้าง (${open.length})</th><th style="width:20%">ผู้รับผิดชอบ</th><th style="width:16%">กำหนด</th><th style="width:16%">สถานะ</th></tr>
+        ${open.map(t=>`<tr><td>${esc(t.title)}</td><td>${esc(t.owner||'-')}</td><td class="${isLate(t)?'late':''}">${esc(thShort(t.due)||'-')}</td><td>${SL[t.status]}</td></tr>`).join('')}</table>`:'<p>ไม่มีงานค้าง</p>'}
+      ${done.length?`<table><tr><th>เสร็จใน 14 วันที่ผ่านมา (${done.length})</th><th style="width:20%">ผู้รับผิดชอบ</th><th style="width:16%">เสร็จเมื่อ</th></tr>
+        ${done.map(t=>`<tr><td>${esc(t.title)}</td><td>${esc(t.owner||'-')}</td><td>${esc(thShort((t.doneAt||'').slice(0,10))||'-')}</td></tr>`).join('')}</table>`:''}
+    </div>`;
+  }).join('');
+  const el=wrapRpt(`<h1>รายงานสถานะงาน</h1><p class="sub">ณ วันที่ ${esc(thLong(TODAY))}${UI.pf!=='all'?'':' · '+ps.length+' โครงการ'}</p>${blocks}`);
+  await savePDF(el,`รายงานสถานะงาน-${UI.pf==='all'?'ทุกโครงการ':fileSafe(pname(UI.pf))}-${TODAY}.pdf`,$('#rptMsg'));
+};
+
+/* ---------- โครงการ ---------- */
+$('#pf-phase').innerHTML=PHASES.map((p,i)=>`<option value="${i}">${i+1}. ${p}</option>`).join('');
+let editP=null;
+function openProject(id){
+  const p=id?proj(id):null;editP=p;
+  $('#dPT').textContent=p?'แก้ไขโครงการ':'เพิ่มโครงการ';
+  $('#pf-name').value=p?p.name:'';$('#pf-client').value=p?p.client||'':'';$('#pf-loc').value=p?p.loc||'':'';
+  $('#pf-phase').value=p?p.phase||0:0;$('#pf-note').value=p?p.note||'':'';
+  $('#pDel').hidden=!p;$('#dP').showModal();$('#pf-name').focus();
+}
+$('#dP').addEventListener('close',()=>{
+  if($('#dP').returnValue!=='ok')return;
+  const name=$('#pf-name').value.trim();if(!name)return;
+  let p=editP;
+  if(!p){p={id:uid(),created:new Date().toISOString()};D.projects.push(p);UI.pf=p.id;saveUI()}
+  Object.assign(p,{name,client:$('#pf-client').value.trim(),loc:$('#pf-loc').value.trim(),phase:+$('#pf-phase').value,note:$('#pf-note').value});
+  touch(p.id);persist('บันทึกโครงการแล้ว');render();
+});
+$('#pDel').onclick=()=>{
+  if(!editP)return;
+  const nm=D.meetings.filter(m=>m.pid===editP.id).length,nt=D.tasks.filter(t=>t.pid===editP.id).length;
+  if(!confirm(`ลบโครงการ "${editP.name}"?\nจะลบบันทึกการประชุม ${nm} รายการ และงาน ${nt} งานของโครงการนี้ด้วย`))return;
+  const id=editP.id;
+  D.projects=D.projects.filter(p=>p.id!==id);D.meetings=D.meetings.filter(m=>m.pid!==id);D.tasks=D.tasks.filter(t=>t.pid!==id);
+  if(UI.pf===id){UI.pf='all';saveUI()}
+  persist('ลบโครงการแล้ว');editP=null;$('#dP').returnValue='';$('#dP').close();render();
+};
+$('#pAdd').onclick=$('#pAdd2').onclick=()=>openProject();
+
+function renderProj(){
+  const ps=UI.pf==='all'?projOrder():[proj(UI.pf)].filter(Boolean);
+  if(!ps.length){$('#plist').innerHTML='<div class="card empty">ยังไม่มีโครงการ<br><button class="btn" id="firstP">+ เพิ่มโครงการแรก</button></div>';$('#firstP').onclick=()=>openProject();return}
+  $('#plist').innerHTML=ps.map(p=>{
+    const ts=D.tasks.filter(t=>t.pid===p.id),done=ts.filter(t=>t.status==='done').length,late=ts.filter(isLate).length,wait=ts.filter(t=>t.status==='wait').length;
+    const ph=p.phase||0;
+    const lastM=D.meetings.filter(m=>m.pid===p.id).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    return `<article class="card pcard">
+      <h3>${esc(p.name)}</h3>
+      <p class="sub">${esc([p.client,p.loc].filter(Boolean).join(' · ')||' ')}</p>
+      <div class="phases" aria-hidden="true">${PHASES.map((_,i)=>`<i class="${i<=ph?'on':''}"></i>`).join('')}</div>
+      <div class="phase-l">ขั้นตอน ${ph+1}/${PHASES.length}: <b>${esc(PHASES[ph])}</b></div>
+      ${p.note?`<p class="hint" style="margin-top:4px">${nl(p.note)}</p>`:''}
+      ${ts.length?`<div class="bar" role="img" aria-label="เสร็จ ${done} จาก ${ts.length} งาน"><i style="width:${Math.round(done/ts.length*100)}%"></i></div>`:''}
+      <div class="pstat"><span>งานเสร็จ ${done}/${ts.length}</span>${late?`<span class="late">เลยกำหนด ${late}</span>`:''}${wait?`<span>รอลูกค้า ${wait}</span>`:''}<span>${lastM?'ประชุมล่าสุด '+esc(thShort(lastM.date)):'ยังไม่มีบันทึกประชุม'}</span></div>
+      <div class="row">
+        <button class="btn sm" data-go="${p.id}">ดูงาน</button>
+        <button class="btn ghost sm" data-meet="${p.id}">+ ประชุม</button>
+        <button class="btn ghost sm" data-ed="${p.id}">แก้ไข</button>
+      </div></article>`;
+  }).join('');
+  $$('[data-go]').forEach(b=>b.onclick=()=>{UI.pf=b.dataset.go;UI.sf='open';saveUI();setTab('status')});
+  $$('[data-meet]').forEach(b=>b.onclick=()=>{UI.pf=b.dataset.meet;saveUI();renderTop();openMeeting()});
+  $$('[data-ed]').forEach(b=>b.onclick=()=>openProject(b.dataset.ed));
+}
+
+/* ---------- สำรอง / นำเข้า ---------- */
+$('#bkOut').onclick=async()=>{
+  const blob=new Blob([JSON.stringify({app:'arstinla-meeting-status',v:1,exported:new Date().toISOString(),data:D},null,1)],{type:'application/json'});
+  const filename=`meeting-status-backup-${TODAY}.json`;
+  const dl=await dlP;
+  if(dl){try{await dl.save({filename,data:blob})}catch(e){}return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+};
+$('#bkIn').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const j=JSON.parse(await f.text());const d=j.data||j;
+    if(!Array.isArray(d.projects)||!Array.isArray(d.tasks)||!Array.isArray(d.meetings))throw 0;
+    if(!confirm(`นำเข้า ${d.projects.length} โครงการ, ${d.meetings.length} การประชุม, ${d.tasks.length} งาน?\nข้อมูลปัจจุบันในเครื่องนี้จะถูกแทนที่`))return;
+    D.projects=d.projects;D.meetings=d.meetings;D.tasks=d.tasks;UI.pf='all';saveUI();persist('นำเข้าข้อมูลแล้ว');render();
+  }catch(_){alert('ไฟล์นี้ไม่ใช่ไฟล์สำรองของแอปนี้')}
+};
+
+/* ---------- render ---------- */
+function render(){
+  renderTop();
+  if(UI.tab==='meet')renderMeet();else if(UI.tab==='proj')renderProj();else renderStatus();
+}
+setTab(['status','meet','proj'].includes(UI.tab)?UI.tab:'status');
+})();
+</script>
+<script src="../shared/pwa-install.js"></script>
+</body>
+</html>
