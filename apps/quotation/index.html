@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ARSTINLA Quotation — ใบเสนอราคา</title>
+<meta name="description" content="ออกใบเสนอราคาค่าบริการออกแบบ คำนวณ VAT หัก ณ ที่จ่าย แบ่งงวดชำระ และสร้าง PDF ส่งลูกค้า">
+<meta name="theme-color" content="#171816">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="../shared/pwa-install.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#A65335; --brand-ink:#ffffff; --brand-soft:#F4E5DC;
+  --bg:#EFEDE8; --surface:#FFFFFF; --ink:#1E1F1C; --muted:#67665F; --line:#D5D2CA;
+  --ok:#2E7D4F; --ok-soft:#DFF1E6; --sent:#2D5F9A; --sent-soft:#E0EAF5; --no:#9A3B2A; --no-soft:#F6E0DA;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#E09A76; --brand-ink:#22150E; --brand-soft:#3A271D;
+  --bg:#161714; --surface:#212220; --ink:#ECEAE4; --muted:#A3A198; --line:#3A3B37;
+  --ok:#7FCB9C; --ok-soft:#17301F; --sent:#8DB6E8; --sent-soft:#1B2A3C; --no:#F0907C; --no-soft:#3D1F19;
+}}
+:root[data-theme="dark"]{
+  --brand:#E09A76; --brand-ink:#22150E; --brand-soft:#3A271D;
+  --bg:#161714; --surface:#212220; --ink:#ECEAE4; --muted:#A3A198; --line:#3A3B37;
+  --ok:#7FCB9C; --ok-soft:#17301F; --sent:#8DB6E8; --sent-soft:#1B2A3C; --no:#F0907C; --no-soft:#3D1F19;
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",Tahoma,"Leelawadee UI",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 64px}
+header{padding:20px 0 10px}
+header h1{margin:0;font-size:1.5rem;line-height:1.3;font-weight:700;padding-right:130px}
+@media (display-mode:standalone){header h1{padding-right:0}}
+header p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+h2{font-size:1.1rem;margin:24px 0 10px}
+h3{font-size:1rem;margin:0 0 8px}
+label.f{display:block;font-size:.88rem;font-weight:600;margin-bottom:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:70px;line-height:1.5}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--brand);margin:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--no);border:1px solid var(--no)}
+.btn.sm{padding:5px 10px;font-size:.9rem}
+.btn[disabled]{opacity:.6;cursor:progress}
+.hint{color:var(--muted);font-size:.88rem;margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:560px){.grid2,.grid3{grid-template-columns:1fr}}
+.stack{display:grid;gap:10px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:2px solid var(--ink)}
+.tabs{display:flex;gap:4px}
+.tabs button{flex:1;font:inherit;font-weight:600;padding:10px 6px;border:0;background:transparent;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brand)}
+
+/* รายการใบเสนอราคา */
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.kpi div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi b{display:block;font-size:1.25rem;line-height:1.3;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.82rem;color:var(--muted)}
+@media (max-width:560px){.kpi{grid-template-columns:1fr 1fr}.kpi div:first-child{grid-column:1/3}}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.qlist button.q{width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 12px}
+.q .no{font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.q .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q .sub{grid-column:1;font-size:.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.q .amt{grid-row:1/3;grid-column:2;text-align:right;align-self:center}
+.q .amt b{display:block;font-variant-numeric:tabular-nums}
+.st{display:inline-block;font-size:.78rem;font-weight:600;border-radius:12px;padding:1px 8px;border:1px solid var(--line);color:var(--muted)}
+.st[data-s="sent"]{background:var(--sent-soft);border-color:var(--sent);color:var(--sent)}
+.st[data-s="won"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.st[data-s="lost"]{background:var(--no-soft);border-color:var(--no);color:var(--no)}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 10px}
+.filters button{font:inherit;font-size:.9rem;padding:5px 12px;border-radius:16px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.empty{text-align:center;padding:28px 14px;color:var(--muted)}
+.empty .btn{margin-top:10px}
+
+/* ตัวแก้ไข */
+.edhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+.edhead .no{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
+.items{display:grid;gap:8px}
+.it{display:grid;grid-template-columns:28px 1fr 74px 84px 120px 120px 32px;gap:6px;align-items:center}
+.it .ix{color:var(--muted);font-size:.85rem;text-align:center;font-variant-numeric:tabular-nums}
+.it .amt{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;padding-right:4px}
+.it.h{grid-template-columns:28px 1fr 32px}
+.it.h input{font-weight:700;background:var(--brand-soft)}
+.it-head{font-size:.78rem;color:var(--muted);font-weight:600}
+.it-head span{text-align:right}
+.it-head span:nth-child(2){text-align:left}
+.ibtn{width:32px;height:32px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:1rem;line-height:1;padding:0}
+.it-menu{position:relative}
+@media (max-width:700px){
+  .it-head{display:none}
+  .it{grid-template-columns:1fr 1fr 1fr 32px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+  .it .ix{display:none}
+  .it .desc{grid-column:1/4}
+  .it .del{grid-row:1;grid-column:4}
+  .it .amt{grid-column:1/5;border-top:1px dashed var(--line);padding-top:6px}
+  .it .amt::before{content:"จำนวนเงิน ";font-weight:400;color:var(--muted);font-size:.85rem}
+  .it.h{grid-template-columns:1fr 32px;padding:6px;background:transparent;border-style:dashed}
+}
+.addrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.presets button{font:inherit;font-size:.86rem;padding:5px 10px;border-radius:16px;border:1px dashed var(--muted);background:transparent;color:var(--ink);cursor:pointer}
+.helper{margin-top:12px;padding:10px;border-radius:8px;background:var(--brand-soft)}
+.helper .grid3{align-items:end}
+
+.totals{display:grid;gap:6px;max-width:380px;margin-left:auto}
+.totals .tr{display:flex;justify-content:space-between;gap:12px;align-items:center;font-variant-numeric:tabular-nums}
+.totals .tr.grand{border-top:2px solid var(--ink);padding-top:8px;font-weight:700;font-size:1.15rem}
+.totals .tr.net{color:var(--brand);font-weight:700}
+.totals label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.totals input.disc{width:130px;text-align:right}
+.words{text-align:right;color:var(--muted);font-size:.92rem;margin-top:6px}
+
+.inst{display:grid;gap:6px}
+.in{display:grid;grid-template-columns:1fr 80px 130px 32px;gap:6px;align-items:center}
+.in .amt{text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:560px){.in{grid-template-columns:1fr 70px 32px}.in .amt{grid-column:1/3;text-align:left;color:var(--muted);font-size:.88rem}}
+.warn{color:var(--no);font-weight:600}
+
+.bar{position:sticky;bottom:0;z-index:4;background:var(--bg);border-top:1px solid var(--line);padding:10px 0 calc(env(safe-area-inset-bottom,0px) + 10px);margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.bar .tot{font-weight:700;font-variant-numeric:tabular-nums}
+.bar .tot small{display:block;font-weight:400;color:var(--muted);font-size:.78rem}
+
+.presetEd{display:grid;gap:6px}
+.pe{display:grid;grid-template-columns:1fr 90px 120px 32px;gap:6px}
+@media (max-width:560px){.pe{grid-template-columns:1fr 1fr 32px}.pe>:first-child{grid-column:1/3}.pe>.ibtn{grid-row:1;grid-column:3}}
+
+.saved{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 14px;border-radius:16px;font-size:.88rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
+.saved.on{opacity:1}
+.foot{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;align-items:center}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>ใบเสนอราคา ARSTINLA</h1>
+  <p>ออกใบเสนอราคาค่าบริการออกแบบ คำนวณ VAT / หัก ณ ที่จ่าย แบ่งงวดชำระ แล้วส่ง PDF ให้ลูกค้า</p>
+</header>
+
+<div class="top">
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="list" aria-selected="true">ใบเสนอราคา</button>
+    <button role="tab" data-tab="edit" aria-selected="false" id="tabEdit">แก้ไข</button>
+    <button role="tab" data-tab="set" aria-selected="false">ตั้งค่า</button>
+  </div>
+</div>
+
+<!-- ===== รายการ ===== -->
+<section id="v-list">
+  <div class="kpi" id="kpi"></div>
+  <div class="row" style="justify-content:space-between;margin-top:20px">
+    <h2 style="margin:0">ใบเสนอราคาทั้งหมด</h2>
+    <button class="btn" id="qNew">+ สร้างใบเสนอราคา</button>
+  </div>
+  <div class="filters" id="filters"></div>
+  <input id="qSearch" placeholder="ค้นหาชื่อลูกค้า โครงการ หรือเลขที่" aria-label="ค้นหา" style="margin-bottom:10px">
+  <ul class="qlist" id="qlist"></ul>
+</section>
+
+<!-- ===== แก้ไข ===== -->
+<section id="v-edit" hidden>
+  <div id="noQuote" class="card empty" hidden>ยังไม่ได้เลือกใบเสนอราคา<br><button class="btn" id="qNew2">+ สร้างใบเสนอราคา</button></div>
+  <div id="editor" hidden>
+    <div class="edhead">
+      <span class="no" id="eNo"></span>
+      <div class="row">
+        <label class="f" for="eStatus" style="margin:0">สถานะ</label>
+        <select id="eStatus" style="width:auto"></select>
+      </div>
+    </div>
+
+    <div class="card stack">
+      <div class="grid3">
+        <div><label class="f" for="eDate">วันที่</label><input type="date" id="eDate" data-k="date"></div>
+        <div><label class="f" for="eValid">ยืนราคา (วัน)</label><input id="eValid" data-k="validDays" inputmode="numeric"></div>
+        <div><label class="f" for="eRef">อ้างอิง / ครั้งที่</label><input id="eRef" data-k="ref" placeholder="เช่น ฉบับแก้ไข 1"></div>
+      </div>
+    </div>
+
+    <h2>ลูกค้า</h2>
+    <div class="card stack">
+      <div class="grid2">
+        <div><label class="f" for="cName">ชื่อลูกค้า / บริษัท *</label><input id="cName" data-c="name" list="clients" placeholder="เช่น คุณรมญ์นลิน"></div>
+        <div><label class="f" for="cAttn">ผู้ติดต่อ</label><input id="cAttn" data-c="attn"></div>
+      </div>
+      <div><label class="f" for="cAddr">ที่อยู่</label><textarea id="cAddr" data-c="addr" style="min-height:56px"></textarea></div>
+      <div class="grid3">
+        <div><label class="f" for="cTax">เลขประจำตัวผู้เสียภาษี</label><input id="cTax" data-c="tax" inputmode="numeric"></div>
+        <div><label class="f" for="cPhone">โทร</label><input id="cPhone" data-c="phone" inputmode="tel"></div>
+        <div><label class="f" for="cEmail">อีเมล / LINE</label><input id="cEmail" data-c="email"></div>
+      </div>
+    </div>
+
+    <h2>โครงการ</h2>
+    <div class="card stack">
+      <div class="grid3">
+        <div><label class="f" for="pName">ชื่อโครงการ</label><input id="pName" data-p="name" list="projs" placeholder="เช่น บ้านพักอาศัย 2 ชั้น"></div>
+        <div><label class="f" for="pLoc">ที่ตั้ง</label><input id="pLoc" data-p="loc"></div>
+        <div><label class="f" for="pArea">พื้นที่ใช้สอย (ตร.ม.)</label><input id="pArea" data-p="area" inputmode="decimal"></div>
+      </div>
+      <p class="hint" id="fromConsult" hidden></p>
+    </div>
+
+    <h2>รายการ</h2>
+    <div class="card">
+      <div class="it it-head" aria-hidden="true"><span>#</span><span>รายการ</span><span>จำนวน</span><span>หน่วย</span><span>ราคา/หน่วย</span><span>จำนวนเงิน</span><span></span></div>
+      <div class="items" id="items"></div>
+      <div class="addrow">
+        <button class="btn ghost sm" id="addItem">+ เพิ่มรายการ</button>
+        <button class="btn ghost sm" id="addHead">+ หัวข้อ</button>
+        <button class="btn ghost sm" id="toggleHelper">คิดจาก % งบก่อสร้าง</button>
+      </div>
+      <div class="presets" id="presets" aria-label="รายการบริการสำเร็จรูป"></div>
+      <div class="helper" id="helper" hidden>
+        <div class="grid3">
+          <div><label class="f" for="hBudget">งบก่อสร้างโดยประมาณ (บาท)</label><input id="hBudget" inputmode="decimal" class="num"></div>
+          <div><label class="f" for="hPct">อัตราค่าบริการ (%)</label><input id="hPct" inputmode="decimal" class="num" value="5"></div>
+          <div><button class="btn" id="hAdd" style="width:100%">เพิ่มเป็นรายการ</button></div>
+        </div>
+        <p class="hint" id="hOut" style="margin-top:6px"></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="totals">
+        <div class="tr"><span>รวมเป็นเงิน</span><span id="tSub">0.00</span></div>
+        <div class="tr"><span>ส่วนลด</span><input class="disc num" id="eDisc" inputmode="decimal" placeholder="0.00" aria-label="ส่วนลด (บาท)"></div>
+        <div class="tr"><span>ยอดหลังหักส่วนลด</span><span id="tAfter">0.00</span></div>
+        <div class="tr"><label><input type="checkbox" id="eVat"> ภาษีมูลค่าเพิ่ม 7%</label><span id="tVat">0.00</span></div>
+        <div class="tr grand"><span>ยอดรวมทั้งสิ้น</span><span id="tTotal">0.00</span></div>
+        <div class="tr"><label><input type="checkbox" id="eWht"> หัก ณ ที่จ่าย 3%</label><span id="tWht">0.00</span></div>
+        <div class="tr net" id="netRow"><span>ยอดชำระสุทธิ</span><span id="tNet">0.00</span></div>
+      </div>
+      <p class="words" id="tWords"></p>
+    </div>
+
+    <h2>งวดชำระเงิน</h2>
+    <div class="card">
+      <div class="inst" id="inst"></div>
+      <div class="row" style="margin-top:10px;justify-content:space-between">
+        <button class="btn ghost sm" id="addInst">+ เพิ่มงวด</button>
+        <span class="hint" id="instSum"></span>
+      </div>
+    </div>
+
+    <h2>เงื่อนไข / หมายเหตุ</h2>
+    <textarea id="eTerms" data-k="terms" style="min-height:130px"></textarea>
+
+    <div class="bar">
+      <div class="tot"><small>ยอดรวมทั้งสิ้น</small><span id="barTotal">0.00</span></div>
+      <div class="row">
+        <button class="btn ghost sm" id="eLine">คัดลอกส่ง LINE</button>
+        <button class="btn ghost sm" id="eDup">ทำสำเนา</button>
+        <button class="btn" id="ePdf">PDF</button>
+      </div>
+    </div>
+    <p class="hint" id="eMsg" aria-live="polite" style="text-align:right"></p>
+    <div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn danger sm" id="eDel">ลบใบเสนอราคานี้</button></div>
+  </div>
+</section>
+
+<!-- ===== ตั้งค่า ===== -->
+<section id="v-set" hidden>
+  <h2>ข้อมูลผู้เสนอราคา</h2>
+  <div class="card stack">
+    <div class="grid2">
+      <div><label class="f" for="sName">ชื่อบริษัท / สำนักงาน</label><input id="sName" data-s="name"></div>
+      <div><label class="f" for="sTax">เลขประจำตัวผู้เสียภาษี</label><input id="sTax" data-s="tax" inputmode="numeric"></div>
+    </div>
+    <div><label class="f" for="sAddr">ที่อยู่</label><textarea id="sAddr" data-s="addr" style="min-height:56px"></textarea></div>
+    <div class="grid3">
+      <div><label class="f" for="sPhone">โทร</label><input id="sPhone" data-s="phone"></div>
+      <div><label class="f" for="sLine">LINE / อีเมล</label><input id="sLine" data-s="line"></div>
+      <div><label class="f" for="sWeb">เว็บไซต์</label><input id="sWeb" data-s="web"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="f" for="sSigner">ผู้เสนอราคา (ชื่อที่ลงนาม)</label><input id="sSigner" data-s="signer"></div>
+      <div><label class="f" for="sLic">เลขทะเบียนใบอนุญาตสถาปนิก</label><input id="sLic" data-s="license" placeholder="ไม่บังคับ"></div>
+    </div>
+    <div class="grid3">
+      <div><label class="f" for="sPrefix">คำนำหน้าเลขที่</label><input id="sPrefix" data-s="prefix"></div>
+      <div><label class="f" for="sValid">ยืนราคา (วัน) ค่าเริ่มต้น</label><input id="sValid" data-s="validDays" inputmode="numeric"></div>
+      <div><label class="f" for="sVat">VAT ค่าเริ่มต้น</label><select id="sVat" data-s="vat"><option value="0">ไม่คิด VAT</option><option value="1">คิด VAT 7%</option></select></div>
+    </div>
+    <div><label class="f" for="sBank">บัญชีรับชำระเงิน</label><textarea id="sBank" data-s="bank" style="min-height:56px" placeholder="ธนาคาร / ชื่อบัญชี / เลขที่บัญชี (แสดงใน PDF)"></textarea></div>
+  </div>
+
+  <h2>เงื่อนไขค่าเริ่มต้น</h2>
+  <textarea id="sTerms" data-s="terms" style="min-height:140px"></textarea>
+
+  <h2>งวดชำระค่าเริ่มต้น</h2>
+  <div class="card"><div class="presetEd" id="sInst"></div><button class="btn ghost sm" id="sAddInst" style="margin-top:8px">+ เพิ่มงวด</button></div>
+
+  <h2>รายการบริการสำเร็จรูป</h2>
+  <p class="hint" style="margin-bottom:8px">ปุ่มลัดในหน้าแก้ไข ใส่ราคาประจำไว้ได้ ราคาจะถูกเติมให้อัตโนมัติ</p>
+  <div class="card"><div class="presetEd" id="sPresets"></div><button class="btn ghost sm" id="sAddPreset" style="margin-top:8px">+ เพิ่มบริการ</button></div>
+</section>
+
+<datalist id="clients"></datalist>
+<datalist id="projs"></datalist>
+
+<div class="foot">
+  <span>ข้อมูลเก็บไว้ในเครื่องนี้เท่านั้น สำรองไว้เป็นไฟล์ได้</span>
+  <div class="row">
+    <button class="btn ghost sm" id="bkOut">สำรองข้อมูล</button>
+    <label class="btn ghost sm" style="cursor:pointer">นำเข้า<input type="file" id="bkIn" accept=".json,application/json" hidden></label>
+  </div>
+</div>
+</div>
+
+<div class="saved" id="saved" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nl=s=>esc(s).replace(/\n/g,'<br>');
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const TODAY=iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const thLong=s=>s?new Date(s+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric'}):'';
+const thShort=s=>s?new Date(s+'T00:00:00').toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}):'';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const r2=n=>{n=+n||0;return Math.sign(n)*Math.round((Math.abs(n)+Number.EPSILON)*100)/100};
+const num=v=>{const n=parseFloat(String(v==null?'':v).replace(/,/g,''));return isFinite(n)?n:0};
+const money=n=>r2(n).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0=n=>Math.round(n).toLocaleString('th-TH');
+
+/* ---------- บาทถ้วน ---------- */
+function bahtText(v){
+  v=r2(v);if(v===0)return 'ศูนย์บาทถ้วน';
+  const neg=v<0;v=Math.abs(v);
+  const baht=Math.floor(v),satang=Math.round((v-baht)*100);
+  const N=['','หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด','แปด','เก้า'],P=['','สิบ','ร้อย','พัน','หมื่น','แสน'];
+  const six=(x,lead)=>{let s='';const d=String(x).split('').map(Number);const L=d.length;
+    d.forEach((v,i)=>{const p=L-1-i;if(!v)return;
+      if(p===1&&v===1)s+='สิบ';else if(p===1&&v===2)s+='ยี่สิบ';
+      else if(p===0&&v===1&&(L>1||lead))s+='เอ็ด';else s+=N[v]+P[p]});return s};
+  const read=x=>{if(x>=1e6){const hi=Math.floor(x/1e6),lo=x%1e6;return read(hi)+'ล้าน'+(lo?six(lo,true):'')}return six(x,false)};
+  let out=(baht?read(baht)+'บาท':'')+(satang?six(satang,false)+'สตางค์':'ถ้วน');
+  return (neg?'ลบ':'')+out;
+}
+
+/* ---------- ข้อมูล ---------- */
+const KEY='qt-data';
+const DEF_TERMS=`1. ราคานี้ยืนราคา {validDays} วัน นับจากวันที่เสนอราคา
+2. ราคาไม่รวมค่าธรรมเนียมราชการ ค่าสำรวจรังวัดที่ดิน และค่าทดสอบดิน (ถ้ามี)
+3. รวมการแก้ไขแบบไม่เกิน 2 ครั้งในแต่ละขั้นตอน การแก้ไขเกินขอบเขตคิดค่าบริการเพิ่มตามจริง
+4. ระยะเวลาดำเนินงานเริ่มนับเมื่อได้รับเงินงวดแรกและข้อมูลที่จำเป็นครบถ้วน
+5. ลิขสิทธิ์แบบเป็นของผู้ออกแบบ ผู้ว่าจ้างมีสิทธิ์นำแบบไปใช้ก่อสร้างในโครงการนี้เท่านั้น`;
+const DEF_INST=[{label:'มัดจำเมื่อตกลงว่าจ้าง',pct:30},{label:'ส่งแบบร่างที่ผู้ว่าจ้างอนุมัติ',pct:30},{label:'ส่งแบบก่อสร้างฉบับสมบูรณ์',pct:30},{label:'ยื่นขออนุญาตก่อสร้าง / ส่งมอบงาน',pct:10}];
+const DEF_PRESETS=[
+  {desc:'งานออกแบบสถาปัตยกรรม (แบบร่าง + แบบก่อสร้าง)',unit:'ตร.ม.',price:0},
+  {desc:'งานออกแบบวิศวกรรมโครงสร้าง',unit:'ตร.ม.',price:0},
+  {desc:'งานออกแบบระบบไฟฟ้าและสุขาภิบาล',unit:'ตร.ม.',price:0},
+  {desc:'งานออกแบบตกแต่งภายใน',unit:'ตร.ม.',price:0},
+  {desc:'ภาพทัศนียภาพ 3D (Perspective)',unit:'ภาพ',price:0},
+  {desc:'จัดทำเอกสารและยื่นขออนุญาตก่อสร้าง',unit:'งาน',price:0},
+  {desc:'ถอดปริมาณวัสดุและประมาณราคา (BOQ)',unit:'งาน',price:0},
+  {desc:'ตรวจและให้คำปรึกษาหน้างานระหว่างก่อสร้าง',unit:'ครั้ง',price:0}
+];
+const D=load(KEY,null)||{};
+D.company=Object.assign({name:'ARSTINLA Design & Consult',tax:'',addr:'',phone:'061-519-4622',line:'LINE @arstinla',web:'www.arstinla.com',signer:'',license:'',prefix:'QT',validDays:30,vat:'0',bank:'',terms:DEF_TERMS,inst:DEF_INST,presets:DEF_PRESETS},D.company||{});
+if(!Array.isArray(D.quotes))D.quotes=[];
+if(!D.seq)D.seq={};
+let st;
+function persist(msg){
+  const ok=store(KEY,D);const el=$('#saved');
+  el.textContent=ok?(msg||'บันทึกแล้ว'):'บันทึกไม่สำเร็จ — พื้นที่ในเบราว์เซอร์เต็มหรือถูกปิดไว้';
+  el.classList.add('on');clearTimeout(st);st=setTimeout(()=>el.classList.remove('on'),ok?1100:4000);
+}
+let pt;const persistSoon=()=>{clearTimeout(pt);pt=setTimeout(()=>persist(),500)};
+const UI=load('qt-ui',{tab:'list',cur:'',f:'all'});
+const saveUI=()=>store('qt-ui',UI);
+
+const STATUS=[['draft','ร่าง'],['sent','ส่งแล้ว'],['won','อนุมัติ'],['lost','ไม่อนุมัติ']];
+const SL=Object.fromEntries(STATUS);
+
+function calc(q){
+  const sub=r2(q.items.filter(i=>i.type!=='h').reduce((a,i)=>a+r2(num(i.qty)*num(i.price)),0));
+  const disc=r2(Math.min(num(q.disc),sub));
+  const after=r2(sub-disc);
+  const vat=q.vat?r2(after*0.07):0;
+  const total=r2(after+vat);
+  const wht=q.wht?r2(after*0.03):0;
+  const net=r2(total-wht);
+  return {sub,disc,after,vat,total,wht,net};
+}
+const cur=()=>D.quotes.find(q=>q.id===UI.cur);
+const beYear=s=>new Date(s+'T00:00:00').getFullYear()+543;
+function nextNo(date){
+  const y=beYear(date||TODAY);D.seq[y]=(D.seq[y]||0)+1;
+  return `${(D.company.prefix||'QT').trim()}${y}-${String(D.seq[y]).padStart(3,'0')}`;
+}
+function newQuote(seed){
+  const c=D.company;
+  const q=Object.assign({id:uid(),no:'',date:TODAY,validDays:+c.validDays||30,ref:'',status:'draft',
+    client:{name:'',attn:'',addr:'',tax:'',phone:'',email:''},proj:{name:'',loc:'',area:''},
+    items:[],disc:'',vat:c.vat==='1',wht:false,inst:JSON.parse(JSON.stringify(c.inst||DEF_INST)),
+    terms:c.terms||DEF_TERMS,created:new Date().toISOString()},seed||{});
+  q.no=nextNo(q.date);
+  D.quotes.unshift(q);UI.cur=q.id;saveUI();persist('สร้างใบเสนอราคาแล้ว');
+  return q;
+}
+
+/* ---------- แท็บ ---------- */
+function setTab(t){
+  UI.tab=t;saveUI();
+  $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
+  ['list','edit','set'].forEach(k=>$('#v-'+k).hidden=k!==t);
+  if(t==='list')renderList();else if(t==='edit')renderEditor();else renderSettings();
+  window.scrollTo({top:0});
+}
+$$('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+
+/* ---------- รายการ ---------- */
+function renderList(){
+  const qs=D.quotes;
+  const yr=TODAY.slice(0,4);
+  const thisYear=qs.filter(q=>(q.date||'').slice(0,4)===yr);
+  const won=thisYear.filter(q=>q.status==='won');
+  const pending=qs.filter(q=>q.status==='sent');
+  $('#kpi').innerHTML=`<div><b>${money0(won.reduce((a,q)=>a+calc(q).total,0))}</b><span>ยอดที่อนุมัติปี ${+yr+543} (${won.length} ใบ)</span></div>
+    <div><b>${money0(pending.reduce((a,q)=>a+calc(q).total,0))}</b><span>รอตอบรับ (${pending.length} ใบ)</span></div>
+    <div><b>${thisYear.length?Math.round(won.length/Math.max(1,thisYear.filter(q=>q.status!=='draft').length)*100):0}%</b><span>อัตราปิดงานปีนี้</span></div>`;
+  const F=[['all','ทั้งหมด'],...STATUS];
+  $('#filters').innerHTML=F.map(([k,l])=>`<button data-f="${k}" aria-pressed="${UI.f===k}">${l}${k!=='all'?' '+qs.filter(q=>q.status===k).length:''}</button>`).join('');
+  $$('#filters button').forEach(b=>b.onclick=()=>{UI.f=b.dataset.f;saveUI();renderList()});
+  const term=$('#qSearch').value.trim().toLowerCase();
+  const list=qs.filter(q=>(UI.f==='all'||q.status===UI.f)&&(!term||[q.no,q.client.name,q.proj.name,q.client.attn].join(' ').toLowerCase().includes(term)));
+  if(!qs.length){$('#qlist').innerHTML='<li class="card empty">ยังไม่มีใบเสนอราคา<br><button class="btn" id="firstQ">+ สร้างใบเสนอราคาแรก</button></li>';$('#firstQ').onclick=createAndEdit;return}
+  if(!list.length){$('#qlist').innerHTML='<li class="card empty">ไม่พบใบเสนอราคาที่ตรงกัน</li>';return}
+  $('#qlist').innerHTML=list.map(q=>{const t=calc(q);
+    return `<li><button class="q" data-id="${q.id}">
+      <span class="no">${esc(q.no)} · ${esc(thShort(q.date))} <span class="st" data-s="${q.status}">${SL[q.status]}</span></span>
+      <span class="nm">${esc(q.client.name||'(ยังไม่ใส่ชื่อลูกค้า)')}</span>
+      <span class="sub">${esc(q.proj.name||'—')}</span>
+      <span class="amt"><b>${money(t.total)}</b><span class="hint">บาท</span></span></button></li>`}).join('');
+  $$('#qlist .q').forEach(b=>b.onclick=()=>{UI.cur=b.dataset.id;saveUI();setTab('edit')});
+}
+$('#qSearch').oninput=renderList;
+function createAndEdit(){newQuote();setTab('edit')}
+$('#qNew').onclick=$('#qNew2').onclick=createAndEdit;
+
+/* ---------- ตัวแก้ไข ---------- */
+$('#eStatus').innerHTML=STATUS.map(([k,l])=>`<option value="${k}">${l}</option>`).join('');
+function renderEditor(){
+  const q=cur();
+  $('#noQuote').hidden=!!q;$('#editor').hidden=!q;
+  if(!q)return;
+  $('#eNo').textContent=q.no;$('#eStatus').value=q.status;
+  $('#eDate').value=q.date;$('#eValid').value=q.validDays;$('#eRef').value=q.ref||'';
+  $$('[data-c]').forEach(el=>el.value=q.client[el.dataset.c]||'');
+  $$('[data-p]').forEach(el=>el.value=q.proj[el.dataset.p]||'');
+  $('#eDisc').value=q.disc||'';$('#eVat').checked=!!q.vat;$('#eWht').checked=!!q.wht;
+  $('#eTerms').value=q.terms||'';$('#eMsg').textContent='';
+  const names=[...new Set(D.quotes.map(x=>x.client.name).filter(Boolean))];
+  $('#clients').innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
+  const consult=load('ms-data',null);
+  const projs=consult&&Array.isArray(consult.projects)?consult.projects:[];
+  $('#projs').innerHTML=projs.map(p=>`<option value="${esc(p.name)}">`).join('');
+  renderPresets();renderItems();renderInst();renderTotals();
+}
+$('#eStatus').onchange=e=>{const q=cur();q.status=e.target.value;if(q.status!=='draft'&&!q.sentAt)q.sentAt=new Date().toISOString();persist('อัปเดตสถานะแล้ว')};
+$('#eDate').onchange=e=>{cur().date=e.target.value||TODAY;persistSoon()};
+$('#eValid').oninput=e=>{cur().validDays=parseInt(e.target.value,10)||0;persistSoon()};
+$('#eRef').oninput=e=>{cur().ref=e.target.value;persistSoon()};
+$('#eTerms').oninput=e=>{cur().terms=e.target.value;persistSoon()};
+$$('[data-c]').forEach(el=>el.oninput=()=>{
+  const q=cur();q.client[el.dataset.c]=el.value;
+  if(el.dataset.c==='name'){
+    const prev=D.quotes.find(x=>x!==q&&x.client.name===el.value);
+    if(prev&&!q.client.addr&&!q.client.phone){Object.assign(q.client,JSON.parse(JSON.stringify(prev.client)));$$('[data-c]').forEach(e2=>e2.value=q.client[e2.dataset.c]||'')}
+  }
+  persistSoon();
+});
+$$('[data-p]').forEach(el=>el.oninput=()=>{
+  const q=cur();q.proj[el.dataset.p]=el.value;
+  if(el.dataset.p==='name'){
+    const consult=load('ms-data',null);const p=consult&&(consult.projects||[]).find(x=>x.name===el.value);
+    if(p){if(!q.proj.loc&&p.loc){q.proj.loc=p.loc;$('#pLoc').value=p.loc}
+      if(!q.client.name&&p.client){q.client.name=p.client;$('#cName').value=p.client}
+      $('#fromConsult').hidden=false;$('#fromConsult').textContent='ดึงข้อมูลจากโครงการใน ARSTINLA Consult แล้ว';}
+  }
+  if(el.dataset.p==='area'){renderItems();renderTotals()}
+  persistSoon();
+});
+
+/* รายการ */
+function renderItems(){
+  const q=cur();let n=0;
+  $('#items').innerHTML=q.items.length?q.items.map((it,i)=>{
+    if(it.type==='h')return `<div class="it h"><span class="ix">▸</span><input data-i="${i}" data-k="desc" value="${esc(it.desc)}" placeholder="หัวข้อ เช่น หมวดงานออกแบบ" aria-label="หัวข้อ"><button class="ibtn del" data-del="${i}" aria-label="ลบหัวข้อ">×</button></div>`;
+    n++;
+    return `<div class="it">
+      <span class="ix">${n}</span>
+      <input class="desc" data-i="${i}" data-k="desc" value="${esc(it.desc)}" placeholder="รายละเอียดรายการ" aria-label="รายการ">
+      <input class="num" data-i="${i}" data-k="qty" value="${esc(it.qty)}" inputmode="decimal" aria-label="จำนวน" placeholder="1">
+      <input data-i="${i}" data-k="unit" value="${esc(it.unit)}" aria-label="หน่วย" placeholder="หน่วย">
+      <input class="num" data-i="${i}" data-k="price" value="${esc(it.price)}" inputmode="decimal" aria-label="ราคาต่อหน่วย" placeholder="0.00">
+      <span class="amt" data-amt="${i}">${money(num(it.qty)*num(it.price))}</span>
+      <button class="ibtn del" data-del="${i}" aria-label="ลบรายการ">×</button></div>`;
+  }).join(''):'<p class="hint">ยังไม่มีรายการ เลือกจากปุ่มบริการด้านล่าง หรือกด + เพิ่มรายการ</p>';
+  $$('#items [data-k]').forEach(el=>el.oninput=()=>{
+    const it=cur().items[+el.dataset.i];it[el.dataset.k]=el.value;
+    const a=$(`[data-amt="${el.dataset.i}"]`);if(a)a.textContent=money(num(it.qty)*num(it.price));
+    renderTotals();persistSoon();
+  });
+  $$('#items [data-del]').forEach(b=>b.onclick=()=>{cur().items.splice(+b.dataset.del,1);renderItems();renderTotals();persist()});
+}
+function addItem(it,focus){
+  const q=cur();q.items.push(Object.assign({type:'i',desc:'',qty:'1',unit:'',price:''},it));
+  renderItems();renderTotals();persist();
+  if(focus){const ins=$$('#items input[data-k="desc"]');ins[ins.length-1].focus()}
+}
+$('#addItem').onclick=()=>addItem({},true);
+$('#addHead').onclick=()=>addItem({type:'h',qty:'',unit:'',price:''},true);
+function renderPresets(){
+  $('#presets').innerHTML=(D.company.presets||[]).map((p,i)=>`<button data-pi="${i}">+ ${esc(p.desc)}</button>`).join('');
+  $$('#presets button').forEach(b=>b.onclick=()=>{
+    const p=D.company.presets[+b.dataset.pi];const q=cur();
+    const area=num(q.proj.area);const byArea=/ตร\.?ม/.test(p.unit||'');
+    addItem({desc:p.desc,unit:p.unit||'',qty:byArea&&area?String(area):'1',price:p.price?String(p.price):''});
+    if(byArea&&!area)$('#eMsg').textContent='ใส่พื้นที่ใช้สอยในหัวข้อโครงการ แล้วแก้จำนวนให้ตรง';
+  });
+}
+$('#toggleHelper').onclick=()=>{$('#helper').hidden=!$('#helper').hidden;updHelper()};
+function updHelper(){const b=num($('#hBudget').value),p=num($('#hPct').value);$('#hOut').textContent=b&&p?`ค่าบริการ = ${money(b*p/100)} บาท (${bahtText(b*p/100)})`:'ใส่งบก่อสร้างและอัตรา % เพื่อคำนวณ'}
+$('#hBudget').oninput=$('#hPct').oninput=updHelper;
+$('#hAdd').onclick=()=>{
+  const b=num($('#hBudget').value),p=num($('#hPct').value);if(!b||!p){updHelper();return}
+  addItem({desc:`ค่าบริการออกแบบ ${p}% ของงบประมาณค่าก่อสร้าง ${money0(b)} บาท`,qty:'1',unit:'งาน',price:String(r2(b*p/100))});
+  $('#helper').hidden=true;
+};
+$('#eDisc').oninput=e=>{cur().disc=e.target.value;renderTotals();persistSoon()};
+$('#eVat').onchange=e=>{cur().vat=e.target.checked;renderTotals();persist()};
+$('#eWht').onchange=e=>{cur().wht=e.target.checked;renderTotals();persist()};
+function renderTotals(){
+  const q=cur(),t=calc(q);
+  $('#tSub').textContent=money(t.sub);$('#tAfter').textContent=money(t.after);$('#tVat').textContent=money(t.vat);
+  $('#tTotal').textContent=money(t.total);$('#tWht').textContent=t.wht?'-'+money(t.wht):'0.00';$('#tNet').textContent=money(t.net);
+  $('#netRow').hidden=!q.wht;$('#barTotal').textContent=money(t.total)+' บาท';
+  $('#tWords').textContent='('+bahtText(t.total)+')';
+  renderInstAmounts();
+}
+
+/* งวด */
+function renderInst(){
+  const q=cur();
+  $('#inst').innerHTML=q.inst.map((s,i)=>`<div class="in">
+    <input data-ii="${i}" data-k="label" value="${esc(s.label)}" aria-label="งวดที่ ${i+1}" placeholder="งวดที่ ${i+1}">
+    <input class="num" data-ii="${i}" data-k="pct" value="${esc(s.pct)}" inputmode="decimal" aria-label="เปอร์เซ็นต์">
+    <span class="amt" data-ia="${i}"></span>
+    <button class="ibtn" data-idel="${i}" aria-label="ลบงวด">×</button></div>`).join('')||'<p class="hint">ไม่แบ่งงวด (ชำระครั้งเดียว)</p>';
+  $$('#inst [data-k]').forEach(el=>el.oninput=()=>{cur().inst[+el.dataset.ii][el.dataset.k]=el.value;renderInstAmounts();persistSoon()});
+  $$('#inst [data-idel]').forEach(b=>b.onclick=()=>{cur().inst.splice(+b.dataset.idel,1);renderInst();persist()});
+  renderInstAmounts();
+}
+function instAmounts(q){
+  const t=calc(q).total;const list=q.inst.map(s=>r2(t*num(s.pct)/100));
+  const sum=q.inst.reduce((a,s)=>a+num(s.pct),0);
+  if(list.length&&Math.abs(sum-100)<1e-9){const diff=r2(t-list.reduce((a,b)=>a+b,0));list[list.length-1]=r2(list[list.length-1]+diff)}
+  return {list,sum};
+}
+function renderInstAmounts(){
+  const q=cur();if(!q)return;const {list,sum}=instAmounts(q);
+  list.forEach((a,i)=>{const el=$(`[data-ia="${i}"]`);if(el)el.textContent=money(a)+' บาท'});
+  $('#instSum').innerHTML=q.inst.length?(Math.abs(sum-100)<1e-9?'รวม 100%':`<span class="warn">รวม ${r2(sum)}% (ควรเท่ากับ 100%)</span>`):'';
+}
+$('#addInst').onclick=()=>{cur().inst.push({label:'',pct:''});renderInst();persist();const ins=$$('#inst input[data-k="label"]');ins[ins.length-1].focus()};
+
+$('#eDup').onclick=()=>{
+  const q=cur();const c=JSON.parse(JSON.stringify(q));
+  delete c.id;delete c.no;delete c.sentAt;c.status='draft';c.date=TODAY;c.ref=q.ref?q.ref+' (สำเนา)':'สำเนาจาก '+q.no;
+  newQuote(c);renderEditor();window.scrollTo({top:0});
+};
+$('#eDel').onclick=()=>{
+  const q=cur();if(!confirm(`ลบใบเสนอราคา ${q.no}?`))return;
+  D.quotes=D.quotes.filter(x=>x!==q);UI.cur='';saveUI();persist('ลบแล้ว');setTab('list');
+};
+
+/* ---------- LINE ---------- */
+function lineText(q){
+  const t=calc(q),c=D.company;const L=[`ใบเสนอราคา ${q.no}`,`จาก ${c.name}`];
+  if(q.client.name)L.push('เรียน '+q.client.name+(q.client.attn?' ('+q.client.attn+')':''));
+  if(q.proj.name)L.push('โครงการ: '+q.proj.name+(q.proj.loc?' · '+q.proj.loc:'')+(num(q.proj.area)?' · '+q.proj.area+' ตร.ม.':''));
+  L.push('');
+  q.items.forEach(it=>{if(it.type==='h'){L.push('▸ '+it.desc)}else if(it.desc){L.push(`• ${it.desc} — ${money(num(it.qty)*num(it.price))} บาท`)}});
+  L.push('');
+  if(t.disc)L.push('ส่วนลด: '+money(t.disc)+' บาท');
+  if(q.vat)L.push('VAT 7%: '+money(t.vat)+' บาท');
+  L.push('💰 ยอดรวมทั้งสิ้น '+money(t.total)+' บาท','('+bahtText(t.total)+')');
+  if(q.inst.length){const {list}=instAmounts(q);L.push('','งวดชำระ');q.inst.forEach((s,i)=>L.push(`${i+1}. ${s.label} ${num(s.pct)}% = ${money(list[i])} บาท`))}
+  L.push('',`ยืนราคาถึง ${thLong(addDays(q.date,+q.validDays||0))}`,'',c.name+(c.phone?' · '+c.phone:''));
+  return L.join('\n');
+}
+async function copyText(s){try{await navigator.clipboard.writeText(s);return true}catch(e){const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
+$('#eLine').onclick=async()=>{const ok=await copyText(lineText(cur()));$('#eMsg').textContent=ok?'คัดลอกแล้ว — เปิด LINE แล้ววางได้เลย':'คัดลอกไม่สำเร็จ'};
+
+/* ---------- PDF ---------- */
+const MARK=`<svg viewBox="0 0 100 100" width="46" height="46" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="18" fill="#171816"/><polygon points="50,16 27,72 50,79" fill="#c36b48"/><polygon points="50,16 50,79 73,70" fill="#e9e5dc"/><circle cx="50" cy="13.5" r="2.6" fill="#c36b48"/></svg>`;
+const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
+async function saveBlob(blob,filename){
+  const dl=await dlP;
+  if(dl){try{await dl.save({filename,data:blob});return 'saved'}catch(e){return e&&e.code==='declined'?'declined':'error'}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+  return 'downloaded';
+}
+const fileSafe=s=>String(s||'').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
+function buildPDF(q){
+  const c=D.company,t=calc(q),{list}=instAmounts(q);
+  let n=0;
+  const rows=q.items.map(it=>{
+    if(it.type==='h')return `<tr class="h"><td></td><td colspan="5">${esc(it.desc)}</td></tr>`;
+    n++;return `<tr><td class="c">${n}</td><td>${nl(it.desc)}</td><td class="r">${esc(it.qty)}</td><td class="c">${esc(it.unit)}</td><td class="r">${money(num(it.price))}</td><td class="r">${money(num(it.qty)*num(it.price))}</td></tr>`}).join('');
+  const terms=(q.terms||'').replace(/\{validDays\}/g,q.validDays||'');
+  const tr=(l,v,cls)=>`<tr class="${cls||''}"><td>${l}</td><td class="r">${v}</td></tr>`;
+  const el=document.createElement('div');
+  el.innerHTML=`<div class="rpt"><style>
+  .rpt{font-family:"IBM Plex Sans Thai",Tahoma,sans-serif;color:#1E1F1C;background:#fff;width:190mm;font-size:10pt;line-height:1.5}
+  .rpt .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm;border-bottom:2px solid #1E1F1C;padding-bottom:4mm}
+  .rpt .co{display:flex;gap:3.5mm}.rpt .co b{font-size:12.5pt;display:block;line-height:1.3}.rpt .co div{font-size:8.8pt;color:#55544e}
+  .rpt .ttl{text-align:right}.rpt .ttl h1{margin:0;font-size:19pt;color:#A65335;line-height:1.2}.rpt .ttl span{font-size:8.5pt;letter-spacing:.2em;color:#888}
+  .rpt .meta{display:flex;gap:5mm;margin:5mm 0}
+  .rpt .box{flex:1;border:1px solid #D5D2CA;border-radius:3px;padding:3mm 4mm;font-size:9.3pt}
+  .rpt .box .lb{font-size:8pt;color:#888;letter-spacing:.06em}
+  .rpt .box b{font-size:10.5pt}
+  .rpt .kv{display:grid;grid-template-columns:auto 1fr;gap:.5mm 4mm}
+  .rpt table{border-collapse:collapse;width:100%}
+  .rpt .tb th{background:#1E1F1C;color:#fff;font-weight:600;padding:2mm;font-size:9pt}
+  .rpt .tb td{padding:2mm;border-bottom:1px solid #E3E0D8;vertical-align:top}
+  .rpt .tb tr.h td{background:#F4E5DC;font-weight:700;border-bottom:0}
+  .rpt .c{text-align:center}.rpt .r{text-align:right;font-variant-numeric:tabular-nums}
+  .rpt .sum{display:flex;gap:6mm;margin-top:4mm;align-items:flex-start}
+  .rpt .words{flex:1;background:#F4F2EE;border-radius:3px;padding:3mm 4mm;font-weight:600}
+  .rpt .tt{width:78mm}.rpt .tt td{padding:1.2mm 2mm}.rpt .tt .g td{border-top:2px solid #1E1F1C;font-weight:700;font-size:11pt}.rpt .tt .n td{color:#A65335;font-weight:700}
+  .rpt h2{font-size:10.5pt;margin:5mm 0 2mm}
+  .rpt .ins td,.rpt .ins th{border:1px solid #E3E0D8;padding:1.6mm 2.5mm}.rpt .ins th{background:#F4F2EE;font-weight:600;text-align:left}
+  .rpt .terms{font-size:9pt;color:#3d3c37}
+  .rpt .sig{display:flex;gap:14mm;margin-top:14mm}.rpt .sig div{flex:1;text-align:center;font-size:9pt;color:#55544e}.rpt .sig b{display:block;border-top:1px solid #1E1F1C;padding-top:2mm;margin-bottom:1mm;color:#1E1F1C}
+  .rpt .ft{margin-top:8mm;text-align:center;font-size:8pt;color:#aaa}
+  </style>
+  <div class="hd">
+    <div class="co">${MARK}<div><b>${esc(c.name)}</b>${c.addr?nl(c.addr)+'<br>':''}${[c.phone?'โทร '+esc(c.phone):'',esc(c.line),esc(c.web)].filter(Boolean).join(' · ')}${c.tax?'<br>เลขประจำตัวผู้เสียภาษี '+esc(c.tax):''}${c.license?'<br>ใบอนุญาตสถาปนิก '+esc(c.license):''}</div></div>
+    <div class="ttl"><h1>ใบเสนอราคา</h1><span>QUOTATION</span></div>
+  </div>
+  <div class="meta">
+    <div class="box" style="flex:1.6"><div class="lb">ลูกค้า / CUSTOMER</div><b>${esc(q.client.name||'-')}</b>${q.client.attn?'<br>ผู้ติดต่อ: '+esc(q.client.attn):''}${q.client.addr?'<br>'+nl(q.client.addr):''}${q.client.tax?'<br>เลขประจำตัวผู้เสียภาษี '+esc(q.client.tax):''}${[q.client.phone,q.client.email].filter(Boolean).length?'<br>'+esc([q.client.phone,q.client.email].filter(Boolean).join(' · ')):''}</div>
+    <div class="box"><div class="kv"><span>เลขที่</span><b>${esc(q.no)}</b><span>วันที่</span><span>${esc(thLong(q.date))}</span><span>ยืนราคาถึง</span><span>${esc(thLong(addDays(q.date,+q.validDays||0)))}</span>${q.ref?`<span>อ้างอิง</span><span>${esc(q.ref)}</span>`:''}</div></div>
+  </div>
+  ${q.proj.name||q.proj.loc?`<div class="box" style="margin-bottom:4mm"><span class="lb">โครงการ / PROJECT</span>&nbsp; <b>${esc(q.proj.name||'')}</b>${q.proj.loc?' · '+esc(q.proj.loc):''}${num(q.proj.area)?' · พื้นที่ใช้สอยประมาณ '+esc(q.proj.area)+' ตร.ม.':''}</div>`:''}
+  <table class="tb"><thead><tr><th class="c" style="width:9mm">ลำดับ</th><th style="text-align:left">รายการ</th><th class="r" style="width:16mm">จำนวน</th><th class="c" style="width:15mm">หน่วย</th><th class="r" style="width:26mm">ราคา/หน่วย</th><th class="r" style="width:28mm">จำนวนเงิน</th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="c">-</td></tr>'}</tbody></table>
+  <div class="sum">
+    <div class="words">${esc(bahtText(t.total))}</div>
+    <table class="tt">
+      ${tr('รวมเป็นเงิน',money(t.sub))}
+      ${t.disc?tr('ส่วนลด','-'+money(t.disc))+tr('ยอดหลังหักส่วนลด',money(t.after)):''}
+      ${q.vat?tr('ภาษีมูลค่าเพิ่ม 7%',money(t.vat)):''}
+      ${tr('ยอดรวมทั้งสิ้น',money(t.total),'g')}
+      ${q.wht?tr('หัก ณ ที่จ่าย 3%','-'+money(t.wht))+tr('ยอดชำระสุทธิ',money(t.net),'n'):''}
+    </table>
+  </div>
+  ${q.inst.length?`<h2>งวดการชำระเงิน</h2><table class="ins"><tr><th style="width:12mm">งวด</th><th>รายละเอียด</th><th class="r" style="width:16mm">%</th><th class="r" style="width:32mm">จำนวนเงิน (บาท)</th></tr>
+    ${q.inst.map((s,i)=>`<tr><td class="c">${i+1}</td><td>${esc(s.label)}</td><td class="r">${esc(num(s.pct))}</td><td class="r">${money(list[i])}</td></tr>`).join('')}</table>`:''}
+  ${c.bank?`<h2>การชำระเงิน</h2><div class="terms">${nl(c.bank)}</div>`:''}
+  ${terms.trim()?`<h2>เงื่อนไข</h2><div class="terms">${nl(terms.trim())}</div>`:''}
+  <div class="sig">
+    <div><b>ผู้เสนอราคา${c.signer?' — '+esc(c.signer):''}</b>${esc(c.name)}<br>วันที่ ${esc(thLong(q.date))}</div>
+    <div><b>ผู้อนุมัติ / ผู้ว่าจ้าง</b>${esc(q.client.name||'')}<br>วันที่ ......................................</div>
+  </div>
+  <div class="ft">${esc(c.name)} · ${esc(c.web||'')}</div></div>`;
+  return el.firstElementChild;
+}
+$('#ePdf').onclick=async()=>{
+  const q=cur(),btn=$('#ePdf'),msg=$('#eMsg');
+  if(!window.html2pdf){msg.textContent='โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วเปิดหน้านี้ใหม่';return}
+  if(!q.client.name){msg.textContent='ใส่ชื่อลูกค้าก่อนสร้าง PDF';$('#cName').focus();return}
+  btn.disabled=true;msg.textContent='กำลังสร้าง PDF…';
+  try{
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.95},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr','.sum','.sig','h2','.box']}}).from(buildPDF(q)).outputPdf('blob');
+    const r=await saveBlob(blob,`ใบเสนอราคา-${q.no}-${fileSafe(q.client.name)}.pdf`);
+    msg.textContent=r==='declined'?'ยกเลิกการบันทึก':r==='error'?'บันทึก PDF ไม่สำเร็จ':'ได้ไฟล์ PDF แล้ว ส่งให้ลูกค้าทาง LINE หรืออีเมลได้เลย';
+    if(q.status==='draft'){q.status='sent';q.sentAt=new Date().toISOString();$('#eStatus').value='sent';persist('เปลี่ยนสถานะเป็น "ส่งแล้ว"')}
+  }catch(e){msg.textContent='สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง'}
+  finally{btn.disabled=false}
+};
+
+/* ---------- ตั้งค่า ---------- */
+function renderSettings(){
+  const c=D.company;
+  $$('[data-s]').forEach(el=>el.value=c[el.dataset.s]==null?'':c[el.dataset.s]);
+  $('#sInst').innerHTML=(c.inst||[]).map((s,i)=>`<div class="pe" style="grid-template-columns:1fr 90px 32px"><input data-si="${i}" data-k="label" value="${esc(s.label)}" aria-label="งวด"><input class="num" data-si="${i}" data-k="pct" value="${esc(s.pct)}" aria-label="%"><button class="ibtn" data-sidel="${i}" aria-label="ลบ">×</button></div>`).join('');
+  $$('#sInst [data-k]').forEach(el=>el.oninput=()=>{c.inst[+el.dataset.si][el.dataset.k]=el.dataset.k==='pct'?num(el.value):el.value;persistSoon()});
+  $$('#sInst [data-sidel]').forEach(b=>b.onclick=()=>{c.inst.splice(+b.dataset.sidel,1);persist();renderSettings()});
+  $('#sPresets').innerHTML=(c.presets||[]).map((p,i)=>`<div class="pe"><input data-pi="${i}" data-k="desc" value="${esc(p.desc)}" aria-label="บริการ"><input data-pi="${i}" data-k="unit" value="${esc(p.unit)}" aria-label="หน่วย" placeholder="หน่วย"><input class="num" data-pi="${i}" data-k="price" value="${p.price?esc(p.price):''}" inputmode="decimal" aria-label="ราคาต่อหน่วย" placeholder="ราคา/หน่วย"><button class="ibtn" data-pdel="${i}" aria-label="ลบ">×</button></div>`).join('');
+  $$('#sPresets [data-k]').forEach(el=>el.oninput=()=>{c.presets[+el.dataset.pi][el.dataset.k]=el.dataset.k==='price'?num(el.value):el.value;persistSoon()});
+  $$('#sPresets [data-pdel]').forEach(b=>b.onclick=()=>{c.presets.splice(+b.dataset.pdel,1);persist();renderSettings()});
+}
+$$('[data-s]').forEach(el=>el.oninput=el.onchange=()=>{D.company[el.dataset.s]=el.dataset.s==='validDays'?(parseInt(el.value,10)||0):el.value;persistSoon()});
+$('#sAddInst').onclick=()=>{D.company.inst.push({label:'',pct:0});persist();renderSettings()};
+$('#sAddPreset').onclick=()=>{D.company.presets.push({desc:'',unit:'งาน',price:0});persist();renderSettings();const ins=$$('#sPresets input[data-k="desc"]');ins[ins.length-1].focus()};
+
+/* ---------- สำรอง ---------- */
+$('#bkOut').onclick=async()=>{
+  const blob=new Blob([JSON.stringify({app:'arstinla-quotation',v:1,exported:new Date().toISOString(),data:D})],{type:'application/json'});
+  await saveBlob(blob,`arstinla-quotation-backup-${TODAY}.json`);
+};
+$('#bkIn').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const j=JSON.parse(await f.text());const d=j.data||j;
+    if(!Array.isArray(d.quotes)||!d.company)throw 0;
+    if(!confirm(`นำเข้า ${d.quotes.length} ใบเสนอราคาและการตั้งค่า?\nข้อมูลปัจจุบันในเครื่องนี้จะถูกแทนที่`))return;
+    D.company=d.company;D.quotes=d.quotes;D.seq=d.seq||{};UI.cur='';saveUI();persist('นำเข้าข้อมูลแล้ว');setTab('list');
+  }catch(_){alert('ไฟล์นี้ไม่ใช่ไฟล์สำรองของแอปนี้')}
+};
+
+if(UI.tab==='edit'&&!cur())UI.tab='list';
+setTab(['list','edit','set'].includes(UI.tab)?UI.tab:'list');
+})();
+</script>
+<script src="../shared/pwa-install.js"></script>
+</body>
+</html>
