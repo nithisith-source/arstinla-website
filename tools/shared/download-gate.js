@@ -2,6 +2,7 @@
   "use strict";
 
   const LINE_ID="@227hzpry";
+  const LINE_NAME="ARSTINLA Design";
   const LINE_ID_ENCODED="%40227hzpry";
   const STORAGE_KEY="arstinla-download-actions";
   let activeRequest=null;
@@ -76,8 +77,8 @@
           <a class="arstinla-download-action arstinla-download-share" data-line-share target="_blank" rel="noopener">แชร์ให้เพื่อนใน LINE</a>
         </div>
         <div class="arstinla-download-qr" data-line-qr hidden>
-          <img src="/assets/line-qr.svg" alt="QR Code เพิ่มเพื่อน LINE ${LINE_ID}" width="132" height="132">
-          <span>สแกนด้วยมือถือเพื่อเพิ่มเพื่อน<br><b>LINE ${LINE_ID}</b></span>
+          <img src="/assets/line-qr.svg" alt="QR Code เพิ่มเพื่อน LINE ${LINE_NAME}" width="132" height="132">
+          <span>สแกนด้วยมือถือเพื่อเพิ่มเพื่อน<br><b>LINE ${LINE_NAME}</b></span>
         </div>
         <p class="arstinla-download-status" data-line-status hidden></p>
         <div class="arstinla-download-ready" data-download-ready hidden>
@@ -97,8 +98,8 @@
       if(action==="line_message" && event.currentTarget.dataset.desktop==="true"){
         const copied=await copyText(event.currentTarget.dataset.messageText||"");
         status.textContent=copied
-          ? "คัดลอกข้อความแล้วค่ะ สแกน QR เพื่อเปิด LINE @227hzpry แล้ววางข้อความได้เลย"
-          : "สแกน QR เพื่อเปิด LINE @227hzpry แล้วส่งข้อความจากหน้าต่างนี้ได้เลย";
+          ? "คัดลอกข้อความแล้วค่ะ สแกน QR เพื่อเปิด LINE ARSTINLA Design แล้ววางข้อความได้เลย"
+          : "สแกน QR เพื่อเปิด LINE ARSTINLA Design แล้วส่งข้อความจากหน้าต่างนี้ได้เลย";
         status.hidden=false;
       }
       recordAction(action);
