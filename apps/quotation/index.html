@@ -139,6 +139,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .pe{display:grid;grid-template-columns:1fr 90px 120px 32px;gap:6px}
 @media (max-width:560px){.pe{grid-template-columns:1fr 1fr 32px}.pe>:first-child{grid-column:1/3}.pe>.ibtn{grid-row:1;grid-column:3}}
 
+.logo-set{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+@media (max-width:560px){.logo-set{grid-template-columns:1fr}}
+.logo-prev{width:180px;height:96px;border:1px dashed var(--line);border-radius:8px;background:#fff;display:grid;place-items:center;padding:10px}
+.logo-prev img{max-width:100%;max-height:100%;object-fit:contain}
 .saved{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 14px;border-radius:16px;font-size:.88rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
 .saved.on{opacity:1}
 .foot{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;align-items:center}
@@ -276,6 +280,19 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <!-- ===== ตั้งค่า ===== -->
 <section id="v-set" hidden>
+  <h2>โลโก้ในใบเสนอราคา</h2>
+  <div class="card logo-set">
+    <div class="logo-prev" id="logoPrev"></div>
+    <div class="stack" style="gap:8px">
+      <div class="row">
+        <label class="btn" style="cursor:pointer">อัปโหลดโลโก้<input type="file" id="logoIn" accept="image/*" hidden></label>
+        <button class="btn ghost sm" id="logoReset" type="button">ใช้โลโก้สามเหลี่ยม (ค่าเริ่มต้น)</button>
+      </div>
+      <p class="hint">ไฟล์ PNG พื้นใสหรือ JPG ก็ได้ โลโก้แนวนอน (มีชื่อบริษัท) จะแสดงกว้างขึ้นอัตโนมัติ</p>
+      <label class="row" style="gap:8px;cursor:pointer"><input type="checkbox" id="logoHideName"> โลโก้มีชื่อบริษัทอยู่แล้ว (ไม่ต้องพิมพ์ชื่อซ้ำข้างโลโก้)</label>
+    </div>
+  </div>
+
   <h2>ข้อมูลผู้เสนอราคา</h2>
   <div class="card stack">
     <div class="grid2">
@@ -618,7 +635,14 @@ async function copyText(s){try{await navigator.clipboard.writeText(s);return tru
 $('#eLine').onclick=async()=>{const ok=await copyText(lineText(cur()));$('#eMsg').textContent=ok?'คัดลอกแล้ว — เปิด LINE แล้ววางได้เลย':'คัดลอกไม่สำเร็จ'};
 
 /* ---------- PDF ---------- */
-const MARK=`<img src="/assets/icons/icon-192.png" width="46" height="46" alt="" style="border-radius:8px;display:block">`;
+const DEFAULT_LOGO='/assets/icons/icon-192.png';
+const logoSrc=()=>D.company.logo||DEFAULT_LOGO;
+function logoHTML(){
+  const custom=!!D.company.logo;
+  return custom
+    ?`<img src="${D.company.logo}" alt="" style="display:block;max-height:16mm;max-width:52mm;object-fit:contain">`
+    :`<img src="${DEFAULT_LOGO}" width="46" height="46" alt="" style="border-radius:8px;display:block">`;
+}
 const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
 async function saveBlob(blob,filename){
   const dl=await dlP;
@@ -661,7 +685,7 @@ function buildPDF(q){
   .rpt .ft{margin-top:8mm;text-align:center;font-size:8pt;color:#aaa}
   </style>
   <div class="hd">
-    <div class="co">${MARK}<div><b>${esc(c.name)}</b>${c.addr?nl(c.addr)+'<br>':''}${[c.phone?'โทร '+esc(c.phone):'',esc(c.line),esc(c.web)].filter(Boolean).join(' · ')}${c.tax?'<br>เลขประจำตัวผู้เสียภาษี '+esc(c.tax):''}${c.license?'<br>ใบอนุญาตสถาปนิก '+esc(c.license):''}</div></div>
+    <div class="co">${logoHTML()}<div>${c.logo&&c.logoHideName?'':`<b>${esc(c.name)}</b>`}${c.addr?nl(c.addr)+'<br>':''}${[c.phone?'โทร '+esc(c.phone):'',esc(c.line),esc(c.web)].filter(Boolean).join(' · ')}${c.tax?'<br>เลขประจำตัวผู้เสียภาษี '+esc(c.tax):''}${c.license?'<br>ใบอนุญาตสถาปนิก '+esc(c.license):''}</div></div>
     <div class="ttl"><h1>ใบเสนอราคา</h1><span>QUOTATION</span></div>
   </div>
   <div class="meta">
@@ -706,8 +730,33 @@ $('#ePdf').onclick=async()=>{
 };
 
 /* ---------- ตั้งค่า ---------- */
+function renderLogo(){
+  $('#logoPrev').innerHTML=`<img src="${esc(logoSrc())}" alt="โลโก้ปัจจุบัน">`;
+  $('#logoReset').hidden=!D.company.logo;
+  $('#logoHideName').checked=!!D.company.logoHideName;
+  $('#logoHideName').closest('label').hidden=!D.company.logo;
+}
+function readLogo(file){return new Promise((res,rej)=>{
+  const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{
+    const max=600,sc=Math.min(1,max/Math.max(im.width,im.height));
+    const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);
+    const isJpg=/jpe?g/i.test(file.type);
+    res(c.toDataURL(isJpg?'image/jpeg':'image/png',0.9));
+  };
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('x'))};im.src=u;
+})}
+$('#logoIn').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{D.company.logo=await readLogo(f);persist('เปลี่ยนโลโก้แล้ว');renderLogo()}
+  catch(_){alert('เปิดไฟล์รูปนี้ไม่ได้ ลองใช้ไฟล์ PNG หรือ JPG')}
+};
+$('#logoReset').onclick=()=>{delete D.company.logo;D.company.logoHideName=false;persist('กลับไปใช้โลโก้สามเหลี่ยม');renderLogo()};
+$('#logoHideName').onchange=e=>{D.company.logoHideName=e.target.checked;persist()};
 function renderSettings(){
   const c=D.company;
+  renderLogo();
   $$('[data-s]').forEach(el=>el.value=c[el.dataset.s]==null?'':c[el.dataset.s]);
   $('#sInst').innerHTML=(c.inst||[]).map((s,i)=>`<div class="pe" style="grid-template-columns:1fr 90px 32px"><input data-si="${i}" data-k="label" value="${esc(s.label)}" aria-label="งวด"><input class="num" data-si="${i}" data-k="pct" value="${esc(s.pct)}" aria-label="%"><button class="ibtn" data-sidel="${i}" aria-label="ลบ">×</button></div>`).join('');
   $$('#sInst [data-k]').forEach(el=>el.oninput=()=>{c.inst[+el.dataset.si][el.dataset.k]=el.dataset.k==='pct'?num(el.value):el.value;persistSoon()});
