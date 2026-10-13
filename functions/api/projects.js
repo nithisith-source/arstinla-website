@@ -1140,9 +1140,6 @@ export async function onRequestPut({
       year
     );
 
-    /* completion is optional in older
-       project records, so insert it
-       when missing instead of failing */
     updatedBlock = upsertProjectText(
       updatedBlock,
       "completion",
