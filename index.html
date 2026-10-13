@@ -4320,6 +4320,10 @@ background-repeat:
         Downloads
       </a>
 
+      <a href="#downloads" class="nav-install" data-install-site hidden>
+        Add to Home Screen
+      </a>
+
       <a
         href="/admin/projects/"
         class="admin-manager-link"
@@ -5966,6 +5970,10 @@ background-repeat:
           เลือก Open App เพื่อใช้งานบนเบราว์เซอร์
           แล้วกด Install App เพื่อติดตั้งลงมือถือหรือคอมพิวเตอร์
         </p>
+        <button type="button" class="site-install-btn" data-install-site hidden>
+          <img src="/apple-touch-icon.png?v=2" alt="" width="28" height="28">
+          <span>เพิ่มเว็บ ARSTINLA ลงหน้าจอมือถือ</span>
+        </button>
       </div>
 
       <div class="app-download-list">
@@ -9099,6 +9107,69 @@ const submitButton =
 
   });
 
+})();
+</script>
+
+<style>
+  .site-install-btn{display:inline-flex;align-items:center;gap:10px;margin-top:14px;padding:8px 16px 8px 8px;border:1px solid var(--orange);background:transparent;color:inherit;font:500 .9rem/1.3 var(--font-th);cursor:pointer}
+  .site-install-btn img{border-radius:7px;display:block;width:28px!important;height:28px!important;max-width:none!important;flex:none;object-fit:cover}
+  .site-install-btn:hover{background:rgba(195,107,72,.08)}
+  .site-install-btn[hidden],.nav-install[hidden]{display:none!important}
+  .install-sheet{border:0;padding:0;max-width:420px;width:calc(100vw - 32px);background:var(--cream);color:var(--black);font-family:var(--font-th)}
+  .install-sheet::backdrop{background:rgba(0,0,0,.55)}
+  .install-sheet .is-in{padding:22px 22px 18px}
+  .install-sheet .is-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .install-sheet .is-hd img{border-radius:12px;width:52px!important;height:52px!important;max-width:none!important;flex:none;object-fit:cover}
+  .install-sheet .is-hd b{display:block;font-family:var(--font-en);letter-spacing:.12em;font-size:1rem}
+  .install-sheet .is-hd span{font-size:.85rem;color:#67665f}
+  .install-sheet b{font-weight:700}
+  .install-sheet ol{margin:0;padding-left:1.3em;display:grid;gap:10px;font-size:.98rem;line-height:1.55}
+  .install-sheet .ico{display:inline-grid;place-items:center;width:26px;height:26px;border:1px solid rgba(23,24,22,.25);border-radius:6px;vertical-align:-7px;margin:0 2px}
+  .install-sheet .ico svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .install-sheet .note{margin:14px 0 0;padding:10px 12px;background:rgba(195,107,72,.1);font-size:.88rem;line-height:1.5}
+  .install-sheet .is-ft{display:flex;justify-content:flex-end;margin-top:16px}
+  .install-sheet .is-ft button{font:600 .9rem var(--font-th);padding:9px 20px;border:0;background:var(--black);color:var(--cream);cursor:pointer}
+</style>
+<dialog class="install-sheet" id="installSheet" aria-labelledby="installSheetTitle">
+  <div class="is-in">
+    <div class="is-hd"><img src="/apple-touch-icon.png?v=2" alt="" width="52" height="52"><div><b id="installSheetTitle">ARSTINLA</b><span>เพิ่มไอคอนเว็บลงหน้าจอมือถือ</span></div></div>
+    <div id="installSteps"></div>
+    <div class="is-ft"><button type="button" data-close>เข้าใจแล้ว</button></div>
+  </div>
+</dialog>
+<script>
+(function(){
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||window.matchMedia('(display-mode: minimal-ui)').matches||window.navigator.standalone===true;
+  var ua=navigator.userAgent||'';
+  var isIOS=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var isAndroid=/android/i.test(ua);
+  var inApp=/Line\/|FBAN|FBAV|Instagram|TikTok|Messenger/i.test(ua);
+  var iosOtherBrowser=isIOS&&/CriOS|FxiOS|EdgiOS|GSA\//i.test(ua);
+  var mobile=isIOS||isAndroid||window.matchMedia('(pointer: coarse)').matches;
+  var deferred=null;
+  var els=document.querySelectorAll('[data-install-site]');
+  function show(on){for(var i=0;i<els.length;i++)els[i].hidden=!on}
+  if(standalone)return;
+  if(mobile)show(true);
+  window.addEventListener('beforeinstallprompt',function(e){if(!mobile)return;e.preventDefault();deferred=e;show(true)});
+  window.addEventListener('appinstalled',function(){deferred=null;show(false)});
+  var sheet=document.getElementById('installSheet'),steps=document.getElementById('installSteps');
+  var shareIco='<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 11v9h14v-9"/></svg></span>';
+  var plusIco='<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></svg></span>';
+  var dotsIco='<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></span>';
+  function html(){
+    if(inApp)return '<ol><li>แอปนี้ (เช่น LINE / Facebook) เพิ่มไอคอนลงหน้าจอไม่ได้</li><li>กดเมนู '+dotsIco+' หรือ "เปิดในเบราว์เซอร์" เพื่อเปิด arstinla.com ใน '+(isIOS?'<b>Safari</b>':'<b>Chrome</b>')+'</li><li>แล้วกดปุ่ม "เพิ่มเว็บ ARSTINLA ลงหน้าจอมือถือ" อีกครั้ง</li></ol>';
+    if(isIOS)return '<ol>'+(iosOtherBrowser?'<li>เปิดหน้านี้ใน <b>Safari</b> (บน iPhone ต้องใช้ Safari)</li>':'')+'<li>แตะปุ่ม <b>แชร์</b> '+shareIco+' ที่แถบด้านล่าง (หรือด้านบนบน iPad)</li><li>เลื่อนลงแล้วแตะ <b>เพิ่มไปยังหน้าจอโฮม</b> '+plusIco+'</li><li>แตะ <b>เพิ่ม</b> มุมขวาบน</li></ol><p class="note">ไอคอนสามเหลี่ยม ARSTINLA จะอยู่บนหน้าจอ แตะเพื่อเปิดเว็บได้ทันที</p>';
+    return '<ol><li>แตะเมนู '+dotsIco+' มุมขวาบนของ Chrome</li><li>เลือก <b>เพิ่มลงในหน้าจอหลัก</b> หรือ <b>ติดตั้งแอป</b></li><li>แตะ <b>เพิ่ม / ติดตั้ง</b></li></ol>';
+  }
+  function open(e){
+    if(e)e.preventDefault();
+    if(deferred){deferred.prompt();deferred.userChoice.then(function(c){if(c.outcome==='accepted')show(false);deferred=null});return}
+    steps.innerHTML=html();
+    if(sheet.showModal)sheet.showModal();else sheet.setAttribute('open','');
+  }
+  for(var i=0;i<els.length;i++)els[i].addEventListener('click',open);
+  sheet.addEventListener('click',function(e){if(e.target===sheet||e.target.hasAttribute('data-close'))sheet.close()});
 })();
 </script>
 
