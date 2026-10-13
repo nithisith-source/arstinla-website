@@ -317,7 +317,7 @@ $('#exBtn').onclick=async()=>{
     if(!el){msg.textContent=onlyFix?'งวดที่เลือกยังไม่มีรายการที่ต้องแก้':'งวดที่เลือกยังไม่มีผลตรวจ — ตรวจอย่างน้อย 1 ข้อก่อนสร้าง PDF';return}
     const nm=(P.name||'บ้าน').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
     const filename=`ตรวจรับงาน-${nm}-${P.date||new Date().toISOString().slice(0,10)}.pdf`;
-    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.85},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.r-item','.r-head','.sig']}}).from(el).outputPdf('blob');
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.85},html2canvas:{scale:2,backgroundColor:'#ffffff',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.r-item','.r-head','.sig']}}).from(el).outputPdf('blob');
     const dl=await dlP;
     if(dl){
       try{await dl.save({filename,data:blob});msg.textContent='บันทึก PDF แล้ว ส่งให้ผู้รับเหมาทางไลน์หรืออีเมลได้เลย'}

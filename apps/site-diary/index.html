@@ -372,7 +372,7 @@ $('#exBtn').onclick=async()=>{
     if(!el){msg.textContent='ช่วงวันที่เลือกยังไม่มีบันทึก';return}
     const nm=(P.name||'หน้างาน').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
     const filename=`รายงานหน้างาน-${nm}-${from===to?from:from+'_'+to}.pdf`;
-    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.85},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.dh','.meta','.sec','.ims img','.kpi','.sig','tr']}}).from(el).outputPdf('blob');
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.85},html2canvas:{scale:2,backgroundColor:'#ffffff',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['.dh','.meta','.sec','.ims img','.kpi','.sig','tr']}}).from(el).outputPdf('blob');
     const dl=await dlP;
     if(dl){
       try{await dl.save({filename,data:blob});msg.textContent='บันทึก PDF แล้ว ส่งให้เจ้าของบ้านทางไลน์หรืออีเมลได้เลย'}
