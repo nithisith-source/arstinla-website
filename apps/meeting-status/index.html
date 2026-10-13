@@ -144,6 +144,57 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 @media (max-width:560px){.ai-row{grid-template-columns:1fr 1fr 36px}.ai-row>:first-child{grid-column:1/3}.ai-row>.x{grid-row:1;grid-column:3}}
 .ai-row select{padding:6px}
 
+/* รูปแนบ */
+.addph{display:inline-flex;align-items:center;font-size:.95rem;font-weight:600;padding:8px 14px;border-radius:8px;border:1px dashed var(--muted);color:var(--ink);cursor:pointer}
+.addph:focus-within{outline:3px solid var(--brand);outline-offset:2px}
+.photos{display:flex;gap:8px;flex-wrap:wrap}
+.photos:not(:empty){margin-top:10px}
+.ph{position:relative}
+.ph .th{padding:0;border:0;background:none;cursor:zoom-in;display:block}
+.ph img{width:84px;height:84px;object-fit:cover;border-radius:6px;display:block;border:1px solid var(--line)}
+.ph .rm{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);background:var(--ink);color:var(--surface);font-size:14px;line-height:1;padding:0;cursor:pointer}
+dialog#lb{background:rgba(0,0,0,.92);width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;border-radius:0;padding:16px;place-items:center}
+dialog#lb[open]{display:grid}
+#lb img{max-width:100%;max-height:85vh;border-radius:6px}
+#lb .btn{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px}
+.mph{font-size:.8rem;color:var(--muted)}
+
+/* แถบนัดวันนี้ */
+.agenda{margin-top:16px;border:1px solid var(--brand);background:var(--brand-soft);border-radius:10px;padding:10px 14px}
+.agenda h3{margin:0 0 4px;font-size:.95rem}
+.agenda ul{margin:0;padding:0;list-style:none;display:grid;gap:2px}
+.agenda li button{font:inherit;color:var(--ink);background:none;border:0;padding:2px 0;text-align:left;cursor:pointer;width:100%}
+.agenda .when{display:inline-block;min-width:64px;font-weight:700;color:var(--brand)}
+
+/* ปฏิทิน */
+.calbar{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center;margin:20px 0 10px}
+.calbar .nav{height:44px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.3rem;cursor:pointer}
+.calbar .mid{text-align:center}
+.calbar .mid b{display:block;font-size:1.2rem;line-height:1.3}
+.calbar .mid button{font:inherit;font-size:.85rem;color:var(--brand);background:none;border:0;cursor:pointer;padding:0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal .wd{font-size:.78rem;color:var(--muted);text-align:center;padding:2px 0}
+.cal .cd{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;min-height:58px;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.cal .cd.out{opacity:.4}
+.cal .cd .dn{font-size:.88rem;font-weight:600;line-height:1}
+.cal .cd.today .dn{background:var(--brand);color:var(--brand-ink);border-radius:10px;padding:2px 6px}
+.cal .cd[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.cal .dots{display:flex;flex-wrap:wrap;gap:3px}
+.cal .dots i{width:8px;height:8px;border-radius:50%;display:block}
+.dot-meet{background:var(--brand)}.dot-next{background:var(--doing)}.dot-due{background:var(--wait)}.dot-late{background:var(--late)}.dot-done{background:var(--done)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.82rem;color:var(--muted);margin:8px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.evs{list-style:none;margin:0;padding:0}
+.ev{display:grid;grid-template-columns:10px 1fr;gap:2px 10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:start}
+.ev:last-child{border-bottom:0}
+.ev>i{width:10px;height:10px;border-radius:50%;margin-top:8px}
+.ev .t{font:inherit;color:var(--ink);text-align:left;background:none;border:0;padding:0;cursor:pointer;font-weight:600}
+.ev .m{grid-column:2;font-size:.85rem;color:var(--muted)}
+.ev .row{grid-column:2;gap:6px;margin-top:4px}
+.ev.is-done .t{text-decoration:line-through;color:var(--muted);font-weight:500}
+@media (max-width:420px){.tabs button{font-size:.92rem;padding:9px 2px}}
+
 .saved{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:6px 14px;border-radius:16px;font-size:.88rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30}
 .saved.on{opacity:1}
 .foot{margin-top:32px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;align-items:center}
@@ -165,13 +216,15 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
   </div>
   <div class="tabs" role="tablist">
     <button role="tab" data-tab="status" aria-selected="true">สถานะงาน<span class="n" id="nLate"></span></button>
-    <button role="tab" data-tab="meet" aria-selected="false">การประชุม</button>
+    <button role="tab" data-tab="meet" aria-selected="false">ประชุม</button>
+    <button role="tab" data-tab="cal" aria-selected="false">ปฏิทิน</button>
     <button role="tab" data-tab="proj" aria-selected="false">โครงการ</button>
   </div>
 </div>
 
 <!-- ===== สถานะงาน ===== -->
 <section id="v-status">
+  <div class="agenda" id="agenda" hidden></div>
   <div class="kpi" id="kpi"></div>
 
   <h2>เพิ่มงาน</h2>
@@ -204,6 +257,26 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
     <button class="btn" id="mNew">+ บันทึกการประชุมใหม่</button>
   </div>
   <ul class="mlist" id="mlist"></ul>
+</section>
+
+<!-- ===== ปฏิทิน ===== -->
+<section id="v-cal" hidden>
+  <div class="calbar">
+    <button class="nav" id="calPrev" aria-label="เดือนก่อนหน้า">‹</button>
+    <div class="mid"><b id="calTitle"></b><button id="calToday">กลับมาวันนี้</button></div>
+    <button class="nav" id="calNext" aria-label="เดือนถัดไป">›</button>
+  </div>
+  <div class="cal" id="cal"></div>
+  <div class="legend">
+    <span><i class="dot-meet"></i>ประชุม</span><span><i class="dot-next"></i>นัดครั้งถัดไป</span><span><i class="dot-due"></i>กำหนดส่งงาน</span><span><i class="dot-late"></i>เลยกำหนด</span><span><i class="dot-done"></i>งานเสร็จ</span>
+  </div>
+  <h2 id="calDayTitle"></h2>
+  <div class="card" style="padding-top:4px;padding-bottom:4px"><ul class="evs" id="calDay"></ul></div>
+  <div class="row" style="margin-top:14px;justify-content:space-between">
+    <p class="hint" style="flex:1;min-width:220px">อยากให้มือถือเตือนก่อนถึงนัด: กด <b>Google Calendar</b> หรือ <b>iPhone / Outlook</b> ที่แต่ละนัด หรือส่งออกนัดที่จะถึงทั้งหมดในครั้งเดียว</p>
+    <button class="btn ghost sm" id="icsAll">ส่งออกนัดทั้งหมด (.ics)</button>
+  </div>
+  <p class="hint" id="calMsg" aria-live="polite" style="margin-top:6px"></p>
 </section>
 
 <!-- ===== โครงการ ===== -->
@@ -281,14 +354,25 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
     <div><label class="f" for="mf-notes">เรื่องที่ประชุม / รายละเอียด</label><textarea id="mf-notes" style="min-height:120px" placeholder="1. ลูกค้าขอขยายห้องนอนใหญ่ไปทางทิศตะวันออก 1 ม.&#10;2. ..."></textarea></div>
     <div><label class="f" for="mf-dec">ข้อสรุป / มติ</label><textarea id="mf-dec" placeholder="สิ่งที่ตกลงกันแล้ว"></textarea></div>
     <div>
+      <label class="f">รูป / สเก็ตช์ / ไวท์บอร์ด</label>
+      <label class="addph" id="addph"><span>ถ่ายรูป / เลือกรูป</span><input type="file" id="phIn" accept="image/*" multiple hidden></label>
+      <div class="photos" id="mPhotos"></div>
+    </div>
+    <div>
       <label class="f">งานที่ต้องทำต่อ (จะไปอยู่ในแท็บสถานะงาน)</label>
       <div class="ai" id="aiList"></div>
       <button class="btn ghost sm" type="button" id="aiAdd" style="margin-top:8px">+ เพิ่มงาน</button>
     </div>
     <div class="grid2">
       <div><label class="f" for="mf-next">นัดประชุมครั้งถัดไป</label><input type="date" id="mf-next"></div>
-      <div><label class="f" for="mf-rec">ผู้จดบันทึก</label><input id="mf-rec" list="owners"></div>
+      <div><label class="f" for="mf-ntime">เวลานัด</label><input type="time" id="mf-ntime"></div>
     </div>
+    <div class="row" id="nextCal" hidden>
+      <span class="hint">ให้มือถือเตือนนัดครั้งถัดไป:</span>
+      <button type="button" class="btn ghost sm" id="nGcal">Google Calendar</button>
+      <button type="button" class="btn ghost sm" id="nIcs">iPhone / Outlook</button>
+    </div>
+    <div><label class="f" for="mf-rec">ผู้จดบันทึก</label><input id="mf-rec" list="owners"></div>
     <p class="hint" id="mMsg" aria-live="polite"></p>
   </div>
   <div class="dlg-f">
@@ -302,6 +386,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 </form></dialog>
 
 <div class="saved" id="saved" aria-live="polite"></div>
+<dialog id="lb" aria-label="ดูรูป"><img alt=""><button class="btn" type="button">ปิด</button></dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
@@ -339,6 +424,20 @@ const UI=load('ms-ui',{pf:'all',tab:'status',sf:'open'});
 const saveUI=()=>store('ms-ui',UI);
 if(UI.pf!=='all'&&!D.projects.some(p=>p.id===UI.pf))UI.pf='all';
 
+/* ---------- รูป (IndexedDB) ---------- */
+let dbp=null;const mem=new Map(),urls=new Map();
+function idb(){if(!dbp)dbp=new Promise((res,rej)=>{const r=indexedDB.open('ms-photos',1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});return dbp}
+async function putPhoto(k,b){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('p','readwrite');t.objectStore('p').put(b,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch(e){mem.set(k,b)}}
+async function getPhoto(k){if(mem.has(k))return mem.get(k);try{const d=await idb();return await new Promise((res,rej)=>{const r=d.transaction('p').objectStore('p').get(k);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error)})}catch(e){return null}}
+async function delPhoto(k){mem.delete(k);if(urls.has(k)){URL.revokeObjectURL(urls.get(k));urls.delete(k)}try{const d=await idb();d.transaction('p','readwrite').objectStore('p').delete(k)}catch(e){}}
+async function photoURL(k){if(urls.has(k))return urls.get(k);const b=await getPhoto(k);if(!b)return null;const u=URL.createObjectURL(b);urls.set(k,u);return u}
+function compress(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{const sc=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',0.8)};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('x'))};im.src=u})}
+const toDataURL=b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r(null);fr.readAsDataURL(b)});
+function showPhoto(u){if(!u)return;$('#lb img').src=u;$('#lb').showModal()}
+$('#lb').onclick=e=>{if(e.target.tagName!=='IMG')$('#lb').close()};
+
 const proj=id=>D.projects.find(p=>p.id===id);
 const pname=id=>(proj(id)||{}).name||'ไม่ระบุโครงการ';
 const inScope=x=>UI.pf==='all'||x.pid===UI.pf;
@@ -369,7 +468,7 @@ $('#pSel').onchange=e=>{UI.pf=e.target.value;saveUI();render()};
 function setTab(t){
   UI.tab=t;saveUI();
   $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
-  $('#v-status').hidden=t!=='status';$('#v-meet').hidden=t!=='meet';$('#v-proj').hidden=t!=='proj';
+  ['status','meet','cal','proj'].forEach(k=>$('#v-'+k).hidden=t!==k);
   render();
 }
 $$('.tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
@@ -406,6 +505,7 @@ function taskMeta(t,showProj){
   return bits.map(b=>`<span>${b}</span>`).join('');
 }
 function renderStatus(){
+  renderAgenda();
   const scoped=D.tasks.filter(inScope);
   const weekAgo=addDays(TODAY,-7);
   const k={
@@ -493,7 +593,7 @@ function renderMeet(){
       <span class="mdate"><b>${d.getDate()}</b><span>${d.toLocaleDateString('th-TH',{month:'short',year:'2-digit'})}</span></span>
       <span class="mtitle">${esc(m.title||'ประชุม '+pname(m.pid))}</span>
       <span class="msub">${esc(sub)||'—'}</span>
-      <span class="mcount">${ts.length?`${open} ค้าง<br>${ts.length} งาน`:''}</span></button></li>`;
+      <span class="mcount">${ts.length?`${open} ค้าง<br>${ts.length} งาน`:''}${m.p&&m.p.length?`<br><span class="mph">📷 ${m.p.length}</span>`:''}</span></button></li>`;
   }).join('');
   $$('#mlist button[data-id]').forEach(b=>b.onclick=()=>openMeeting(b.dataset.id));
 }
@@ -514,27 +614,50 @@ function renderAI(){
 }
 $('#aiAdd').onclick=()=>{draftAI.push({title:'',owner:'',due:'',status:'todo'});renderAI();const ins=$$('#aiList input[data-k="title"]');ins[ins.length-1].focus()};
 
-function openMeeting(id){
+let draftP=[],addedP=new Set(),removedP=new Set();
+async function renderMPhotos(){
+  const list=[...draftP];
+  const parts=await Promise.all(list.map(async k=>{const u=await photoURL(k);return u?`<div class="ph"><button type="button" class="th" data-k="${k}" aria-label="ดูรูปขยาย"><img src="${u}" alt=""></button><button type="button" class="rm" data-rm="${k}" aria-label="ลบรูป">×</button></div>`:''}));
+  $('#mPhotos').innerHTML=parts.join('');
+  $$('#mPhotos .th').forEach(b=>b.onclick=()=>showPhoto(urls.get(b.dataset.k)));
+  $$('#mPhotos .rm').forEach(b=>b.onclick=()=>{
+    if(!confirm('ลบรูปนี้?'))return;const k=b.dataset.rm;draftP=draftP.filter(x=>x!==k);
+    if(addedP.has(k)){addedP.delete(k);delPhoto(k)}else removedP.add(k);
+    renderMPhotos();
+  });
+}
+$('#phIn').onchange=async()=>{
+  const fi=$('#phIn'),files=[...fi.files];fi.value='';if(!files.length)return;
+  const lab=$('#addph span');lab.textContent='กำลังบันทึกรูป…';
+  for(const f of files){try{const b=await compress(f);const k='m_'+uid();await putPhoto(k,b);draftP.push(k);addedP.add(k)}catch(err){alert('เปิดรูป '+f.name+' ไม่ได้ ลองใช้ไฟล์ JPG หรือ PNG')}}
+  lab.textContent='ถ่ายรูป / เลือกรูป';renderMPhotos();
+};
+function updNextCal(){$('#nextCal').hidden=!$('#mf-next').value}
+$('#mf-next').oninput=$('#mf-next').onchange=updNextCal;
+function openMeeting(id,preset){
   if(!D.projects.length){alert('เพิ่มโครงการก่อน แล้วค่อยบันทึกการประชุม');openProject();return}
   const m=id?D.meetings.find(x=>x.id===id):null;editM=m;
   $('#dMT').textContent=m?'บันทึกการประชุม':'บันทึกการประชุมใหม่';
   projOptions($('#mf-proj'),false,m?m.pid:(UI.pf!=='all'?UI.pf:projOrder()[0].id));
-  const v=m||{date:TODAY,time:'',place:'',title:'',att:'',notes:'',dec:'',next:'',rec:load('ms-rec','')};
+  const v=m||Object.assign({date:TODAY,time:'',place:'',title:'',att:'',notes:'',dec:'',next:'',ntime:'',rec:load('ms-rec','')},preset||{});
+  if(!m&&preset&&preset.pid&&proj(preset.pid))$('#mf-proj').value=preset.pid;
   $('#mf-title').value=v.title||'';$('#mf-place').value=v.place||'';$('#mf-date').value=v.date||TODAY;$('#mf-time').value=v.time||'';
-  $('#mf-att').value=v.att||'';$('#mf-notes').value=v.notes||'';$('#mf-dec').value=v.dec||'';$('#mf-next').value=v.next||'';$('#mf-rec').value=v.rec||'';
+  $('#mf-att').value=v.att||'';$('#mf-notes').value=v.notes||'';$('#mf-dec').value=v.dec||'';$('#mf-next').value=v.next||'';$('#mf-ntime').value=v.ntime||'';$('#mf-rec').value=v.rec||'';
+  draftP=m?[...(m.p||[])]:[];addedP=new Set();removedP=new Set();renderMPhotos();updNextCal();
   draftAI=m?D.tasks.filter(t=>t.mid===m.id).map(t=>({id:t.id,title:t.title,owner:t.owner||'',due:t.due||'',status:t.status})):[];
   renderAI();$('#mDel').hidden=!m;$('#mMsg').textContent='';
   $('#dM').showModal();
 }
 function readMeetingForm(){
   return {pid:$('#mf-proj').value,title:$('#mf-title').value.trim(),place:$('#mf-place').value.trim(),date:$('#mf-date').value||TODAY,time:$('#mf-time').value,
-    att:$('#mf-att').value,notes:$('#mf-notes').value,dec:$('#mf-dec').value,next:$('#mf-next').value,rec:$('#mf-rec').value.trim()};
+    att:$('#mf-att').value,notes:$('#mf-notes').value,dec:$('#mf-dec').value,next:$('#mf-next').value,ntime:$('#mf-next').value?$('#mf-ntime').value:'',rec:$('#mf-rec').value.trim()};
 }
 function commitMeeting(){
   const v=readMeetingForm();if(!v.pid)return null;
   let m=editM;
   if(!m){m={id:uid(),created:new Date().toISOString()};D.meetings.push(m);editM=m}
-  Object.assign(m,v);store('ms-rec',v.rec);
+  Object.assign(m,v);m.p=[...draftP];store('ms-rec',v.rec);
+  removedP.forEach(k=>delPhoto(k));removedP.clear();addedP.clear();
   const keep=new Set();
   draftAI.filter(a=>a.title.trim()).forEach(a=>{
     let t=a.id&&D.tasks.find(x=>x.id===a.id);
@@ -547,12 +670,17 @@ function commitMeeting(){
   touch(m.pid);persist('บันทึกการประชุมแล้ว');
   return m;
 }
-$('#dM').addEventListener('close',()=>{if($('#dM').returnValue==='ok')commitMeeting();editM=null;render()});
+$('#dM').addEventListener('close',()=>{
+  if($('#dM').returnValue==='ok')commitMeeting();
+  else{addedP.forEach(k=>delPhoto(k));}
+  addedP=new Set();removedP=new Set();draftP=[];editM=null;render();
+});
 $('#mDel').onclick=()=>{
   if(!editM)return;
   const n=D.tasks.filter(t=>t.mid===editM.id).length;
   if(!confirm('ลบบันทึกการประชุมนี้?'+(n?`\nงานที่มาจากการประชุมนี้ ${n} งานจะยังอยู่ในสถานะงาน`:'')))return;
   D.tasks.forEach(t=>{if(t.mid===editM.id)delete t.mid});
+  [...(editM.p||[]),...addedP].forEach(k=>delPhoto(k));addedP=new Set();
   D.meetings=D.meetings.filter(x=>x!==editM);persist('ลบแล้ว');editM=null;$('#dM').returnValue='';$('#dM').close();render();
 };
 
@@ -566,7 +694,7 @@ function meetingText(m){
   if(m.notes.trim())L.push('','เรื่องที่ประชุม',m.notes.trim());
   if(m.dec.trim())L.push('','✅ ข้อสรุป',m.dec.trim());
   if(ts.length){L.push('','📌 งานที่ต้องทำ');ts.forEach(t=>L.push(`• ${t.title}${t.owner?' — '+t.owner:''}${t.due?' (ภายใน '+thShort(t.due)+')':''}`))}
-  if(m.next)L.push('','➡️ นัดครั้งถัดไป: '+thLong(m.next));
+  if(m.next)L.push('','➡️ นัดครั้งถัดไป: '+thLong(m.next)+(m.ntime?' เวลา '+m.ntime+' น.':''));
   L.push('','— ARSTINLA Design & Consult');
   return L.join('\n');
 }
@@ -594,17 +722,22 @@ const PDF_CSS=`.rpt{font-family:"IBM Plex Sans Thai",Tahoma,sans-serif;color:#26
 .rpt .proj{border-top:2px solid #26211E;margin-top:10px;padding-top:6px}
 .rpt .proj h2{margin-top:2px}.rpt .ph{color:#6B625C;margin:0 0 6px}
 .rpt .sig{display:flex;gap:16mm;margin-top:16mm}.rpt .sig div{flex:1;text-align:center;color:#6B625C}.rpt .sig b{display:block;border-top:1px solid #26211E;margin-bottom:4px;padding-top:4px;color:#26211E;font-weight:600}
+.rpt .ims{display:flex;flex-wrap:wrap;gap:2mm}.rpt .ims img{width:61mm;border-radius:3px;border:1px solid #D6CFC9}
 .rpt .ft{margin-top:10mm;font-size:8.5pt;color:#A99F98;text-align:center}`;
 const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
+async function saveBlob(blob,filename){
+  const dl=await dlP;
+  if(dl){try{await dl.save({filename,data:blob});return 'saved'}catch(e){return e&&e.code==='declined'?'declined':'error'}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+  return 'downloaded';
+}
 async function savePDF(el,filename,msgEl){
   if(!window.html2pdf){msgEl.textContent='โหลดตัวสร้าง PDF ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วเปิดหน้านี้ใหม่';return}
   msgEl.textContent='กำลังสร้าง PDF…';
   try{
-    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.9},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr','.box','.sig','h2']}}).from(el).outputPdf('blob');
-    const dl=await dlP;
-    if(dl){try{await dl.save({filename,data:blob});msgEl.textContent='บันทึก PDF แล้ว'}catch(e){msgEl.textContent=e&&e.code==='declined'?'ยกเลิกการบันทึก':'บันทึก PDF ไม่สำเร็จ'}return}
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
-    msgEl.textContent='ดาวน์โหลด PDF แล้ว';
+    const blob=await html2pdf().set({margin:[10,10,12,10],image:{type:'jpeg',quality:0.9},html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy'],avoid:['tr','.box','.sig','h2','.ims img']}}).from(el).outputPdf('blob');
+    const r=await saveBlob(blob,filename);
+    msgEl.textContent=r==='saved'?'บันทึก PDF แล้ว':r==='declined'?'ยกเลิกการบันทึก':r==='error'?'บันทึก PDF ไม่สำเร็จ':'ดาวน์โหลด PDF แล้ว';
   }catch(e){msgEl.textContent='สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง'}
 }
 const fileSafe=s=>String(s||'').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
@@ -615,6 +748,8 @@ $('#mPdf').onclick=async()=>{
   $('#mDel').hidden=false;
   const p=proj(m.pid)||{};const ts=D.tasks.filter(t=>t.mid===m.id);
   const att=(m.att||'').split(/\n|,/).map(s=>s.trim()).filter(Boolean);
+  $('#mMsg').textContent='กำลังเตรียมรูป…';
+  let imgs='';for(const k of (m.p||[])){const b=await getPhoto(k);const u=b&&await toDataURL(b);if(u)imgs+=`<img src="${u}">`}
   const el=wrapRpt(`<h1>รายงานการประชุม</h1><p class="sub">${esc(m.title||p.name||'')}</p>
     <table class="info">
       <tr><td>โครงการ</td><td>${esc(p.name||'-')}</td></tr>
@@ -627,7 +762,8 @@ $('#mPdf').onclick=async()=>{
     ${m.dec.trim()?`<h2>ข้อสรุป / มติที่ประชุม</h2><div class="box">${nl(m.dec.trim())}</div>`:''}
     ${ts.length?`<h2>งานที่ต้องดำเนินการ</h2><table><tr><th class="c" style="width:8%">ลำดับ</th><th>รายการ</th><th style="width:22%">ผู้รับผิดชอบ</th><th style="width:18%">กำหนดเสร็จ</th></tr>
       ${ts.map((t,i)=>`<tr><td class="c">${i+1}</td><td>${esc(t.title)}</td><td>${esc(t.owner||'-')}</td><td>${esc(thShort(t.due)||'-')}</td></tr>`).join('')}</table>`:''}
-    ${m.next?`<p><b>นัดประชุมครั้งถัดไป:</b> ${esc(thLong(m.next))}</p>`:''}
+    ${imgs?`<h2>รูปประกอบ</h2><div class="ims">${imgs}</div>`:''}
+    ${m.next?`<p><b>นัดประชุมครั้งถัดไป:</b> ${esc(thLong(m.next))}${m.ntime?' เวลา '+esc(m.ntime)+' น.':''}</p>`:''}
     <div class="sig"><div><b>ผู้จดบันทึก${m.rec?' — '+esc(m.rec):''}</b>วันที่ ............................</div><div><b>ผู้รับรองบันทึก</b>วันที่ ............................</div></div>`);
   await savePDF(el,`รายงานการประชุม-${fileSafe(p.name)}-${m.date}.pdf`,$('#mMsg'));
 };
@@ -655,6 +791,139 @@ $('#rptBtn').onclick=async()=>{
   await savePDF(el,`รายงานสถานะงาน-${UI.pf==='all'?'ทุกโครงการ':fileSafe(pname(UI.pf))}-${TODAY}.pdf`,$('#rptMsg'));
 };
 
+/* ---------- ปฏิทิน / นัด ---------- */
+const pad=n=>String(n).padStart(2,'0');
+function events(){
+  const ev=[];
+  D.meetings.forEach(m=>{
+    ev.push({d:m.date,time:m.time||'',type:'meet',title:m.title||'ประชุม',pid:m.pid,mid:m.id,place:m.place||''});
+    if(m.next&&!D.meetings.some(x=>x!==m&&x.pid===m.pid&&x.date===m.next))
+      ev.push({d:m.next,time:m.ntime||'',type:'next',title:'นัดประชุมครั้งถัดไป',pid:m.pid,mid:m.id,place:m.place||''});
+  });
+  D.tasks.forEach(t=>{if(t.due)ev.push({d:t.due,time:'',type:t.status==='done'?'done':isLate(t)?'late':'due',title:t.title,pid:t.pid,tid:t.id,owner:t.owner||''})});
+  const rank={meet:0,next:1,late:2,due:3,done:4};
+  return ev.filter(inScope).sort((a,b)=>(a.d+(a.time||'99')+rank[a.type]).localeCompare(b.d+(b.time||'99')+rank[b.type]));
+}
+const evLabel={meet:'ประชุม',next:'นัดประชุม',due:'กำหนดส่ง',late:'เลยกำหนด',done:'งานเสร็จ'};
+function openEvent(e){
+  if(e.type==='meet')openMeeting(e.mid);
+  else if(e.type==='next'){const src=D.meetings.find(x=>x.id===e.mid);openMeeting(null,{date:e.d,time:e.time,pid:e.pid,place:src?src.place:'',att:src?src.att:''})}
+  else openTask(e.tid);
+}
+function calItem(e){
+  const p=proj(e.pid)||{};
+  if(e.type==='due'||e.type==='late'||e.type==='done')
+    return {uid:e.tid+'-due@arstinla.com',date:e.d,time:'',title:`กำหนดส่ง: ${e.title} (${p.name||''})`,loc:'',desc:(e.owner?'ผู้รับผิดชอบ: '+e.owner+'\n':'')+'สร้างจาก ARSTINLA Consult'};
+  const m=D.meetings.find(x=>x.id===e.mid)||{};
+  const desc=[p.client?'ลูกค้า: '+p.client:'',e.type==='meet'&&m.notes?m.notes.slice(0,400):'',e.type==='next'&&m.dec?'มติครั้งก่อน: '+m.dec.slice(0,300):'','สร้างจาก ARSTINLA Consult'].filter(Boolean).join('\n');
+  return {uid:e.mid+'-'+e.type+'@arstinla.com',date:e.d,time:e.time||'',title:`ประชุม ${p.name||''}${e.type==='meet'&&m.title?' — '+m.title:''}`,loc:e.place||'',desc};
+}
+function gcalURL(c){
+  let dates;
+  if(c.time){const s=localStamp(c.date,c.time,0),en=localStamp(c.date,c.time,60);dates=s+'/'+en}
+  else dates=c.date.replace(/-/g,'')+'/'+addDays(c.date,1).replace(/-/g,'');
+  const q=new URLSearchParams({action:'TEMPLATE',text:c.title,dates,details:c.desc||'',location:c.loc||'',ctz:'Asia/Bangkok'});
+  return 'https://calendar.google.com/calendar/render?'+q.toString();
+}
+function localStamp(date,time,addMin){
+  const [h,mi]=time.split(':').map(Number);const dt=new Date(date+'T00:00:00');dt.setMinutes(h*60+mi+addMin);
+  return iso(dt).replace(/-/g,'')+'T'+pad(dt.getHours())+pad(dt.getMinutes())+'00';
+}
+const icsEsc=s=>String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+function fold(line){
+  const enc=new TextEncoder();if(enc.encode(line).length<=75)return line;
+  const out=[];let cur='',len=0;
+  for(const ch of line){const n=enc.encode(ch).length;if(len+n>(out.length?74:75)){out.push(cur);cur='';len=0}cur+=ch;len+=n}
+  out.push(cur);return out.join('\r\n ');
+}
+function icsText(list){
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ARSTINLA//Consult//TH','CALSCALE:GREGORIAN','METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE','TZID:Asia/Bangkok','BEGIN:STANDARD','DTSTART:19700101T000000','TZOFFSETFROM:+0700','TZOFFSETTO:+0700','TZNAME:ICT','END:STANDARD','END:VTIMEZONE'];
+  list.forEach(c=>{
+    L.push('BEGIN:VEVENT','UID:'+c.uid,'DTSTAMP:'+stamp);
+    let trig;
+    if(c.time){L.push('DTSTART;TZID=Asia/Bangkok:'+localStamp(c.date,c.time,0),'DTEND;TZID=Asia/Bangkok:'+localStamp(c.date,c.time,60));trig=['-P1D','-PT1H']}
+    else{L.push('DTSTART;VALUE=DATE:'+c.date.replace(/-/g,''),'DTEND;VALUE=DATE:'+addDays(c.date,1).replace(/-/g,''));trig=['-PT15H','PT8H']}
+    L.push('SUMMARY:'+icsEsc(c.title));
+    if(c.loc)L.push('LOCATION:'+icsEsc(c.loc));
+    if(c.desc)L.push('DESCRIPTION:'+icsEsc(c.desc));
+    trig.forEach(t=>L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(c.title),'TRIGGER:'+t,'END:VALARM'));
+    L.push('END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  return L.map(fold).join('\r\n')+'\r\n';
+}
+async function downloadICS(list,filename,msgEl){
+  const r=await saveBlob(new Blob([icsText(list)],{type:'text/calendar;charset=utf-8'}),filename);
+  if(msgEl)msgEl.textContent=r==='declined'?'ยกเลิกแล้ว':r==='error'?'บันทึกไฟล์ไม่สำเร็จ':'ได้ไฟล์ .ics แล้ว — เปิดไฟล์เพื่อเพิ่มลงปฏิทิน (iPhone, Outlook, Google)';
+}
+function openURL(u){
+  const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener noreferrer';
+  document.body.appendChild(a);a.click();a.remove();
+}
+
+function nextFromForm(){
+  const pid=$('#mf-proj').value,d=$('#mf-next').value;if(!d)return null;
+  const p=proj(pid)||{};
+  return {uid:(editM?editM.id:'new'+uid())+'-next@arstinla.com',date:d,time:$('#mf-ntime').value,title:`ประชุม ${p.name||''}`,loc:$('#mf-place').value.trim(),
+    desc:[p.client?'ลูกค้า: '+p.client:'',$('#mf-dec').value.trim()?'มติครั้งก่อน: '+$('#mf-dec').value.trim().slice(0,300):'','สร้างจาก ARSTINLA Consult'].filter(Boolean).join('\n')};
+}
+$('#nGcal').onclick=()=>{const c=nextFromForm();if(c)openURL(gcalURL(c))};
+$('#nIcs').onclick=()=>{const c=nextFromForm();if(c)downloadICS([c],`นัดประชุม-${fileSafe(pname($('#mf-proj').value))}-${c.date}.ics`,$('#mMsg'))};
+
+function renderAgenda(){
+  const tmr=addDays(TODAY,1);
+  const list=events().filter(e=>(e.d===TODAY||e.d===tmr)&&e.type!=='done');
+  const box=$('#agenda');
+  if(!list.length){box.hidden=true;box.innerHTML='';return}
+  box.hidden=false;
+  box.innerHTML=`<h3>นัดและงานวันนี้ – พรุ่งนี้</h3><ul>${list.map((e,i)=>`<li><button data-i="${i}"><span class="when">${e.d===TODAY?'วันนี้':'พรุ่งนี้'}${e.time?' '+esc(e.time):''}</span> ${esc(evLabel[e.type])}: ${esc(e.type==='meet'||e.type==='next'?pname(e.pid)+(e.type==='meet'&&e.title!=='ประชุม'?' — '+e.title:''):e.title)}${UI.pf==='all'&&!(e.type==='meet'||e.type==='next')?' · '+esc(pname(e.pid)):''}</button></li>`).join('')}</ul>`;
+  $$('#agenda [data-i]').forEach(b=>b.onclick=()=>openEvent(list[+b.dataset.i]));
+}
+
+function renderCal(){
+  if(!UI.calM)UI.calM=TODAY.slice(0,7);
+  if(!UI.calSel)UI.calSel=TODAY;
+  const [y,mo]=UI.calM.split('-').map(Number);
+  const first=new Date(y,mo-1,1);
+  $('#calTitle').textContent=first.toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  const startOff=first.getDay(),dim=new Date(y,mo,0).getDate();
+  const cells=Math.ceil((startOff+dim)/7)*7;
+  const ev=events();const byDay={};ev.forEach(e=>(byDay[e.d]=byDay[e.d]||[]).push(e));
+  let html=['อา','จ','อ','พ','พฤ','ศ','ส'].map(w=>`<div class="wd">${w}</div>`).join('');
+  for(let i=0;i<cells;i++){
+    const d=iso(new Date(y,mo-1,1-startOff+i));const es=byDay[d]||[];
+    const dots=es.slice(0,6).map(e=>`<i class="dot-${e.type}"></i>`).join('');
+    html+=`<button class="cd${d.slice(0,7)!==UI.calM?' out':''}${d===TODAY?' today':''}" data-d="${d}" aria-pressed="${d===UI.calSel}" aria-label="${esc(thLong(d))}${es.length?' มี '+es.length+' รายการ':''}"><span class="dn">${+d.slice(8)}</span><span class="dots">${dots}</span></button>`;
+  }
+  $('#cal').innerHTML=html;
+  $$('#cal .cd').forEach(b=>b.onclick=()=>{UI.calSel=b.dataset.d;if(b.dataset.d.slice(0,7)!==UI.calM)UI.calM=b.dataset.d.slice(0,7);saveUI();renderCal()});
+  const sel=UI.calSel,list=byDay[sel]||[];
+  $('#calDayTitle').textContent=thWeek(sel)+' '+thLong(sel)+(sel===TODAY?' (วันนี้)':'');
+  $('#calDay').innerHTML=list.length?list.map((e,i)=>{
+    const isMeet=e.type==='meet'||e.type==='next';
+    const main=isMeet?`${evLabel[e.type]} ${pname(e.pid)}${e.type==='meet'&&e.title!=='ประชุม'?' — '+e.title:''}`:e.title;
+    const meta=[e.time?e.time+' น.':'',isMeet?e.place:pname(e.pid),!isMeet&&e.owner?'👤 '+e.owner:'',!isMeet?evLabel[e.type]:''].filter(Boolean).join(' · ');
+    const canCal=e.d>=TODAY&&e.type!=='done';
+    return `<li class="ev${e.type==='done'?' is-done':''}"><i class="dot-${e.type}"></i><button class="t" data-i="${i}">${esc(main)}</button>
+      <div class="m">${esc(meta)}${e.type==='next'?' · กดเพื่อจดบันทึกการประชุมนัดนี้':''}</div>
+      ${canCal?`<div class="row"><button class="btn ghost sm" data-g="${i}">Google Calendar</button><button class="btn ghost sm" data-ics="${i}">iPhone / Outlook</button></div>`:''}</li>`;
+  }).join(''):`<li class="empty">ไม่มีนัดหรืองานในวันนี้<br><button class="btn ghost sm" id="calNewMeet">+ บันทึกการประชุมวันนี้</button></li>`;
+  $$('#calDay .t').forEach(b=>b.onclick=()=>openEvent(list[+b.dataset.i]));
+  $$('#calDay [data-g]').forEach(b=>b.onclick=()=>openURL(gcalURL(calItem(list[+b.dataset.g]))));
+  $$('#calDay [data-ics]').forEach(b=>b.onclick=()=>{const c=calItem(list[+b.dataset.ics]);downloadICS([c],`นัด-${fileSafe(c.title)}-${c.date}.ics`,$('#calMsg'))});
+  const nb=$('#calNewMeet');if(nb)nb.onclick=()=>openMeeting(null,{date:sel});
+}
+$('#calPrev').onclick=()=>{const [y,m]=UI.calM.split('-').map(Number);UI.calM=iso(new Date(y,m-2,1)).slice(0,7);saveUI();renderCal()};
+$('#calNext').onclick=()=>{const [y,m]=UI.calM.split('-').map(Number);UI.calM=iso(new Date(y,m,1)).slice(0,7);saveUI();renderCal()};
+$('#calToday').onclick=()=>{UI.calM=TODAY.slice(0,7);UI.calSel=TODAY;saveUI();renderCal()};
+$('#icsAll').onclick=()=>{
+  const list=events().filter(e=>e.d>=TODAY&&e.type!=='done').map(calItem);
+  if(!list.length){$('#calMsg').textContent='ยังไม่มีนัดหรือกำหนดส่งที่จะถึง';return}
+  downloadICS(list,`arstinla-consult-นัดทั้งหมด-${TODAY}.ics`,$('#calMsg'));
+};
+
 /* ---------- โครงการ ---------- */
 $('#pf-phase').innerHTML=PHASES.map((p,i)=>`<option value="${i}">${i+1}. ${p}</option>`).join('');
 let editP=null;
@@ -678,6 +947,7 @@ $('#pDel').onclick=()=>{
   const nm=D.meetings.filter(m=>m.pid===editP.id).length,nt=D.tasks.filter(t=>t.pid===editP.id).length;
   if(!confirm(`ลบโครงการ "${editP.name}"?\nจะลบบันทึกการประชุม ${nm} รายการ และงาน ${nt} งานของโครงการนี้ด้วย`))return;
   const id=editP.id;
+  D.meetings.filter(m=>m.pid===id).forEach(m=>(m.p||[]).forEach(k=>delPhoto(k)));
   D.projects=D.projects.filter(p=>p.id!==id);D.meetings=D.meetings.filter(m=>m.pid!==id);D.tasks=D.tasks.filter(t=>t.pid!==id);
   if(UI.pf===id){UI.pf='all';saveUI()}
   persist('ลบโครงการแล้ว');editP=null;$('#dP').returnValue='';$('#dP').close();render();
@@ -712,11 +982,10 @@ function renderProj(){
 
 /* ---------- สำรอง / นำเข้า ---------- */
 $('#bkOut').onclick=async()=>{
-  const blob=new Blob([JSON.stringify({app:'arstinla-meeting-status',v:1,exported:new Date().toISOString(),data:D},null,1)],{type:'application/json'});
-  const filename=`meeting-status-backup-${TODAY}.json`;
-  const dl=await dlP;
-  if(dl){try{await dl.save({filename,data:blob})}catch(e){}return}
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+  const photos={};
+  for(const m of D.meetings)for(const k of (m.p||[])){const b=await getPhoto(k);const u=b&&await toDataURL(b);if(u)photos[k]=u}
+  const blob=new Blob([JSON.stringify({app:'arstinla-consult',v:2,exported:new Date().toISOString(),data:D,photos})],{type:'application/json'});
+  await saveBlob(blob,`arstinla-consult-backup-${TODAY}.json`);
 };
 $('#bkIn').onchange=async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
@@ -724,6 +993,9 @@ $('#bkIn').onchange=async e=>{
     const j=JSON.parse(await f.text());const d=j.data||j;
     if(!Array.isArray(d.projects)||!Array.isArray(d.tasks)||!Array.isArray(d.meetings))throw 0;
     if(!confirm(`นำเข้า ${d.projects.length} โครงการ, ${d.meetings.length} การประชุม, ${d.tasks.length} งาน?\nข้อมูลปัจจุบันในเครื่องนี้จะถูกแทนที่`))return;
+    for(const m of D.meetings)for(const k of (m.p||[]))await delPhoto(k);
+    const ph=j.photos||{};
+    for(const k of Object.keys(ph)){try{const b=await (await fetch(ph[k])).blob();await putPhoto(k,b)}catch(_){}}
     D.projects=d.projects;D.meetings=d.meetings;D.tasks=d.tasks;UI.pf='all';saveUI();persist('นำเข้าข้อมูลแล้ว');render();
   }catch(_){alert('ไฟล์นี้ไม่ใช่ไฟล์สำรองของแอปนี้')}
 };
@@ -731,9 +1003,9 @@ $('#bkIn').onchange=async e=>{
 /* ---------- render ---------- */
 function render(){
   renderTop();
-  if(UI.tab==='meet')renderMeet();else if(UI.tab==='proj')renderProj();else renderStatus();
+  if(UI.tab==='meet')renderMeet();else if(UI.tab==='proj')renderProj();else if(UI.tab==='cal')renderCal();else renderStatus();
 }
-setTab(['status','meet','proj'].includes(UI.tab)?UI.tab:'status');
+setTab(['status','meet','cal','proj'].includes(UI.tab)?UI.tab:'status');
 })();
 </script>
 <script src="../shared/pwa-install.js"></script>

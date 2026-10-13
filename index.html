@@ -519,6 +519,23 @@
     opacity: .55;
   }
 
+  @media (max-width: 1240px) {
+    .nav-links {
+      gap: 14px;
+      letter-spacing: .06em;
+    }
+    .nav-contact {
+      padding: 10px 12px;
+    }
+  }
+
+  @media (max-width: 1120px) {
+    .nav-links {
+      gap: 10px;
+      letter-spacing: .04em;
+    }
+  }
+
 
   .nav-contact {
 
@@ -4294,6 +4311,10 @@ background-repeat:
         Tools
       </a>
 
+      <a href="#downloads">
+        Downloads
+      </a>
+
       <a
         href="/admin/projects/"
         class="admin-manager-link"
@@ -5929,7 +5950,7 @@ background-repeat:
 
     </a>
 
-    <div class="app-downloads reveal" aria-labelledby="app-downloads-title">
+    <div class="app-downloads reveal" id="downloads" style="scroll-margin-top:96px" aria-labelledby="app-downloads-title">
 
       <div class="app-downloads-header">
         <div>

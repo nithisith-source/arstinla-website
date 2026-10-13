@@ -1,4 +1,4 @@
-const CACHE = "arstinla-consult-v1";
+const CACHE = "arstinla-consult-v2";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "../shared/pwa-install.css", "../shared/pwa-install.js"];
 
 self.addEventListener("install", (event) => {
