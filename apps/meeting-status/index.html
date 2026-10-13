@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>บันทึกประชุม & สถานะงาน — ARSTINLA</title>
+<title>ARSTINLA Consult — บันทึกประชุม & สถานะงาน</title>
 <meta name="description" content="บันทึกการประชุมกับลูกค้าและทีม ติดตามงานที่ต้องทำ สถานะโครงการ และสร้างรายงานการประชุมเป็น PDF">
 <meta name="theme-color" content="#9A5A35">
 <link rel="manifest" href="manifest.webmanifest">
@@ -154,8 +154,8 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 <body>
 <div class="wrap">
 <header>
-  <h1>บันทึกประชุม & สถานะงาน</h1>
-  <p>จดการประชุมกับลูกค้าและทีม แตกเป็นงานที่ต้องทำ แล้วติดตามสถานะทุกโครงการในที่เดียว</p>
+  <h1>ARSTINLA Consult</h1>
+  <p>บันทึกประชุม & สถานะงาน — จดการประชุมกับลูกค้าและทีม แตกเป็นงานที่ต้องทำ แล้วติดตามสถานะทุกโครงการในที่เดียว</p>
 </header>
 
 <div class="top">
@@ -608,7 +608,7 @@ async function savePDF(el,filename,msgEl){
   }catch(e){msgEl.textContent='สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง'}
 }
 const fileSafe=s=>String(s||'').replace(/[\\/:*?"<>|]/g,'').slice(0,40);
-const wrapRpt=inner=>{const el=document.createElement('div');el.innerHTML=`<div class="rpt"><style>${PDF_CSS}</style>${inner}<div class="ft">จัดทำด้วยแอปบันทึกประชุม & สถานะงาน · arstinla.com</div></div>`;return el.firstElementChild};
+const wrapRpt=inner=>{const el=document.createElement('div');el.innerHTML=`<div class="rpt"><style>${PDF_CSS}</style>${inner}<div class="ft">จัดทำด้วยแอป ARSTINLA Consult · arstinla.com</div></div>`;return el.firstElementChild};
 
 $('#mPdf').onclick=async()=>{
   const m=commitMeeting();if(!m){$('#mMsg').textContent='เลือกโครงการก่อน';return}

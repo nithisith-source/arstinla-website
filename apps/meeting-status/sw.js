@@ -1,4 +1,4 @@
-const CACHE = "arstinla-meeting-status-v1";
+const CACHE = "arstinla-consult-v1";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "../shared/pwa-install.css", "../shared/pwa-install.js"];
 
 self.addEventListener("install", (event) => {
@@ -7,7 +7,7 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("arstinla-meeting-status-") && key !== CACHE).map((key) => caches.delete(key)))));
+  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith("arstinla-consult-") && key !== CACHE).map((key) => caches.delete(key)))));
   self.clients.claim();
 });
 

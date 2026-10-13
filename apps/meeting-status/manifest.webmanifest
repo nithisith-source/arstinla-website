@@ -1,6 +1,6 @@
 {
-  "name": "ARSTINLA Meeting & Status",
-  "short_name": "Meeting Status",
+  "name": "ARSTINLA Consult",
+  "short_name": "ARSTINLA Consult",
   "description": "บันทึกการประชุม งานที่ต้องทำ และสถานะงานทุกโครงการ",
   "lang": "th",
   "start_url": "./",
