@@ -1,8 +1,8 @@
 (function(){
   "use strict";
 
-  const LINE_ID="@arstinla";
-  const LINE_ID_ENCODED="%40arstinla";
+  const LINE_ID="@227hzpry";
+  const LINE_ID_ENCODED="%40227hzpry";
   const STORAGE_KEY="arstinla-download-actions";
   let activeRequest=null;
   let previousFocus=null;
@@ -16,6 +16,11 @@
     .arstinla-download-kicker{margin:0;color:#c47a55;font:600 10px/1.2 "Space Grotesk","Instrument Sans",sans-serif;letter-spacing:.2em;text-transform:uppercase}
     .arstinla-download-card h2{margin:16px 0 10px;font:400 clamp(30px,6vw,48px)/1.05 "Space Grotesk","IBM Plex Sans Thai",sans-serif;letter-spacing:-.035em}
     .arstinla-download-copy{margin:0;color:#696a63;font-size:13px;line-height:1.75}
+    .arstinla-download-qr{display:flex;align-items:center;gap:16px;margin-top:16px;padding:12px;border:1px solid #c9c4b9;background:#fff}
+    .arstinla-download-qr[hidden]{display:none!important}
+    .arstinla-download-qr img{width:132px!important;height:132px!important;max-width:none!important;flex:none;display:block}
+    .arstinla-download-qr span{font-size:13px;line-height:1.6;color:#4a4b45}
+    .arstinla-download-qr b{color:#171816;font-size:15px}
     .arstinla-download-actions{display:grid;gap:9px;margin-top:24px}
     .arstinla-download-action,.arstinla-download-final{display:flex;align-items:center;justify-content:center;min-height:50px;padding:12px 18px;border:1px solid #171816;text-decoration:none;text-align:center;font:600 11px/1.4 "Space Grotesk","IBM Plex Sans Thai","Noto Sans Thai",sans-serif;letter-spacing:.09em;text-transform:uppercase;cursor:pointer}
     .arstinla-download-action[hidden]{display:none!important}
@@ -70,6 +75,10 @@
           <a class="arstinla-download-action arstinla-download-message" data-line-message target="_blank" rel="noopener">ส่งผลลัพธ์ให้ ARSTINLA ทาง LINE</a>
           <a class="arstinla-download-action arstinla-download-share" data-line-share target="_blank" rel="noopener">แชร์ให้เพื่อนใน LINE</a>
         </div>
+        <div class="arstinla-download-qr" data-line-qr hidden>
+          <img src="/assets/line-qr.svg" alt="QR Code เพิ่มเพื่อน LINE ${LINE_ID}" width="132" height="132">
+          <span>สแกนด้วยมือถือเพื่อเพิ่มเพื่อน<br><b>LINE ${LINE_ID}</b></span>
+        </div>
         <p class="arstinla-download-status" data-line-status hidden></p>
         <div class="arstinla-download-ready" data-download-ready hidden>
           <p>พร้อมแล้วค่ะ กลับมาที่หน้านี้และกดปุ่มด้านล่างเพื่อรับไฟล์</p>
@@ -88,8 +97,8 @@
       if(action==="line_message" && event.currentTarget.dataset.desktop==="true"){
         const copied=await copyText(event.currentTarget.dataset.messageText||"");
         status.textContent=copied
-          ? "คัดลอกข้อความแล้วค่ะ สแกน QR เพื่อเปิด LINE @arstinla แล้ววางข้อความได้เลย"
-          : "สแกน QR เพื่อเปิด LINE @arstinla แล้วส่งข้อความจากหน้าต่างนี้ได้เลย";
+          ? "คัดลอกข้อความแล้วค่ะ สแกน QR เพื่อเปิด LINE @227hzpry แล้ววางข้อความได้เลย"
+          : "สแกน QR เพื่อเปิด LINE @227hzpry แล้วส่งข้อความจากหน้าต่างนี้ได้เลย";
         status.hidden=false;
       }
       recordAction(action);
@@ -168,6 +177,7 @@
     shareLink.dataset.unlocks=String(options.shareUnlocks!==false);
     shareLink.dataset.afterText=String(options.sharePendingText||"ขอบคุณที่ช่วยแชร์ค่ะ กรุณาเลือกวิธีหลักเพื่อปลดล็อกไฟล์ดาวน์โหลด");
     gate.querySelector("[data-line-status]").hidden=true;
+    gate.querySelector("[data-line-qr]").hidden=isMobile;
     gate.querySelector("[data-download-ready]").hidden=true;
     gate.querySelector("[data-download-final]").textContent=String(options.buttonLabel||"ดาวน์โหลดไฟล์");
     previousFocus=document.activeElement;
