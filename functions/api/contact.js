@@ -17,9 +17,17 @@ export async function onRequestPost(context) {
      CHECK SECRETS
   ========================================= */
 
+  // ตัดช่องว่าง/ขึ้นบรรทัดที่อาจติดมาตอนวางค่าใน Cloudflare
+  const lineToken =
+    String(env.LINE_CHANNEL_ACCESS_TOKEN ?? "").trim();
+
+  const lineUserId =
+    String(env.LINE_USER_ID ?? "").trim();
+
+
   if (
-    !env.LINE_CHANNEL_ACCESS_TOKEN ||
-    !env.LINE_USER_ID
+    !lineToken ||
+    !lineUserId
   ) {
 
     console.error(
@@ -201,13 +209,13 @@ ${detail || "-"}
               "application/json",
 
             "Authorization":
-              `Bearer ${env.LINE_CHANNEL_ACCESS_TOKEN}`
+              `Bearer ${lineToken}`
           },
 
           body: JSON.stringify({
 
             to:
-              env.LINE_USER_ID,
+              lineUserId,
 
             messages: [
               {

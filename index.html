@@ -8497,16 +8497,33 @@ const submitButton =
         );
 
 
-      const result =
-        await response.json();
+      // อ่านผลแบบปลอดภัย: ถ้าเซิร์ฟเวอร์ตอบเป็น HTML (เช่นหน้า error) จะไม่พัง
+      let result = {};
+
+      try {
+        result =
+          await response.json();
+      } catch (parseError) {
+        result = {};
+      }
 
 
       if (!response.ok) {
 
-        throw new Error(
-          result.error ||
-          "ส่งข้อมูลไม่สำเร็จ"
-        );
+        const formError =
+          new Error(
+            result.error ||
+            "ส่งข้อมูลไม่สำเร็จ"
+          );
+
+        // 400 = ข้อมูลไม่ครบ ให้แสดงข้อความจากเซิร์ฟเวอร์ตรงๆ
+        formError.userMessage =
+          response.status === 400 &&
+          result.error
+            ? result.error
+            : "";
+
+        throw formError;
 
       }
 
@@ -8525,7 +8542,8 @@ const submitButton =
       );
 
       formStatus.textContent =
-        "ไม่สามารถส่งข้อมูลได้ในขณะนี้ กรุณาลองอีกครั้ง หรือติดต่อ ARSTINLA ทาง LINE";
+        error.userMessage ||
+        "ไม่สามารถส่งข้อมูลได้ในขณะนี้ กรุณาลองอีกครั้ง หรือติดต่อ ARSTINLA ทาง LINE @arstinla";
 
     } finally {
 
