@@ -20,7 +20,6 @@
     "/apps/quote-compare/icons/*",
     "/apps/site-diary/icons/*",
     "/apps/stage-checklist/icons/*",
-    "/stories/jamjuree-village/assets/*",
-    "/stories/jamjuree-village/downloads/*"
+    "/stories/jamjuree-village/assets/*"
   ]
 }

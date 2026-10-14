@@ -7,13 +7,15 @@ import {
 } from "./_lib/member.js";
 
 const isPage = pathname => pathname.endsWith("/") || pathname.endsWith(".html") || !/\.[a-z0-9]+$/i.test(pathname);
+// Member-only downloadable files (e.g. story e-books) — locked like pages.
+const isLockedFile = pathname => /\/downloads\/[^/]+\.(epub|pdf|zip)$/i.test(pathname);
 
 export async function onRequest(context) {
   const { request, env, next, waitUntil } = context;
   const url = new URL(request.url);
   const need = requiredTier(url.pathname);
 
-  if (!need || request.method !== "GET" || !isPage(url.pathname) || !gateEnabled(env) || !authConfigured(env)) {
+  if (!need || request.method !== "GET" || !(isPage(url.pathname) || isLockedFile(url.pathname)) || !gateEnabled(env) || !authConfigured(env)) {
     return next();
   }
 
@@ -39,7 +41,7 @@ export async function onRequest(context) {
 
   // Count only real page opens, not background fetches from an app's offline cache.
   const dest = request.headers.get("Sec-Fetch-Dest");
-  if (!dest || dest === "document") waitUntil(logVisit(env.MEMBERS_DB, session.sub, url.pathname));
+  if ((!dest || dest === "document") && isPage(url.pathname)) waitUntil(logVisit(env.MEMBERS_DB, session.sub, url.pathname));
   const res = await next();
   const out = new Response(res.body, res);
   out.headers.set("Cache-Control", "private, no-store");
