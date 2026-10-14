@@ -3,7 +3,7 @@ import { readSession, json, getMember, effectiveTier, authConfigured, gateEnable
 
 export async function onRequestGet({ request, env }) {
   const status = { configured: authConfigured(env), gate: gateEnabled(env) };
-  if (!status.configured) return json({ member: null, ...status, missing: missingSettings(env), seen: Object.keys(env).filter(k => /LINE_LOGIN|SESSION|MEMBERS/i.test(k)) });
+  if (!status.configured) return json({ member: null, ...status, missing: missingSettings(env) });
   const s = await readSession(request, env);
   if (!s) return json({ member: null, ...status });
   const m = await getMember(env.MEMBERS_DB, s.sub);
