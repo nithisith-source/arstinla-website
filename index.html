@@ -3756,7 +3756,7 @@ background-repeat:
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 24px;
+  gap: 14px 40px;
 
   width: calc(100% - 10vw);
   margin: 32px auto 54px;
@@ -3771,11 +3771,12 @@ background-repeat:
   border: 0;
   background: transparent;
 
-  color: rgba(23, 24, 22, .42);
+  color: rgba(23, 24, 22, .78);
 
   font-family: var(--font-en);
-  font-size: .68rem;
-  letter-spacing: .12em;
+  font-size: 1.36rem;
+  font-weight: 500;
+  letter-spacing: .1em;
 
   cursor: pointer;
   transition: color .25s ease;
@@ -3794,9 +3795,13 @@ background-repeat:
   transition: width .25s ease;
 }
 
-.project-filter:hover,
 .project-filter.active {
   color: #171816;
+}
+
+.project-filter:hover,
+.project-filter:focus-visible {
+  color: #c36b48;
 }
 
 .project-filter.active::after {
@@ -3809,12 +3814,22 @@ background-repeat:
 
 @media (max-width: 768px) {
   .project-filters {
-    gap: 8px 16px;
+    flex-wrap: nowrap;
+    gap: 0 22px;
     margin-bottom: 36px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .project-filters::-webkit-scrollbar {
+    display: none;
   }
 
   .project-filter {
-    font-size: .62rem;
+    flex: none;
+    white-space: nowrap;
+    font-size: 1rem;
   }
 }
   /* CONTACT ACTIONS */
