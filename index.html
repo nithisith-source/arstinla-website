@@ -3754,11 +3754,14 @@ background-repeat:
 
 .project-filters {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 14px 40px;
+  justify-content: space-between;
+  gap: 0 clamp(8px, 1.2vw, 32px);
+  overflow-x: auto;
+  scrollbar-width: none;
 
-  width: calc(100% - 10vw);
+  width: 100%;
   margin: 32px auto 54px;
 
   border-top: 1px solid rgba(23, 24, 22, .12);
@@ -3774,7 +3777,9 @@ background-repeat:
   color: rgba(23, 24, 22, .78);
 
   font-family: var(--font-en);
-  font-size: 1.36rem;
+  flex: none;
+  white-space: nowrap;
+  font-size: clamp(.55rem, 1.15vw, 1.1rem);
   font-weight: 500;
   letter-spacing: .1em;
 
