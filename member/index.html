@@ -125,9 +125,10 @@ h1{margin:14px 0 10px;font:400 clamp(1.9rem,6vw,2.6rem)/1.08 "Space Grotesk","IB
     "/tools/schematic-planner/":"Schematic Planner","/tools/massing-studio/":"Massing Studio","/tools/home-compass/":"Home Compass",
     "/tools/color-sequence/":"Color Sequence","/tools/birthday/":"Birthday Insight","/tools/enneagram/":"Enneagram","/tools/image/":"Image Tool",
     "/apps/quote-compare/":"Quote Compare","/apps/stage-checklist/":"Stage Checklist","/apps/site-diary/":"Site Diary",
-    "/apps/meeting-status/":"ARSTINLA Consult","/apps/quotation/":"ARSTINLA Quotation","/apps/mai-tor-mai/":"Mai Tor Mai"
+    "/apps/meeting-status/":"ARSTINLA Consult","/apps/quotation/":"ARSTINLA Quotation","/apps/mai-tor-mai/":"Mai Tor Mai",
+    "/stories/jamjuree-village/":"Stories — หมู่บ้านจามจุรี","/media/":"Music"
   };
-  function toolName(p){var m=(p||"").match(/^\/(tools|apps)\/[^/?#]+\//);return m&&TOOLS[m[0]]||""}
+  function toolName(p){var m=(p||"").match(/^\/(tools|apps|stories)\/[^/?#]+\//)||(p||"").match(/^\/media\//);return m&&TOOLS[m[0]]||""}
   var ERR={
     consent:"กรุณาติ๊กยอมรับนโยบายความเป็นส่วนตัวก่อนเข้าสู่ระบบ",
     cancelled:"ยกเลิกการเข้าสู่ระบบแล้ว ลองอีกครั้งได้เลย",

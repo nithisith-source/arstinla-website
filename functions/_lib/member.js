@@ -19,7 +19,9 @@ export const tierRank = tier => Math.max(0, TIERS.indexOf(tier || "free"));
 // To make a tool paid later, add e.g.  "/tools/massing-studio/": "pro"
 export const GATED = {
   "/tools/": "free",
-  "/apps/": "free"
+  "/apps/": "free",
+  "/stories/": "free",
+  "/media/": "free"
 };
 
 export function requiredTier(pathname) {
@@ -201,7 +203,7 @@ export async function upsertMember(db, profile) {
 
 // Shortens tool URLs so stats group by tool, e.g. /tools/birthday/?day=3 → /tools/birthday/
 export function toolKey(pathname) {
-  const m = pathname.match(/^\/(tools|apps)\/([^/]+)/);
+  const m = pathname.match(/^\/(tools|apps|stories)\/([^/]+)/);
   return m ? `/${m[1]}/${m[2]}/` : pathname;
 }
 

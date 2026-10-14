@@ -1,7 +1,14 @@
 {
   "version": 1,
-  "description": "Run Functions only for the API and the member-gated tool/app pages; static files skip Functions.",
-  "include": ["/api/*", "/tools/*", "/apps/*"],
+  "description": "Run Functions only for the API and member-gated pages; static files skip Functions.",
+  "include": [
+    "/api/*",
+    "/tools/*",
+    "/apps/*",
+    "/stories/*",
+    "/media",
+    "/media/*"
+  ],
   "exclude": [
     "/tools/shared/*",
     "/tools/birthday/assets/*",
@@ -12,6 +19,8 @@
     "/apps/quotation/icons/*",
     "/apps/quote-compare/icons/*",
     "/apps/site-diary/icons/*",
-    "/apps/stage-checklist/icons/*"
+    "/apps/stage-checklist/icons/*",
+    "/stories/jamjuree-village/assets/*",
+    "/stories/jamjuree-village/downloads/*"
   ]
 }

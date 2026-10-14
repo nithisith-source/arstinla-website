@@ -1,4 +1,4 @@
-// Member gate for /tools/ and /apps/ pages.
+// Member gate for /tools/, /apps/, /stories/ and /media/ pages.
 // Inactive until MEMBER_GATE = "on" and the LINE Login + D1 settings exist,
 // so deploying this file changes nothing on its own.
 import {
