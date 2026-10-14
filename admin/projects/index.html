@@ -762,15 +762,6 @@
 
       <button
         class="filter"
-        data-filter="tiny-house"
-        type="button"
-        aria-pressed="false"
-      >
-        TINY HOUSE
-      </button>
-
-      <button
-        class="filter"
         data-filter="commercial"
         type="button"
         aria-pressed="false"
@@ -803,6 +794,15 @@
         aria-pressed="false"
       >
         INTERIOR
+      </button>
+
+      <button
+        class="filter"
+        data-filter="tiny-house"
+        type="button"
+        aria-pressed="false"
+      >
+        TINY HOUSE
       </button>
 
       <button
@@ -883,9 +883,6 @@
             Renovate
           </option>
 
-          <option value="tiny-house">
-            Tiny House
-          </option>
 
           <option value="commercial">
             Commercial
@@ -901,6 +898,9 @@
 
           <option value="interior">
             Interior
+          </option>
+          <option value="tiny-house">
+            Tiny House
           </option>
 
           <option value="consult">
@@ -1050,11 +1050,11 @@
             <select id="editProjectCategory" name="category" required>
               <option value="residential">Residential</option>
               <option value="renovation">Renovate</option>
-              <option value="tiny-house">Tiny House</option>
               <option value="commercial">Commercial</option>
               <option value="public">Public &amp; Institutional</option>
               <option value="urban">Urban</option>
               <option value="interior">Interior</option>
+              <option value="tiny-house">Tiny House</option>
               <option value="consult">Consult</option>
             </select>
           </div>
@@ -1403,10 +1403,6 @@
         label: "RENOVATE"
       },
       {
-        id: "tiny-house",
-        label: "TINY HOUSE"
-      },
-      {
         id: "commercial",
         label: "COMMERCIAL"
       },
@@ -1421,6 +1417,10 @@
       {
         id: "interior",
         label: "INTERIOR"
+      },
+      {
+        id: "tiny-house",
+        label: "TINY HOUSE"
       },
       {
         id: "consult",
