@@ -34,6 +34,11 @@ export function gateEnabled(env) {
   return String(env.MEMBER_GATE || "").toLowerCase() === "on";
 }
 
+// Names (never values) of settings that are still missing — shown on /api/auth/me to help setup.
+export function missingSettings(env) {
+  return ["LINE_LOGIN_CHANNEL_ID", "LINE_LOGIN_CHANNEL_SECRET", "SESSION_SECRET", "MEMBERS_DB"].filter(k => !env[k]);
+}
+
 export function authConfigured(env) {
   return Boolean(env.LINE_LOGIN_CHANNEL_ID && env.LINE_LOGIN_CHANNEL_SECRET && env.SESSION_SECRET && env.MEMBERS_DB);
 }
