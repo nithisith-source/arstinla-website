@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "description": "Run Functions only for the API and the member-gated tool/app pages; static files skip Functions.",
+  "include": ["/api/*", "/tools/*", "/apps/*"],
+  "exclude": [
+    "/tools/shared/*",
+    "/tools/birthday/assets/*",
+    "/apps/shared/*",
+    "/apps/mai-tor-mai/icons/*",
+    "/apps/mai-tor-mai/.well-known/*",
+    "/apps/meeting-status/icons/*",
+    "/apps/quotation/icons/*",
+    "/apps/quote-compare/icons/*",
+    "/apps/site-diary/icons/*",
+    "/apps/stage-checklist/icons/*"
+  ]
+}

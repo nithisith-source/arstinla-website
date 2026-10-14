@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Members — ARSTINLA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--muted:#6b6b63;--line:rgba(23,24,22,.16)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--black);font:15px/1.6 "IBM Plex Sans Thai",system-ui,sans-serif}
+button,input,select{font:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 16px 64px}
+.kicker{color:var(--orange);font:600 .7rem "Space Grotesk",sans-serif;letter-spacing:.2em;text-transform:uppercase;margin:0}
+h1{font:400 clamp(2rem,5vw,3.2rem)/1.1 "Space Grotesk",sans-serif;margin:10px 0 18px;letter-spacing:-.02em}
+h2{font-size:1rem;margin:28px 0 10px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--cream);border:1px solid var(--line);padding:12px}
+.bar input{padding:8px 10px;border:1px solid var(--line);background:#fff;min-width:220px;flex:1}
+.btn{padding:8px 16px;border:1px solid var(--black);background:var(--black);color:var(--cream);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--black)}
+.btn.sm{padding:4px 10px;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.kpi div{background:var(--cream);border:1px solid var(--line);padding:12px 14px}
+.kpi b{display:block;font:500 1.6rem "Space Grotesk",sans-serif}
+.kpi span{font-size:.82rem;color:var(--muted)}
+@media(max-width:700px){.kpi{grid-template-columns:1fr 1fr}}
+.tbl{width:100%;border-collapse:collapse;background:var(--cream);border:1px solid var(--line)}
+.tbl th,.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;font-size:.88rem}
+.tbl th{font:600 .72rem "Space Grotesk",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:#ece8df}
+.tbl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.who{display:flex;gap:10px;align-items:center}
+.who img,.who .ph{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--paper);flex:none}
+.who small{display:block;color:var(--muted);font-size:.72rem;word-break:break-all}
+.tbl select,.tbl input[type=date]{padding:4px 6px;border:1px solid var(--line);background:#fff}
+.yes{color:#2e7d4f;font-weight:600}
+.scroll{overflow-x:auto}
+.msg{margin:10px 0 0;color:var(--muted);font-size:.88rem;min-height:1.4em}
+.msg.err{color:#a3341f}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">ARSTINLA / ADMIN</p>
+  <h1>Members</h1>
+
+  <div class="bar">
+    <input id="adminKey" type="password" placeholder="Admin Key" autocomplete="current-password">
+    <button class="btn" id="load">โหลดข้อมูล</button>
+    <button class="btn ghost" id="csv" disabled>ส่งออก CSV</button>
+    <input id="search" placeholder="ค้นหาชื่อ" style="max-width:220px">
+  </div>
+  <p class="msg" id="msg">ใส่ Admin Key (ตัวเดียวกับหน้า Projects) แล้วกดโหลดข้อมูล</p>
+
+  <div id="out" hidden>
+    <div class="kpi" id="kpi"></div>
+
+    <h2>สมาชิก</h2>
+    <div class="scroll"><table class="tbl" id="members"></table></div>
+
+    <h2>การใช้งานแต่ละเครื่องมือ</h2>
+    <div class="scroll"><table class="tbl" id="tools"></table></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s){return document.querySelector(s)};
+  var KEY_NAME="ARSTINLA_ADMIN_KEY";
+  var data=null;
+  var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+  var d=function(s){return s?new Date(s).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"2-digit"}):"-"};
+  try{$("#adminKey").value=sessionStorage.getItem(KEY_NAME)||""}catch(e){}
+  function key(){return $("#adminKey").value.trim()}
+  function msg(t,err){$("#msg").textContent=t;$("#msg").className="msg"+(err?" err":"")}
+
+  function load(){
+    if(!key()){msg("ใส่ Admin Key ก่อน",true);return}
+    msg("กำลังโหลด…");
+    fetch("/api/admin/members",{headers:{"x-admin-key":key()},cache:"no-store"}).then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})}).then(function(x){
+      if(!x.ok){msg(x.j.error==="Unauthorized"?"Admin Key ไม่ถูกต้อง":"โหลดไม่สำเร็จ: "+(x.j.error||""),true);return}
+      try{sessionStorage.setItem(KEY_NAME,key())}catch(e){}
+      data=x.j;render();msg("อัปเดต "+new Date().toLocaleTimeString("th-TH"));$("#csv").disabled=false;
+    }).catch(function(){msg("เชื่อมต่อไม่สำเร็จ",true)});
+  }
+
+  function render(){
+    $("#out").hidden=false;
+    var ms=data.members,weekAgo=Date.now()-7*864e5;
+    var active=ms.filter(function(m){return m.last_visit&&new Date(m.last_visit).getTime()>weekAgo}).length;
+    var paid=ms.filter(function(m){return m.tier&&m.tier!=="free"&&(!m.tier_until||new Date(m.tier_until).getTime()>=Date.now())}).length;
+    var friends=ms.filter(function(m){return m.friend}).length;
+    $("#kpi").innerHTML='<div><b>'+ms.length+'</b><span>สมาชิกทั้งหมด</span></div><div><b>'+active+'</b><span>ใช้งานใน 7 วัน</span></div><div><b>'+friends+'</b><span>เป็นเพื่อน LINE @arstinla</span></div><div><b>'+paid+'</b><span>สมาชิกระดับจ่ายเงิน</span></div>';
+    var term=$("#search").value.trim().toLowerCase();
+    var list=ms.filter(function(m){return !term||(m.name||"").toLowerCase().indexOf(term)>=0});
+    var opts=function(t){return data.tiers.map(function(x){return'<option'+(x===t?" selected":"")+'>'+x+"</option>"}).join("")};
+    $("#members").innerHTML='<tr><th>สมาชิก</th><th>ระดับ</th><th>ถึงวันที่</th><th>เพื่อน OA</th><th>สมัคร</th><th>เข้าใช้ล่าสุด</th><th class="n">ใช้เครื่องมือ</th><th></th></tr>'+
+      (list.length?list.map(function(m){
+        return '<tr data-id="'+esc(m.id)+'"><td><div class="who">'+(m.picture?'<img src="'+esc(m.picture)+'" alt="">':'<span class="ph"></span>')+'<div>'+esc(m.name||"-")+'<small>'+esc(m.id)+'</small></div></div></td>'+
+          '<td><select class="tier">'+opts(m.tier||"free")+'</select></td>'+
+          '<td><input type="date" class="until" value="'+esc((m.tier_until||"").slice(0,10))+'">'+(m.tier_until&&new Date(m.tier_until).getTime()<Date.now()&&m.tier!=="free"?'<br><small style="color:#a3341f">หมดอายุแล้ว</small>':'')+'</td>'+
+          '<td>'+(m.friend?'<span class="yes">✓</span>':"-")+'</td><td>'+d(m.created_at)+'</td><td>'+d(m.last_visit||m.last_login_at)+'</td>'+
+          '<td class="n">'+(m.visits||0)+'</td><td><button class="btn sm ghost save">บันทึก</button></td></tr>'}).join("")
+      :'<tr><td colspan="8">ยังไม่มีสมาชิก</td></tr>');
+    document.querySelectorAll("#members .save").forEach(function(b){b.onclick=function(){
+      var tr=b.closest("tr");b.disabled=true;
+      fetch("/api/admin/members",{method:"POST",headers:{"x-admin-key":key(),"Content-Type":"application/json"},
+        body:JSON.stringify({id:tr.dataset.id,tier:tr.querySelector(".tier").value,tierUntil:tr.querySelector(".until").value||null})})
+      .then(function(r){return r.json()}).then(function(j){b.disabled=false;
+        if(!j.ok){msg("บันทึกไม่สำเร็จ: "+(j.error||""),true);return}
+        var m=data.members.find(function(x){return x.id===j.member.id});Object.assign(m,j.member);msg("บันทึก "+(m.name||"")+" แล้ว")})
+      .catch(function(){b.disabled=false;msg("บันทึกไม่สำเร็จ",true)})}});
+    $("#tools").innerHTML='<tr><th>เครื่องมือ / แอป</th><th class="n">ครั้งที่เปิด</th><th class="n">สมาชิกที่ใช้</th></tr>'+
+      (data.tools.length?data.tools.map(function(t){return'<tr><td>'+esc(t.path)+'</td><td class="n">'+t.visits+'</td><td class="n">'+t.members+"</td></tr>"}).join(""):'<tr><td colspan="3">ยังไม่มีการใช้งาน</td></tr>');
+  }
+
+  $("#csv").onclick=function(){
+    if(!data)return;
+    var rows=[["name","line_user_id","tier","tier_until","friend","created_at","last_login_at","visits"]].concat(data.members.map(function(m){return[m.name,m.id,m.tier,m.tier_until||"",m.friend?1:0,m.created_at,m.last_login_at,m.visits||0]}));
+    var csv="﻿"+rows.map(function(r){return r.map(function(c){c=String(c==null?"":c);return/[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(",")}).join("\n");
+    var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="arstinla-members-"+new Date().toISOString().slice(0,10)+".csv";document.body.appendChild(a);a.click();a.remove();
+  };
+  $("#load").onclick=load;$("#adminKey").onkeydown=function(e){if(e.key==="Enter")load()};
+  $("#search").oninput=function(){if(data)render()};
+  if(key())load();
+})();
+</script>
+</body>
+</html>

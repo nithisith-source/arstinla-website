@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>สมาชิก ARSTINLA — เข้าสู่ระบบด้วย LINE</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#171816">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--orange-dark:#a65335;--muted:#6b6b63;--line:rgba(23,24,22,.16);--green:#06c755}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--paper);color:var(--black);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.65;display:flex;flex-direction:column}
+a{color:inherit}
+.top{display:flex;justify-content:space-between;align-items:center;padding:20px clamp(16px,4vw,48px)}
+.brand{text-decoration:none;font:600 1.05rem "Space Grotesk",sans-serif;letter-spacing:.32em}
+.brand small{display:block;font-size:.55rem;letter-spacing:.3em;color:var(--muted);font-weight:500}
+.top .back{font:500 .72rem "Space Grotesk",sans-serif;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
+main{flex:1;display:grid;place-items:center;padding:24px 16px 56px}
+.card{width:min(520px,100%);background:var(--cream);border:1px solid var(--line);padding:clamp(26px,5vw,46px);position:relative}
+.kicker{margin:0;color:var(--orange);font:600 .66rem/1.2 "Space Grotesk",sans-serif;letter-spacing:.22em;text-transform:uppercase}
+h1{margin:14px 0 10px;font:400 clamp(1.9rem,6vw,2.6rem)/1.08 "Space Grotesk","IBM Plex Sans Thai",sans-serif;letter-spacing:-.03em}
+.lead{margin:0;color:var(--muted);font-size:.95rem}
+.tool{margin:16px 0 0;padding:10px 14px;border-left:3px solid var(--orange);background:rgba(195,107,72,.08);font-size:.92rem}
+.perks{margin:20px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:.92rem}
+.perks li{display:flex;gap:10px}
+.perks li::before{content:"";flex:none;width:6px;height:6px;margin-top:.62em;background:var(--orange)}
+.consent{display:flex;gap:10px;align-items:flex-start;margin:22px 0 0;font-size:.86rem;color:#3f3f3a;cursor:pointer}
+.consent input{flex:none;width:18px;height:18px;margin-top:2px;accent-color:var(--black)}
+.line-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:16px;padding:14px 18px;border:0;background:var(--green);color:#fff;font:600 1rem "IBM Plex Sans Thai",sans-serif;text-decoration:none;cursor:pointer}
+.line-btn svg{width:24px;height:24px;flex:none}
+.line-btn[aria-disabled="true"]{background:#b9c7bd;cursor:not-allowed;pointer-events:none}
+.note{margin:12px 0 0;font-size:.78rem;color:var(--muted)}
+.msg{margin:16px 0 0;padding:10px 14px;font-size:.88rem;background:#fff;border:1px solid var(--line)}
+.msg.err{border-color:#c0462f;color:#9a3422}
+.prof{display:flex;gap:14px;align-items:center;margin-top:18px}
+.prof img,.prof .ph{width:64px;height:64px;border-radius:50%;object-fit:cover;background:var(--paper);flex:none}
+.prof b{display:block;font-size:1.15rem}
+.badge{display:inline-block;margin-top:3px;padding:1px 10px;font:600 .68rem "Space Grotesk",sans-serif;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--black)}
+.badge.pro{background:var(--black);color:var(--cream)}
+.go{display:block;width:100%;margin-top:22px;padding:14px;border:0;background:var(--black);color:var(--cream);text-align:center;text-decoration:none;font:600 .95rem "IBM Plex Sans Thai",sans-serif}
+.links{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:.84rem}
+.links a{color:var(--muted)}
+.tools{margin:18px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tools a{display:block;padding:9px 12px;border:1px solid var(--line);text-decoration:none;font-size:.86rem;background:#fff}
+.tools a:hover{border-color:var(--black)}
+@media (max-width:420px){.tools{grid-template-columns:1fr}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">ARSTINLA<small>DESIGN &amp; CONSULT</small></a>
+  <a class="back" href="/#tools">← Tools</a>
+</header>
+
+<main>
+  <section class="card" aria-live="polite">
+    <p class="kicker">ARSTINLA / MEMBER</p>
+
+    <!-- loading -->
+    <div id="vLoading"><h1>สมาชิก</h1><p class="lead">กำลังโหลด…</p></div>
+
+    <!-- logged out -->
+    <div id="vLogin" hidden>
+      <h1>เข้าสู่ระบบ<br>ด้วย LINE</h1>
+      <p class="lead">สมัครฟรีด้วยบัญชี LINE ที่มีอยู่แล้ว ไม่ต้องตั้งรหัสผ่าน แล้วใช้เครื่องมือและแอปของ ARSTINLA ได้ทันที</p>
+      <p class="tool" id="toolNote" hidden></p>
+      <ul class="perks">
+        <li>ใช้เครื่องมือออกแบบ เช็กลิสต์ และแอปช่วยงานก่อสร้างทั้งหมด</li>
+        <li>รับข่าวเครื่องมือใหม่และบทความจาก LINE @arstinla</li>
+        <li>เข้าใช้ได้ทุกอุปกรณ์ด้วย LINE บัญชีเดียว</li>
+      </ul>
+      <label class="consent"><input type="checkbox" id="consent">
+        <span>ฉันยินยอมให้ ARSTINLA เก็บชื่อและรูปโปรไฟล์ LINE เพื่อใช้เป็นบัญชีสมาชิก และบันทึกการใช้งานเครื่องมือ ตาม<a href="/privacy/" target="_blank">นโยบายความเป็นส่วนตัว</a></span>
+      </label>
+      <a class="line-btn" id="lineBtn" href="#" aria-disabled="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.8-3.4 7.9-5.9C21.4 14.4 22 12.8 22 11c0-4.4-4.5-8-10-8zM8.3 13.4H6.4c-.3 0-.5-.2-.5-.5V9.1c0-.3.2-.5.5-.5s.5.2.5.5v3.3h1.4c.3 0 .5.2.5.5s-.2.5-.5.5zm2-.5c0 .3-.2.5-.5.5s-.5-.2-.5-.5V9.1c0-.3.2-.5.5-.5s.5.2.5.5v3.8zm4.6 0c0 .2-.1.4-.3.5h-.2c-.2 0-.3-.1-.4-.2l-2-2.7v2.4c0 .3-.2.5-.5.5s-.5-.2-.5-.5V9.1c0-.2.1-.4.3-.5h.2c.2 0 .3.1.4.2l2 2.7V9.1c0-.3.2-.5.5-.5s.5.2.5.5v3.8zm3.1-2.4c.3 0 .5.2.5.5s-.2.5-.5.5h-1.4v.9h1.4c.3 0 .5.2.5.5s-.2.5-.5.5h-1.9c-.3 0-.5-.2-.5-.5V9.1c0-.3.2-.5.5-.5H18c.3 0 .5.2.5.5s-.2.5-.5.5h-1.4v.9H18z"/></svg>
+        เข้าสู่ระบบด้วย LINE
+      </a>
+      <p class="note" id="consentHint">ติ๊กยอมรับด้านบนก่อนเพื่อเข้าสู่ระบบ</p>
+      <p class="msg err" id="errMsg" hidden></p>
+    </div>
+
+    <!-- needs higher level -->
+    <div id="vNeed" hidden>
+      <h1>เครื่องมือสำหรับ<br>สมาชิก Pro</h1>
+      <p class="lead">เครื่องมือนี้เปิดให้สมาชิกระดับ Pro ทักมาที่ LINE @arstinla เพื่ออัปเกรดสมาชิกได้เลย</p>
+      <a class="line-btn" href="https://line.me/R/ti/p/%40arstinla" target="_blank" rel="noopener">ติดต่ออัปเกรดทาง LINE @arstinla</a>
+      <div class="links"><a href="/member/">ดูบัญชีของฉัน</a><a href="/#tools">กลับไปหน้าเครื่องมือ</a></div>
+    </div>
+
+    <!-- logged in -->
+    <div id="vMe" hidden>
+      <h1>บัญชีสมาชิก</h1>
+      <div class="prof"><img id="mePic" alt="" hidden><span class="ph" id="mePh"></span>
+        <div><b id="meName"></b><span class="badge" id="meTier"></span></div></div>
+      <p class="lead" id="meSince" style="margin-top:12px"></p>
+      <a class="go" id="goNext" hidden>ไปต่อ →</a>
+      <ul class="tools" id="toolList"></ul>
+      <div class="links"><a href="/privacy/">นโยบายความเป็นส่วนตัว</a><a href="/api/auth/logout" id="logout">ออกจากระบบ</a></div>
+    </div>
+
+    <!-- not set up yet -->
+    <div id="vSetup" hidden>
+      <h1>ระบบสมาชิก<br>เร็วๆ นี้</h1>
+      <p class="lead">ระบบสมาชิกกำลังเตรียมเปิดใช้งาน ระหว่างนี้ใช้เครื่องมือได้ตามปกติ</p>
+      <a class="go" id="goSetup" href="/#tools">ไปที่เครื่องมือ →</a>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s){return document.querySelector(s)};
+  var q=new URLSearchParams(location.search);
+  var next=q.get("next")||"";
+  if(!(next.charAt(0)==="/"&&next.charAt(1)!=="/"))next="";
+  var TOOLS={
+    "/tools/schematic-planner/":"Schematic Planner","/tools/massing-studio/":"Massing Studio","/tools/home-compass/":"Home Compass",
+    "/tools/color-sequence/":"Color Sequence","/tools/birthday/":"Birthday Insight","/tools/enneagram/":"Enneagram","/tools/image/":"Image Tool",
+    "/apps/quote-compare/":"Quote Compare","/apps/stage-checklist/":"Stage Checklist","/apps/site-diary/":"Site Diary",
+    "/apps/meeting-status/":"ARSTINLA Consult","/apps/quotation/":"ARSTINLA Quotation","/apps/mai-tor-mai/":"Mai Tor Mai"
+  };
+  function toolName(p){var m=(p||"").match(/^\/(tools|apps)\/[^/?#]+\//);return m&&TOOLS[m[0]]||""}
+  var ERR={
+    consent:"กรุณาติ๊กยอมรับนโยบายความเป็นส่วนตัวก่อนเข้าสู่ระบบ",
+    cancelled:"ยกเลิกการเข้าสู่ระบบแล้ว ลองอีกครั้งได้เลย",
+    state:"หมดเวลาหรือข้อมูลไม่ตรงกัน กรุณากดเข้าสู่ระบบอีกครั้ง",
+    token:"เชื่อมต่อ LINE ไม่สำเร็จ กรุณาลองใหม่",verify:"ยืนยันตัวตนกับ LINE ไม่สำเร็จ กรุณาลองใหม่",
+    server:"ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง",setup:"ระบบสมาชิกยังไม่พร้อมใช้งาน"
+  };
+  function show(id){["vLoading","vLogin","vNeed","vMe","vSetup"].forEach(function(v){$("#"+v).hidden=v!==id})}
+
+  function loginView(){
+    show("vLogin");
+    var name=toolName(next);
+    if(name){$("#toolNote").hidden=false;$("#toolNote").textContent="เข้าสู่ระบบเพื่อใช้ "+name}
+    var err=q.get("error");if(err&&ERR[err]){$("#errMsg").hidden=false;$("#errMsg").textContent=ERR[err]}
+    var cb=$("#consent"),btn=$("#lineBtn");
+    function sync(){var ok=cb.checked;btn.setAttribute("aria-disabled",ok?"false":"true");$("#consentHint").hidden=ok;
+      btn.href=ok?"/api/auth/login?consent=1&next="+encodeURIComponent(next||"/member/"):"#"}
+    cb.addEventListener("change",sync);sync();
+  }
+
+  function meView(m){
+    if(q.get("need")){show("vNeed");return}
+    show("vMe");
+    $("#meName").textContent=m.name||"สมาชิก";
+    var t=(m.tier||"free");$("#meTier").textContent=t;$("#meTier").className="badge"+(t!=="free"?" pro":"");
+    if(m.picture){$("#mePic").src=m.picture;$("#mePic").hidden=false;$("#mePh").hidden=true}
+    var since=m.since?new Date(m.since).toLocaleDateString("th-TH",{day:"numeric",month:"long",year:"numeric"}):"";
+    $("#meSince").textContent=(since?"สมาชิกตั้งแต่ "+since:"")+(m.tierUntil&&t!=="free"?" · "+t.toUpperCase()+" ถึง "+new Date(m.tierUntil).toLocaleDateString("th-TH"):"");
+    if(next&&next.indexOf("/member")!==0){var g=$("#goNext");g.hidden=false;g.href=next;g.textContent="ไปที่ "+(toolName(next)||"หน้าที่เปิดไว้")+" →"}
+    $("#toolList").innerHTML=Object.keys(TOOLS).map(function(p){return '<li><a href="'+p+'">'+TOOLS[p]+"</a></li>"}).join("");
+  }
+
+  fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
+    if(!d.configured){show("vSetup");if(next)$("#goSetup").href=next;return}
+    if(d.member)meView(d.member);else loginView();
+  }).catch(function(){loginView()});
+})();
+</script>
+</body>
+</html>
