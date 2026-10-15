@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ตังค์เหลือ — จดรายรับรายจ่ายจากสลิป</title>
+<meta name="description" content="ตังค์เหลือ (TangLuer) แอปจดรายรับรายจ่าย อัปโหลดสลิปโอนเงินแล้วระบบอ่านยอด วันที่ และชื่อให้ พร้อมสรุปงบรายเดือน">
+<meta name="theme-color" content="#0F6E6A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="../shared/pwa-install.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#0F6E6A; --brand-ink:#ffffff; --brand-soft:#DCEDEB;
+  --bg:#EDEFEE; --surface:#FFFFFF; --ink:#1E2A2D; --muted:#5F6D70; --line:#CDD3D2;
+  --in:#2F7A3B; --in-soft:#E0F0E2; --out:#B0402C; --out-soft:#F8E1DC; --warn:#A86A00; --warn-soft:#FBEFD6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#4DB6AE; --brand-ink:#0B1F1E; --brand-soft:#173634;
+  --bg:#141A1B; --surface:#1D2526; --ink:#E6ECEB; --muted:#9AA8A9; --line:#334042;
+  --in:#7CC487; --in-soft:#1E3322; --out:#EE8A76; --out-soft:#3E2420; --warn:#E3B04B; --warn-soft:#3A2F17;
+}}
+:root[data-theme="dark"]{
+  --brand:#4DB6AE; --brand-ink:#0B1F1E; --brand-soft:#173634;
+  --bg:#141A1B; --surface:#1D2526; --ink:#E6ECEB; --muted:#9AA8A9; --line:#334042;
+  --in:#7CC487; --in-soft:#1E3322; --out:#EE8A76; --out-soft:#3E2420; --warn:#E3B04B; --warn-soft:#3A2F17;
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",Tahoma,"Leelawadee UI",sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 96px}
+header{padding:20px 0 4px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:40px;height:40px;border-radius:10px}
+header h1{margin:0;font-size:1.5rem;line-height:1.2;font-weight:700}
+header h1 small{font-size:.8rem;font-weight:500;color:var(--muted);margin-left:6px}
+header p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.hero{margin:14px 0 4px;background:var(--brand);color:var(--brand-ink);border-radius:14px;padding:14px 16px}
+.hero small{display:block;opacity:.85;font-size:.85rem}
+.hero .big{font-size:2rem;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.hero .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.25)}
+.hero .row b{display:block;font-size:1rem;font-variant-numeric:tabular-nums}
+.hero .bar{background:rgba(255,255,255,.25);margin-top:10px}
+.hero .bar i{background:var(--brand-ink)}
+.hero .bar.over i{background:#FFB4A3}
+.hero .bnote{font-size:.8rem;opacity:.9;margin-top:4px}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:4px;padding:12px 0;border-bottom:2px solid var(--line);margin-bottom:18px}
+.tab{flex:1;font:inherit;font-weight:600;font-size:.95rem;padding:9px 4px;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--brand);color:var(--brand-ink)}
+.tab .dot{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:var(--out);color:#fff;font-size:.75rem;line-height:20px}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,label.drop:focus-within{outline:3px solid var(--brand);outline-offset:2px}
+section[hidden],[hidden]{display:none!important}
+h2{font-size:1.15rem;margin:24px 0 8px}
+.hint{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+label.f{display:block;font-size:.85rem;font-weight:600;margin-bottom:2px;color:var(--muted)}
+input,select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 14px;background:var(--brand);color:var(--brand-ink);cursor:pointer;white-space:nowrap}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:transparent;color:var(--out);border:1px solid var(--out)}
+.btn:disabled{opacity:.5;cursor:default}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+label.drop{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:24px 16px;border:2px dashed var(--brand);border-radius:12px;background:var(--brand-soft);cursor:pointer}
+label.drop svg{width:40px;height:40px;stroke:var(--brand);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+label.drop b{font-size:1.1rem}
+label.drop span{color:var(--muted);font-size:.9rem}
+label.drop input{position:absolute;opacity:0;width:1px;height:1px}
+label.drop.over{background:var(--surface)}
+.progress{margin:12px 0;padding:10px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--line);font-size:.95rem}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--brand);width:0;transition:width .25s}
+.bar.over i{background:var(--out)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px}
+.card.dup{border-color:var(--warn);background:linear-gradient(var(--warn-soft),var(--surface) 64px)}
+.rv{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px}
+.rv.noimg{grid-template-columns:1fr}
+.rv>*{min-width:0}
+.thumb{width:88px;height:140px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--line);background:var(--bg);cursor:zoom-in}
+.thumb.none{display:grid;place-items:center;color:var(--muted);font-size:.8rem;cursor:default}
+.fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.fields>*{min-width:0}
+.fields input[type=date],.fields input[type=time]{padding:8px 6px;font-size:.95rem}
+.fields .w2{grid-column:span 2}
+.fields input.amt{font-size:1.15rem;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.fields .need{border-color:var(--warn);background:var(--warn-soft)}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-weight:600;border:0;padding:7px;background:var(--surface);color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"][data-v="out"]{background:var(--out-soft);color:var(--out)}
+.seg button[aria-pressed="true"][data-v="in"]{background:var(--in-soft);color:var(--in)}
+.tag{display:inline-block;font-size:.8rem;padding:1px 8px;border-radius:10px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.card .acts{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.filters .w2{grid-column:span 2}
+.day{margin-top:16px}
+.day h3{display:flex;justify-content:space-between;font-size:.9rem;color:var(--muted);margin:0 0 6px;font-weight:600}
+.ent{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer}
+.ent .ic{width:38px;height:38px;border-radius:50%;background:var(--out-soft);color:var(--out);display:grid;place-items:center;font-weight:700;flex:none;font-size:.8rem}
+.ent.in .ic{background:var(--in-soft);color:var(--in)}
+.ent .mid{flex:1;min-width:0}
+.ent .mid b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ent .mid small{display:block;color:var(--muted);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ent .amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ent.in .amt{color:var(--in)}
+.empty{color:var(--muted);font-size:.95rem;padding:16px 0}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kpi small{display:block;color:var(--muted);font-size:.8rem}
+.kpi b{display:block;font-size:1.1rem;font-variant-numeric:tabular-nums;line-height:1.3}
+.kpi.in b{color:var(--in)} .kpi.out b{color:var(--out)}
+.cats{list-style:none;padding:0;margin:6px 0 0}
+.cats li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0;border-top:1px solid var(--line);font-size:.95rem}
+.cats li:first-child{border-top:0}
+.cats li span:nth-child(2){font-variant-numeric:tabular-nums;text-align:right}
+.cats li .bar{grid-column:span 2;height:6px;margin:0}
+.cats li .note{grid-column:span 2;font-size:.8rem;color:var(--muted)}
+.cats li.over .note{color:var(--out);font-weight:600}
+.catrow{display:grid;grid-template-columns:1fr 120px auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.catrow:first-child{border-top:0}
+.catrow input{padding:6px 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px 4px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--line);font-size:.9rem}
+.chip button,.x{border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;padding:0 6px;font-size:1.1rem;line-height:1}
+.addrow{display:flex;gap:6px;margin-top:10px}
+.addrow input{flex:1}
+dialog{border:0;border-radius:14px;padding:16px;width:min(560px,calc(100vw - 32px));background:var(--surface);color:var(--ink);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog h2{margin:0 0 12px}
+dialog.viewer{padding:8px;width:min(480px,calc(100vw - 16px))}
+dialog.viewer img{display:block;width:100%;max-height:80vh;object-fit:contain;border-radius:8px}
+.foot{margin-top:28px;color:var(--muted);font-size:.85rem}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:20px;font-size:.9rem;z-index:50;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1}
+.report-head{display:none}
+@media (max-width:420px){
+  .rv{grid-template-columns:72px minmax(0,1fr)}
+  .thumb{width:72px;height:116px}
+  .catrow{grid-template-columns:1fr 96px auto}
+  .hero .big{font-size:1.75rem}
+}
+@media (prefers-reduced-motion:reduce){.bar i,.toast{transition:none}}
+@media print{
+  body{background:#fff;color:#000}
+  .hero,.tabs,#p-add,#p-list,#p-set,.noprint,.arstinla-pwa-install,.arstinla-pwa-note{display:none!important}
+  #p-sum{display:block!important}
+  .report-head{display:block;margin-bottom:12px}
+  .card,.kpi{break-inside:avoid;border-color:#bbb}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand"><img src="icons/icon-192.png" alt=""><div><h1>ตังค์เหลือ<small>TangLuer</small></h1><p>จดรายรับรายจ่ายจากสลิป ไม่ต้องพิมพ์เอง</p></div></div>
+  <div class="hero" aria-live="polite">
+    <small id="h-label">ตังค์เหลือเดือนนี้</small>
+    <div class="big" id="h-left">฿0</div>
+    <div class="bar" id="h-bar" hidden><i></i></div>
+    <div class="bnote" id="h-bnote" hidden></div>
+    <div class="row">
+      <div><small>รายรับ</small><b id="h-in">฿0</b></div>
+      <div><small>รายจ่าย</small><b id="h-out">฿0</b></div>
+      <div><small>จ่ายวันนี้</small><b id="h-today">฿0</b></div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" data-t="add" aria-selected="true">จด<span class="dot" id="q-dot" hidden></span></button>
+  <button class="tab" role="tab" data-t="list" aria-selected="false">รายการ</button>
+  <button class="tab" role="tab" data-t="sum" aria-selected="false">สรุป</button>
+  <button class="tab" role="tab" data-t="set" aria-selected="false">ตั้งค่า</button>
+</nav>
+
+<!-- ============ จด ============ -->
+<section id="p-add" role="tabpanel">
+  <div class="card" id="owner-tip" hidden style="margin:0 0 12px;border-color:var(--brand)">
+    <b>ตั้งชื่อบัญชีของคุณก่อน</b>
+    <p class="hint" style="margin:4px 0 8px">ใส่ชื่อตามที่ขึ้นในสลิป (เช่น นาย สมชาย ใจดี) ระบบจะรู้เองว่าสลิปไหนเป็นรายรับหรือรายจ่าย</p>
+    <div class="addrow" style="margin:0"><input id="owner-quick" placeholder="ชื่อในบัญชีธนาคารของคุณ"><button class="btn" id="owner-quick-add">บันทึก</button></div>
+  </div>
+  <label class="drop" id="drop">
+    <svg viewBox="0 0 24 24"><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3M12 4v12M7 9l5-5 5 5"/></svg>
+    <b>เลือกสลิปจากแกลเลอรี</b>
+    <span>เลือกได้หลายรูปพร้อมกัน · หรือกด "แชร์" สลิปจากแอปธนาคารมาที่ตังค์เหลือ</span>
+    <input type="file" id="files" accept="image/*" multiple>
+  </label>
+  <div class="row-btns" style="margin-top:10px">
+    <button class="btn ghost" id="manual-out">− จดรายจ่ายเอง</button>
+    <button class="btn ghost" id="manual-in">+ จดรายรับเอง</button>
+  </div>
+  <div class="progress" id="prog" hidden><span id="prog-t">กำลังอ่านสลิป…</span><div class="bar"><i id="prog-b"></i></div></div>
+
+  <div id="q-head" hidden>
+    <h2>รอตรวจ <span id="q-n"></span></h2>
+    <p class="hint">ตรวจตัวเลขที่ระบบอ่านได้ เลือกหมวด แล้วกดบันทึก ระบบจะจำชื่อคนหรือร้านไว้เติมหมวดให้ครั้งหน้า</p>
+    <div class="row-btns" id="q-all"><button class="btn" id="save-all">บันทึกทั้งหมดที่กรอกครบ</button></div>
+  </div>
+  <div id="queue"></div>
+</section>
+
+<!-- ============ รายการ ============ -->
+<section id="p-list" role="tabpanel" hidden>
+  <div class="filters">
+    <div><label class="f" for="l-month">เดือน</label><input type="month" id="l-month"></div>
+    <div><label class="f" for="l-type">ประเภท</label><select id="l-type"><option value="">ทั้งหมด</option><option value="out">รายจ่าย</option><option value="in">รายรับ</option></select></div>
+    <div class="w2"><label class="f" for="l-q">ค้นหา</label><input id="l-q" type="search" placeholder="ชื่อ หมวด หรือหมายเหตุ"></div>
+  </div>
+  <div id="list"></div>
+</section>
+
+<!-- ============ สรุป ============ -->
+<section id="p-sum" role="tabpanel" hidden>
+  <div class="report-head"><h2 style="margin:0">ตังค์เหลือ — สรุปรายรับรายจ่าย</h2><p id="r-period" style="margin:0"></p></div>
+  <div class="filters noprint">
+    <div class="w2"><label class="f" for="s-month">เดือน</label><input type="month" id="s-month"></div>
+  </div>
+  <div id="sum"></div>
+  <div class="row-btns noprint" style="margin-top:16px">
+    <button class="btn" id="print">พิมพ์ / บันทึก PDF</button>
+    <button class="btn ghost" id="csv">ส่งออก Excel (CSV)</button>
+  </div>
+</section>
+
+<!-- ============ ตั้งค่า ============ -->
+<section id="p-set" role="tabpanel" hidden>
+  <h2 style="margin-top:0">ชื่อบัญชีของฉัน</h2>
+  <p class="hint">ชื่อตามที่ขึ้นในสลิป ถ้าสลิปโอน "ถึง" ชื่อนี้จะเป็นรายรับ ถ้าโอน "จาก" ชื่อนี้จะเป็นรายจ่าย ใส่ได้หลายชื่อ (เช่น ชื่อไทยและอังกฤษ)</p>
+  <div class="chips" id="owners"></div>
+  <div class="addrow"><input id="ow-name" placeholder="เช่น นาย สมชาย ใจดี"><button class="btn" id="ow-add">เพิ่ม</button></div>
+
+  <h2>งบรายจ่ายต่อเดือน</h2>
+  <p class="hint">ตั้งงบรวม หรือแยกตามหมวดด้านล่างก็ได้ ไม่ใส่ก็ได้</p>
+  <input id="budget" inputmode="decimal" placeholder="เช่น 20000" style="max-width:200px">
+
+  <h2>หมวดรายจ่าย</h2>
+  <div class="card" style="margin-top:0"><div id="cats-out"></div>
+  <div class="addrow"><input id="nc-out" placeholder="หมวดรายจ่ายใหม่"><button class="btn" data-add="out">เพิ่ม</button></div></div>
+
+  <h2>หมวดรายรับ</h2>
+  <div class="card" style="margin-top:0"><div id="cats-in"></div>
+  <div class="addrow"><input id="nc-in" placeholder="หมวดรายรับใหม่"><button class="btn" data-add="in">เพิ่ม</button></div></div>
+
+  <h2>ชื่อที่จำไว้</h2>
+  <p class="hint">คนหรือร้านที่เคยจด ระบบจะเติมหมวดให้อัตโนมัติ</p>
+  <div class="chips" id="parties"></div>
+
+  <h2>สำรองข้อมูล</h2>
+  <p class="hint">ข้อมูลและรูปสลิปเก็บอยู่ในเครื่องนี้เท่านั้น ไม่ได้ส่งขึ้นเซิร์ฟเวอร์ ควรสำรองเป็นไฟล์ไว้เป็นระยะ (ไฟล์สำรองไม่รวมรูปสลิป)</p>
+  <div class="row-btns">
+    <button class="btn ghost" id="backup">ดาวน์โหลดไฟล์สำรอง</button>
+    <label class="btn ghost" style="display:inline-block">นำเข้าไฟล์สำรอง<input type="file" id="restore" accept="application/json,.json" hidden></label>
+  </div>
+  <p class="foot">ตังค์เหลือ (TangLuer) · ARSTINLA Design</p>
+</section>
+</div>
+
+<dialog id="dlg"><form method="dialog" id="dlg-f"></form></dialog>
+<dialog id="viewer" class="viewer"><form method="dialog"><img id="viewer-img" alt="สลิป"><button class="btn ghost" style="width:100%;margin-top:8px">ปิด</button></form></dialog>
+<datalist id="party-list"></datalist>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="slip-parse.js"></script>
+<script>
+"use strict";
+/* ---------- ข้อมูล ---------- */
+const KEY = "tangluer.v1";
+const DEFAULT_CATS = [
+  ...["อาหาร", "เดินทาง", "ของใช้ / ช้อปปิ้ง", "บิล / ค่าน้ำไฟเน็ต", "ที่พัก / ผ่อนบ้าน", "สุขภาพ", "ครอบครัว / ลูก", "บันเทิง", "โอนให้คนอื่น", "อื่น ๆ"].map(n => ({ name: n, type: "out", budget: 0 })),
+  ...["เงินเดือน / ค่าจ้าง", "รายได้เสริม", "ได้รับโอน", "อื่น ๆ"].map(n => ({ name: n, type: "in", budget: 0 }))
+];
+const $ = s => document.querySelector(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const fresh = () => ({ owners: [], budget: 0, cats: DEFAULT_CATS.map(c => ({ ...c })), entries: [], parties: {} });
+function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && Array.isArray(v.entries)) return Object.assign(fresh(), v); } catch (e) {} return fresh(); }
+let S = load();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast("พื้นที่เก็บข้อมูลเต็ม — สำรองข้อมูลแล้วลบรายการเก่า"); } };
+
+const fmt = n => "฿" + (Number(n) || 0).toLocaleString("th-TH", { maximumFractionDigits: 2 });
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+const thMonth = ym => { if (!ym) return ""; const [y, m] = ym.split("-"); return new Date(+y, +m - 1, 1).toLocaleDateString("th-TH", { month: "long", year: "numeric" }); };
+const thDate = d => d ? new Date(d + "T00:00").toLocaleDateString("th-TH", { weekday: "short", day: "numeric", month: "short", year: "2-digit" }) : "ไม่ระบุวันที่";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const key = SlipParse.payeeKey;
+const done = () => S.entries.filter(e => e.status === "ok");
+const pending = () => S.entries.filter(e => e.status === "review");
+const catsOf = t => S.cats.filter(c => c.type === t);
+const sum = (rows, t) => rows.filter(e => !t || e.type === t).reduce((s, e) => s + e.amount, 0);
+const inMonth = (rows, m) => rows.filter(e => (e.date || "").startsWith(m));
+const isOwner = name => { const k = key(name); return !!k && S.owners.some(o => { const ok = key(o); return ok && (k === ok || k.startsWith(ok) || ok.startsWith(k)); }); };
+
+let toastT = 0;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2600); }
+
+/* ---------- รูปสลิป (IndexedDB) ---------- */
+let dbp = null;
+function idb() { if (!dbp) dbp = new Promise((res, rej) => { const r = indexedDB.open("tangluer", 1); r.onupgradeneeded = () => r.result.createObjectStore("img"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); return dbp; }
+async function imgPut(k, blob) { try { const db = await idb(); await new Promise((res, rej) => { const t = db.transaction("img", "readwrite"); t.objectStore("img").put(blob, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); return true; } catch (e) { return false; } }
+async function imgGet(k) { try { const db = await idb(); return await new Promise(res => { const r = db.transaction("img").objectStore("img").get(k); r.onsuccess = () => res(r.result || null); r.onerror = () => res(null); }); } catch (e) { return null; } }
+async function imgDel(k) { try { const db = await idb(); db.transaction("img", "readwrite").objectStore("img").delete(k); } catch (e) {} }
+const urlCache = new Map();
+async function imgURL(k) { if (!k) return null; if (urlCache.has(k)) return urlCache.get(k); const b = await imgGet(k); if (!b) return null; const u = URL.createObjectURL(b); urlCache.set(k, u); return u; }
+
+/* ---------- ไลบรารีอ่านสลิป (โหลดเมื่อใช้ครั้งแรก) ---------- */
+const scripts = {};
+function loadScript(src) { return scripts[src] || (scripts[src] = new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => { delete scripts[src]; rej(new Error("load " + src)); }; document.head.appendChild(s); })); }
+let worker = null;
+async function ocrWorker(onLoading) {
+  if (worker) return worker;
+  onLoading && onLoading();
+  await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js");
+  worker = await Tesseract.createWorker(["tha", "eng"]);
+  return worker;
+}
+function fileToImage(blob) { return new Promise((res, rej) => { const u = URL.createObjectURL(blob); const im = new Image(); im.onload = () => { URL.revokeObjectURL(u); res(im); }; im.onerror = () => { URL.revokeObjectURL(u); rej(new Error("bad image")); }; im.src = u; }); }
+function drawScaled(im, maxW) { const k = Math.min(1, maxW / im.naturalWidth); const c = document.createElement("canvas"); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k); c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); return c; }
+const toBlob = (c, q) => new Promise(res => c.toBlob(res, "image/jpeg", q));
+function forOcr(c) {
+  const g = document.createElement("canvas"); g.width = c.width; g.height = c.height;
+  const x = g.getContext("2d"); x.drawImage(c, 0, 0);
+  const d = x.getImageData(0, 0, g.width, g.height), p = d.data;
+  for (let i = 0; i < p.length; i += 4) { let v = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2]; v = v > 165 ? 255 : v < 90 ? 0 : (v - 90) * 3.4; p[i] = p[i + 1] = p[i + 2] = v; }
+  x.putImageData(d, 0, 0); return g;
+}
+async function readQR(c) {
+  try { if ("BarcodeDetector" in window) { const r = await new BarcodeDetector({ formats: ["qr_code"] }).detect(c); if (r && r[0]) return r[0].rawValue; } } catch (e) {}
+  try {
+    await loadScript("https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js");
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height);
+    const r = jsQR(d.data, c.width, c.height, { inversionAttempts: "attemptBoth" });
+    return r ? r.data : null;
+  } catch (e) { return null; }
+}
+
+/* ---------- อ่านสลิปทีละใบ ---------- */
+let busy = false;
+const waiting = [];
+function newEntry(type) { return { id: uid(), status: "review", type: type || "out", date: today(), time: "", amount: null, party: "", category: "", note: "", ref: "", img: "", created: Date.now() }; }
+async function addFiles(files) {
+  files = [...files].filter(f => f && (!f.type || f.type.startsWith("image/")));
+  if (!files.length) return;
+  waiting.push(...files);
+  if (busy) return;
+  busy = true;
+  const prog = $("#prog"), pt = $("#prog-t"), pb = $("#prog-b");
+  prog.hidden = false;
+  let n = 0, ocrOk = true;
+  while (waiting.length) {
+    const f = waiting.shift(); n++;
+    const total = n + waiting.length;
+    const label = () => pt.textContent = `กำลังอ่านสลิป ${n}/${total}`;
+    label(); pb.style.width = ((n - 1) / total * 100) + "%";
+    const e = newEntry("out");
+    if (f.lastModified) e.date = new Date(f.lastModified - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+    try {
+      const im = await fileToImage(f);
+      const big = drawScaled(im, 1400);
+      const blob = await toBlob(drawScaled(im, 900), 0.8);
+      if (blob && await imgPut(e.id, blob)) e.img = e.id;
+      e.ref = (await readQR(big)) || "";
+      if (ocrOk) {
+        try {
+          const w = await ocrWorker(() => pt.textContent = "กำลังเตรียมตัวอ่านภาษาไทย (ครั้งแรกใช้เวลาสักครู่)…");
+          label();
+          const { data } = await w.recognize(forOcr(big));
+          applyParsed(e, SlipParse.parseSlip(data.text));
+        } catch (err) { ocrOk = false; toast("อ่านข้อความอัตโนมัติไม่ได้ (ครั้งแรกต้องต่ออินเทอร์เน็ต) — กรอกเองได้"); }
+      }
+    } catch (err) { toast("เปิดรูปไม่ได้: " + (f.name || "")); }
+    guessCategory(e);
+    S.entries.push(e); save(); renderQueue(); renderHero();
+  }
+  pb.style.width = "100%"; pt.textContent = `อ่านเสร็จ ${n} สลิป`;
+  setTimeout(() => { prog.hidden = true; pb.style.width = 0; }, 1500);
+  busy = false;
+}
+function applyParsed(e, p) {
+  if (p.amount) e.amount = p.amount;
+  if (p.date) e.date = p.date;
+  if (p.time) e.time = p.time;
+  if (p.receiver && isOwner(p.receiver)) { e.type = "in"; e.party = p.sender || ""; }
+  else { e.type = "out"; e.party = (p.sender && isOwner(p.receiver) ? p.sender : p.receiver) || ""; }
+}
+function guessCategory(e) {
+  const m = S.parties[key(e.party)];
+  if (m && e.party) { if (m.type && !e.typeSet) e.type = m.type; if (!e.category && catsOf(e.type).some(c => c.name === m.category)) e.category = m.category; }
+}
+function dupOf(e) {
+  return S.entries.find(o => o !== e && o.status === "ok" && (
+    (e.ref && o.ref === e.ref) ||
+    (!e.ref && e.amount && o.amount === e.amount && o.date === e.date && o.time && o.time === e.time && key(o.party) === key(e.party))
+  ));
+}
+function learn(e) {
+  const k = key(e.party); if (!k) return;
+  const old = S.parties[k] || { count: 0 };
+  S.parties[k] = { name: e.party, type: e.type, category: e.category, count: old.count + 1 };
+}
+const complete = e => e.amount > 0 && e.category && e.date;
+
+/* ---------- ฟอร์ม ---------- */
+function opts(list, sel, blank) { return (blank ? `<option value="">${blank}</option>` : "") + list.map(v => `<option value="${esc(v)}"${v === sel ? " selected" : ""}>${esc(v)}</option>`).join(""); }
+function fieldsHTML(e, pre) {
+  const need = v => v ? "" : "need";
+  return `<div class="fields">
+    <div class="w2 seg" role="group" aria-label="ประเภท"><button type="button" data-v="out" aria-pressed="${e.type === "out"}">รายจ่าย</button><button type="button" data-v="in" aria-pressed="${e.type === "in"}">รายรับ</button></div>
+    <div class="w2"><label class="f" for="${pre}amt">จำนวนเงิน (บาท)</label><input class="amt ${need(e.amount)}" id="${pre}amt" data-k="amount" inputmode="decimal" value="${e.amount ?? ""}" placeholder="0.00"></div>
+    <div class="w2"><label class="f" for="${pre}party" data-pl>${e.type === "in" ? "ได้รับจาก" : "จ่ายให้"}</label><input id="${pre}party" data-k="party" value="${esc(e.party)}" placeholder="ชื่อคน / ร้าน" list="party-list"></div>
+    <div><label class="f" for="${pre}date">วันที่</label><input type="date" id="${pre}date" data-k="date" value="${esc(e.date)}"></div>
+    <div><label class="f" for="${pre}time">เวลา</label><input type="time" id="${pre}time" data-k="time" value="${esc(e.time)}"></div>
+    <div class="w2"><label class="f" for="${pre}cat">หมวด</label><select id="${pre}cat" data-k="category" class="${need(e.category)}">${opts(catsOf(e.type).map(c => c.name), e.category, "เลือกหมวด…")}</select></div>
+    <div class="w2"><label class="f" for="${pre}note">หมายเหตุ</label><input id="${pre}note" data-k="note" value="${esc(e.note)}" placeholder="เช่น ข้าวเที่ยง, ค่าเทอมลูก"></div>
+  </div>`;
+}
+function bindFields(root, e, onChange) {
+  const catSel = root.querySelector('[data-k="category"]');
+  const fillCats = () => { catSel.innerHTML = opts(catsOf(e.type).map(c => c.name), e.category, "เลือกหมวด…"); catSel.classList.toggle("need", !e.category); };
+  root.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
+    if (e.type === b.dataset.v) return;
+    e.type = b.dataset.v; e.typeSet = true;
+    if (!catsOf(e.type).some(c => c.name === e.category)) e.category = "";
+    root.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.v === e.type)));
+    root.querySelector("[data-pl]").textContent = e.type === "in" ? "ได้รับจาก" : "จ่ายให้";
+    fillCats(); onChange && onChange();
+  });
+  root.querySelectorAll("[data-k]").forEach(el => {
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "input", () => {
+      const k = el.dataset.k;
+      e[k] = k === "amount" ? (parseFloat(el.value.replace(/[,฿\s]/g, "")) || null) : el.value;
+      if (k === "party" && !e.category) { const m = S.parties[key(e.party)]; if (m && catsOf(e.type).some(c => c.name === m.category)) { e.category = m.category; fillCats(); } }
+      if (k === "amount" || k === "category") el.classList.toggle("need", !e[k]);
+      onChange && onChange();
+    });
+  });
+}
+function partyList() { $("#party-list").innerHTML = Object.values(S.parties).sort((a, b) => b.count - a.count).slice(0, 200).map(p => `<option value="${esc(p.name)}">`).join(""); }
+
+/* ---------- หน้า จด: รอตรวจ ---------- */
+function renderQueue() {
+  const q = pending(), box = $("#queue");
+  $("#q-dot").hidden = !q.length; $("#q-dot").textContent = q.length;
+  $("#q-head").hidden = !q.length; $("#q-n").textContent = `(${q.length})`;
+  $("#q-all").hidden = q.length < 2;
+  $("#owner-tip").hidden = S.owners.length > 0;
+  [...box.children].forEach(c => { if (!q.some(e => e.id === c.dataset.id)) c.remove(); });
+  const have = new Set([...box.children].map(c => c.dataset.id));
+  q.forEach(e => { if (!have.has(e.id)) box.appendChild(reviewCard(e)); });
+  partyList();
+}
+function reviewCard(e) {
+  const c = document.createElement("div");
+  c.className = "card"; c.dataset.id = e.id;
+  const d = dupOf(e);
+  if (d) c.classList.add("dup");
+  c.innerHTML = `${d ? `<p style="margin:0 0 8px"><span class="tag warn">สลิปซ้ำ?</span> <small>ตรงกับ ${esc(fmt(d.amount))} · ${esc(thDate(d.date))} ที่จดไว้แล้ว</small></p>` : ""}
+    <div class="rv"><div class="tw"></div><div>${fieldsHTML(e, "q" + e.id + "-")}</div></div>
+    <div class="acts"><span>${e.ref ? '<span class="tag">อ่าน QR สลิปได้</span>' : ""}</span>
+      <span class="row-btns"><button class="btn danger" data-a="del">ทิ้ง</button><button class="btn" data-a="ok">บันทึก</button></span></div>`;
+  thumbInto(c.querySelector(".tw"), e.img);
+  bindFields(c, e, save);
+  c.querySelector('[data-a="ok"]').onclick = () => {
+    if (!complete(e)) { toast("กรอกจำนวนเงินและเลือกหมวดก่อน"); c.querySelector(".need")?.focus(); return; }
+    delete e.typeSet; e.status = "ok"; learn(e); save(); renderAll(); toast((e.type === "in" ? "จดรายรับ " : "จดรายจ่าย ") + fmt(e.amount));
+  };
+  c.querySelector('[data-a="del"]').onclick = () => { removeEntry(e); toast("ทิ้งสลิปแล้ว"); };
+  return c;
+}
+async function thumbInto(el, k) {
+  const u = await imgURL(k);
+  if (u) { const im = document.createElement("img"); im.className = "thumb"; im.src = u; im.alt = "สลิป แตะเพื่อขยาย"; im.onclick = () => { $("#viewer-img").src = u; $("#viewer").showModal(); }; el.replaceChildren(im); }
+  else el.innerHTML = `<div class="thumb none">ไม่มีรูป</div>`;
+}
+function removeEntry(e) { S.entries = S.entries.filter(x => x !== e); if (e.img) imgDel(e.img); save(); renderAll(); }
+
+/* ---------- หน้า รายการ ---------- */
+function renderList() {
+  const m = $("#l-month").value, t = $("#l-type").value, q = $("#l-q").value.trim().toLowerCase();
+  const rows = done().filter(e => (!m || (e.date || "").startsWith(m)) && (!t || e.type === t) &&
+      (!q || [e.party, e.category, e.note].join(" ").toLowerCase().includes(q)))
+    .sort((a, b) => (b.date + (b.time || "")).localeCompare(a.date + (a.time || "")) || b.created - a.created);
+  const box = $("#list");
+  if (!rows.length) { box.innerHTML = `<p class="empty">ยังไม่มีรายการในช่วงนี้</p>`; return; }
+  const days = {};
+  rows.forEach(e => (days[e.date] = days[e.date] || []).push(e));
+  box.innerHTML = `<p class="hint" style="margin-top:8px">${rows.length} รายการ · รับ <b style="color:var(--in)">${fmt(sum(rows, "in"))}</b> · จ่าย <b style="color:var(--out)">${fmt(sum(rows, "out"))}</b></p>` +
+    Object.entries(days).map(([d, es]) => `<div class="day"><h3><span>${esc(thDate(d))}</span><span>จ่าย ${fmt(sum(es, "out"))}</span></h3>${es.map(e => `
+      <button class="ent ${e.type}" data-id="${e.id}"><span class="ic" aria-hidden="true">${esc([...(e.category || "?")].slice(0, 2).join(""))}</span>
+      <span class="mid"><b>${esc(e.party || e.note || e.category)}</b><small>${esc(e.category)}${e.time ? " · " + esc(e.time) : ""}${e.note && e.party ? " · " + esc(e.note) : ""}</small></span>
+      <span class="amt">${e.type === "in" ? "+" : "−"}${fmt(e.amount)}</span></button>`).join("")}</div>`).join("");
+  box.querySelectorAll(".ent").forEach(b => b.onclick = () => editEntry(S.entries.find(e => e.id === b.dataset.id)));
+}
+function editEntry(e, isNew) {
+  const copy = { ...e };
+  const f = $("#dlg-f");
+  f.innerHTML = `<h2>${isNew ? (e.type === "in" ? "จดรายรับ" : "จดรายจ่าย") : "แก้ไขรายการ"}</h2>
+    <div class="rv${e.img ? "" : " noimg"}">${e.img ? '<div class="tw"></div>' : ""}<div>${fieldsHTML(copy, "d-")}</div></div>
+    <div class="acts" style="display:flex;justify-content:space-between;gap:8px;margin-top:14px;flex-wrap:wrap">
+      ${isNew ? "<span></span>" : '<button class="btn danger" type="button" id="d-del">ลบ</button>'}
+      <span class="row-btns"><button class="btn ghost" value="cancel">ยกเลิก</button><button class="btn" type="button" id="d-ok">บันทึก</button></span></div>`;
+  if (e.img) thumbInto(f.querySelector(".tw"), e.img);
+  bindFields(f, copy);
+  f.querySelector("#d-ok").onclick = () => {
+    if (!complete(copy)) { toast("กรอกจำนวนเงิน วันที่ และหมวดให้ครบ"); return; }
+    delete copy.typeSet;
+    Object.assign(e, copy, { status: "ok" });
+    if (isNew) S.entries.push(e);
+    learn(e); save(); $("#dlg").close(); renderAll(); toast("บันทึกแล้ว");
+  };
+  const del = f.querySelector("#d-del");
+  if (del) del.onclick = () => { if (confirm("ลบรายการนี้?")) { $("#dlg").close(); removeEntry(e); toast("ลบแล้ว"); } };
+  $("#dlg").showModal();
+  setTimeout(() => f.querySelector(isNew ? '[data-k="amount"]' : "#d-ok")?.focus(), 50);
+}
+
+/* ---------- หน้า สรุป ---------- */
+function daysIn(ym) { const [y, m] = ym.split("-").map(Number); return new Date(y, m, 0).getDate(); }
+function renderSum() {
+  const m = $("#s-month").value || today().slice(0, 7);
+  const rows = inMonth(done(), m);
+  $("#r-period").textContent = thMonth(m) + " · พิมพ์เมื่อ " + new Date().toLocaleString("th-TH");
+  const box = $("#sum");
+  if (!rows.length) { box.innerHTML = `<p class="empty">ยังไม่มีรายการใน${esc(thMonth(m))}</p>`; return; }
+  const inc = sum(rows, "in"), out = sum(rows, "out"), left = inc - out;
+  const isNow = m === today().slice(0, 7);
+  const dayN = isNow ? new Date().getDate() : daysIn(m);
+  const by = t => { const o = {}; rows.filter(e => e.type === t).forEach(e => o[e.category] = (o[e.category] || 0) + e.amount); return Object.entries(o).sort((a, b) => b[1] - a[1]); };
+  const budgetOf = n => (S.cats.find(c => c.type === "out" && c.name === n) || {}).budget || 0;
+  const outRows = by("out").map(([n, v]) => {
+    const b = budgetOf(n), pct = b ? v / b * 100 : v / (out || 1) * 100;
+    return `<li class="${b && v > b ? "over" : ""}"><span>${esc(n)}</span><span>${fmt(v)}</span><span class="bar${b && v > b ? " over" : ""}"><i style="width:${Math.min(pct, 100)}%"></i></span>
+      ${b ? `<span class="note">งบ ${fmt(b)} · ${v > b ? "เกินงบ " + fmt(v - b) : "เหลือ " + fmt(b - v)}</span>` : ""}</li>`;
+  }).join("");
+  const inRows = by("in").map(([n, v]) => `<li><span>${esc(n)}</span><span>${fmt(v)}</span><span class="bar"><i style="width:${v / (inc || 1) * 100}%;background:var(--in)"></i></span></li>`).join("");
+  const top = Object.values(rows.filter(e => e.type === "out").reduce((o, e) => { const k = key(e.party) || "—"; o[k] = o[k] || { name: e.party || "ไม่ระบุ", v: 0, n: 0 }; o[k].v += e.amount; o[k].n++; return o; }, {})).sort((a, b) => b.v - a.v).slice(0, 5);
+  box.innerHTML = `<div class="kpis"><div class="kpi in"><small>รายรับ</small><b>${fmt(inc)}</b></div><div class="kpi out"><small>รายจ่าย</small><b>${fmt(out)}</b></div><div class="kpi"><small>ตังค์เหลือ</small><b style="color:${left < 0 ? "var(--out)" : "var(--ink)"}">${left < 0 ? "−" : ""}${fmt(Math.abs(left))}</b></div></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>เฉลี่ยจ่ายวันละ ${fmt(out / dayN)}</b><span class="hint" style="margin:0">${rows.length} รายการ</span></div>
+      ${S.budget > 0 ? `<div class="bar${out > S.budget ? " over" : ""}"><i style="width:${Math.min(out / S.budget * 100, 100)}%"></i></div>
+      <div class="hint" style="margin:4px 0 0">งบเดือนนี้ ${fmt(S.budget)} · ${out > S.budget ? "เกินงบ " + fmt(out - S.budget) : "ใช้ได้อีก " + fmt(S.budget - out) + (isNow ? ` (วันละ ${fmt((S.budget - out) / Math.max(1, daysIn(m) - dayN + 1))})` : "")}</div>` : ""}</div>
+    ${outRows ? `<div class="card"><h3 style="margin:0">รายจ่ายตามหมวด</h3><ul class="cats">${outRows}</ul></div>` : ""}
+    ${inRows ? `<div class="card"><h3 style="margin:0">รายรับตามหมวด</h3><ul class="cats">${inRows}</ul></div>` : ""}
+    ${top.length ? `<div class="card"><h3 style="margin:0">จ่ายให้ใครมากที่สุด</h3><ul class="cats">${top.map(p => `<li><span>${esc(p.name)} <small style="color:var(--muted)">${p.n} ครั้ง</small></span><span>${fmt(p.v)}</span></li>`).join("")}</ul></div>` : ""}`;
+}
+function exportCSV() {
+  const m = $("#s-month").value;
+  const rows = inMonth(done(), m).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  if (!rows.length) { toast("ไม่มีรายการให้ส่งออก"); return; }
+  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [["วันที่", "เวลา", "ประเภท", "หมวด", "คู่รายการ", "จำนวนเงิน", "หมายเหตุ", "เลขอ้างอิงสลิป"].map(q).join(",")]
+    .concat(rows.map(e => [e.date, e.time, e.type === "in" ? "รายรับ" : "รายจ่าย", e.category, e.party, (e.type === "in" ? e.amount : -e.amount).toFixed(2), e.note, e.ref].map(q).join(",")));
+  download(new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" }), `tangluer-${m}.csv`);
+}
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+
+/* ---------- หน้า ตั้งค่า ---------- */
+function renderSet() {
+  $("#owners").innerHTML = S.owners.length ? S.owners.map((o, i) => `<span class="chip">${esc(o)}<button aria-label="ลบ ${esc(o)}" data-i="${i}">×</button></span>`).join("") : `<p class="empty" style="padding:0">ยังไม่ได้ตั้ง</p>`;
+  $("#owners").querySelectorAll("button").forEach(b => b.onclick = () => { S.owners.splice(+b.dataset.i, 1); save(); renderAll(); });
+  $("#budget").value = S.budget || "";
+  ["out", "in"].forEach(t => {
+    const box = $("#cats-" + t);
+    box.innerHTML = catsOf(t).map(c => `<div class="catrow"><span>${esc(c.name)}</span>
+      ${t === "out" ? `<input inputmode="decimal" aria-label="งบหมวด ${esc(c.name)}" placeholder="งบ/เดือน" value="${c.budget || ""}" data-n="${esc(c.name)}">` : "<span></span>"}
+      <button class="x" aria-label="ลบหมวด ${esc(c.name)}" data-d="${esc(c.name)}">×</button></div>`).join("");
+    box.querySelectorAll("input[data-n]").forEach(el => el.addEventListener("change", () => { const c = S.cats.find(x => x.type === t && x.name === el.dataset.n); c.budget = parseFloat(el.value.replace(/,/g, "")) || 0; save(); renderSum(); }));
+    box.querySelectorAll("button[data-d]").forEach(b => b.onclick = () => {
+      if (catsOf(t).length < 2) { toast("ต้องมีอย่างน้อย 1 หมวด"); return; }
+      if (done().some(e => e.type === t && e.category === b.dataset.d) && !confirm(`หมวด "${b.dataset.d}" มีรายการอยู่ ลบหมวดแล้วรายการเดิมยังอยู่ ต้องการลบ?`)) return;
+      S.cats = S.cats.filter(x => !(x.type === t && x.name === b.dataset.d)); save(); renderSet();
+    });
+  });
+  const ps = Object.entries(S.parties).sort((a, b) => b[1].count - a[1].count);
+  $("#parties").innerHTML = ps.length ? ps.map(([k, p]) => `<span class="chip">${esc(p.name)} → ${esc(p.category)}<button aria-label="ลืม ${esc(p.name)}" data-k="${esc(k)}">×</button></span>`).join("") : `<p class="empty" style="padding:0">ยังไม่มี — จะเริ่มจำเมื่อจดรายการ</p>`;
+  $("#parties").querySelectorAll("button").forEach(b => b.onclick = () => { delete S.parties[b.dataset.k]; save(); renderSet(); });
+}
+function addOwner(v) { v = v.trim(); if (!v || S.owners.includes(v)) return false; S.owners.push(v); save(); renderAll(); return true; }
+
+/* ---------- ส่วนบน ---------- */
+function renderHero() {
+  const t = today(), m = t.slice(0, 7), rows = inMonth(done(), m);
+  const inc = sum(rows, "in"), out = sum(rows, "out"), left = inc - out;
+  $("#h-label").textContent = "ตังค์เหลือ" + thMonth(m).replace(/^/, " ");
+  $("#h-left").textContent = (left < 0 ? "−" : "") + fmt(Math.abs(left));
+  $("#h-in").textContent = fmt(inc); $("#h-out").textContent = fmt(out);
+  $("#h-today").textContent = fmt(sum(rows.filter(e => e.date === t), "out"));
+  const hb = $("#h-bar"), hn = $("#h-bnote");
+  hb.hidden = hn.hidden = !(S.budget > 0);
+  if (S.budget > 0) {
+    hb.classList.toggle("over", out > S.budget);
+    hb.querySelector("i").style.width = Math.min(out / S.budget * 100, 100) + "%";
+    hn.textContent = out > S.budget ? `เกินงบเดือนนี้ ${fmt(out - S.budget)}` : `ใช้งบไป ${(out / S.budget * 100).toFixed(0)}% · ใช้ได้อีก ${fmt(S.budget - out)}`;
+  }
+}
+function renderAll() { renderQueue(); renderHero(); renderList(); renderSum(); renderSet(); }
+
+function setTab(t) {
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", String(b.dataset.t === t)));
+  ["add", "list", "sum", "set"].forEach(k => $("#p-" + k).hidden = k !== t);
+  if (t === "list") renderList(); if (t === "sum") renderSum(); if (t === "set") renderSet();
+}
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => setTab(b.dataset.t));
+
+$("#files").addEventListener("change", ev => { addFiles(ev.target.files); ev.target.value = ""; });
+const drop = $("#drop");
+["dragenter", "dragover"].forEach(k => drop.addEventListener(k, ev => { ev.preventDefault(); drop.classList.add("over"); }));
+["dragleave", "drop"].forEach(k => drop.addEventListener(k, ev => { ev.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", ev => addFiles(ev.dataTransfer.files));
+document.addEventListener("paste", ev => { const fs = [...(ev.clipboardData?.files || [])]; if (fs.length) addFiles(fs); });
+const manual = t => { const e = newEntry(t); e.status = "ok"; editEntry(e, true); };
+$("#manual-out").onclick = () => manual("out");
+$("#manual-in").onclick = () => manual("in");
+$("#save-all").onclick = () => { let n = 0; pending().forEach(e => { if (complete(e) && !dupOf(e)) { delete e.typeSet; e.status = "ok"; learn(e); n++; } }); save(); renderAll(); toast(n ? `บันทึก ${n} รายการ` : "ยังไม่มีรายการที่กรอกครบ"); };
+$("#l-month").addEventListener("input", renderList);
+$("#l-type").addEventListener("change", renderList);
+$("#l-q").addEventListener("input", renderList);
+$("#s-month").addEventListener("input", renderSum);
+$("#print").onclick = () => { renderSum(); window.print(); };
+$("#csv").onclick = exportCSV;
+$("#ow-add").onclick = () => { if (addOwner($("#ow-name").value)) $("#ow-name").value = ""; };
+$("#ow-name").addEventListener("keydown", ev => { if (ev.key === "Enter") $("#ow-add").click(); });
+$("#owner-quick-add").onclick = () => { if (addOwner($("#owner-quick").value)) { $("#owner-quick").value = ""; toast("บันทึกชื่อบัญชีแล้ว"); } };
+$("#budget").addEventListener("change", ev => { S.budget = parseFloat(ev.target.value.replace(/,/g, "")) || 0; save(); renderHero(); renderSum(); });
+document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
+  const t = b.dataset.add, inp = $("#nc-" + t), n = inp.value.trim();
+  if (!n || catsOf(t).some(c => c.name === n)) return;
+  S.cats.push({ name: n, type: t, budget: 0 }); inp.value = ""; save(); renderSet();
+});
+["out", "in"].forEach(t => $("#nc-" + t).addEventListener("keydown", ev => { if (ev.key === "Enter") document.querySelector(`[data-add="${t}"]`).click(); }));
+$("#backup").onclick = () => download(new Blob([JSON.stringify({ app: "tangluer", v: 1, at: new Date().toISOString(), data: S }, null, 1)], { type: "application/json" }), `tangluer-backup-${today()}.json`);
+$("#restore").addEventListener("change", async ev => {
+  const f = ev.target.files[0]; ev.target.value = ""; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text()), d = j.data || j;
+    if (!Array.isArray(d.entries)) throw 0;
+    if (!confirm(`นำเข้า ${d.entries.length} รายการ จะแทนที่ข้อมูลในเครื่องนี้ทั้งหมด ต้องการต่อ?`)) return;
+    S = Object.assign(fresh(), d); save(); renderAll(); toast("นำเข้าข้อมูลแล้ว");
+  } catch (e) { toast("ไฟล์นี้ไม่ใช่ไฟล์สำรองของตังค์เหลือ"); }
+});
+
+/* สลิปที่แชร์มาจากแอปอื่น (Android: แชร์ → ตังค์เหลือ) */
+async function pickShared() {
+  if (!("caches" in window)) return;
+  try {
+    const c = await caches.open("tangluer-share"), keys = await c.keys();
+    if (!keys.length) return;
+    const files = [];
+    for (const k of keys) { const r = await c.match(k); const b = await r.blob(); files.push(new File([b], "shared.jpg", { type: b.type || "image/jpeg", lastModified: Number(r.headers.get("x-modified")) || Date.now() })); await c.delete(k); }
+    history.replaceState(null, "", location.pathname);
+    setTab("add"); addFiles(files);
+  } catch (e) {}
+}
+
+const m0 = today().slice(0, 7);
+$("#l-month").value = m0; $("#s-month").value = m0;
+renderAll();
+setTab(pending().length || !done().length ? "add" : "list");
+pickShared();
+</script>
+<script src="../shared/pwa-install.js"></script>
+</body>
+</html>
