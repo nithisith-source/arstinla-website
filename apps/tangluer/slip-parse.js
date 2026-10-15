@@ -11,8 +11,11 @@
   const EN_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
   // OCR ภาษาไทยมักแทรกช่องว่างระหว่างตัวอักษร — ยุบช่องว่างที่อยู่ระหว่างอักษรไทย
+  // OCR มักให้ "ํา" (นิคหิต+สระอา) แทน "ำ" — รวมให้เป็นตัวเดียว
+  const norm = t => String(t || "").replace(/ํ\s*า/g, "ำ");
+
   function tidy(line) {
-    let s = line
+    let s = norm(line)
       .replace(/[​ ]/g, " ")
       .replace(/([฀-๿.])\s+(?=[฀-๿.])/g, "$1");
     // ตัวเลขที่ถูกแยกทีละหลัก เช่น "3 , 4 5 0 . 0 0" → "3,450.00"
@@ -146,7 +149,7 @@
       .replace(/[\s.]/g, "");
   }
 
-  const api = { parseSlip, parseParties, payeeKey, parseDate, parseAmount, parseTime, tidy };
+  const api = { norm, parseSlip, parseParties, payeeKey, parseDate, parseAmount, parseTime, tidy };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.SlipParse = api;
 })(typeof self !== "undefined" ? self : this);

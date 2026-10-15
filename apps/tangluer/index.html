@@ -186,12 +186,23 @@ dialog.viewer img{display:block;width:100%;max-height:80vh;object-fit:contain;bo
   <label class="drop" id="drop">
     <svg viewBox="0 0 24 24"><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3M12 4v12M7 9l5-5 5 5"/></svg>
     <b>เลือกสลิปจากแกลเลอรี</b>
-    <span>เลือกได้หลายรูปพร้อมกัน · หรือกด "แชร์" สลิปจากแอปธนาคารมาที่ตังค์เหลือ</span>
+    <span>เลือกรูปทั้งหมดของวันนี้ได้เลย แอปจะข้ามรูปที่ไม่ใช่สลิปและสลิปที่เคยอ่านแล้วให้เอง · หรือกด "แชร์" สลิปจากแอปธนาคารมาที่ตังค์เหลือ</span>
     <input type="file" id="files" accept="image/*" multiple>
   </label>
   <div class="row-btns" style="margin-top:10px">
     <button class="btn ghost" id="manual-out">− จดรายจ่ายเอง</button>
     <button class="btn ghost" id="manual-in">+ จดรายรับเอง</button>
+  </div>
+  <div class="card" id="folder-box" hidden>
+    <b>อ่านจากโฟลเดอร์ในคอมพิวเตอร์</b>
+    <p class="hint" style="margin:2px 0 10px" id="folder-hint">เลือกโฟลเดอร์ที่เก็บสลิปไว้ครั้งเดียว ครั้งต่อไปกดปุ่มเดียวเพื่ออ่านเฉพาะรูปใหม่</p>
+    <div class="row-btns" style="align-items:center">
+      <button class="btn" id="folder-scan" hidden>อ่านรูปใหม่</button>
+      <button class="btn ghost" id="folder-pick">เลือกโฟลเดอร์</button>
+      <label style="display:flex;align-items:center;gap:6px;font-size:.9rem;color:var(--muted)">ย้อนหลัง
+        <select id="scan-days" style="width:auto;padding:6px 8px"><option value="1">วันนี้</option><option value="7">7 วัน</option><option value="30">30 วัน</option><option value="0">ทั้งหมด</option></select></label>
+    </div>
+    <input type="file" id="folder-input" webkitdirectory multiple hidden>
   </div>
   <div class="progress" id="prog" hidden><span id="prog-t">กำลังอ่านสลิป…</span><div class="bar"><i id="prog-b"></i></div></div>
 
@@ -275,7 +286,7 @@ const DEFAULT_CATS = [
 ];
 const $ = s => document.querySelector(s);
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const fresh = () => ({ owners: [], budget: 0, cats: DEFAULT_CATS.map(c => ({ ...c })), entries: [], parties: {} });
+const fresh = () => ({ owners: [], budget: 0, cats: DEFAULT_CATS.map(c => ({ ...c })), entries: [], parties: {}, seen: {}, scanDays: 7 });
 function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && Array.isArray(v.entries)) return Object.assign(fresh(), v); } catch (e) {} return fresh(); }
 let S = load();
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast("พื้นที่เก็บข้อมูลเต็ม — สำรองข้อมูลแล้วลบรายการเก่า"); } };
@@ -298,7 +309,7 @@ function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.ad
 
 /* ---------- รูปสลิป (IndexedDB) ---------- */
 let dbp = null;
-function idb() { if (!dbp) dbp = new Promise((res, rej) => { const r = indexedDB.open("tangluer", 1); r.onupgradeneeded = () => r.result.createObjectStore("img"); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); return dbp; }
+function idb() { if (!dbp) dbp = new Promise((res, rej) => { const r = indexedDB.open("tangluer", 2); r.onupgradeneeded = () => { const db = r.result; if (!db.objectStoreNames.contains("img")) db.createObjectStore("img"); if (!db.objectStoreNames.contains("kv")) db.createObjectStore("kv"); }; r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); return dbp; }
 async function imgPut(k, blob) { try { const db = await idb(); await new Promise((res, rej) => { const t = db.transaction("img", "readwrite"); t.objectStore("img").put(blob, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); return true; } catch (e) { return false; } }
 async function imgGet(k) { try { const db = await idb(); return await new Promise(res => { const r = db.transaction("img").objectStore("img").get(k); r.onsuccess = () => res(r.result || null); r.onerror = () => res(null); }); } catch (e) { return null; } }
 async function imgDel(k) { try { const db = await idb(); db.transaction("img", "readwrite").objectStore("img").delete(k); } catch (e) {} }
@@ -337,46 +348,78 @@ async function readQR(c) {
 }
 
 /* ---------- อ่านสลิปทีละใบ ---------- */
+function newEntry(type) { return { id: uid(), status: "review", type: type || "out", date: today(), time: "", amount: null, party: "", category: "", note: "", ref: "", img: "", created: Date.now() }; }
+const fp = f => [f.size, f.lastModified || 0, f.name && f.name !== "shared.jpg" ? f.name : ""].join("|");
+function markSeen(f) {
+  S.seen[fp(f)] = 1;
+  const ks = Object.keys(S.seen);
+  if (ks.length > 4000) ks.slice(0, ks.length - 4000).forEach(k => delete S.seen[k]);
+}
+const SLIP_WORDS = /(โอน|ชำระ|สำเร็จ|จำนวน|ค่าธรรมเนียม|เลขที่รายการ|รหัสอ้างอิง|พร้อมเพย์|transfer|successful|amount|ref)/i;
 let busy = false;
 const waiting = [];
-function newEntry(type) { return { id: uid(), status: "review", type: type || "out", date: today(), time: "", amount: null, party: "", category: "", note: "", ref: "", img: "", created: Date.now() }; }
-async function addFiles(files) {
+const tally = { slip: 0, notSlip: 0, seen: 0 };
+// opts.pickedOne = ผู้ใช้เลือกรูปเดียวเอง → ไม่ข้ามแม้ดูไม่เหมือนสลิป
+async function addFiles(files, opts = {}) {
   files = [...files].filter(f => f && (!f.type || f.type.startsWith("image/")));
-  if (!files.length) return;
-  waiting.push(...files);
+  if (!files.length) { if (opts.fromFolder && !busy) toast("ไม่มีรูปใหม่ในโฟลเดอร์"); return; }
+  const todo = files.filter(f => !S.seen[fp(f)] || opts.force);
+  tally.seen += files.length - todo.length;
+  const keepAll = files.length === 1 && !opts.fromFolder;
+  waiting.push(...todo.map(f => ({ f, keep: keepAll })));
   if (busy) return;
+  if (!waiting.length) { report(); return; }
   busy = true;
   const prog = $("#prog"), pt = $("#prog-t"), pb = $("#prog-b");
   prog.hidden = false;
   let n = 0, ocrOk = true;
   while (waiting.length) {
-    const f = waiting.shift(); n++;
+    const { f, keep } = waiting.shift(); n++;
     const total = n + waiting.length;
-    const label = () => pt.textContent = `กำลังอ่านสลิป ${n}/${total}`;
+    const label = () => pt.textContent = `กำลังอ่านรูป ${n}/${total} · เจอสลิป ${tally.slip}`;
     label(); pb.style.width = ((n - 1) / total * 100) + "%";
     const e = newEntry("out");
     if (f.lastModified) e.date = new Date(f.lastModified - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+    let text = "", read = false;
     try {
       const im = await fileToImage(f);
       const big = drawScaled(im, 1400);
-      const blob = await toBlob(drawScaled(im, 900), 0.8);
-      if (blob && await imgPut(e.id, blob)) e.img = e.id;
       e.ref = (await readQR(big)) || "";
+      if (e.ref && S.entries.some(o => o.ref === e.ref)) { tally.seen++; markSeen(f); save(); continue; } // สลิปใบนี้อ่านไปแล้ว (ไฟล์ซ้ำ/สำเนา)
       if (ocrOk) {
         try {
           const w = await ocrWorker(() => pt.textContent = "กำลังเตรียมตัวอ่านภาษาไทย (ครั้งแรกใช้เวลาสักครู่)…");
           label();
-          const { data } = await w.recognize(forOcr(big));
-          applyParsed(e, SlipParse.parseSlip(data.text));
+          text = (await w.recognize(forOcr(big))).data.text || "";
+          read = true;
         } catch (err) { ocrOk = false; toast("อ่านข้อความอัตโนมัติไม่ได้ (ครั้งแรกต้องต่ออินเทอร์เน็ต) — กรอกเองได้"); }
       }
+      const parsed = read ? SlipParse.parseSlip(text) : {};
+      // ข้ามเฉพาะรูปที่มั่นใจว่าไม่ใช่สลิป: ไม่มี QR และอ่านข้อความได้แต่ไม่เจอคำ/ยอดเงินแบบสลิป
+      if (!keep && !e.ref && read && !(SLIP_WORDS.test(SlipParse.norm(text).replace(/\s+/g, "")) && parsed.amount)) {
+        tally.notSlip++; markSeen(f); save(); continue;
+      }
+      if (read) applyParsed(e, parsed);
+      const blob = await toBlob(drawScaled(im, 900), 0.8);
+      if (blob && await imgPut(e.id, blob)) e.img = e.id;
     } catch (err) { toast("เปิดรูปไม่ได้: " + (f.name || "")); }
     guessCategory(e);
+    tally.slip++; markSeen(f);
     S.entries.push(e); save(); renderQueue(); renderHero();
   }
-  pb.style.width = "100%"; pt.textContent = `อ่านเสร็จ ${n} สลิป`;
-  setTimeout(() => { prog.hidden = true; pb.style.width = 0; }, 1500);
+  pb.style.width = "100%";
   busy = false;
+  report();
+}
+function report() {
+  const parts = [`เจอสลิป ${tally.slip} ใบ`];
+  if (tally.notSlip) parts.push(`ข้ามรูปที่ไม่ใช่สลิป ${tally.notSlip}`);
+  if (tally.seen) parts.push(`เคยอ่านแล้ว ${tally.seen}`);
+  const prog = $("#prog");
+  prog.hidden = false; $("#prog-b").style.width = "100%";
+  $("#prog-t").textContent = "อ่านเสร็จ · " + parts.join(" · ");
+  tally.slip = tally.notSlip = tally.seen = 0;
+  setTimeout(() => { if (!busy) { prog.hidden = true; $("#prog-b").style.width = 0; } }, 5000);
 }
 function applyParsed(e, p) {
   if (p.amount) e.amount = p.amount;
@@ -652,6 +695,58 @@ async function pickShared() {
     setTab("add"); addFiles(files);
   } catch (e) {}
 }
+
+/* ---------- โฟลเดอร์ในคอมพิวเตอร์ ---------- */
+async function kvGet(k) { try { const db = await idb(); return await new Promise(res => { const r = db.transaction("kv").objectStore("kv").get(k); r.onsuccess = () => res(r.result || null); r.onerror = () => res(null); }); } catch (e) { return null; } }
+async function kvPut(k, v) { try { const db = await idb(); db.transaction("kv", "readwrite").objectStore("kv").put(v, k); } catch (e) {} }
+const hasDirPicker = "showDirectoryPicker" in window;
+const hasDirInput = "webkitdirectory" in document.createElement("input");
+const coarse = matchMedia("(pointer:coarse)").matches;
+let dirHandle = null;
+const sinceMs = () => { const d = Number(S.scanDays) || 0; if (!d) return 0; const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime() - (d - 1) * 864e5; };
+const isImg = n => /\.(jpe?g|png|webp|heic|heif)$/i.test(n);
+async function listDir(h, depth, out) {
+  for await (const [name, ent] of h.entries()) {
+    if (ent.kind === "file" && isImg(name)) { const f = await ent.getFile(); if (f.lastModified >= sinceMs()) out.push(f); }
+    else if (ent.kind === "directory" && depth < 2 && !name.startsWith(".")) await listDir(ent, depth + 1, out);
+  }
+  return out;
+}
+async function scanFolder(ask) {
+  if (!dirHandle) return;
+  try {
+    let perm = await dirHandle.queryPermission({ mode: "read" });
+    if (perm !== "granted" && ask) perm = await dirHandle.requestPermission({ mode: "read" });
+    if (perm !== "granted") return false;
+    $("#prog").hidden = false; $("#prog-t").textContent = "กำลังดูรูปในโฟลเดอร์…";
+    const files = (await listDir(dirHandle, 0, [])).sort((a, b) => a.lastModified - b.lastModified);
+    $("#prog").hidden = busy ? false : true;
+    setTab("add"); addFiles(files, { fromFolder: true });
+    return true;
+  } catch (e) { toast("เปิดโฟลเดอร์ไม่ได้ — ลองเลือกใหม่"); return false; }
+}
+function folderUI() {
+  $("#folder-scan").hidden = !dirHandle;
+  if (dirHandle) { $("#folder-scan").textContent = `อ่านรูปใหม่ใน "${dirHandle.name}"`; $("#folder-pick").textContent = "เปลี่ยนโฟลเดอร์"; }
+  if (!hasDirPicker) $("#folder-hint").textContent = "เลือกโฟลเดอร์ที่เก็บสลิป แอปจะอ่านเฉพาะรูปที่ยังไม่เคยอ่าน";
+}
+$("#scan-days").value = String(S.scanDays ?? 7);
+$("#scan-days").onchange = ev => { S.scanDays = Number(ev.target.value); save(); };
+$("#folder-box").hidden = coarse || !(hasDirPicker || hasDirInput);
+$("#folder-pick").onclick = async () => {
+  if (hasDirPicker) {
+    try { dirHandle = await window.showDirectoryPicker({ id: "tangluer-slips", mode: "read" }); await kvPut("dir", dirHandle); folderUI(); scanFolder(true); }
+    catch (e) { if (e.name !== "AbortError") toast("เลือกโฟลเดอร์ไม่ได้"); }
+  } else $("#folder-input").click();
+};
+$("#folder-scan").onclick = () => scanFolder(true);
+$("#folder-input").addEventListener("change", ev => { const s0 = sinceMs(); addFiles([...ev.target.files].filter(f => isImg(f.name) && f.lastModified >= s0), { fromFolder: true }); ev.target.value = ""; });
+(async () => {
+  if (!hasDirPicker || coarse) return;
+  dirHandle = await kvGet("dir");
+  folderUI();
+  if (dirHandle) scanFolder(false); // ถ้าเบราว์เซอร์ยังจำสิทธิ์อยู่ จะอ่านรูปใหม่ให้เองตอนเปิดแอป
+})();
 
 const m0 = today().slice(0, 7);
 $("#l-month").value = m0; $("#s-month").value = m0;
