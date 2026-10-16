@@ -35,6 +35,28 @@ body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .co
 .plan-wrap.panning{cursor:grabbing}
 .plan-board{margin-inline:auto}
 @media print{.zoom-controls{display:none!important}.plan-wrap{overflow:visible!important;max-height:none!important}}
+.zoom-controls .full-btn{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.06em;border-left:1px solid #ffffff2e;padding:0 12px}
+.zoom-controls .full-icon{font-size:14px}
+.panel-collapse{display:none}
+body.full-mode{overflow:hidden}
+body.full-mode .site-header,body.full-mode .stage-bar,body.full-mode .sheet-head,body.full-mode .legend,body.full-mode .environment-info,body.full-mode .analysis,body.full-mode .method-note,body.full-mode .control-panel>.eyebrow,body.full-mode .control-panel>h1,body.full-mode .control-intro{display:none!important}
+body.full-mode .planner-shell{display:grid!important;grid-template-columns:250px minmax(0,1fr);height:100svh;min-height:0}
+body.full-mode .control-panel{display:block!important;position:relative;max-height:100svh;padding:14px 14px 24px;zoom:.82;max-height:calc(100svh / .82)}
+body.full-mode .control-panel .control-section{margin-top:0}
+body.full-mode .workspace{max-height:100svh;min-height:0;padding:10px 14px;overflow:hidden}
+body.full-mode .client-sheet{max-width:none;border:0;padding:0;background:transparent;height:100%;display:flex;flex-direction:column}
+body.full-mode .layer-controls{margin:0 0 6px;justify-content:flex-start}
+body.full-mode .layer-controls>*{height:32px}
+body.full-mode .plan-layout{flex:1;min-height:0}
+body.full-mode .plan-wrap{max-height:calc(100svh - 108px)}
+body.full-mode .zoom-controls{margin-top:-38px}
+body.full-mode .panel-collapse{display:grid;place-items:center;position:sticky;top:0;margin:-6px -6px 6px auto;width:30px;height:30px;border:1px solid #ffffff40;background:#171816;color:#f7f4ed;font-size:18px;cursor:pointer;z-index:5}
+body.full-mode.panel-hidden .planner-shell{grid-template-columns:0 minmax(0,1fr)}
+body.full-mode.panel-hidden .control-panel{padding:0;overflow:visible;border:0}
+body.full-mode.panel-hidden .control-panel>*:not(.panel-collapse){display:none!important}
+body.full-mode.panel-hidden .panel-collapse{position:fixed;left:8px;top:10px;margin:0}
+body.full-mode.panel-hidden .workspace{padding-left:48px}
+@media(max-width:760px){body.full-mode .planner-shell{grid-template-columns:min(240px,70vw) minmax(0,1fr)}body.full-mode .layer-controls{display:none}body.full-mode .zoom-controls{margin-top:0}body.full-mode .plan-wrap{max-height:calc(100svh - 70px)}}
 @media(max-width:760px){.site-header{height:auto;min-height:72px;padding-top:16px;padding-bottom:16px;align-items:flex-start}.brand span{display:block;margin-top:4px}.top-nav{flex-direction:column;align-items:flex-end;gap:7px}.planner-shell{display:block}.control-panel,.workspace{max-height:none}.control-panel{border-right:0;border-bottom:1px solid var(--line)}.workspace{padding:20px 12px 36px}.stage-bar,.sheet-head{align-items:flex-start}.stage-bar{display:block}.stage-actions{margin-top:12px}.sheet-head{display:block}.sheet-meta{text-align:left;margin-top:10px}.client-sheet{padding:15px}.layer-controls{justify-content:stretch;margin-top:18px}.layer-toggle,.wall-setting{flex:1 1 145px}.plan-wrap{padding:34px 28px 28px 36px}.environment-info{display:block}.environment-info article{border-right:0;border-bottom:1px solid var(--pale)}.analysis{grid-template-columns:1fr}.room-report{grid-column:auto}.report-list{grid-template-columns:1fr}.legend{margin-left:16px;margin-right:16px}.drag-note{width:100%;margin:5px 0 0}.room-content{padding:calc(5px + var(--wall-inner))}.room-block small{font-size:6px}}
 @media print{.site-header,.control-panel,.stage-bar,.layer-controls,.toast,.room-nudge{display:none!important}.planner-shell{display:block}.workspace{padding:0;max-height:none;overflow:visible}.client-sheet{border:0;max-width:none;padding:5mm}.sheet-head{margin-bottom:4mm}.plan-layout{grid-template-columns:max-content 70mm;gap:8mm}.plan-wrap{padding:8mm}.plan-board{width:var(--print-width)!important;height:var(--print-height)!important;aspect-ratio:auto!important}.legend{width:var(--print-width);margin:3mm 8mm 0}.analysis{break-before:page}.method-note{break-inside:avoid}body{background:white}@page{size:A2 landscape;margin:10mm}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -50,7 +72,8 @@ body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .co
 </header>
 
 <main class="planner-shell">
-  <aside class="control-panel">
+  <aside class="control-panel" id="controlPanel">
+    <button type="button" class="panel-collapse" id="panelCollapse" aria-expanded="true" title="ซ่อน/แสดงแถบแก้ไข">‹</button>
     <div class="eyebrow">ARSTINLA DIGITAL TOOL / 06</div>
     <h1>Plan before<br>the plan.</h1>
     <p class="control-intro">จัดฟังก์ชัน ขนาดห้อง และอ่านทิศแดด–ลม เพื่อสร้างบทสนทนาแรกกับลูกค้าก่อนพัฒนาแบบจริง</p>
@@ -157,6 +180,7 @@ body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .co
               <button type="button" id="zoomOut" aria-label="ซูมออก" title="ซูมออก (Ctrl + ลูกกลิ้ง)">−</button>
               <button type="button" id="zoomReset" aria-label="กลับขนาดพอดีจอ" title="พอดีจอ">100%</button>
               <button type="button" id="zoomIn" aria-label="ซูมเข้า" title="ซูมเข้า (Ctrl + ลูกกลิ้ง)">+</button>
+              <button type="button" id="fullModeBtn" class="full-btn" aria-pressed="false" title="โหมดเต็มจอ (F)"><span class="full-icon" aria-hidden="true">⛶</span><span class="full-text">เต็มจอ</span></button>
             </div>
           <div class="plan-wrap">
             <span class="compass-label n">N</span><span class="compass-label e">E</span><span class="compass-label s">S</span><span class="compass-label w">W</span>
@@ -538,6 +562,26 @@ document.addEventListener("keydown",event=>{
   event.preventDefault();const step=event.shiftKey?1:.1;
   room?moveRoom(room,delta[0]*step,delta[1]*step):moveColumn(column,delta[0]*step,delta[1]*step);renderAll();
 });
+
+/* ---- Full-screen mode with a compact edit panel on the left ---- */
+(function(){
+  const body=document.body,btn=$("fullModeBtn"),collapse=$("panelCollapse");
+  const refresh=()=>requestAnimationFrame(()=>window.dispatchEvent(new Event("resize")));
+  function set(on){
+    body.classList.toggle("full-mode",on);btn.setAttribute("aria-pressed",String(on));
+    btn.querySelector(".full-text").textContent=on?"ออก":"เต็มจอ";btn.title=on?"ออกจากโหมดเต็มจอ (Esc)":"โหมดเต็มจอ (F)";
+    if(on){body.classList.remove("present-mode");if(window.innerWidth<760){body.classList.add("panel-hidden");collapse.setAttribute("aria-expanded","false");collapse.textContent="›"}try{document.documentElement.requestFullscreen?.().catch(()=>{})}catch(e){}}
+    else{body.classList.remove("panel-hidden");collapse.setAttribute("aria-expanded","true");collapse.textContent="‹";if(document.fullscreenElement)document.exitFullscreen?.().catch(()=>{})}
+    refresh();
+  }
+  btn.addEventListener("click",()=>set(!body.classList.contains("full-mode")));
+  collapse.addEventListener("click",()=>{const hide=!body.classList.contains("panel-hidden");body.classList.toggle("panel-hidden",hide);collapse.setAttribute("aria-expanded",String(!hide));collapse.textContent=hide?"›":"‹";refresh()});
+  document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&body.classList.contains("full-mode"))set(false)});
+  document.addEventListener("keydown",e=>{const t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))return;
+    if(e.key==="Escape"&&body.classList.contains("full-mode")&&!document.fullscreenElement){set(false)}
+    else if((e.key==="f"||e.key==="F")&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();set(!body.classList.contains("full-mode"))}});
+  window.addEventListener("beforeprint",()=>{if(body.classList.contains("full-mode"))set(false)});
+})();
 </script>
 </body>
 </html>
