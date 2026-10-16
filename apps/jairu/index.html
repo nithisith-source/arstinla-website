@@ -7,47 +7,104 @@
 <meta name="description" content="ใจรู้ แบบฝึกเข้าใจตัวเองวันละบท 30 วัน โดย ARSTINLA">
 <link rel="icon" href="/favicon.ico?v=2" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#E9ECF0">
 <style>
-:root{--bg:#f7f3ec;--card:#fffdf9;--ink:#2f2a24;--mute:#7b7268;--line:#e6dfd3;--acc:#5f8a6a;--acc2:#e9f1ea;--warn:#b5653a;--pro:#9a7b2f;--prob:#f6eed8}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1a18;--card:#252320;--ink:#ece6dc;--mute:#a59c90;--line:#38342f;--acc:#86b892;--acc2:#2a3a2d;--warn:#e09367;--pro:#d9b860;--prob:#3a3220}}
-:root[data-theme="dark"]{--bg:#1b1a18;--card:#252320;--ink:#ece6dc;--mute:#a59c90;--line:#38342f;--acc:#86b892;--acc2:#2a3a2d;--warn:#e09367;--pro:#d9b860;--prob:#3a3220}
+:root{--mist:#E9ECF0;--paper:#F4F6F8;--ink:#1C2333;--soft:#5B6B8C;--mute:#7A8499;--line:#D3D8E0;--moon:#C9A24A;--moon-soft:#EFE3C2;--moon-dim:#D6CCAE;--shade:#C9CFDA;--warn:#A4572F;
+ --serif:"Noto Serif Thai",Georgia,serif;--sans:"IBM Plex Sans Thai Looped","IBM Plex Sans Thai",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mist:#121827;--paper:#1A2133;--ink:#E6E9F0;--soft:#9AA8C6;--mute:#8590A8;--line:#2A3349;--moon:#E2C072;--moon-soft:#3A3426;--moon-dim:#4A4230;--shade:#2C3550;--warn:#E09367}}
+:root[data-theme="dark"]{--mist:#121827;--paper:#1A2133;--ink:#E6E9F0;--soft:#9AA8C6;--mute:#8590A8;--line:#2A3349;--moon:#E2C072;--moon-soft:#3A3426;--moon-dim:#4A4230;--shade:#2C3550;--warn:#E09367}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.65;font-size:16px}
-#app{max-width:640px;margin:0 auto;padding:16px 16px 80px}
-h1{font-size:26px;margin:4px 0 0}h2{font-size:21px;margin:0 0 6px}h3{font-size:16px;margin:0 0 6px}
-.sub{color:var(--mute);font-size:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
-.btn{display:inline-block;border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:600;background:var(--acc);color:#fff;cursor:pointer;text-decoration:none}
+html{background:var(--mist)}
+body{margin:0;background:var(--mist);color:var(--ink);font:400 16px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
+#app{max-width:620px;margin:0 auto;padding:20px 20px 120px}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--moon);outline-offset:3px}
+.sub{color:var(--mute);font-size:14px;margin:0}
+.brand{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--mute)}
+.brand a{text-decoration:none}
+.link{background:none;border:0;padding:6px 0;cursor:pointer;color:var(--soft);font-size:14px}
+.link:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:0;border-radius:999px;padding:0 26px;background:var(--ink);color:var(--mist);font:500 15px var(--sans);cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--soft)}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.btn.pro{background:var(--pro);color:#fff}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--acc)}
-.mod{margin-top:18px}.mod h3{display:flex;align-items:center;gap:8px}.dot{width:10px;height:10px;border-radius:50%}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.day{aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;cursor:pointer;color:var(--ink);font:inherit;font-weight:600;position:relative}
-.day small{font-size:10px;color:var(--mute);font-weight:400}
-.day.done{background:var(--acc2);border-color:var(--acc)}
-.day.lock{opacity:.4;cursor:not-allowed}
-.day.today{outline:2px solid var(--acc);outline-offset:1px}
-.day .tag{position:absolute;top:3px;right:5px;font-size:9px;color:var(--pro)}
-.lesson{background:var(--acc2);border-radius:12px;padding:14px;margin:12px 0}
-label.q{display:block;font-weight:600;margin:18px 0 8px}
-textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
+.btn.ghost:hover{border-color:var(--soft);background:transparent}
+.btn.moon{background:var(--moon);color:#1C2333}
+/* hero: the 30-moon cycle */
+.hero{text-align:center;margin:18px 0 8px}
+.ring{width:min(320px,86vw);aspect-ratio:1;margin:0 auto;display:block}
+.ring .m-dark{fill:var(--shade)}
+.ring .m-lit{fill:var(--paper);stroke:var(--line);stroke-width:.6}
+.ring .done .m-dark{fill:var(--shade);stroke:var(--moon);stroke-width:1}
+.ring .done .m-lit{fill:var(--moon);stroke:none}
+.ring .now .halo{fill:none;stroke:var(--moon);stroke-width:1.2}
+.ring .locked{opacity:.45}
+.ring-num{font:500 64px/1 var(--serif);fill:var(--ink)}
+.ring-cap{font:400 13px var(--sans);fill:var(--mute)}
+.title{font:500 40px/1.15 var(--serif);margin:6px 0 0;letter-spacing:-.01em}
+.tagline{font:400 15px/1.6 var(--sans);color:var(--soft);margin:4px 0 0}
+/* today */
+.today{margin:34px 0 10px;padding:24px 0 26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.today .kicker{font-size:14px;color:var(--soft);margin:0 0 4px}
+.today h2{font:500 28px/1.3 var(--serif);margin:0 0 6px}
+.today .row{margin-top:18px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+/* modules */
+.mods{margin-top:26px}
+.mod{display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.mod h3{margin:0;font:500 16px/1.4 var(--serif);display:flex;align-items:center;gap:10px}
+.mod h3 i{width:3px;height:18px;border-radius:2px;background:var(--c);flex:none}
+.mod h3 small{font:400 12px var(--sans);color:var(--mute);margin-left:auto}
+.days{display:flex;gap:6px}
+.day{width:40px;height:44px;padding:0;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:10px}
+.day svg{width:22px;height:22px}
+.day .m-dark{fill:var(--shade)}.day .m-lit{fill:var(--paper);stroke:var(--line);stroke-width:1}
+.day.done .m-dark{fill:var(--shade);stroke:var(--moon);stroke-width:1.4}.day.done .m-lit{fill:var(--moon);stroke:none}
+.day span{font-size:11px;color:var(--mute);line-height:1}
+.day.now{background:var(--paper);box-shadow:inset 0 0 0 1px var(--moon)}
+.day.now span{color:var(--ink);font-weight:600}
+.day:hover:not(:disabled){background:var(--paper)}
+.day:disabled{cursor:default;opacity:.5}
+.day .tag{font-size:9px;color:var(--moon);font-weight:600}
+@media (max-width:520px){.mod{grid-template-columns:1fr}.days{justify-content:space-between}.day{width:auto;flex:1}}
+/* pro */
+.probox{margin:0;padding:0}
+.probox h2{font:500 24px/1.35 var(--serif);margin:0 0 6px}
+.probox .price{font:500 18px var(--serif);margin:14px 0 18px}
+.probox .price span{color:var(--mute);font:400 14px var(--sans);margin:0 6px}
+/* lesson page */
+.lesson-head{margin:18px 0 0;padding-left:16px;border-left:3px solid var(--c)}
+.lesson-head .kicker{font-size:14px;color:var(--soft);margin:0}
+.lesson-head h2{font:500 32px/1.3 var(--serif);margin:2px 0 0}
+.lesson{font:400 19px/1.95 var(--serif);margin:26px 0 8px;color:var(--ink)}
+.block{margin-top:34px}
+label.q{display:flex;gap:12px;font:500 16px/1.6 var(--sans);margin:0 0 10px}
+label.q b{font:500 15px var(--serif);color:var(--moon);min-width:1.2em}
+textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;font:400 16px/1.8 var(--sans);background:var(--paper);color:var(--ink);resize:vertical}
+textarea:focus{outline:0;border-color:var(--soft)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
-.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.sc{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;margin:6px 0;font-size:14px}
-.sc input{width:100%;accent-color:var(--acc)}.sc b{text-align:right}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 15px;font-size:14px;cursor:pointer}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--mist)}
+.sc{display:grid;grid-template-columns:120px 1fr 26px;gap:12px;align-items:center;margin:10px 0;font-size:14px}
+.sc input{width:100%;accent-color:var(--moon)}.sc b{text-align:right;font:500 15px var(--serif)}
 .prev{font-size:12px;color:var(--mute)}
-.moods{display:flex;gap:8px}.mood{font-size:26px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px 8px;cursor:pointer}.mood.on{border-color:var(--acc);background:var(--acc2)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.link{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0;font-weight:600}
-.probox{background:var(--prob);border:1px solid var(--pro);border-radius:16px;padding:18px;margin:14px 0}
-.note{font-size:13px;color:var(--warn);margin-top:10px}
-.sum dt{font-weight:600;margin-top:14px;color:var(--acc)}.sum dd{margin:4px 0 0;white-space:pre-wrap}
-@media (max-width:380px){.sc{grid-template-columns:88px 1fr 24px}}
+.moods{display:flex;gap:6px;flex-wrap:wrap}
+.mood{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.mood.on{border-color:var(--moon);background:var(--moon-soft)}
+.finish{position:sticky;bottom:0;margin:40px -20px 0;padding:14px 20px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--mist) 30%);display:flex;gap:14px;align-items:center}
+.saved{font-size:13px;color:var(--mute)}
+#msg{font-size:14px;color:var(--warn)}
+.note{font-size:13px;color:var(--warn);margin-top:22px}
+/* summary */
+.sum-title{font:500 32px/1.3 var(--serif);margin:16px 0 4px}
+.sum{margin:26px 0 0}
+.sum dt{font:500 14px var(--sans);color:var(--soft);margin-top:22px}
+.sum dd{margin:4px 0 0;font:400 18px/1.8 var(--serif);white-space:pre-wrap}
+.gate{min-height:70vh;display:flex;flex-direction:column;justify-content:center}
+@media (max-width:380px){.sc{grid-template-columns:92px 1fr 22px}.title{font-size:34px}}
+@media (prefers-reduced-motion:no-preference){.ring .now .halo{animation:breathe 4s ease-in-out infinite}@keyframes breathe{50%{stroke-opacity:.25}}}
 </style>
 </head>
 <body>
@@ -131,7 +188,7 @@ const SUMMARY = [
   ['เสียงในหัว',11,'a'],['ความเชื่อที่จำกัด',13,'a'],['กับดักความคิด',14,'k'],
   ['การเติมใจที่ชอบ',19,'g'],['เป้าหมายเดียว',24,'a'],['นิสัยจิ๋ว',26,'a'],['สิ่งที่ค้นพบ',29,'a']
 ];
-const MOODS = ['😞','🙁','😐','🙂','😄'];
+const MOODS = ['หนักใจ','ไม่ค่อยดี','เฉยๆ','ดี','เบาสบาย'];
 
 /* ===== สถานะ ===== */
 let member, S, view = {name:'home'};
@@ -149,83 +206,98 @@ function unlocked(n){
 }
 
 /* ===== หน้าหลัก ===== */
-function home(){
-  const nd = nextDay(), c = doneCount();
-  let todayCard;
-  if(!nd) todayCard = `<h2>จบครบ 30 วันแล้ว 🎉</h2><p class="sub">กลับไปอ่านคำตอบของตัวเอง หรือดูภาพรวมตัวตนได้เสมอ</p>`;
-  else if(!unlocked(nd)) todayCard = `<h2>วันนี้ทำครบแล้ว</h2><p class="sub">บทที่ ${nd} จะเปิดพรุ่งนี้ การเว้นช่วงให้ความคิดได้ตกตะกอนคือส่วนหนึ่งของการฝึก</p>`;
-  else if(needsPro(nd)) todayCard = proBox(nd);
-  else todayCard = `<p class="sub">วันที่ ${nd} · ${esc(MODULES[DAYS[nd-1].m].n)}</p><h2>${esc(DAYS[nd-1].t)}</h2><p class="sub">ใช้เวลาประมาณ 10 นาที</p><button class="btn" onclick="go('day',${nd})">เริ่มบทวันนี้</button>`;
-
-  const mods = MODULES.map((m,mi)=>{
-    const cells = DAYS.map((d,i)=>({d,n:i+1})).filter(x=>x.d.m===mi).map(({n})=>{
-      const lock = !unlocked(n) || needsPro(n);
-      const cls = ['day', S.done[n]?'done':'', lock?'lock':'', n===nd&&!lock?'today':''].join(' ');
-      return `<button class="${cls}" ${lock?'disabled':''} onclick="go('day',${n})">${n>FREE_DAYS&&!member.isPro?'<span class="tag">PRO</span>':''}${S.done[n]?'✓':n}<small>${S.mood[n]!=null?MOODS[S.mood[n]]:''}</small></button>`;
-    }).join('');
-    return `<div class="mod"><h3><span class="dot" style="background:${m.c}"></span>${mi+1}. ${esc(m.n)}</h3><div class="grid">${cells}</div></div>`;
-  }).join('');
-
-  return `<div class="top"><div><p class="sub"><a href="/" style="color:inherit">ARSTINLA</a> · แบบฝึกวันละบท</p><h1>ใจรู้</h1></div>
-    <button class="btn ghost" onclick="go('summary')">ภาพรวมตัวฉัน</button></div>
-    <p class="sub">เข้าใจตัวเองใน 30 วัน${member.name?` · สวัสดี ${esc(member.name)}`:''}</p>
-    <div class="row" style="margin:6px 0"><div class="bar" style="flex:1"><i style="width:${c/30*100}%"></i></div><span class="sub">${c}/30</span></div>
-    <div class="card">${todayCard}</div>${mods}
-    ${member.contentError?`<p class="note">โหลดบทเรียนสำหรับ Pro ไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง หรือเช็คการเชื่อมต่ออินเทอร์เน็ต</p>`:''}
-    ${member.demo?`<p class="note">โหมดทดลอง: ยังไม่ได้เชื่อมระบบสมาชิก ข้อมูลเก็บในเครื่องนี้เท่านั้น ${DEV?'· เปิดทุกบท (dev)':''}</p>`:''}`;
+function moonPath(phase,r){ // phase 0..1 (0 new, .5 full)
+  const k=Math.abs(Math.cos(phase*2*Math.PI))*r, wax=phase<.5;
+  const outer=wax?1:0, inner=(phase<.25||phase>.75)?(wax?0:1):(wax?1:0);
+  return `M0 ${-r}A${r} ${r} 0 0 ${outer} 0 ${r}A${k.toFixed(2)} ${r} 0 0 ${inner} 0 ${-r}Z`;
 }
-function proBox(n){
-  return `<div class="probox"><h3>วันที่ ${n}–30 สำหรับสมาชิก ARSTINLA Pro</h3>
-  <p class="sub">ปลดล็อกทั้ง 30 บท ภาพรวมตัวตน และดาวน์โหลดบันทึกทั้งหมด พร้อมเครื่องมืออื่นทุกตัวบน arstinla.com</p>
-  <p><b>99 บาท/เดือน</b> หรือ <b>990 บาท/ปี</b></p>
-  <a class="btn pro" href="${PRO_URL}&next=${encodeURIComponent(location.pathname)}">สมัคร Pro</a></div>`;
+const phaseOf=n=>(n-.5)/30;
+function moonSvg(n,r){ return `<circle class="m-dark" r="${r}"/><path class="m-lit" d="${moonPath(phaseOf(n),r)}"/>`; }
+function ring(nd){
+  const c=150,R=124,parts=DAYS.map((d,i)=>{const n=i+1,a=(i/30)*2*Math.PI-Math.PI/2,x=c+R*Math.cos(a),y=c+R*Math.sin(a);
+    const cls=[S.done[n]?'done':'',n===nd?'now':'',(!S.done[n]&&(needsPro(n)))?'locked':''].join(' ');
+    return `<g class="${cls}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">${n===nd?'<circle class="halo" r="13"/>':''}${moonSvg(n,8)}</g>`}).join('');
+  const c2=doneCount();
+  return `<svg class="ring" viewBox="0 0 300 300" role="img" aria-label="ทำแล้ว ${c2} จาก 30 บท">${parts}
+    <text class="ring-num" x="150" y="160" text-anchor="middle">${c2}</text><text class="ring-cap" x="150" y="188" text-anchor="middle">จาก 30 บท</text></svg>`;
+}
+function home(){
+  const nd = nextDay();
+  let todayCard;
+  if(!nd) todayCard = `<h2>ครบ 30 วันแล้ว</h2><p class="sub">ดวงจันทร์ครบรอบแล้ว กลับไปอ่านคำตอบของตัวเอง หรือเปิดภาพรวมตัวฉันได้เสมอ</p><div class="row"><button class="btn" onclick="go('summary')">เปิดภาพรวมตัวฉัน</button></div>`;
+  else if(!unlocked(nd)) todayCard = `<p class="kicker">วันนี้ทำแล้ว</p><h2>บทที่ ${nd} จะเปิดพรุ่งนี้</h2><p class="sub">เว้นให้ความคิดได้ตกตะกอนสักคืน เป็นส่วนหนึ่งของการฝึก</p>`;
+  else if(needsPro(nd)) todayCard = proBox(nd);
+  else todayCard = `<p class="kicker">วันที่ ${nd} ใน${esc(MODULES[DAYS[nd-1].m].n)}</p><h2>${esc(DAYS[nd-1].t)}</h2><p class="sub">ใช้เวลาราว 10 นาที</p><div class="row"><button class="btn" onclick="go('day',${nd})">เริ่มบทวันนี้</button></div>`;
+  const mods = MODULES.map((m,mi)=>{
+    const ns=[1,2,3,4,5].map(k=>mi*5+k), doneIn=ns.filter(n=>S.done[n]).length;
+    const cells = ns.map(n=>{
+      const lock = !unlocked(n) || needsPro(n);
+      const cls = ['day', S.done[n]?'done':'', n===nd&&!lock?'now':''].join(' ');
+      const label = `วันที่ ${n} ${DAYS[n-1].t}${S.done[n]?' ทำแล้ว':lock?(needsPro(n)?' สำหรับ Pro':' ยังไม่เปิด'):''}`;
+      return `<button class="${cls}" ${lock?'disabled':''} aria-label="${esc(label)}" title="${esc(DAYS[n-1].t)}" onclick="go('day',${n})"><svg viewBox="-11 -11 22 22" aria-hidden="true">${moonSvg(n,9)}</svg><span>${n>FREE_DAYS&&!member.isPro&&!S.done[n]?'<em class="tag">Pro</em>':n}</span></button>`;
+    }).join('');
+    return `<div class="mod" style="--c:${m.c}"><h3><i></i>${esc(m.n)}<small>${doneIn}/5</small></h3><div class="days">${cells}</div></div>`;
+  }).join('');
+  return `<div class="brand"><a href="/">ARSTINLA</a><button class="link" onclick="go('summary')">ภาพรวมตัวฉัน</button></div>
+    <header class="hero">${ring(nd)}<h1 class="title">ใจรู้</h1><p class="tagline">เข้าใจตัวเองวันละบท ครบรอบในหนึ่งเดือน${member.name?`<br>สวัสดี ${esc(member.name)}`:''}</p></header>
+    <section class="today">${todayCard}</section>
+    <section class="mods" aria-label="บทเรียนทั้ง 30 วัน">${mods}</section>
+    ${member.contentError?`<p class="note">โหลดบทเรียนสำหรับ Pro ไม่สำเร็จ รีเฟรชหน้านี้อีกครั้ง หรือตรวจการเชื่อมต่ออินเทอร์เน็ต</p>`:''}
+    ${member.demo?`<p class="note">โหมดทดลอง ยังไม่ได้เชื่อมระบบสมาชิก ข้อมูลเก็บในเครื่องนี้เท่านั้น${DEV?' (เปิดทุกบท)':''}</p>`:''}`;
+}
+function proBox(n,heading){
+  return `<div class="probox"><p class="kicker">ทำครบ ${FREE_DAYS} วันแรกแล้ว</p><h2>${heading||`บทที่ ${n}–30 สำหรับสมาชิก ARSTINLA Pro`}</h2>
+  <p class="sub">ปลดล็อกอีก 23 บท ภาพรวมตัวฉันที่สรุปจากคำตอบทั้งหมด และดาวน์โหลดบันทึกเก็บไว้ ใช้เครื่องมือ Pro อื่นบน arstinla.com ได้ด้วย</p>
+  <p class="price">99 บาท<span>ต่อเดือน หรือ</span>990 บาท<span>ต่อปี</span></p>
+  <a class="btn moon" href="${PRO_URL}&next=${encodeURIComponent(location.pathname)}">สมัคร Pro</a></div>`;
 }
 
 /* ===== หน้าบทเรียน ===== */
 function dayView(n){
   const d = DAYS[n-1], a = S.ans[n] || {}, m = MODULES[d.m];
+  let qi=0;
   const qs = d.q.map(q=>{
-    const v = a[q.id];
-    if(q.type==='text') return `<label class="q">${esc(q.p)}</label><textarea data-q="${q.id}" oninput="setA(${n},'${q.id}',this.value)">${esc(v)}</textarea>`;
-    if(q.type==='chips') return `<label class="q">${esc(q.p)}</label><div class="chips">${q.opts.map(o=>`<button class="chip ${(v||[]).includes(o)?'on':''}" onclick="chip(${n},'${q.id}',${q.max},this)">${esc(o)}</button>`).join('')}</div>`;
+    const v = a[q.id], num=`<b>${++qi}</b>`;
+    if(q.type==='text') return `<div class="block"><label class="q" for="q-${q.id}">${num}<span>${esc(q.p)}</span></label><textarea id="q-${q.id}" data-q="${q.id}" oninput="setA(${n},'${q.id}',this.value)">${esc(v)}</textarea></div>`;
+    if(q.type==='chips') return `<div class="block"><label class="q">${num}<span>${esc(q.p)}</span></label><div class="chips">${q.opts.map(o=>`<button class="chip ${(v||[]).includes(o)?'on':''}" aria-pressed="${(v||[]).includes(o)}" onclick="chip(${n},'${q.id}',${q.max},this)">${esc(o)}</button>`).join('')}</div></div>`;
     if(q.type==='scale'){
       const prev = q.compare ? (S.ans[q.compare]||{})[q.id] : null;
-      return `<label class="q">${esc(q.p)}</label>${q.items.map((it,i)=>{const val=(v||[])[i]??5;return `<div class="sc"><span>${esc(it)}${prev?`<br><span class="prev">วันที่ ${q.compare}: ${prev[i]??'-'}</span>`:''}</span><input type="range" min="1" max="10" value="${val}" oninput="sc(${n},'${q.id}',${i},this)"><b>${val}</b></div>`}).join('')}`;
+      return `<div class="block"><label class="q">${num}<span>${esc(q.p)}</span></label>${q.items.map((it,i)=>{const val=(v||[])[i]??5;return `<div class="sc"><span>${esc(it)}${prev?`<br><span class="prev">วันที่ ${q.compare} ได้ ${prev[i]??'-'}</span>`:''}</span><input type="range" min="1" max="10" value="${val}" aria-label="${esc(it)}" oninput="sc(${n},'${q.id}',${i},this)"><b>${val}</b></div>`}).join('')}</div>`;
     }
   }).join('');
-  return `<button class="link" onclick="go('home')">← กลับ</button>
-  <div class="card"><p class="sub" style="color:${m.c}">วันที่ ${n} · ${esc(m.n)}</p><h2>${esc(d.t)}</h2>
-  <div class="lesson">${esc(d.l)}</div>
-  <label class="q">วันนี้ใจคุณเป็นอย่างไร</label><div class="moods">${MOODS.map((e,i)=>`<button class="mood ${S.mood[n]===i?'on':''}" onclick="mood(${n},${i})">${e}</button>`).join('')}</div>
+  return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button>
+  <header class="lesson-head" style="--c:${m.c}"><p class="kicker">วันที่ ${n} ใน${esc(m.n)}</p><h2>${esc(d.t)}</h2></header>
+  <p class="lesson">${esc(d.l)}</p>
+  <div class="block"><label class="q"><span>ก่อนเริ่ม วันนี้ใจคุณเป็นอย่างไร</span></label><div class="moods">${MOODS.map((e,i)=>`<button class="mood ${S.mood[n]===i?'on':''}" aria-pressed="${S.mood[n]===i}" onclick="mood(${n},${i})">${e}</button>`).join('')}</div></div>
   ${qs}
-  <div class="row" style="margin-top:22px"><button class="btn" id="fin" onclick="finish(${n})">${S.done[n]?'บันทึกการแก้ไข':'ทำบทนี้เสร็จแล้ว'}</button><span class="sub" id="msg"></span></div></div>`;
+  <div class="finish"><button class="btn" id="fin" onclick="finish(${n})">${S.done[n]?'บันทึกการแก้ไข':'จบบทวันนี้'}</button><span class="saved" id="saved">คำตอบบันทึกในเครื่องนี้อัตโนมัติ</span><span id="msg" role="status"></span></div>`;
 }
 function setA(n,id,v){ (S.ans[n] ||= {})[id] = v; save(); }
 function chip(n,id,max,el){
   const arr = ((S.ans[n] ||= {})[id] ||= []), o = el.textContent, i = arr.indexOf(o);
   if(i>=0) arr.splice(i,1); else { if(arr.length>=max){ msg(`เลือกได้ไม่เกิน ${max}`); return; } arr.push(o); }
-  el.classList.toggle('on'); save();
+  el.classList.toggle('on'); el.setAttribute('aria-pressed',el.classList.contains('on')); save();
 }
 function sc(n,id,i,el){ const a=((S.ans[n] ||= {})[id] ||= []); a[i]=+el.value; el.nextElementSibling.textContent=el.value; save(); }
-function mood(n,i){ S.mood[n]=i; save(); document.querySelectorAll('.mood').forEach((b,j)=>b.classList.toggle('on',j===i)); }
+function mood(n,i){ S.mood[n]=i; save(); document.querySelectorAll('.mood').forEach((b,j)=>{b.classList.toggle('on',j===i);b.setAttribute('aria-pressed',j===i)}); }
 function msg(t){ const m=document.getElementById('msg'); if(m) m.textContent=t; }
 function finish(n){
   const a = S.ans[n] || {}, d = DAYS[n-1];
   d.q.forEach(q=>{ if(q.type==='scale' && !a[q.id]) (S.ans[n] ||= {})[q.id] = q.items.map(()=>5); });
   const empty = d.q.filter(q=>q.type!=='scale').some(q=>{ const v=(S.ans[n]||{})[q.id]; return !v || (Array.isArray(v)?!v.length:!String(v).trim()); });
-  if(empty){ msg('ตอบให้ครบทุกข้อก่อนนะ สั้นๆ ก็ได้'); return; }
+  if(empty){ msg('ยังมีคำถามที่ว่างอยู่ ตอบสั้นๆ ก็ได้'); return; }
   if(!S.done[n]) S.done[n] = today();
   save(); go('home'); window.scrollTo(0,0);
 }
 
 /* ===== ภาพรวมตัวฉัน (Pro) ===== */
 function summary(){
-  if(!member.isPro && !DEV) return `<button class="link" onclick="go('home')">← กลับ</button>${proBox(FREE_DAYS+1).replace(`วันที่ ${FREE_DAYS+1}–30 สำหรับ`,'ภาพรวมตัวฉัน สำหรับ')}`;
-  const rows = SUMMARY.map(([label,n,id])=>{ const v=(S.ans[n]||{})[id]; if(!v||(Array.isArray(v)&&!v.length)) return ''; return `<dt>${esc(label)}</dt><dd>${esc(Array.isArray(v)?v.join(' · '):v)}</dd>`; }).join('');
-  return `<button class="link" onclick="go('home')">← กลับ</button>
-  <div class="card"><h2>ภาพรวมตัวฉัน</h2><p class="sub">รวบรวมจากคำตอบของคุณตลอดคอร์ส</p>
-  <dl class="sum">${rows || '<p class="sub">ยังไม่มีข้อมูล ทำแบบฝึกไปเรื่อยๆ ภาพนี้จะค่อยๆ ชัดขึ้น</p>'}</dl>
-  <div class="row" style="margin-top:20px"><button class="btn ghost" onclick="exportTxt()">ดาวน์โหลดบันทึกทั้งหมด</button></div></div>`;
+  if(!member.isPro && !DEV) return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button><section class="today">${proBox(FREE_DAYS+1,'ภาพรวมตัวฉัน สำหรับสมาชิก ARSTINLA Pro')}</section>`;
+  const rows = SUMMARY.map(([label,n,id])=>{ const v=(S.ans[n]||{})[id]; if(!v||(Array.isArray(v)&&!v.length)) return ''; return `<dt>${esc(label)}</dt><dd>${esc(Array.isArray(v)?v.join(', '):v)}</dd>`; }).join('');
+  return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button>
+  <h2 class="sum-title">ภาพรวมตัวฉัน</h2><p class="sub">รวบรวมจากคำตอบของคุณตลอดคอร์ส ยิ่งทำมาก ภาพยิ่งชัด</p>
+  <dl class="sum">${rows || '<p class="sub">ยังไม่มีคำตอบ ทำบทแรกแล้วกลับมาดูหน้านี้อีกครั้ง</p>'}</dl>
+  <div class="row" style="margin-top:32px"><button class="btn ghost" onclick="exportTxt()">ดาวน์โหลดบันทึกทั้งหมด</button></div>`;
 }
 function exportTxt(){
   let out = 'ใจรู้ — บันทึกการเข้าใจตัวเอง 30 วัน\n\n';
@@ -256,7 +328,7 @@ function render(){
     }catch(e){ if(member.isPro) member.contentError = true; }
   }
   if(!member.loggedIn){
-    document.getElementById('app').innerHTML = `<div class="card"><h1>ใจรู้</h1><p class="sub">แบบฝึกเข้าใจตัวเองวันละบท 30 วัน</p><p>เข้าสู่ระบบสมาชิก ARSTINLA เพื่อเริ่มใช้งาน</p><a class="btn" href="${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}">เข้าสู่ระบบด้วย LINE</a></div>`;
+    document.getElementById('app').innerHTML = `<div class="gate"><h1 class="title">ใจรู้</h1><p class="tagline">แบบฝึกเข้าใจตัวเองวันละบท 30 วัน ทำฟรี 7 วันแรก</p><p class="sub" style="margin:18px 0 22px">เข้าสู่ระบบสมาชิก ARSTINLA ด้วย LINE เพื่อเริ่มบทแรก</p><div class="row"><a class="btn" href="${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}">เข้าสู่ระบบด้วย LINE</a></div></div>`;
     return;
   }
   S = load() || {start:today(), done:{}, ans:{}, mood:{}};
