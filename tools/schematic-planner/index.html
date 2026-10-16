@@ -24,6 +24,17 @@
 .legend{display:flex;gap:17px;flex-wrap:wrap;margin:15px 25px 0;font-size:9px;color:#6b6c65}.legend span{display:flex;gap:6px;align-items:center}.legend em{font-style:normal}.legend i{width:20px;height:2px;background:var(--sun)}.legend .wind i{background:var(--wind)}.legend .room i{background:#9ea892;height:10px;border:2px solid #191a18}.legend .column i{width:10px;height:10px;background:#343834;border:1px solid #fff;box-shadow:0 0 0 1px #343834}.legend .grid-key i{width:20px;height:10px;border:1px solid #777268;background:repeating-linear-gradient(90deg,transparent 0 3px,#9d988e55 3px 4px)}.legend .metric-scale i{width:10mm;height:4px;border:solid #55564f;border-width:0 1px 1px;background:none}.scale-spec{width:100%;border-top:1px solid var(--pale);padding-top:9px;font:600 8px var(--font-en);letter-spacing:.09em;text-transform:uppercase}.drag-note{margin-left:auto}.analysis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.analysis-card{border-top:1px solid var(--pale);padding-top:16px}.analysis-card h3{font:400 22px var(--font-en);letter-spacing:-.025em;margin:7px 0 8px}.analysis-card p{margin:0;color:#66675f;font-size:11px;line-height:1.7}.room-report{grid-column:1/-1;border-top:1px solid var(--pale);padding-top:17px}.report-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.report-item{border:1px solid var(--pale);padding:13px;min-height:112px}.report-item header{display:flex;justify-content:space-between;gap:10px}.report-item strong{font-size:12px}.report-item b{font:600 8px var(--font-en);letter-spacing:.1em;text-transform:uppercase;color:var(--green)}.report-item.review b{color:#a4572f}.report-item p{margin:8px 0 0;color:#6f7069;font-size:10px;line-height:1.6}.method-note{border-top:1px solid var(--pale);margin-top:20px;padding-top:15px;color:#85867f;font-size:9px;line-height:1.7}.method-note a{text-decoration:underline}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,15px);opacity:0;background:white;color:var(--ink);padding:12px 18px;font-size:11px;z-index:20;pointer-events:none;transition:.2s;box-shadow:0 15px 45px #0005}.toast.show{opacity:1;transform:translate(-50%,0)}
 body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .control-panel{display:none}body.present-mode .workspace{max-height:none;min-height:calc(100svh - 72px)}body.present-mode .client-sheet{max-width:1400px}.present-only{display:none}body.present-mode .present-only{display:inline}
 @media(max-width:1080px){.planner-shell{grid-template-columns:290px minmax(0,1fr)}.plan-layout{grid-template-columns:1fr}.environment-info{display:grid;grid-template-columns:repeat(3,1fr)}.environment-info article{border-bottom:0;border-right:1px solid var(--pale)}.environment-info article:last-child{border-right:0}.report-list{grid-template-columns:1fr 1fr}}
+.plan-view{position:relative}
+.zoom-controls{position:relative;z-index:9;display:flex;width:max-content;margin:0 0 6px auto;background:#171816;border:1px solid #171816;box-shadow:0 6px 18px #0003}
+.zoom-controls button{min-width:34px;height:30px;padding:0 8px;border:0;background:transparent;color:#f7f4ed;font:600 15px/1 var(--font-en);cursor:pointer}
+.zoom-controls #zoomReset{min-width:56px;font-size:10px;letter-spacing:.06em;border-inline:1px solid #ffffff2e}
+.zoom-controls button:hover,.zoom-controls button:focus-visible{background:#c36b48;outline:0}
+.zoom-controls button:disabled{opacity:.35;cursor:default;background:transparent}
+.plan-wrap{overflow:auto;overscroll-behavior:contain;max-height:min(82vh,1400px)}
+.plan-wrap.zoomed{touch-action:pan-x pan-y}
+.plan-wrap.panning{cursor:grabbing}
+.plan-board{margin-inline:auto}
+@media print{.zoom-controls{display:none!important}.plan-wrap{overflow:visible!important;max-height:none!important}}
 @media(max-width:760px){.site-header{height:auto;min-height:72px;padding-top:16px;padding-bottom:16px;align-items:flex-start}.brand span{display:block;margin-top:4px}.top-nav{flex-direction:column;align-items:flex-end;gap:7px}.planner-shell{display:block}.control-panel,.workspace{max-height:none}.control-panel{border-right:0;border-bottom:1px solid var(--line)}.workspace{padding:20px 12px 36px}.stage-bar,.sheet-head{align-items:flex-start}.stage-bar{display:block}.stage-actions{margin-top:12px}.sheet-head{display:block}.sheet-meta{text-align:left;margin-top:10px}.client-sheet{padding:15px}.layer-controls{justify-content:stretch;margin-top:18px}.layer-toggle,.wall-setting{flex:1 1 145px}.plan-wrap{padding:34px 28px 28px 36px}.environment-info{display:block}.environment-info article{border-right:0;border-bottom:1px solid var(--pale)}.analysis{grid-template-columns:1fr}.room-report{grid-column:auto}.report-list{grid-template-columns:1fr}.legend{margin-left:16px;margin-right:16px}.drag-note{width:100%;margin:5px 0 0}.room-content{padding:calc(5px + var(--wall-inner))}.room-block small{font-size:6px}}
 @media print{.site-header,.control-panel,.stage-bar,.layer-controls,.toast,.room-nudge{display:none!important}.planner-shell{display:block}.workspace{padding:0;max-height:none;overflow:visible}.client-sheet{border:0;max-width:none;padding:5mm}.sheet-head{margin-bottom:4mm}.plan-layout{grid-template-columns:max-content 70mm;gap:8mm}.plan-wrap{padding:8mm}.plan-board{width:var(--print-width)!important;height:var(--print-height)!important;aspect-ratio:auto!important}.legend{width:var(--print-width);margin:3mm 8mm 0}.analysis{break-before:page}.method-note{break-inside:avoid}body{background:white}@page{size:A2 landscape;margin:10mm}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
@@ -141,6 +152,12 @@ body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .co
 
       <div class="plan-layout">
         <div>
+          <div class="plan-view">
+            <div class="zoom-controls" role="group" aria-label="ซูมพื้นที่ทำงาน">
+              <button type="button" id="zoomOut" aria-label="ซูมออก" title="ซูมออก (Ctrl + ลูกกลิ้ง)">−</button>
+              <button type="button" id="zoomReset" aria-label="กลับขนาดพอดีจอ" title="พอดีจอ">100%</button>
+              <button type="button" id="zoomIn" aria-label="ซูมเข้า" title="ซูมเข้า (Ctrl + ลูกกลิ้ง)">+</button>
+            </div>
           <div class="plan-wrap">
             <span class="compass-label n">N</span><span class="compass-label e">E</span><span class="compass-label s">S</span><span class="compass-label w">W</span>
             <div class="dimension-axis dimension-top" id="dimensionTop" aria-hidden="true"></div>
@@ -163,6 +180,7 @@ body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .co
               <button type="button" data-nudge="right" aria-label="เลื่อนรายการที่เลือกไปทางขวา 0.10 เมตร" title="ขวา 0.10 ม.">→</button>
               <button type="button" data-nudge="down" aria-label="เลื่อนรายการที่เลือกลง 0.10 เมตร" title="ลง 0.10 ม.">↓</button>
             </div>
+          </div>
           </div>
           <div class="legend"><span><i></i>Solar ray</span><span class="wind"><i></i>Prevailing wind</span><span class="room"><i></i><em id="wallLegend">Room outline · 0.10 m · Center</em></span><span class="column"><i></i>Column · center on grid</span><span class="grid-key"><i></i>1.00 m grid / 0.10 m subdivision</span><span class="metric-scale"><i></i>1.00 m</span><span class="drag-note">Drag rooms / columns · Arrow keys move 0.10 m</span><span class="scale-spec">Scale 1:100 · 1.00 m = 10 mm · Print A2 at 100% / Actual size</span></div>
         </div>
@@ -471,6 +489,44 @@ $("resetPlan").addEventListener("click",resetPlan);$("printBtn").addEventListene
 $("roomNudge").addEventListener("pointerdown",event=>event.stopPropagation());document.querySelectorAll("[data-nudge]").forEach(button=>button.addEventListener("click",event=>{event.stopPropagation();nudgeSelected(button.dataset.nudge)}));
 window.addEventListener("resize",()=>{renderWallStyle();renderDimensions();renderCompass();renderNudge()});window.addEventListener("beforeprint",()=>{renderWallStyle();renderDimensions();renderCompass();renderNudge()});
 $("presentBtn").addEventListener("click",()=>{document.body.classList.toggle("present-mode");$("presentBtn").textContent=document.body.classList.contains("present-mode")?"Exit presentation":"Present client view";requestAnimationFrame(()=>{renderWallStyle();renderDimensions();renderCompass();renderNudge()});window.scrollTo({top:0,behavior:"smooth"})});
+
+/* ---- Zoom in / out on the plan board ---- */
+(function(){
+  const wrap=document.querySelector(".plan-wrap"),board=$("planBoard"),MIN=.5,MAX=4,STEPS=[.5,.67,.8,1,1.25,1.5,2,2.5,3,4];
+  let zoom=1;try{const saved=parseFloat(localStorage.getItem("arstinla-planner-zoom"));if(saved>=MIN&&saved<=MAX)zoom=saved}catch(e){}
+  const rerender=()=>{renderWallStyle();renderDimensions();renderCompass();renderNudge()};
+  function apply(next,clientX,clientY){
+    next=Math.min(MAX,Math.max(MIN,Math.round(next*100)/100));
+    const r=board.getBoundingClientRect(),w=wrap.getBoundingClientRect();
+    const ax=clientX??(w.left+w.width/2),ay=clientY??(w.top+w.height/2);
+    const fx=r.width?(ax-r.left)/r.width:.5,fy=r.height?(ay-r.top)/r.height:.5;
+    zoom=next;board.style.width=`${zoom*100}%`;wrap.classList.toggle("zoomed",zoom>1);
+    rerender();
+    const r2=board.getBoundingClientRect();
+    wrap.scrollLeft+=r2.left+fx*r2.width-ax;wrap.scrollTop+=r2.top+fy*r2.height-ay;
+    $("zoomReset").textContent=`${Math.round(zoom*100)}%`;$("zoomOut").disabled=zoom<=MIN;$("zoomIn").disabled=zoom>=MAX;
+    try{localStorage.setItem("arstinla-planner-zoom",String(zoom))}catch(e){}
+  }
+  const step=dir=>{const i=STEPS.findIndex(s=>s>=zoom-.001);let n=dir>0?STEPS.find(s=>s>zoom+.001):[...STEPS].reverse().find(s=>s<zoom-.001);apply(n??zoom)};
+  $("zoomIn").addEventListener("click",()=>step(1));$("zoomOut").addEventListener("click",()=>step(-1));
+  $("zoomReset").addEventListener("click",()=>{apply(1);wrap.scrollLeft=0;wrap.scrollTop=0});
+  // Ctrl/⌘ + wheel, or a trackpad pinch, zooms around the pointer.
+  wrap.addEventListener("wheel",e=>{if(!(e.ctrlKey||e.metaKey))return;e.preventDefault();apply(zoom*Math.exp(-e.deltaY*.0025),e.clientX,e.clientY)},{passive:false});
+  // Two-finger pinch on touch screens.
+  let pinch=null;const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+  wrap.addEventListener("touchstart",e=>{if(e.touches.length===2)pinch={d:dist(e.touches),z:zoom}},{passive:true});
+  wrap.addEventListener("touchmove",e=>{if(!pinch||e.touches.length!==2)return;e.preventDefault();const cx=(e.touches[0].clientX+e.touches[1].clientX)/2,cy=(e.touches[0].clientY+e.touches[1].clientY)/2;apply(pinch.z*dist(e.touches)/pinch.d,cx,cy)},{passive:false});
+  wrap.addEventListener("touchend",e=>{if(e.touches.length<2)pinch=null});
+  // Drag empty space with the mouse to pan when zoomed in.
+  let pan=null;
+  board.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse"||e.button!==0||zoom<=1||e.target.closest(".room-block,.column-block"))return;pan={x:e.clientX,y:e.clientY,l:wrap.scrollLeft,t:wrap.scrollTop};wrap.classList.add("panning");board.setPointerCapture(e.pointerId)});
+  board.addEventListener("pointermove",e=>{if(!pan)return;wrap.scrollLeft=pan.l-(e.clientX-pan.x);wrap.scrollTop=pan.t-(e.clientY-pan.y)});
+  const endPan=()=>{pan=null;wrap.classList.remove("panning")};board.addEventListener("pointerup",endPan);board.addEventListener("pointercancel",endPan);
+  // Keyboard: Ctrl/⌘ + / − / 0
+  document.addEventListener("keydown",e=>{if(!(e.ctrlKey||e.metaKey))return;if(e.key==="="||e.key==="+"){e.preventDefault();step(1)}else if(e.key==="-"){e.preventDefault();step(-1)}else if(e.key==="0"){e.preventDefault();$("zoomReset").click()}});
+  window.addEventListener("beforeprint",()=>{board.style.width=""});window.addEventListener("afterprint",()=>apply(zoom));
+  apply(zoom);
+})();
 </script>
 </body>
 </html>
