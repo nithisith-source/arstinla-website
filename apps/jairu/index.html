@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ใจรู้ — เข้าใจตัวเอง 30 วัน · ARSTINLA</title>
+<meta name="description" content="ใจรู้ แบบฝึกเข้าใจตัวเองวันละบท 30 วัน โดย ARSTINLA">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f3ec;--card:#fffdf9;--ink:#2f2a24;--mute:#7b7268;--line:#e6dfd3;--acc:#5f8a6a;--acc2:#e9f1ea;--warn:#b5653a;--pro:#9a7b2f;--prob:#f6eed8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1a18;--card:#252320;--ink:#ece6dc;--mute:#a59c90;--line:#38342f;--acc:#86b892;--acc2:#2a3a2d;--warn:#e09367;--pro:#d9b860;--prob:#3a3220}}
+:root[data-theme="dark"]{--bg:#1b1a18;--card:#252320;--ink:#ece6dc;--mute:#a59c90;--line:#38342f;--acc:#86b892;--acc2:#2a3a2d;--warn:#e09367;--pro:#d9b860;--prob:#3a3220}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,sans-serif;line-height:1.65;font-size:16px}
+#app{max-width:640px;margin:0 auto;padding:16px 16px 80px}
+h1{font-size:26px;margin:4px 0 0}h2{font-size:21px;margin:0 0 6px}h3{font-size:16px;margin:0 0 6px}
+.sub{color:var(--mute);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+.btn{display:inline-block;border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:600;background:var(--acc);color:#fff;cursor:pointer;text-decoration:none}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.pro{background:var(--pro);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--acc)}
+.mod{margin-top:18px}.mod h3{display:flex;align-items:center;gap:8px}.dot{width:10px;height:10px;border-radius:50%}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.day{aspect-ratio:1;border-radius:12px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;cursor:pointer;color:var(--ink);font:inherit;font-weight:600;position:relative}
+.day small{font-size:10px;color:var(--mute);font-weight:400}
+.day.done{background:var(--acc2);border-color:var(--acc)}
+.day.lock{opacity:.4;cursor:not-allowed}
+.day.today{outline:2px solid var(--acc);outline-offset:1px}
+.day .tag{position:absolute;top:3px;right:5px;font-size:9px;color:var(--pro)}
+.lesson{background:var(--acc2);border-radius:12px;padding:14px;margin:12px 0}
+label.q{display:block;font-weight:600;margin:18px 0 8px}
+textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.sc{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;margin:6px 0;font-size:14px}
+.sc input{width:100%;accent-color:var(--acc)}.sc b{text-align:right}
+.prev{font-size:12px;color:var(--mute)}
+.moods{display:flex;gap:8px}.mood{font-size:26px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:6px 8px;cursor:pointer}.mood.on{border-color:var(--acc);background:var(--acc2)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.link{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0;font-weight:600}
+.probox{background:var(--prob);border:1px solid var(--pro);border-radius:16px;padding:18px;margin:14px 0}
+.note{font-size:13px;color:var(--warn);margin-top:10px}
+.sum dt{font-weight:600;margin-top:14px;color:var(--acc)}.sum dd{margin:4px 0 0;white-space:pre-wrap}
+@media (max-width:380px){.sc{grid-template-columns:88px 1fr 24px}}
+</style>
+</head>
+<body>
+<div id="app"><p class="sub">กำลังโหลด…</p></div>
+<script src="/apps/shared/arstinla-member.js"></script>
+<script>
+/* ===== ตั้งค่า ===== */
+const APP_ID = 'jairu';
+const FREE_DAYS = 7;                       // สมาชิกฟรีทำได้ถึงวันที่ 7
+const PRO_URL = '/member/?need=pro';       // หน้าอัปเกรด ARSTINLA Pro
+const LOGIN_URL = '/member/';              // หน้าเข้าสู่ระบบด้วย LINE
+const params = new URLSearchParams(location.search);
+const DEV = params.get('dev') === '1' && /^(localhost|127\.0\.0\.1)$/.test(location.hostname); // ?dev=1 ใช้ได้เฉพาะตอนทดสอบในเครื่อง
+
+/* ===== จุดเชื่อมระบบสมาชิก =====
+   ถ้าเว็บมี window.ARSTINLA.getMember() ให้คืนค่า {id, name, loggedIn, isPro}
+   ถ้ายังไม่มี จะทำงานในโหมดทดลอง (?pro=1 เพื่อจำลองสมาชิก Pro) */
+async function getMember(){
+  try{ if(window.ARSTINLA && typeof ARSTINLA.getMember==='function') return await ARSTINLA.getMember(); }catch(e){}
+  return {id:'demo', name:'', loggedIn:true, isPro: params.get('pro')==='1', demo:true};
+}
+
+/* ===== เนื้อหา ===== */
+const MODULES = [
+  {n:'รู้จักตัวเองตอนนี้', c:'#7a9e7e'},
+  {n:'อารมณ์และปฏิกิริยา', c:'#d08c60'},
+  {n:'รูปแบบความคิด', c:'#6c8ebf'},
+  {n:'ความสัมพันธ์', c:'#c0738f'},
+  {n:'เป้าหมายที่ตรงกับตัวจริง', c:'#b59a3c'},
+  {n:'นิสัยและการลงมือทำ', c:'#5f9ea0'}
+];
+const LIFE = ['สุขภาพกาย','สุขภาพใจ','งาน/อาชีพ','การเงิน','ครอบครัว','เพื่อน/ความสัมพันธ์','การเรียนรู้','ความสนุก/พักผ่อน'];
+const T = (id,p)=>({id,type:'text',p});
+const DAYS = [
+ {t:'จุดเริ่มต้น', l:'การเข้าใจตัวเองเริ่มจากการมองตัวเองตามจริง ไม่ตัดสิน ไม่ต้องตอบให้สวย ตอบให้จริงก็พอ',
+  q:[T('a','ถ้าให้อธิบายชีวิตตอนนี้ด้วย 3 คำ จะเป็นคำว่าอะไร'),T('b','อะไรทำให้คุณอยากเข้าใจตัวเองมากขึ้นในช่วงนี้'),T('c','อีก 30 วัน อยากเห็นอะไรในตัวเองเปลี่ยนไป')]},
+ {t:'วงล้อชีวิต', l:'ให้คะแนนความพอใจแต่ละด้านของชีวิต 1–10 ตามความรู้สึกวันนี้ เราจะกลับมาเทียบกันอีกครั้งในวันที่ 29',
+  q:[{id:'w',type:'scale',p:'ความพอใจในแต่ละด้าน',items:LIFE},T('a','ด้านไหนที่คะแนนต่ำแล้วรู้สึกว่าอยากดูแลก่อน เพราะอะไร')]},
+ {t:'คุณค่าที่ยึดถือ', l:'คุณค่า (values) คือสิ่งที่สำคัญกับเราจริงๆ เวลาชีวิตสวนทางกับคุณค่า เรามักรู้สึกอึดอัดโดยไม่รู้สาเหตุ',
+  q:[{id:'v',type:'chips',p:'เลือกคุณค่าที่สำคัญที่สุดกับคุณ (ไม่เกิน 5)',max:5,opts:['ความซื่อสัตย์','ครอบครัว','อิสรภาพ','ความมั่นคง','ความคิดสร้างสรรค์','การเติบโต','ความยุติธรรม','สุขภาพ','การยอมรับ','ความสงบ','การช่วยเหลือผู้อื่น','ความสำเร็จ','ความสนุก','ความรู้','ศรัทธา','มิตรภาพ','ความงาม','ความรับผิดชอบ']},
+    T('a','เล่าเหตุการณ์หนึ่งที่คุณภูมิใจในตัวเองมาก มันสะท้อนคุณค่าข้อไหน')]},
+ {t:'จุดแข็งที่มองข้าม', l:'จุดแข็งมักเป็นสิ่งที่เราทำได้ง่ายจนคิดว่าใครๆ ก็ทำได้ ลองมองผ่านสายตาคนอื่น',
+  q:[T('a','คนรอบตัวมักขอให้คุณช่วยเรื่องอะไร'),T('b','งานหรือกิจกรรมอะไรที่ทำแล้วลืมเวลา'),T('c','คำชมที่คุณได้ยินบ่อยที่สุดคืออะไร')]},
+ {t:'อะไรเติม อะไรดูดพลัง', l:'สังเกตพลังงานของตัวเองตลอดสัปดาห์ บางอย่างดูเล็กแต่ดูดพลังเราทุกวัน',
+  q:[T('a','สิ่งที่เติมพลังให้คุณ (คน สถานที่ กิจกรรม)'),T('b','สิ่งที่ดูดพลังคุณ'),T('c','สัปดาห์นี้จะเพิ่มสิ่งที่เติมพลัง 1 อย่าง คือ')]},
+ {t:'ตั้งชื่ออารมณ์', l:'แค่ตั้งชื่ออารมณ์ได้ชัด อารมณ์ก็เบาลงแล้ว เพราะสมองเปลี่ยนจากโหมดตอบโต้มาเป็นโหมดสังเกต',
+  q:[{id:'e',type:'chips',p:'วันนี้คุณรู้สึกอะไรบ้าง',max:8,opts:['สงบ','ดีใจ','ขอบคุณ','ตื่นเต้น','เหนื่อย','เบื่อ','กังวล','กลัว','หงุดหงิด','โกรธ','เสียใจ','เหงา','อาย','ผิดหวัง','สับสน','ภูมิใจ']},
+    T('a','อารมณ์ไหนแรงที่สุดวันนี้ เกิดขึ้นตอนไหน')]},
+ {t:'ตัวกระตุ้น', l:'ตัวกระตุ้น (trigger) คือสถานการณ์ที่ทำให้อารมณ์พุ่งเร็วกว่าปกติ รู้ตัวกระตุ้นก่อน = มีเวลาเลือกมากขึ้น',
+  q:[T('a','นึกถึงครั้งล่าสุดที่อารมณ์ขึ้นเร็ว เกิดอะไรขึ้น'),T('b','ตอนนั้นร่างกายรู้สึกอย่างไร (ร้อนหน้า ใจเต้น กำมือ ฯลฯ)'),T('c','คุณทำอะไรต่อ และรู้สึกอย่างไรกับสิ่งที่ทำ')]},
+ /* บทที่ 8–30: เนื้อหาเต็มโหลดจากเซิร์ฟเวอร์เฉพาะสมาชิก Pro (/api/jairu/content) */
+ {t:'อารมณ์ใต้ภูเขาน้ำแข็ง', pro:true, l:'', q:[]},
+ {t:'แบบแผนการตอบสนอง', pro:true, l:'', q:[]},
+ {t:'หยุด หายใจ เลือก', pro:true, l:'', q:[]},
+ {t:'เสียงในหัว', pro:true, l:'', q:[]},
+ {t:'ความคิดไม่ใช่ข้อเท็จจริง', pro:true, l:'', q:[]},
+ {t:'ความเชื่อที่จำกัดตัวเอง', pro:true, l:'', q:[]},
+ {t:'กับดักความคิด', pro:true, l:'', q:[]},
+ {t:'พูดกับตัวเองเหมือนเพื่อน', pro:true, l:'', q:[]},
+ {t:'คนรอบตัว', pro:true, l:'', q:[]},
+ {t:'บทบาทที่สวม', pro:true, l:'', q:[]},
+ {t:'ขอบเขต', pro:true, l:'', q:[]},
+ {t:'การเติมใจ', pro:true, l:'', q:[]},
+ {t:'ความขัดแย้ง', pro:true, l:'', q:[]},
+ {t:'อยากจริง vs ควรอยาก', pro:true, l:'', q:[]},
+ {t:'วันธรรมดาในอีก 3 ปี', pro:true, l:'', q:[]},
+ {t:'ความกลัวที่ขวางอยู่', pro:true, l:'', q:[]},
+ {t:'เป้าหมายเดียว', pro:true, l:'', q:[]},
+ {t:'ตัดออก', pro:true, l:'', q:[]},
+ {t:'นิสัยจิ๋ว', pro:true, l:'', q:[]},
+ {t:'จัดสภาพแวดล้อม', pro:true, l:'', q:[]},
+ {t:'เมื่อพลาด', pro:true, l:'', q:[]},
+ {t:'ทบทวน', pro:true, l:'', q:[]},
+ {t:'จดหมายถึงตัวเองในอนาคต', pro:true, l:'', q:[]}
+];
+DAYS.forEach((d,i)=>d.m=Math.floor(i/5));
+
+const SUMMARY = [
+  ['ชีวิตตอนนี้ใน 3 คำ',1,'a'],['คุณค่าที่ยึดถือ',3,'v'],['จุดแข็ง',4,'b'],['สิ่งที่เติมพลัง',5,'a'],
+  ['ตัวกระตุ้นอารมณ์',7,'a'],['ความต้องการใต้อารมณ์',8,'b'],['รูปแบบการตอบสนอง',9,'r'],
+  ['เสียงในหัว',11,'a'],['ความเชื่อที่จำกัด',13,'a'],['กับดักความคิด',14,'k'],
+  ['การเติมใจที่ชอบ',19,'g'],['เป้าหมายเดียว',24,'a'],['นิสัยจิ๋ว',26,'a'],['สิ่งที่ค้นพบ',29,'a']
+];
+const MOODS = ['😞','🙁','😐','🙂','😄'];
+
+/* ===== สถานะ ===== */
+let member, S, view = {name:'home'};
+const today = ()=>new Date().toLocaleDateString('sv');
+const key = ()=>`${APP_ID}:${member.id}`;
+function load(){ try{ return JSON.parse(localStorage.getItem(key())) || null }catch(e){ return null } }
+function save(){ try{ localStorage.setItem(key(), JSON.stringify(S)) }catch(e){} }
+const esc = s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const doneCount = ()=>Object.keys(S.done).length;
+const needsPro = n=> n>FREE_DAYS && ((!member.isPro && !DEV) || DAYS[n-1].pro);
+function nextDay(){ for(let n=1;n<=30;n++) if(!S.done[n]) return n; return 0; }
+function unlocked(n){
+  if(DEV || n===1 || S.done[n]) return true;
+  return !!S.done[n-1] && S.done[n-1] !== today();   // เปิดวันละบท
+}
+
+/* ===== หน้าหลัก ===== */
+function home(){
+  const nd = nextDay(), c = doneCount();
+  let todayCard;
+  if(!nd) todayCard = `<h2>จบครบ 30 วันแล้ว 🎉</h2><p class="sub">กลับไปอ่านคำตอบของตัวเอง หรือดูภาพรวมตัวตนได้เสมอ</p>`;
+  else if(!unlocked(nd)) todayCard = `<h2>วันนี้ทำครบแล้ว</h2><p class="sub">บทที่ ${nd} จะเปิดพรุ่งนี้ การเว้นช่วงให้ความคิดได้ตกตะกอนคือส่วนหนึ่งของการฝึก</p>`;
+  else if(needsPro(nd)) todayCard = proBox(nd);
+  else todayCard = `<p class="sub">วันที่ ${nd} · ${esc(MODULES[DAYS[nd-1].m].n)}</p><h2>${esc(DAYS[nd-1].t)}</h2><p class="sub">ใช้เวลาประมาณ 10 นาที</p><button class="btn" onclick="go('day',${nd})">เริ่มบทวันนี้</button>`;
+
+  const mods = MODULES.map((m,mi)=>{
+    const cells = DAYS.map((d,i)=>({d,n:i+1})).filter(x=>x.d.m===mi).map(({n})=>{
+      const lock = !unlocked(n) || needsPro(n);
+      const cls = ['day', S.done[n]?'done':'', lock?'lock':'', n===nd&&!lock?'today':''].join(' ');
+      return `<button class="${cls}" ${lock?'disabled':''} onclick="go('day',${n})">${n>FREE_DAYS&&!member.isPro?'<span class="tag">PRO</span>':''}${S.done[n]?'✓':n}<small>${S.mood[n]!=null?MOODS[S.mood[n]]:''}</small></button>`;
+    }).join('');
+    return `<div class="mod"><h3><span class="dot" style="background:${m.c}"></span>${mi+1}. ${esc(m.n)}</h3><div class="grid">${cells}</div></div>`;
+  }).join('');
+
+  return `<div class="top"><div><p class="sub"><a href="/" style="color:inherit">ARSTINLA</a> · แบบฝึกวันละบท</p><h1>ใจรู้</h1></div>
+    <button class="btn ghost" onclick="go('summary')">ภาพรวมตัวฉัน</button></div>
+    <p class="sub">เข้าใจตัวเองใน 30 วัน${member.name?` · สวัสดี ${esc(member.name)}`:''}</p>
+    <div class="row" style="margin:6px 0"><div class="bar" style="flex:1"><i style="width:${c/30*100}%"></i></div><span class="sub">${c}/30</span></div>
+    <div class="card">${todayCard}</div>${mods}
+    ${member.contentError?`<p class="note">โหลดบทเรียนสำหรับ Pro ไม่สำเร็จ ลองรีเฟรชหน้าอีกครั้ง หรือเช็คการเชื่อมต่ออินเทอร์เน็ต</p>`:''}
+    ${member.demo?`<p class="note">โหมดทดลอง: ยังไม่ได้เชื่อมระบบสมาชิก ข้อมูลเก็บในเครื่องนี้เท่านั้น ${DEV?'· เปิดทุกบท (dev)':''}</p>`:''}`;
+}
+function proBox(n){
+  return `<div class="probox"><h3>วันที่ ${n}–30 สำหรับสมาชิก ARSTINLA Pro</h3>
+  <p class="sub">ปลดล็อกทั้ง 30 บท ภาพรวมตัวตน และดาวน์โหลดบันทึกทั้งหมด พร้อมเครื่องมืออื่นทุกตัวบน arstinla.com</p>
+  <p><b>99 บาท/เดือน</b> หรือ <b>990 บาท/ปี</b></p>
+  <a class="btn pro" href="${PRO_URL}&next=${encodeURIComponent(location.pathname)}">สมัคร Pro</a></div>`;
+}
+
+/* ===== หน้าบทเรียน ===== */
+function dayView(n){
+  const d = DAYS[n-1], a = S.ans[n] || {}, m = MODULES[d.m];
+  const qs = d.q.map(q=>{
+    const v = a[q.id];
+    if(q.type==='text') return `<label class="q">${esc(q.p)}</label><textarea data-q="${q.id}" oninput="setA(${n},'${q.id}',this.value)">${esc(v)}</textarea>`;
+    if(q.type==='chips') return `<label class="q">${esc(q.p)}</label><div class="chips">${q.opts.map(o=>`<button class="chip ${(v||[]).includes(o)?'on':''}" onclick="chip(${n},'${q.id}',${q.max},this)">${esc(o)}</button>`).join('')}</div>`;
+    if(q.type==='scale'){
+      const prev = q.compare ? (S.ans[q.compare]||{})[q.id] : null;
+      return `<label class="q">${esc(q.p)}</label>${q.items.map((it,i)=>{const val=(v||[])[i]??5;return `<div class="sc"><span>${esc(it)}${prev?`<br><span class="prev">วันที่ ${q.compare}: ${prev[i]??'-'}</span>`:''}</span><input type="range" min="1" max="10" value="${val}" oninput="sc(${n},'${q.id}',${i},this)"><b>${val}</b></div>`}).join('')}`;
+    }
+  }).join('');
+  return `<button class="link" onclick="go('home')">← กลับ</button>
+  <div class="card"><p class="sub" style="color:${m.c}">วันที่ ${n} · ${esc(m.n)}</p><h2>${esc(d.t)}</h2>
+  <div class="lesson">${esc(d.l)}</div>
+  <label class="q">วันนี้ใจคุณเป็นอย่างไร</label><div class="moods">${MOODS.map((e,i)=>`<button class="mood ${S.mood[n]===i?'on':''}" onclick="mood(${n},${i})">${e}</button>`).join('')}</div>
+  ${qs}
+  <div class="row" style="margin-top:22px"><button class="btn" id="fin" onclick="finish(${n})">${S.done[n]?'บันทึกการแก้ไข':'ทำบทนี้เสร็จแล้ว'}</button><span class="sub" id="msg"></span></div></div>`;
+}
+function setA(n,id,v){ (S.ans[n] ||= {})[id] = v; save(); }
+function chip(n,id,max,el){
+  const arr = ((S.ans[n] ||= {})[id] ||= []), o = el.textContent, i = arr.indexOf(o);
+  if(i>=0) arr.splice(i,1); else { if(arr.length>=max){ msg(`เลือกได้ไม่เกิน ${max}`); return; } arr.push(o); }
+  el.classList.toggle('on'); save();
+}
+function sc(n,id,i,el){ const a=((S.ans[n] ||= {})[id] ||= []); a[i]=+el.value; el.nextElementSibling.textContent=el.value; save(); }
+function mood(n,i){ S.mood[n]=i; save(); document.querySelectorAll('.mood').forEach((b,j)=>b.classList.toggle('on',j===i)); }
+function msg(t){ const m=document.getElementById('msg'); if(m) m.textContent=t; }
+function finish(n){
+  const a = S.ans[n] || {}, d = DAYS[n-1];
+  d.q.forEach(q=>{ if(q.type==='scale' && !a[q.id]) (S.ans[n] ||= {})[q.id] = q.items.map(()=>5); });
+  const empty = d.q.filter(q=>q.type!=='scale').some(q=>{ const v=(S.ans[n]||{})[q.id]; return !v || (Array.isArray(v)?!v.length:!String(v).trim()); });
+  if(empty){ msg('ตอบให้ครบทุกข้อก่อนนะ สั้นๆ ก็ได้'); return; }
+  if(!S.done[n]) S.done[n] = today();
+  save(); go('home'); window.scrollTo(0,0);
+}
+
+/* ===== ภาพรวมตัวฉัน (Pro) ===== */
+function summary(){
+  if(!member.isPro && !DEV) return `<button class="link" onclick="go('home')">← กลับ</button>${proBox(FREE_DAYS+1).replace(`วันที่ ${FREE_DAYS+1}–30 สำหรับ`,'ภาพรวมตัวฉัน สำหรับ')}`;
+  const rows = SUMMARY.map(([label,n,id])=>{ const v=(S.ans[n]||{})[id]; if(!v||(Array.isArray(v)&&!v.length)) return ''; return `<dt>${esc(label)}</dt><dd>${esc(Array.isArray(v)?v.join(' · '):v)}</dd>`; }).join('');
+  return `<button class="link" onclick="go('home')">← กลับ</button>
+  <div class="card"><h2>ภาพรวมตัวฉัน</h2><p class="sub">รวบรวมจากคำตอบของคุณตลอดคอร์ส</p>
+  <dl class="sum">${rows || '<p class="sub">ยังไม่มีข้อมูล ทำแบบฝึกไปเรื่อยๆ ภาพนี้จะค่อยๆ ชัดขึ้น</p>'}</dl>
+  <div class="row" style="margin-top:20px"><button class="btn ghost" onclick="exportTxt()">ดาวน์โหลดบันทึกทั้งหมด</button></div></div>`;
+}
+function exportTxt(){
+  let out = 'ใจรู้ — บันทึกการเข้าใจตัวเอง 30 วัน\n\n';
+  DAYS.forEach((d,i)=>{ const n=i+1, a=S.ans[n]; if(!a) return;
+    out += `วันที่ ${n}: ${d.t}${S.done[n]?` (${S.done[n]})`:''}\n`;
+    d.q.forEach(q=>{ const v=a[q.id]; if(v==null) return;
+      out += `- ${q.p}\n  ${q.type==='scale'?q.items.map((it,j)=>`${it} ${v[j]}`).join(', '):Array.isArray(v)?v.join(', '):v}\n`; });
+    out += '\n'; });
+  const b = new Blob([out],{type:'text/plain;charset=utf-8'}), u = URL.createObjectURL(b), l = document.createElement('a');
+  l.href=u; l.download='jairu-journal.txt'; l.click(); setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+
+/* ===== เริ่มทำงาน ===== */
+function go(name,n){
+  if(name==='day' && (!unlocked(n) || needsPro(n))) return;
+  view={name,n}; render(); window.scrollTo(0,0);
+}
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = view.name==='day' ? dayView(view.n) : view.name==='summary' ? summary() : home();
+}
+(async()=>{
+  member = await getMember();
+  if(member.loggedIn && (member.isPro || DEV) && !member.demo){
+    try{ const r = await fetch('/api/jairu/content',{credentials:'same-origin',cache:'no-store'});
+      if(r.ok){ const d = await r.json(); d.days.forEach((day,k)=>{ const n=d.from+k; DAYS[n-1] = Object.assign(day,{m:Math.floor((n-1)/5)}); }); }
+      else if(member.isPro) member.contentError = true;
+    }catch(e){ if(member.isPro) member.contentError = true; }
+  }
+  if(!member.loggedIn){
+    document.getElementById('app').innerHTML = `<div class="card"><h1>ใจรู้</h1><p class="sub">แบบฝึกเข้าใจตัวเองวันละบท 30 วัน</p><p>เข้าสู่ระบบสมาชิก ARSTINLA เพื่อเริ่มใช้งาน</p><a class="btn" href="${LOGIN_URL}?next=${encodeURIComponent(location.pathname)}">เข้าสู่ระบบด้วย LINE</a></div>`;
+    return;
+  }
+  S = load() || {start:today(), done:{}, ans:{}, mood:{}};
+  render();
+})();
+</script>
+</body>
+</html>

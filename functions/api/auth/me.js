@@ -9,7 +9,7 @@ export async function onRequestGet({ request, env }) {
   const m = await getMember(env.MEMBERS_DB, s.sub);
   if (!m) return json({ member: null, ...status });
   return json({
-    member: { name: m.name, picture: m.picture, tier: effectiveTier(m), tierUntil: m.tier_until, friend: !!m.friend, since: m.created_at },
+    member: { uid: m.id, name: m.name, picture: m.picture, tier: effectiveTier(m), tierUntil: m.tier_until, friend: !!m.friend, since: m.created_at },
     ...status
   });
 }
