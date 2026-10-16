@@ -112,9 +112,9 @@ textarea:focus{outline:0;border-color:var(--soft)}
 .pet-name{display:flex;gap:8px;justify-content:center;margin-top:12px}
 .pet-name input{flex:1;max-width:220px;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:0 16px;font:inherit;background:var(--paper);color:var(--ink)}
 .pet-name .btn{min-height:44px;padding:0 18px}
-.pet-mini{float:right;width:76px;height:76px;margin:-6px -4px 0 10px}
+.pet-mini{float:right;width:88px;height:88px;margin:-6px -4px 0 10px}
 .reveal{text-align:left}
-.reveal-art{display:block;width:min(300px,78vw);margin:10px auto 6px;background:radial-gradient(circle at 50% 52%,hsl(var(--pet-h) 45% 88% / .9),transparent 66%)}
+.reveal-art{display:block;width:min(340px,86vw);height:auto;margin:6px auto 4px}
 .reveal-name{font:500 40px/1.2 var(--serif);margin:4px 0 0}
 .reveal-name span{display:block;font-size:22px;color:var(--soft)}
 .reveal .kicker{font-size:14px;color:var(--soft);margin:0}
@@ -140,7 +140,7 @@ blockquote{margin:4px 0 14px;padding:4px 0 4px 14px;border-left:3px solid var(--
 <body>
 <div id="app"><p class="sub">กำลังโหลด…</p></div>
 <script src="/apps/shared/arstinla-member.js"></script>
-<script src="spirit.js?v=1"></script>
+<script src="spirit.js?v=3"></script>
 <script>
 /* ===== ตั้งค่า ===== */
 const APP_ID = 'jairu';
@@ -328,7 +328,7 @@ function summary(){
   if(!member.isPro && !DEV) return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button><section class="today">${proBox(FREE_DAYS+1,'ภาพรวมตัวฉัน สำหรับสมาชิก ARSTINLA Pro')}</section>`;
   const rows = SUMMARY.map(([label,n,id])=>{ const v=(S.ans[n]||{})[id]; if(!v||(Array.isArray(v)&&!v.length)) return ''; return `<dt>${esc(label)}</dt><dd>${esc(Array.isArray(v)?v.join(', '):v)}</dd>`; }).join('');
   return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button>
-  ${petStage()===5?`<div class="row" style="margin-top:16px"><button class="btn moon" onclick="go('reveal')">ดูตัวตนของฉัน: ${esc((ANIMALS[(petRank()||['lion'])[0]]||{}).name||'')}</button></div>`:''}
+  ${petStage()===5?`<div class="row" style="margin-top:16px"><button class="btn moon" onclick="go('reveal')">ดูตัวตนของฉัน: ${esc((ANIMALS[(petRank()||['lion'])[0]]||{}).species||'')}</button></div>`:''}
   <h2 class="sum-title">ภาพรวมตัวฉัน</h2><p class="sub">รวบรวมจากคำตอบของคุณตลอดคอร์ส ยิ่งทำมาก ภาพยิ่งชัด</p>
   <dl class="sum">${rows || '<p class="sub">ยังไม่มีคำตอบ ทำบทแรกแล้วกลับมาดูหน้านี้อีกครั้ง</p>'}</dl>
   <div class="row" style="margin-top:32px"><button class="btn ghost" onclick="exportTxt()">ดาวน์โหลดบันทึกทั้งหมด</button></div>`;

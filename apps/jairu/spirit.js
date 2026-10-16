@@ -4,35 +4,35 @@
 
 /* ---------- สัตว์ประจำตัว 8 แบบ ---------- */
 const ANIMALS = {
-  elephant:{name:'ช้าง', title:'ผู้พิทักษ์', hue:212,
+  elephant:{species:'คชาจันทร์', name:'ช้าง', title:'ผู้พิทักษ์', hue:212,
     essence:'คุณมีหัวใจของคนที่ดูแลคนรอบตัว ความผูกพัน ความรับผิดชอบ และความมั่นคงคือสิ่งที่คุณยึดไว้ คนรอบข้างรู้สึกปลอดภัยเมื่อมีคุณอยู่',
     strengths:['ความจำดี ไม่ลืมคนที่สำคัญ','อดทนและหนักแน่น','ทำให้คนรอบตัวรู้สึกปลอดภัย'],
     growth:'ช้างที่แข็งแรงต้องกินอิ่มก่อนจะแบกใคร ลองดูแลความต้องการของตัวเองให้ทันกับที่ดูแลคนอื่น'},
-  eagle:{name:'อินทรี', title:'ผู้มองไกล', hue:28,
+  eagle:{species:'วิหคเมฆา', name:'อินทรี', title:'ผู้มองไกล', hue:28,
     essence:'คุณมองเห็นภาพไกลกว่าวันนี้ อิสรภาพและการเติบโตคือเชื้อเพลิงของคุณ คุณชอบบินสูงกว่าที่เคย และไม่กลัวลมแรง',
     strengths:['มีวิสัยทัศน์ชัด','ลงมือเร็วเมื่อเห็นโอกาส','ไม่ยอมหยุดอยู่กับที่'],
     growth:'อินทรีบินได้ไกลเพราะรู้จักร่อนพักบนสายลม ลองให้ความสำเร็จเล็กๆ ระหว่างทางได้มีเวลาถูกชื่นชม'},
-  dolphin:{name:'โลมา', title:'ผู้เชื่อมใจ', hue:192,
+  dolphin:{species:'มัจฉานที', name:'โลมา', title:'ผู้เชื่อมใจ', hue:192,
     essence:'คุณมีพลังจากผู้คน มิตรภาพ เสียงหัวเราะ และการได้ช่วยใครสักคนทำให้คุณมีชีวิตชีวา คุณเป็นคนที่ทำให้วงสนทนาอบอุ่นขึ้น',
     strengths:['อ่านอารมณ์คนเก่ง','ทำให้บรรยากาศเบาลง','เป็นสะพานเชื่อมคนเข้าหากัน'],
     growth:'โลมาก็ต้องขึ้นมาหายใจเป็นช่วงๆ ลองรู้ตัวว่าเมื่อไหร่กำลังเป็นทุกอย่างให้ทุกคน แล้วเว้นที่ไว้ให้ตัวเองบ้าง'},
-  owl:{name:'นกฮูก', title:'ผู้ใคร่ครวญ', hue:262,
+  owl:{species:'อุลูกจันทรา', name:'นกฮูก', title:'ผู้ใคร่ครวญ', hue:262,
     essence:'คุณเข้าใจโลกผ่านการคิดลึกและสังเกตเงียบๆ ความรู้ ความจริง และความยุติธรรมสำคัญกับคุณ คุณมักเห็นสิ่งที่คนอื่นมองข้าม',
     strengths:['คิดรอบคอบ','ซื่อตรงต่อความจริง','สังเกตรายละเอียดเก่ง'],
     growth:'นกฮูกเห็นชัดในความมืด แต่ก็ต้องบินออกจากกิ่งไม้บ้าง ลองลงมือก่อนจะคิดครบทุกมุม แล้วปรับระหว่างทาง'},
-  turtle:{name:'เต่า', title:'ผู้มั่นคงช้าๆ', hue:150,
+  turtle:{species:'กูรมาบัว', name:'เต่า', title:'ผู้มั่นคงช้าๆ', hue:150,
     essence:'คุณเดินด้วยจังหวะของตัวเอง ความสงบ สุขภาพ และศรัทธาคือบ้านที่คุณพกติดตัว คุณไม่รีบ แต่ไปถึงเสมอ',
     strengths:['ใจเย็นในวันที่วุ่นวาย','สม่ำเสมอ','รู้ว่าอะไรสำคัญจริง'],
     growth:'กระดองปกป้องคุณได้ดี ลองยื่นหัวออกมาบอกความต้องการให้คนอื่นรู้ แทนการเก็บไว้ข้างในคนเดียว'},
-  fox:{name:'จิ้งจอก', title:'ผู้สร้างสรรค์', hue:16,
+  fox:{species:'จิ้งจอกเพลิงกนก', name:'จิ้งจอก', title:'ผู้สร้างสรรค์', hue:16,
     essence:'คุณมีความคิดเป็นของตัวเอง ชอบหาทางใหม่ที่ไม่มีใครเดิน ความสร้างสรรค์ ความงาม และอิสระทำให้คุณเป็นคุณ',
     strengths:['ช่างคิดช่างแก้ปัญหา','ปรับตัวเร็ว','เห็นความงามในสิ่งเล็กๆ'],
     growth:'จิ้งจอกฉลาดหาทางเลี่ยง ลองสังเกตว่าบางเรื่องที่เลี่ยงอยู่ อาจเป็นเรื่องที่ควรเผชิญตรงๆ สักครั้ง'},
-  lion:{name:'สิงโต', title:'ผู้นำ', hue:42,
+  lion:{species:'ราชสีห์น้อย', name:'สิงโต', title:'ผู้นำ', hue:42,
     essence:'คุณมีพลังที่จะยืนข้างหน้าและพาคนอื่นไปด้วย ความสำเร็จ ความยุติธรรม และการได้รับการยอมรับขับเคลื่อนคุณ',
     strengths:['กล้าตัดสินใจ','ปกป้องคนที่อ่อนแอกว่า','มีพลังดึงดูดคน'],
     growth:'เสียงคำรามที่ดีที่สุดบางครั้งคือความเงียบ ลองฟังให้จบก่อนตอบ แล้วจะเห็นว่าคนรอบตัวพร้อมเดินไปกับคุณมากขึ้น'},
-  deer:{name:'กวาง', title:'ผู้อ่อนโยน', hue:338,
+  deer:{species:'มฤคมาศ', name:'กวาง', title:'ผู้อ่อนโยน', hue:338,
     essence:'คุณรับรู้ความรู้สึกได้ละเอียด ความงาม ความสงบ และความใจดีคือภาษาของคุณ คุณทำให้โลกรอบตัวนุ่มนวลขึ้น',
     strengths:['เห็นอกเห็นใจคนอื่น','ไวต่อความรู้สึก','สร้างพื้นที่ปลอดภัย'],
     growth:'ความอ่อนโยนไม่ใช่ความอ่อนแอ ลองยืนยันความต้องการของตัวเองอย่างนุ่มนวลแต่ชัดเจน แทนการหลบออกจากความขัดแย้ง'}
@@ -90,6 +90,9 @@ function pal(h, flat){ // flat = literal colours for export
 }
 
 /* ---------- ภาพ ---------- */
+const ART_V = 1;
+const artUrl = key => `art/${key}.webp?v=${ART_V}`;
+const artImg = (key, size) => `<image href="${artUrl(key)}" x="${-size/2}" y="${-size/2}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`;
 function eyes(x, y, r, p){
   const one = cx => `<ellipse cx="${cx}" cy="${y}" rx="${(r*.82).toFixed(1)}" ry="${r}" fill="${p.ink}"/><circle cx="${(cx+r*.32).toFixed(1)}" cy="${(y-r*.38).toFixed(1)}" r="${(r*.34).toFixed(1)}" fill="#fff"/>`;
   return `<g class="eyes">${one(-x)}${one(x)}</g>`;
@@ -189,9 +192,11 @@ function spiritArt(stage, h, ghost){
 }
 function petSvg(cls){
   const stage = petStage(), rank = petRank(), h = petHue();
-  const d = Object.keys(S.done).length, s = stage===5 ? 1 : (0.62 + 0.38*Math.min(d,29)/29);
-  const inner = stage===5 && rank ? animalArt(rank[0], h) : spiritArt(stage, h, rank && rank[0]);
-  return `<g class="${cls||'pet'}" transform="scale(${s.toFixed(3)})"><g class="pet-body">${inner}</g></g>`;
+  const d = Object.keys(S.done).length, s = stage===5 ? 1 : (0.8 + 0.2*Math.min(d,29)/29);
+  const glow = stage>=1 && stage<5 && rank ? `<circle r="78" fill="hsl(${h} 70% 72%)" opacity=".28" filter="url(#petGlow)"/>` : '';
+  const key = stage===5 && rank ? rank[0] : 'stage'+Math.min(stage,4);
+  const inner = `${glow}${artImg(key, 236)}`;
+  return `<defs><filter id="petGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter></defs><g class="${cls||'pet'}" transform="scale(${s.toFixed(3)})"><g class="pet-body">${inner}</g></g>`;
 }
 
 /* ---------- หน้า: แผงดวงจิตบนหน้าหลัก ---------- */
@@ -200,7 +205,7 @@ function petPanel(){
   const hint = stage===0 ? 'ทำบทแรกให้จบ ไข่จะฟักเป็นดวงจิตของคุณ'
     : stage===5 ? 'ดวงจิตกลายร่างเป็นตัวตนของคุณแล้ว'
     : stage===4 ? 'เงาของร่างใหม่เริ่มปรากฏด้านหลังแล้ว อีกไม่กี่บทจะรู้ว่าเป็นตัวอะไร'
-    : rank ? 'สีของดวงจิตเปลี่ยนตามคำตอบของคุณ ทุกคำตอบคืออาหารที่ทำให้โตขึ้น' : 'ทุกคำตอบคืออาหาร ยิ่งตอบจากใจ ดวงจิตยิ่งโต';
+    : rank ? 'แสงรอบตัวดวงจิตเปลี่ยนสีตามคำตอบของคุณ ทุกคำตอบคืออาหารที่ทำให้โตขึ้น' : 'ทุกคำตอบคืออาหาร ยิ่งตอบจากใจ ดวงจิตยิ่งโต';
   return `<div class="pet-panel"><p class="pet-stage">${STAGE_NAME[stage]}${name?` · ${esc(name)}`:''}</p><p class="sub">${hint}</p>
     ${!name && stage>=1 ? `<form class="pet-name" onsubmit="namePet(event)"><input id="petName" maxlength="20" placeholder="ตั้งชื่อดวงจิตของคุณ" aria-label="ชื่อดวงจิต"><button class="btn ghost" type="submit">ตั้งชื่อ</button></form>`:''}
     ${stage===5 ? `<div class="row" style="justify-content:center;margin-top:14px"><button class="btn moon" onclick="go('reveal')">ดูตัวตนของฉัน</button></div>`:''}</div>`;
@@ -227,23 +232,22 @@ function revealView(){
   const shadow = sig.reacts.map(r=>SHADOW[r]).filter(Boolean)[0];
   return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button>
   <section class="reveal" style="--pet-h:${A.hue}">
-    <svg class="reveal-art" viewBox="-110 -110 220 220" role="img" aria-label="${esc(A.name)}">${animalArt(rank[0],A.hue)}</svg>
+    <img class="reveal-art" src="${artUrl(rank[0])}" width="768" height="768" alt="${esc(A.species)} ${esc(A.name)}${esc(A.title)}">
     <p class="kicker">${esc(name)} กลายร่างเป็น</p>
-    <h2 class="reveal-name">${esc(A.name)} <span>${esc(A.title)}</span></h2>
+    <h2 class="reveal-name">${esc(A.species)} <span>ดวงจิตแห่ง${esc(A.name)} ${esc(A.title)}</span></h2>
     <p class="lesson">${esc(A.essence)}</p>
     <div class="block"><h3 class="r-h">ร่องรอยจากคำตอบของคุณ</h3><ul class="r-list">${traces.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
     ${words.length?`<div class="block"><h3 class="r-h">คำของคุณเอง</h3>${words.map(([l,w])=>`<p class="sub">${esc(l)}</p><blockquote>${esc(w)}</blockquote>`).join('')}</div>`:''}
-    <div class="block"><h3 class="r-h">จุดแข็งของ${esc(A.name)}ในตัวคุณ</h3><ul class="r-list">${A.strengths.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+    <div class="block"><h3 class="r-h">จุดแข็งของ${esc(A.species)}ในตัวคุณ</h3><ul class="r-list">${A.strengths.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
     ${shadow?`<div class="block"><h3 class="r-h">เงาที่ควรรู้ทัน</h3><p>${esc(shadow)}</p></div>`:''}
     <div class="block"><h3 class="r-h">ก้าวต่อไป</h3><p>${esc(A.growth)}</p></div>
-    <div class="block"><h3 class="r-h">อีกด้านของคุณ</h3><p>คำตอบของคุณมีส่วนของ${esc(B.name)} ${esc(B.title)} อยู่ด้วย ${esc(B.essence.split(' ')[0])}</p></div>
+    <div class="block"><h3 class="r-h">อีกด้านของคุณ</h3><p>คำตอบของคุณมีส่วนของ${esc(B.species)} ดวงจิตแห่ง${esc(B.name)} ${esc(B.title)} อยู่ด้วย ${esc(B.essence.split(' ')[0])}</p></div>
     <div class="row" style="margin-top:30px"><button class="btn" onclick="sharePet()">บันทึกภาพตัวตนของฉัน</button><button class="btn ghost" onclick="go('summary')">ภาพรวมตัวฉัน</button></div>
   </section>`;
 }
 async function sharePet(){
   const rank = petRank(); if(!rank) return; const A = ANIMALS[rank[0]], name = (S.pet&&S.pet.name)||'ดวงจิตของฉัน';
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-110 -110 220 220" width="760" height="760">${animalArt(rank[0],A.hue,true)}</svg>`;
-  const img = new Image(); img.src = 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  const img = new Image(); img.src = artUrl(rank[0]);
   await img.decode();
   const c = document.createElement('canvas'); c.width=1080; c.height=1350; const x = c.getContext('2d');
   x.fillStyle='#E9ECF0'; x.fillRect(0,0,1080,1350);
@@ -251,8 +255,9 @@ async function sharePet(){
   for(let i=0;i<30;i++){ const a=i/30*Math.PI*2-Math.PI/2; x.fillStyle='#C9A24A'; x.beginPath(); x.arc(540+410*Math.cos(a),520+410*Math.sin(a),9,0,Math.PI*2); x.fill(); }
   x.drawImage(img,160,140,760,760);
   x.textAlign='center'; x.fillStyle='#5B6B8C'; x.font='400 38px "IBM Plex Sans Thai Looped","IBM Plex Sans Thai",sans-serif';
-  x.fillText(`${name} กลายร่างเป็น`,540,1030);
-  x.fillStyle='#1C2333'; x.font='500 96px "Noto Serif Thai",serif'; x.fillText(`${A.name} ${A.title}`,540,1140);
+  x.fillText(`${name} กลายร่างเป็น`,540,1010);
+  x.fillStyle='#1C2333'; x.font='500 96px "Noto Serif Thai",serif'; x.fillText(A.species,540,1130);
+  x.fillStyle='#5B6B8C'; x.font='400 40px "IBM Plex Sans Thai Looped","IBM Plex Sans Thai",sans-serif'; x.fillText(`ดวงจิตแห่ง${A.name} ${A.title}`,540,1195);
   x.fillStyle='#7A8499'; x.font='400 30px "IBM Plex Sans Thai Looped","IBM Plex Sans Thai",sans-serif';
   x.fillText('ใจรู้ · เข้าใจตัวเองใน 30 วัน · arstinla.com/apps/jairu',540,1270);
   const a = document.createElement('a'); a.download = `jairu-${rank[0]}.png`; a.href = c.toDataURL('image/png'); a.click();
