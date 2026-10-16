@@ -103,6 +103,36 @@ textarea:focus{outline:0;border-color:var(--soft)}
 .sum dt{font:500 14px var(--sans);color:var(--soft);margin-top:22px}
 .sum dd{margin:4px 0 0;font:400 18px/1.8 var(--serif);white-space:pre-wrap}
 .gate{min-height:70vh;display:flex;flex-direction:column;justify-content:center}
+/* ดวงจิต */
+.pet-body{transform-box:fill-box;transform-origin:50% 100%}
+.eyes{transform-box:fill-box;transform-origin:50% 50%}
+.pet-panel{margin:-4px auto 0;max-width:420px}
+.pet-stage{font:500 17px var(--serif);margin:0 0 2px;color:var(--ink)}
+.count{font-size:13px;color:var(--mute);margin:10px 0 0}
+.pet-name{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.pet-name input{flex:1;max-width:220px;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:0 16px;font:inherit;background:var(--paper);color:var(--ink)}
+.pet-name .btn{min-height:44px;padding:0 18px}
+.pet-mini{float:right;width:76px;height:76px;margin:-6px -4px 0 10px}
+.reveal{text-align:left}
+.reveal-art{display:block;width:min(300px,78vw);margin:10px auto 6px;background:radial-gradient(circle at 50% 52%,hsl(var(--pet-h) 45% 88% / .9),transparent 66%)}
+.reveal-name{font:500 40px/1.2 var(--serif);margin:4px 0 0}
+.reveal-name span{display:block;font-size:22px;color:var(--soft)}
+.reveal .kicker{font-size:14px;color:var(--soft);margin:0}
+.r-h{font:500 18px var(--serif);margin:0 0 8px}
+.r-list{margin:0;padding-left:1.2em}.r-list li{margin:4px 0}
+blockquote{margin:4px 0 14px;padding:4px 0 4px 14px;border-left:3px solid var(--moon);font:400 17px/1.8 var(--serif)}
+@media (prefers-reduced-motion:no-preference){
+ .ring .pet-body,.pet-mini .pet-body{animation:bob 4.5s ease-in-out infinite}
+ @keyframes bob{50%{transform:translateY(-4px)}}
+ .eyes{animation:blink 6s infinite}
+ @keyframes blink{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.1)}}
+ .pet-mini.fed .pet-body{animation:hop .6s ease}
+ @keyframes hop{30%{transform:translateY(-14px) scale(1.06)}60%{transform:translateY(0) scale(.97)}}
+ .grow .pet-body{animation:grow 1.4s ease}
+ @keyframes grow{0%{transform:scale(.8)}45%{transform:scale(1.12)}100%{transform:scale(1)}}
+ .reveal-art{animation:emerge 1.6s ease both}
+ @keyframes emerge{0%{opacity:0;transform:scale(.6) rotate(-6deg);filter:blur(6px)}100%{opacity:1;transform:none;filter:none}}
+}
 @media (max-width:380px){.sc{grid-template-columns:92px 1fr 22px}.title{font-size:34px}}
 @media (prefers-reduced-motion:no-preference){.ring .now .halo{animation:breathe 4s ease-in-out infinite}@keyframes breathe{50%{stroke-opacity:.25}}}
 </style>
@@ -110,6 +140,7 @@ textarea:focus{outline:0;border-color:var(--soft)}
 <body>
 <div id="app"><p class="sub">กำลังโหลด…</p></div>
 <script src="/apps/shared/arstinla-member.js"></script>
+<script src="spirit.js?v=1"></script>
 <script>
 /* ===== ตั้งค่า ===== */
 const APP_ID = 'jairu';
@@ -218,13 +249,13 @@ function ring(nd){
     const cls=[S.done[n]?'done':'',n===nd?'now':'',(!S.done[n]&&(needsPro(n)))?'locked':''].join(' ');
     return `<g class="${cls}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">${n===nd?'<circle class="halo" r="13"/>':''}${moonSvg(n,8)}</g>`}).join('');
   const c2=doneCount();
-  return `<svg class="ring" viewBox="0 0 300 300" role="img" aria-label="ทำแล้ว ${c2} จาก 30 บท">${parts}
-    <text class="ring-num" x="150" y="160" text-anchor="middle">${c2}</text><text class="ring-cap" x="150" y="188" text-anchor="middle">จาก 30 บท</text></svg>`;
+  return `<svg class="ring" viewBox="0 0 300 300" role="img" aria-label="ดวงจิตของคุณ ทำแล้ว ${c2} จาก 30 บท">${parts}
+    <g class="${S.grew?'grow':''}" transform="translate(150 146) scale(.84)">${petSvg()}</g></svg>`;
 }
 function home(){
   const nd = nextDay();
   let todayCard;
-  if(!nd) todayCard = `<h2>ครบ 30 วันแล้ว</h2><p class="sub">ดวงจันทร์ครบรอบแล้ว กลับไปอ่านคำตอบของตัวเอง หรือเปิดภาพรวมตัวฉันได้เสมอ</p><div class="row"><button class="btn" onclick="go('summary')">เปิดภาพรวมตัวฉัน</button></div>`;
+  if(!nd) todayCard = `<h2>ครบ 30 วันแล้ว</h2><p class="sub">ดวงจันทร์ครบรอบ และดวงจิตของคุณกลายร่างแล้ว กลับมาอ่านคำตอบของตัวเองได้เสมอ</p><div class="row"><button class="btn moon" onclick="go('reveal')">ดูตัวตนของฉัน</button><button class="btn ghost" onclick="go('summary')">ภาพรวมตัวฉัน</button></div>`;
   else if(!unlocked(nd)) todayCard = `<p class="kicker">วันนี้ทำแล้ว</p><h2>บทที่ ${nd} จะเปิดพรุ่งนี้</h2><p class="sub">เว้นให้ความคิดได้ตกตะกอนสักคืน เป็นส่วนหนึ่งของการฝึก</p>`;
   else if(needsPro(nd)) todayCard = proBox(nd);
   else todayCard = `<p class="kicker">วันที่ ${nd} ใน${esc(MODULES[DAYS[nd-1].m].n)}</p><h2>${esc(DAYS[nd-1].t)}</h2><p class="sub">ใช้เวลาราว 10 นาที</p><div class="row"><button class="btn" onclick="go('day',${nd})">เริ่มบทวันนี้</button></div>`;
@@ -239,7 +270,7 @@ function home(){
     return `<div class="mod" style="--c:${m.c}"><h3><i></i>${esc(m.n)}<small>${doneIn}/5</small></h3><div class="days">${cells}</div></div>`;
   }).join('');
   return `<div class="brand"><a href="/">ARSTINLA</a><button class="link" onclick="go('summary')">ภาพรวมตัวฉัน</button></div>
-    <header class="hero">${ring(nd)}<h1 class="title">ใจรู้</h1><p class="tagline">เข้าใจตัวเองวันละบท ครบรอบในหนึ่งเดือน${member.name?`<br>สวัสดี ${esc(member.name)}`:''}</p></header>
+    <header class="hero"><h1 class="title">ใจรู้</h1><p class="tagline">เข้าใจตัวเองวันละบท ครบรอบในหนึ่งเดือน${member.name?` · สวัสดี ${esc(member.name)}`:''}</p>${ring(nd)}${petPanel()}<p class="count">ทำแล้ว ${doneCount()} จาก 30 บท</p></header>
     <section class="today">${todayCard}</section>
     <section class="mods" aria-label="บทเรียนทั้ง 30 วัน">${mods}</section>
     ${member.contentError?`<p class="note">โหลดบทเรียนสำหรับ Pro ไม่สำเร็จ รีเฟรชหน้านี้อีกครั้ง หรือตรวจการเชื่อมต่ออินเทอร์เน็ต</p>`:''}
@@ -247,7 +278,7 @@ function home(){
 }
 function proBox(n,heading){
   return `<div class="probox"><p class="kicker">ทำครบ ${FREE_DAYS} วันแรกแล้ว</p><h2>${heading||`บทที่ ${n}–30 สำหรับสมาชิก ARSTINLA Pro`}</h2>
-  <p class="sub">ปลดล็อกอีก 23 บท ภาพรวมตัวฉันที่สรุปจากคำตอบทั้งหมด และดาวน์โหลดบันทึกเก็บไว้ ใช้เครื่องมือ Pro อื่นบน arstinla.com ได้ด้วย</p>
+  <p class="sub">ดวงจิตของคุณกำลังโต ทำต่ออีก 23 บทเพื่อดูว่าในวันที่ 30 มันจะกลายร่างเป็นสัตว์ตัวไหน ซึ่งจะคำนวณจากคำตอบของคุณเอง พร้อมภาพรวมตัวฉันและดาวน์โหลดบันทึกทั้งหมด</p>
   <p class="price">99 บาท<span>ต่อเดือน หรือ</span>990 บาท<span>ต่อปี</span></p>
   <a class="btn moon" href="${PRO_URL}&next=${encodeURIComponent(location.pathname)}">สมัคร Pro</a></div>`;
 }
@@ -266,28 +297,30 @@ function dayView(n){
     }
   }).join('');
   return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button>
-  <header class="lesson-head" style="--c:${m.c}"><p class="kicker">วันที่ ${n} ใน${esc(m.n)}</p><h2>${esc(d.t)}</h2></header>
+  <header class="lesson-head" style="--c:${m.c}"><svg class="pet-mini" viewBox="-100 -100 200 200" aria-hidden="true">${petSvg()}</svg><p class="kicker">วันที่ ${n} ใน${esc(m.n)}</p><h2>${esc(d.t)}</h2></header>
   <p class="lesson">${esc(d.l)}</p>
   <div class="block"><label class="q"><span>ก่อนเริ่ม วันนี้ใจคุณเป็นอย่างไร</span></label><div class="moods">${MOODS.map((e,i)=>`<button class="mood ${S.mood[n]===i?'on':''}" aria-pressed="${S.mood[n]===i}" onclick="mood(${n},${i})">${e}</button>`).join('')}</div></div>
   ${qs}
-  <div class="finish"><button class="btn" id="fin" onclick="finish(${n})">${S.done[n]?'บันทึกการแก้ไข':'จบบทวันนี้'}</button><span class="saved" id="saved">คำตอบบันทึกในเครื่องนี้อัตโนมัติ</span><span id="msg" role="status"></span></div>`;
+  <div class="finish"><button class="btn" id="fin" onclick="finish(${n})">${S.done[n]?'บันทึกการแก้ไข':'จบบทวันนี้'}</button><span class="saved" id="saved">ทุกคำตอบคืออาหารของดวงจิต บันทึกในเครื่องนี้อัตโนมัติ</span><span id="msg" role="status"></span></div>`;
 }
-function setA(n,id,v){ (S.ans[n] ||= {})[id] = v; save(); }
+function setA(n,id,v){ const o=String((S.ans[n]||{})[id]||''); (S.ans[n] ||= {})[id] = v; save(); if((!o.trim()&&v.trim()) || Math.floor(v.length/60)>Math.floor(o.length/60)) petPing(); }
 function chip(n,id,max,el){
   const arr = ((S.ans[n] ||= {})[id] ||= []), o = el.textContent, i = arr.indexOf(o);
   if(i>=0) arr.splice(i,1); else { if(arr.length>=max){ msg(`เลือกได้ไม่เกิน ${max}`); return; } arr.push(o); }
-  el.classList.toggle('on'); el.setAttribute('aria-pressed',el.classList.contains('on')); save();
+  el.classList.toggle('on'); el.setAttribute('aria-pressed',el.classList.contains('on')); save(); petPing();
 }
 function sc(n,id,i,el){ const a=((S.ans[n] ||= {})[id] ||= []); a[i]=+el.value; el.nextElementSibling.textContent=el.value; save(); }
-function mood(n,i){ S.mood[n]=i; save(); document.querySelectorAll('.mood').forEach((b,j)=>{b.classList.toggle('on',j===i);b.setAttribute('aria-pressed',j===i)}); }
+function mood(n,i){ S.mood[n]=i; save(); petPing(); document.querySelectorAll('.mood').forEach((b,j)=>{b.classList.toggle('on',j===i);b.setAttribute('aria-pressed',j===i)}); }
 function msg(t){ const m=document.getElementById('msg'); if(m) m.textContent=t; }
 function finish(n){
   const a = S.ans[n] || {}, d = DAYS[n-1];
   d.q.forEach(q=>{ if(q.type==='scale' && !a[q.id]) (S.ans[n] ||= {})[q.id] = q.items.map(()=>5); });
   const empty = d.q.filter(q=>q.type!=='scale').some(q=>{ const v=(S.ans[n]||{})[q.id]; return !v || (Array.isArray(v)?!v.length:!String(v).trim()); });
   if(empty){ msg('ยังมีคำถามที่ว่างอยู่ ตอบสั้นๆ ก็ได้'); return; }
-  if(!S.done[n]) S.done[n] = today();
-  save(); go('home'); window.scrollTo(0,0);
+  const fresh = !S.done[n];
+  if(fresh) S.done[n] = today();
+  if(fresh) S.grew = n;
+  save(); go(fresh && n===30 ? 'reveal' : 'home'); window.scrollTo(0,0);
 }
 
 /* ===== ภาพรวมตัวฉัน (Pro) ===== */
@@ -295,6 +328,7 @@ function summary(){
   if(!member.isPro && !DEV) return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button><section class="today">${proBox(FREE_DAYS+1,'ภาพรวมตัวฉัน สำหรับสมาชิก ARSTINLA Pro')}</section>`;
   const rows = SUMMARY.map(([label,n,id])=>{ const v=(S.ans[n]||{})[id]; if(!v||(Array.isArray(v)&&!v.length)) return ''; return `<dt>${esc(label)}</dt><dd>${esc(Array.isArray(v)?v.join(', '):v)}</dd>`; }).join('');
   return `<button class="link" onclick="go('home')">← กลับหน้าหลัก</button>
+  ${petStage()===5?`<div class="row" style="margin-top:16px"><button class="btn moon" onclick="go('reveal')">ดูตัวตนของฉัน: ${esc((ANIMALS[(petRank()||['lion'])[0]]||{}).name||'')}</button></div>`:''}
   <h2 class="sum-title">ภาพรวมตัวฉัน</h2><p class="sub">รวบรวมจากคำตอบของคุณตลอดคอร์ส ยิ่งทำมาก ภาพยิ่งชัด</p>
   <dl class="sum">${rows || '<p class="sub">ยังไม่มีคำตอบ ทำบทแรกแล้วกลับมาดูหน้านี้อีกครั้ง</p>'}</dl>
   <div class="row" style="margin-top:32px"><button class="btn ghost" onclick="exportTxt()">ดาวน์โหลดบันทึกทั้งหมด</button></div>`;
@@ -317,7 +351,8 @@ function go(name,n){
 }
 function render(){
   const app = document.getElementById('app');
-  app.innerHTML = view.name==='day' ? dayView(view.n) : view.name==='summary' ? summary() : home();
+  app.innerHTML = view.name==='day' ? dayView(view.n) : view.name==='summary' ? summary() : view.name==='reveal' ? revealView() : home();
+  if(S && S.grew && view.name==='home'){ delete S.grew; save(); }
 }
 (async()=>{
   member = await getMember();
