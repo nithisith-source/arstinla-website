@@ -182,7 +182,7 @@ body.present-mode .planner-shell{grid-template-columns:1fr}body.present-mode .co
             </div>
           </div>
           </div>
-          <div class="legend"><span><i></i>Solar ray</span><span class="wind"><i></i>Prevailing wind</span><span class="room"><i></i><em id="wallLegend">Room outline · 0.10 m · Center</em></span><span class="column"><i></i>Column · center on grid</span><span class="grid-key"><i></i>1.00 m grid / 0.10 m subdivision</span><span class="metric-scale"><i></i>1.00 m</span><span class="drag-note">Drag rooms / columns · Arrow keys move 0.10 m</span><span class="scale-spec">Scale 1:100 · 1.00 m = 10 mm · Print A2 at 100% / Actual size</span></div>
+          <div class="legend"><span><i></i>Solar ray</span><span class="wind"><i></i>Prevailing wind</span><span class="room"><i></i><em id="wallLegend">Room outline · 0.10 m · Center</em></span><span class="column"><i></i>Column · center on grid</span><span class="grid-key"><i></i>1.00 m grid / 0.10 m subdivision</span><span class="metric-scale"><i></i>1.00 m</span><span class="drag-note">Drag rooms / columns · Arrow keys move 0.10 m (Shift = 1.00 m)</span><span class="scale-spec">Scale 1:100 · 1.00 m = 10 mm · Print A2 at 100% / Actual size</span></div>
         </div>
 
         <aside class="environment-info">
@@ -527,6 +527,17 @@ $("presentBtn").addEventListener("click",()=>{document.body.classList.toggle("pr
   window.addEventListener("beforeprint",()=>{board.style.width=""});window.addEventListener("afterprint",()=>apply(zoom));
   apply(zoom);
 })();
+
+/* ---- Arrow keys move the selected room / column (Shift = 1.00 m) ---- */
+document.addEventListener("keydown",event=>{
+  const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
+  if(!delta||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey)return;
+  const target=event.target;if(target&&(target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)))return;
+  const room=rooms.find(item=>item.id===selectedId),column=!room&&columns.find(item=>item.id===selectedColumnId);
+  if(!room&&!column)return;
+  event.preventDefault();const step=event.shiftKey?1:.1;
+  room?moveRoom(room,delta[0]*step,delta[1]*step):moveColumn(column,delta[0]*step,delta[1]*step);renderAll();
+});
 </script>
 </body>
 </html>
