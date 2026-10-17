@@ -21,6 +21,8 @@
     "/apps/site-diary/icons/*",
     "/apps/stage-checklist/icons/*",
     "/apps/tangluer/icons/*",
-    "/stories/jamjuree-village/assets/*"
+    "/stories/jamjuree-village/assets/*",
+    "/apps/jairu/icons/*",
+    "/apps/jairu/art/*"
   ]
 }

@@ -10,6 +10,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600&family=Noto+Serif+Thai:wght@400;500;600&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#E9ECF0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="ใจรู้">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="../shared/pwa-install.css">
 <style>
 :root{--mist:#E9ECF0;--paper:#F4F6F8;--ink:#1C2333;--soft:#5B6B8C;--mute:#7A8499;--line:#D3D8E0;--moon:#C9A24A;--moon-soft:#EFE3C2;--moon-dim:#D6CCAE;--shade:#C9CFDA;--warn:#A4572F;
  --serif:"Noto Serif Thai",Georgia,serif;--sans:"IBM Plex Sans Thai Looped","IBM Plex Sans Thai",system-ui,sans-serif}
@@ -103,6 +108,9 @@ textarea:focus{outline:0;border-color:var(--soft)}
 .sum dt{font:500 14px var(--sans);color:var(--soft);margin-top:22px}
 .sum dd{margin:4px 0 0;font:400 18px/1.8 var(--serif);white-space:pre-wrap}
 .gate{min-height:70vh;display:flex;flex-direction:column;justify-content:center}
+/* ปุ่มติดตั้งแอป */
+.arstinla-pwa-install{top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 16px)!important;right:16px!important;border-radius:999px!important;background:var(--ink)!important;color:var(--mist)!important;border:0!important;font:500 13px var(--sans)!important;letter-spacing:0!important;text-transform:none!important;padding:0 18px!important}
+body[data-view="day"] .arstinla-pwa-install{display:none}
 /* ดวงจิต */
 .pet-body{transform-box:fill-box;transform-origin:50% 100%}
 .eyes{transform-box:fill-box;transform-origin:50% 50%}
@@ -140,6 +148,8 @@ blockquote{margin:4px 0 14px;padding:4px 0 4px 14px;border-left:3px solid var(--
 <body>
 <div id="app"><p class="sub">กำลังโหลด…</p></div>
 <script src="/apps/shared/arstinla-member.js"></script>
+<script src="../shared/pwa-install.js" defer></script>
+<script>addEventListener('DOMContentLoaded',()=>{const b=document.querySelector('.arstinla-pwa-install'); if(b) b.textContent='ติดตั้งใจรู้ลงมือถือ';});</script>
 <script src="spirit.js?v=3"></script>
 <script>
 /* ===== ตั้งค่า ===== */
@@ -351,6 +361,7 @@ function go(name,n){
 }
 function render(){
   const app = document.getElementById('app');
+  document.body.dataset.view = view.name;
   app.innerHTML = view.name==='day' ? dayView(view.n) : view.name==='summary' ? summary() : view.name==='reveal' ? revealView() : home();
   if(S && S.grew && view.name==='home'){ delete S.grew; save(); }
 }

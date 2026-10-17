@@ -1,0 +1,17 @@
+{
+  "name": "ใจรู้ — เข้าใจตัวเอง 30 วัน",
+  "short_name": "ใจรู้",
+  "description": "แบบฝึกเข้าใจตัวเองวันละบท 30 วัน พร้อมดวงจิตที่เติบโตตามคำตอบของคุณ โดย ARSTINLA",
+  "lang": "th",
+  "id": "/apps/jairu/",
+  "start_url": "/apps/jairu/?source=homescreen",
+  "scope": "/apps/jairu/",
+  "display": "standalone",
+  "background_color": "#1C2333",
+  "theme_color": "#E9ECF0",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
