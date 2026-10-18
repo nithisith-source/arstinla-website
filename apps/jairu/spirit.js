@@ -90,7 +90,7 @@ function pal(h, flat){ // flat = literal colours for export
 }
 
 /* ---------- ภาพ ---------- */
-const ART_V = 1;
+const ART_V = 2;
 const artUrl = key => `art/${key}.webp?v=${ART_V}`;
 const artImg = (key, size) => `<image href="${artUrl(key)}" x="${-size/2}" y="${-size/2}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid meet"/>`;
 function eyes(x, y, r, p){

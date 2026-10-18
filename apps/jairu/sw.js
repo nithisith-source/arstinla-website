@@ -1,6 +1,6 @@
-const CACHE = "arstinla-jairu-v1";
-const CORE = ["./", "./manifest.webmanifest", "./spirit.js?v=3", "../shared/pwa-install.css", "../shared/pwa-install.js", "../shared/arstinla-member.js",
-  "./art/stage0.webp?v=1", "./art/stage1.webp?v=1", "./icons/icon-192.png"];
+const CACHE = "arstinla-jairu-v2";
+const CORE = ["./", "./manifest.webmanifest", "./spirit.js?v=4", "../shared/pwa-install.css", "../shared/pwa-install.js", "../shared/arstinla-member.js",
+  "./art/stage0.webp?v=2", "./art/stage1.webp?v=2", "./icons/icon-192.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(CORE)).catch(() => {}));
