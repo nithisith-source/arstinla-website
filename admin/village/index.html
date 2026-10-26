@@ -60,7 +60,7 @@ h2{font-size:1rem;margin:28px 0 10px}
   <div id="out" hidden>
     <div class="kpi" id="kpi"></div>
     <h2>ใบสมัครเข้าหมู่บ้าน</h2>
-    <p class="msg" style="margin-top:0">อนุมัติแล้วใส่ลิงก์เข้าหมู่บ้าน (WorkAdventure) ผู้สมัครจะเห็นปุ่ม “เข้าหมู่บ้าน” ในหน้า /village/ — ส่งข้อความแจ้งทาง LINE @arstinla ด้วยตัวเอง · “ไม่ผ่าน” จะคืนแปลงให้คนอื่นจอง</p>
+    <p class="msg" style="margin-top:0">กด “อนุมัติแล้ว” ผู้สมัครจะเห็นปุ่ม “เข้าหมู่บ้าน” ในหน้า /village/ ทันที (ใช้ลิงก์หมู่บ้านหลัก) ช่องลิงก์ใส่เฉพาะเมื่อต้องการส่งคนนั้นไปห้องอื่น — ส่งข้อความแจ้งทาง LINE @arstinla ด้วยตัวเอง · “ไม่ผ่าน” จะคืนแปลงให้คนอื่นจอง</p>
     <div class="scroll"><table class="tbl" id="apps"></table></div>
   </div>
 </div>
@@ -100,7 +100,7 @@ h2{font-size:1rem;margin:28px 0 10px}
         return '<tr data-id="'+esc(m.member_id)+'"><td><div class="who">'+(m.picture?'<img src="'+esc(m.picture)+'" alt="">':'<span class="ph"></span>')+'<div>'+esc(m.line_name||"-")+'<small>'+esc(m.site_tier||"")+'</small></div></div></td>'+
           '<td>'+esc(m.display_name)+'</td><td>'+esc(TN[m.tier]||m.tier)+'</td><td>'+esc(m.plot||"-")+'</td>'+
           '<td><select class="status st-'+esc(m.status)+'">'+opts+'</select></td>'+
-          '<td><input class="link" type="url" placeholder="https://play.workadventu.re/…" value="'+esc(m.world_link||"")+'"></td>'+
+          '<td><input class="link" type="url" placeholder="ลิงก์หมู่บ้านหลัก" value="'+esc(m.world_link||"")+'"></td>'+
           '<td>'+(m.friend?'<span class="yes">✓</span>':"-")+'</td><td>'+d(m.updated_at)+'</td>'+
           '<td><button class="btn sm ghost save">บันทึก</button></td></tr>'}).join("")
       :'<tr><td colspan="9">ยังไม่มีใบสมัคร</td></tr>');

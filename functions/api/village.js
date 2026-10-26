@@ -1,10 +1,10 @@
 // GET  /api/village  → booked plots (public) + my application (if logged in)
 // POST /api/village  → apply or change my application (LINE login required)
 import { json, readSession, getMember, authConfigured } from "../_lib/member.js";
-import { ensureVillageSchema, validateApplication, LAND_TIERS, RESERVED_PLOTS } from "../_lib/village.js";
+import { ensureVillageSchema, validateApplication, LAND_TIERS, RESERVED_PLOTS, worldUrl } from "../_lib/village.js";
 
-const publicApp = a =>
-  a && { displayName: a.display_name, tier: a.tier, plot: a.plot, status: a.status, worldLink: a.status === "approved" ? a.world_link || null : null, updatedAt: a.updated_at };
+const publicApp = (a, env) =>
+  a && { displayName: a.display_name, tier: a.tier, plot: a.plot, status: a.status, worldLink: a.status === "approved" ? a.world_link || worldUrl(env) : null, updatedAt: a.updated_at };
 
 async function bookedPlots(db) {
   const rows = await db
@@ -21,7 +21,7 @@ export async function onRequestGet({ request, env }) {
   await ensureVillageSchema(db);
   const s = await readSession(request, env);
   const mine = s ? await db.prepare("SELECT * FROM village_apps WHERE member_id = ?").bind(s.sub).first() : null;
-  return json({ ok: true, loggedIn: !!s, plots: await bookedPlots(db), mine: publicApp(mine) });
+  return json({ ok: true, loggedIn: !!s, plots: await bookedPlots(db), mine: publicApp(mine, env) });
 }
 
 export async function onRequestPost({ request, env }) {
@@ -65,5 +65,5 @@ export async function onRequestPost({ request, env }) {
   }
 
   const mine = await db.prepare("SELECT * FROM village_apps WHERE member_id = ?").bind(s.sub).first();
-  return json({ ok: true, mine: publicApp(mine), plots: await bookedPlots(db) });
+  return json({ ok: true, mine: publicApp(mine, env), plots: await bookedPlots(db) });
 }

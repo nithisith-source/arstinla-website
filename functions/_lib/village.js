@@ -11,6 +11,11 @@ export const PLOTS = [...range("A", 10), ...range("B", 6), ...range("C", 10), ..
 export const LAKE_PLOTS = new Set(range("D", 3));          // lakeside: developer only
 export const RESERVED_PLOTS = { "A-01": "บ้านสถาปนิก" };   // never bookable
 
+// Default link into the village world (WorkAdventure). An approved member gets this
+// unless the admin set a personal link. Override with the VILLAGE_WORLD_URL variable.
+export const DEFAULT_WORLD_URL = "https://play.workadventu.re/@/arstinla-design/arstinla-world/modern-hackathon";
+export const worldUrl = env => String(env?.VILLAGE_WORLD_URL || DEFAULT_WORLD_URL).trim();
+
 // Application status. "rejected" frees the plot again.
 export const STATUSES = ["pending", "approved", "rejected"];
 
