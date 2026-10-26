@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Village — ARSTINLA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--muted:#6b6b63;--line:rgba(23,24,22,.16)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--black);font:15px/1.6 "IBM Plex Sans Thai",system-ui,sans-serif}
+button,input,select{font:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 16px 64px}
+.kicker{color:var(--orange);font:600 .7rem "Space Grotesk",sans-serif;letter-spacing:.2em;text-transform:uppercase;margin:0}
+h1{font:400 clamp(2rem,5vw,3.2rem)/1.1 "Space Grotesk",sans-serif;margin:10px 0 18px;letter-spacing:-.02em}
+h2{font-size:1rem;margin:28px 0 10px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--cream);border:1px solid var(--line);padding:12px}
+.bar input{padding:8px 10px;border:1px solid var(--line);background:#fff;min-width:220px;flex:1}
+.btn{padding:8px 16px;border:1px solid var(--black);background:var(--black);color:var(--cream);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--black)}
+.btn.sm{padding:4px 10px;font-size:.85rem}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.kpi div{background:var(--cream);border:1px solid var(--line);padding:12px 14px}
+.kpi b{display:block;font:500 1.6rem "Space Grotesk",sans-serif}
+.kpi span{font-size:.82rem;color:var(--muted)}
+@media(max-width:700px){.kpi{grid-template-columns:1fr 1fr}}
+.tbl{width:100%;border-collapse:collapse;background:var(--cream);border:1px solid var(--line)}
+.tbl th,.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;font-size:.88rem}
+.tbl th{font:600 .72rem "Space Grotesk",sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:#ece8df}
+.tbl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.who{display:flex;gap:10px;align-items:center}
+.who img,.who .ph{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--paper);flex:none}
+.who small{display:block;color:var(--muted);font-size:.72rem;word-break:break-all}
+.tbl select,.tbl input[type=date]{padding:4px 6px;border:1px solid var(--line);background:#fff}
+.yes{color:#2e7d4f;font-weight:600}
+.scroll{overflow-x:auto}
+.msg{margin:10px 0 0;color:var(--muted);font-size:.88rem;min-height:1.4em}
+.msg.err{color:#a3341f}
+.tbl input.link{width:220px;padding:4px 6px;border:1px solid var(--line);background:#fff}
+.st-pending{color:#9a6a12;font-weight:600}.st-approved{color:#2e7d4f;font-weight:600}.st-rejected{color:#a3341f;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">ARSTINLA / ADMIN</p>
+  <h1>Village</h1>
+
+  <div class="bar">
+    <input id="adminKey" type="password" placeholder="Admin Key" autocomplete="current-password">
+    <button class="btn" id="load">โหลดข้อมูล</button>
+    <a class="btn ghost" href="/village/" target="_blank" style="text-decoration:none">ดูหน้าสมัคร</a>
+    <a class="btn ghost" href="/admin/members/" style="text-decoration:none">Members</a>
+  </div>
+  <p class="msg" id="msg">ใส่ Admin Key (ตัวเดียวกับหน้า Members) แล้วกดโหลดข้อมูล</p>
+
+  <div id="out" hidden>
+    <div class="kpi" id="kpi"></div>
+    <h2>ใบสมัครเข้าหมู่บ้าน</h2>
+    <p class="msg" style="margin-top:0">อนุมัติแล้วใส่ลิงก์เข้าหมู่บ้าน (WorkAdventure) ผู้สมัครจะเห็นปุ่ม “เข้าหมู่บ้าน” ในหน้า /village/ — ส่งข้อความแจ้งทาง LINE @arstinla ด้วยตัวเอง · “ไม่ผ่าน” จะคืนแปลงให้คนอื่นจอง</p>
+    <div class="scroll"><table class="tbl" id="apps"></table></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s){return document.querySelector(s)};
+  var KEY_NAME="ARSTINLA_ADMIN_KEY";
+  var data=null;
+  var TN={guest:"ผู้มาเยือน",resident:"ผู้อยู่อาศัย",owner:"เจ้าของบ้าน",developer:"ผู้พัฒนาโครงการ"};
+  var SN={pending:"รออนุมัติ",approved:"อนุมัติแล้ว",rejected:"ไม่ผ่าน"};
+  var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+  var d=function(s){return s?new Date(s).toLocaleString("th-TH",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"-"};
+  try{$("#adminKey").value=sessionStorage.getItem(KEY_NAME)||""}catch(e){}
+  function key(){return $("#adminKey").value.trim()}
+  function msg(t,err){$("#msg").textContent=t;$("#msg").className="msg"+(err?" err":"")}
+
+  function load(){
+    if(!key()){msg("ใส่ Admin Key ก่อน",true);return}
+    msg("กำลังโหลด…");
+    fetch("/api/admin/village",{headers:{"x-admin-key":key()},cache:"no-store"}).then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})}).then(function(x){
+      if(!x.ok){msg(x.j.error==="Unauthorized"?"Admin Key ไม่ถูกต้อง":"โหลดไม่สำเร็จ: "+(x.j.error||""),true);return}
+      try{sessionStorage.setItem(KEY_NAME,key())}catch(e){}
+      data=x.j;render();msg("อัปเดต "+new Date().toLocaleTimeString("th-TH"));
+    }).catch(function(){msg("เชื่อมต่อไม่สำเร็จ",true)});
+  }
+
+  function render(){
+    $("#out").hidden=false;
+    var a=data.apps,c=function(s){return a.filter(function(x){return x.status===s}).length};
+    var plots=a.filter(function(x){return x.plot&&x.status!=="rejected"}).length;
+    $("#kpi").innerHTML='<div><b>'+a.length+'</b><span>ใบสมัครทั้งหมด</span></div><div><b>'+c("pending")+'</b><span>รออนุมัติ</span></div><div><b>'+c("approved")+'</b><span>อนุมัติแล้ว</span></div><div><b>'+plots+'</b><span>แปลงที่ถูกจอง (รวมรออนุมัติ)</span></div>';
+    $("#apps").innerHTML='<tr><th>ผู้สมัคร</th><th>ชื่อในหมู่บ้าน</th><th>ระดับ</th><th>แปลง</th><th>สถานะ</th><th>ลิงก์เข้าหมู่บ้าน</th><th>เพื่อน OA</th><th>อัปเดต</th><th></th></tr>'+
+      (a.length?a.map(function(m){
+        var opts=["pending","approved","rejected"].map(function(s){return'<option value="'+s+'"'+(s===m.status?" selected":"")+'>'+SN[s]+"</option>"}).join("");
+        return '<tr data-id="'+esc(m.member_id)+'"><td><div class="who">'+(m.picture?'<img src="'+esc(m.picture)+'" alt="">':'<span class="ph"></span>')+'<div>'+esc(m.line_name||"-")+'<small>'+esc(m.site_tier||"")+'</small></div></div></td>'+
+          '<td>'+esc(m.display_name)+'</td><td>'+esc(TN[m.tier]||m.tier)+'</td><td>'+esc(m.plot||"-")+'</td>'+
+          '<td><select class="status st-'+esc(m.status)+'">'+opts+'</select></td>'+
+          '<td><input class="link" type="url" placeholder="https://play.workadventu.re/…" value="'+esc(m.world_link||"")+'"></td>'+
+          '<td>'+(m.friend?'<span class="yes">✓</span>':"-")+'</td><td>'+d(m.updated_at)+'</td>'+
+          '<td><button class="btn sm ghost save">บันทึก</button></td></tr>'}).join("")
+      :'<tr><td colspan="9">ยังไม่มีใบสมัคร</td></tr>');
+    document.querySelectorAll("#apps .save").forEach(function(b){b.onclick=function(){
+      var tr=b.closest("tr");b.disabled=true;
+      var link=tr.querySelector(".link").value.trim();
+      fetch("/api/admin/village",{method:"POST",headers:{"x-admin-key":key(),"Content-Type":"application/json"},
+        body:JSON.stringify({id:tr.dataset.id,status:tr.querySelector(".status").value,worldLink:link||null})})
+      .then(function(r){return r.json()}).then(function(j){b.disabled=false;
+        if(!j.ok){msg("บันทึกไม่สำเร็จ: "+(j.error||""),true);return}
+        var m=data.apps.find(function(x){return x.member_id===j.app.member_id});Object.assign(m,j.app);render();msg("บันทึก "+(m.display_name||"")+" แล้ว")})
+      .catch(function(){b.disabled=false;msg("บันทึกไม่สำเร็จ",true)})}});
+  }
+
+  $("#load").onclick=load;$("#adminKey").onkeydown=function(e){if(e.key==="Enter")load()};
+  if(key())load();
+})();
+</script>
+</body>
+</html>

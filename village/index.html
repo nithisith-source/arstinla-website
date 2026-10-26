@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ARSTINLA Village — สมัครเข้าหมู่บ้านและจองแปลงที่ดิน</title>
+<meta name="description" content="หมู่บ้านเสมือนของ ARSTINLA เดินคุยกันได้ สมาชิกระดับเจ้าของบ้านขึ้นไปจองแปลงที่ดินและแต่งห้องของตัวเองได้">
+<meta name="theme-color" content="#171816">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--muted:#6b6b63;--line:rgba(23,24,22,.16);--green:#06c755;
+  --plot:#dfe6d2;--plot-edge:#8fa585;--lake:#f1e3bf;--lake-edge:#a97b1e;--owned:#cfcbc2;--road:#ddd8cc;--water:#bcd5d9;--tree:#86a374;--mine:#171816}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--black);font:15px/1.65 "IBM Plex Sans Thai",system-ui,sans-serif}
+a{color:inherit}
+button,input{font:inherit}
+.top{display:flex;justify-content:space-between;align-items:center;padding:20px max(16px,4vw)}
+.brand{text-decoration:none;font:600 1.05rem "Space Grotesk",sans-serif;letter-spacing:.32em}
+.brand small{display:block;font-size:.55rem;letter-spacing:.3em;color:var(--muted);font-weight:500}
+.top .back{font:500 .72rem "Space Grotesk",sans-serif;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
+.wrap{max-width:1200px;margin:0 auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px))}
+.kicker{margin:0;color:var(--orange);font:600 .66rem/1.2 "Space Grotesk",sans-serif;letter-spacing:.22em;text-transform:uppercase}
+h1{margin:12px 0 8px;font:400 clamp(2rem,5.5vw,3.2rem)/1.08 "Space Grotesk","IBM Plex Sans Thai",sans-serif;letter-spacing:-.02em;text-wrap:balance}
+.lead{margin:0;color:var(--muted);max-width:62ch}
+.steps{display:flex;flex-wrap:wrap;gap:6px 22px;margin:16px 0 0;padding:0;list-style:none;counter-reset:s;font-size:.9rem}
+.steps li{counter-increment:s;display:flex;gap:8px;align-items:baseline}
+.steps li::before{content:counter(s);font:600 .7rem "Space Grotesk",sans-serif;border:1px solid var(--black);width:20px;height:20px;display:inline-grid;place-items:center;flex:none}
+.grid{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:20px;margin-top:24px;align-items:start}
+@media(max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--cream);border:1px solid var(--line);padding:22px}
+h2{margin:0 0 14px;font:500 1.15rem "Space Grotesk","IBM Plex Sans Thai",sans-serif}
+.field{display:grid;gap:6px;margin-bottom:16px}
+.lbl{font-weight:600;font-size:.9rem}
+.hint{font-size:.8rem;color:var(--muted)}
+input[type=text]{padding:10px 12px;border:1px solid var(--line);background:#fff}
+input:focus-visible,button:focus-visible,a:focus-visible,.tier:focus-within,.plot:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.line-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;background:var(--green);color:#fff;font-weight:600;text-decoration:none}
+.who{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);background:#fff}
+.who img,.who .ph{width:34px;height:34px;border-radius:50%;object-fit:cover;background:var(--paper);flex:none}
+.who small{display:block;color:var(--muted);font-size:.75rem}
+fieldset{border:0;margin:0 0 16px;padding:0}
+legend{padding:0;margin-bottom:6px}
+.tiers{display:grid;gap:6px}
+.tier{display:grid;grid-template-columns:auto 1fr auto;gap:0 10px;align-items:start;border:1px solid var(--line);padding:10px 12px;cursor:pointer;background:#fff}
+.tier input{margin-top:5px;accent-color:var(--black)}
+.tier b{font-weight:600}
+.tier .en{font:600 .62rem "Space Grotesk",sans-serif;letter-spacing:.16em;color:var(--muted);margin-left:4px}
+.tier .desc{grid-column:2/4;font-size:.8rem;color:var(--muted)}
+.tag{font:600 .6rem "Space Grotesk",sans-serif;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tier.land .tag{border-color:var(--black);color:var(--black)}
+.tier.top .tag{border-color:var(--lake-edge);color:var(--lake-edge)}
+.tier:has(input:checked){border-color:var(--black);box-shadow:inset 3px 0 0 var(--orange)}
+.chosen{font:500 .85rem "Space Grotesk","IBM Plex Sans Thai",sans-serif;padding:10px 12px;border:1px dashed var(--line);color:var(--muted);background:#fff}
+.chosen.has{border:1px solid var(--black);color:var(--black)}
+.go{width:100%;padding:14px;border:0;background:var(--black);color:var(--cream);font-weight:600;cursor:pointer}
+.go[disabled]{opacity:.5;cursor:wait}
+.msg{font-size:.85rem;color:#9a3422;min-height:1.4em;margin:8px 0 0}
+.status{border:1px solid var(--black);background:#fff;padding:14px;margin-bottom:18px}
+.status .pill{display:inline-block;font:600 .62rem "Space Grotesk",sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:2px 10px;border:1px solid currentColor}
+.status .pending{color:#9a6a12}.status .approved{color:#2e7d4f}.status .rejected{color:#9a3422}
+.status dl{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;margin:10px 0 0;font-size:.88rem}
+.status dt{color:var(--muted)}.status dd{margin:0}
+.status p{margin:10px 0 0;font-size:.85rem}
+.enter{display:inline-block;margin-top:10px;padding:10px 16px;background:var(--black);color:var(--cream);text-decoration:none;font-weight:600}
+.maphead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:13px;height:13px;border:1px solid var(--plot-edge);display:inline-block}
+.mapbox{position:relative;overflow-x:auto;border:1px solid var(--line);background:#f7f5ef;margin-top:12px}
+.mapbox svg{display:block;min-width:760px;width:100%;height:auto}
+.lock{position:absolute;inset:0;display:grid;place-items:center;background:rgba(243,240,232,.78);text-align:center;padding:20px;font-weight:600}
+.lock small{display:block;font-weight:400;color:var(--muted)}
+.plot{cursor:pointer}
+.plot rect{fill:var(--plot);stroke:var(--plot-edge);stroke-width:1.2;transition:fill .15s}
+.plot:hover rect{fill:#c9d8b8}
+.plot.lake rect{fill:var(--lake);stroke:var(--lake-edge)}
+.plot.taken{cursor:not-allowed}
+.plot.taken rect{fill:var(--owned);stroke:#b3aea3}
+.plot.sel rect{fill:var(--mine);stroke:var(--mine)}
+.plot text{font:500 12px "Space Grotesk",sans-serif;fill:var(--black);pointer-events:none}
+.plot .sz{font:400 10px "IBM Plex Sans Thai",sans-serif;fill:var(--muted)}
+.plot.sel text,.plot.sel .sz{fill:var(--cream)}
+.plot:focus{outline:none}
+.mapnote{font-size:.8rem;color:var(--muted);margin:10px 0 0}
+.foot{font-size:.78rem;color:var(--muted);margin-top:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">ARSTINLA<small>DESIGN &amp; CONSULT</small></a>
+  <a class="back" href="/member/">บัญชีของฉัน</a>
+</header>
+
+<div class="wrap">
+  <p class="kicker">ARSTINLA / VILLAGE</p>
+  <h1>สมัครเข้า ARSTINLA Village</h1>
+  <p class="lead">หมู่บ้านเสมือนที่เดินคุยกันได้แบบเห็นหน้า สมาชิกระดับเจ้าของบ้านขึ้นไปจองแปลงที่ดินและแต่งห้องของตัวเองได้</p>
+  <ol class="steps">
+    <li>เข้าสู่ระบบด้วย LINE</li>
+    <li>เลือกระดับสมาชิก</li>
+    <li>เลือกแปลงที่ดิน (เจ้าของบ้านขึ้นไป)</li>
+    <li>รับลิงก์เข้าหมู่บ้านทาง LINE @arstinla</li>
+  </ol>
+
+  <div class="grid">
+    <form class="card" id="form" novalidate>
+      <div class="status" id="status" hidden></div>
+      <h2 id="formTitle">ใบสมัคร</h2>
+
+      <div class="field">
+        <span class="lbl">บัญชี LINE</span>
+        <a class="line-btn" id="loginBtn" href="/member/?next=%2Fvillage%2F" hidden>เข้าสู่ระบบด้วย LINE</a>
+        <div class="who" id="who" hidden></div>
+        <span class="hint">ใช้บัญชีเดียวกับสมาชิก arstinla.com</span>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="name">ชื่อในหมู่บ้าน</label>
+        <input type="text" id="name" maxlength="24" placeholder="เช่น สมชาย หรือ ตาเคน" autocomplete="nickname">
+        <span class="hint">ชื่อนี้จะแสดงบนแปลงที่ดินของคุณเมื่ออนุมัติแล้ว</span>
+      </div>
+
+      <fieldset>
+        <legend class="lbl">ระดับสมาชิก</legend>
+        <div class="tiers">
+          <label class="tier"><input type="radio" name="tier" id="t-guest" value="guest"><span><b>ผู้มาเยือน</b><span class="en">GUEST</span></span><span class="tag">ลงทะเบียน</span><span class="desc">เดินเที่ยวลานกลางและพื้นที่สาธารณะ</span></label>
+          <label class="tier"><input type="radio" name="tier" id="t-resident" value="resident"><span><b>ผู้อยู่อาศัย</b><span class="en">RESIDENT</span></span><span class="tag">ลงทะเบียน</span><span class="desc">เข้าห้องกิจกรรม ร่วมอีเวนต์ประกวดบ้าน</span></label>
+          <label class="tier land"><input type="radio" name="tier" id="t-owner" value="owner"><span><b>เจ้าของบ้าน</b><span class="en">HOMEOWNER</span></span><span class="tag">จองที่ดิน</span><span class="desc">จองแปลงที่ดิน 1 แปลง พร้อมห้องส่วนตัวไว้แต่ง</span></label>
+          <label class="tier top"><input type="radio" name="tier" id="t-developer" value="developer"><span><b>ผู้พัฒนาโครงการ</b><span class="en">DEVELOPER</span></span><span class="tag">ที่ดิน + ริมน้ำ</span><span class="desc">เลือกแปลงริมสระได้ เข้าเลานจ์ริมน้ำ และได้สิทธิพิเศษ</span></label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <span class="lbl">แปลงที่เลือก</span>
+        <div class="chosen" id="chosen">ยังไม่ได้เลือกแปลง</div>
+      </div>
+
+      <button class="go" type="submit" id="submit">ส่งใบสมัคร</button>
+      <p class="msg" id="msg" role="status"></p>
+      <p class="foot">ทีมงานตรวจใบสมัครแล้วส่งลิงก์เข้าหมู่บ้านให้ทาง LINE @arstinla แปลงที่รออนุมัติจะถูกกันไว้ให้คุณระหว่างนี้</p>
+    </form>
+
+    <section class="card" aria-labelledby="mapTitle">
+      <div class="maphead">
+        <h2 id="mapTitle" style="margin:0">ผังแปลงที่ดิน</h2>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--plot)"></i>ว่าง</span>
+          <span><i class="sw" style="background:var(--lake);border-color:var(--lake-edge)"></i>ริมน้ำ</span>
+          <span><i class="sw" style="background:var(--owned);border-color:#b3aea3"></i>จองแล้ว</span>
+          <span><i class="sw" style="background:var(--mine);border-color:var(--mine)"></i>แปลงของคุณ</span>
+        </div>
+      </div>
+      <div class="mapbox">
+        <svg id="map" viewBox="0 0 1000 620" role="group" aria-label="ผังหมู่บ้าน เลือกแปลงที่ดิน"></svg>
+        <div class="lock" id="lock"><div>เลือกระดับ “เจ้าของบ้าน” หรือ “ผู้พัฒนาโครงการ” เพื่อจองที่ดิน<small>ระดับผู้มาเยือนและผู้อยู่อาศัยส่งใบสมัครได้เลยโดยไม่ต้องเลือกแปลง</small></div></div>
+      </div>
+      <p class="mapnote">เลื่อนซ้ายขวาเพื่อดูทั้งผัง · ขนาดแปลงคิดตามมาตราส่วนผัง 1:500 (1 ตร.ว. = 4 ตร.ม.) · แปลงริมน้ำ D-01 ถึง D-03 สำหรับระดับผู้พัฒนาโครงการ</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg", M=0.2; // 1 unit on the plan = 0.2 m
+  var svg=document.getElementById("map");
+  function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e}
+  function txt(a,s,p){var e=el("text",a,p);e.textContent=s;return e}
+  var $=function(id){return document.getElementById(id)};
+
+  // ---- site plan (plot IDs must match functions/_lib/village.js) ----
+  el("rect",{x:0,y:290,width:1000,height:44,fill:"var(--road)"});
+  el("rect",{x:508,y:0,width:44,height:620,fill:"var(--road)"});
+  el("line",{x1:0,y1:312,x2:1000,y2:312,stroke:"#b9b3a5","stroke-dasharray":"14 10"});
+  el("line",{x1:530,y1:0,x2:530,y2:620,stroke:"#b9b3a5","stroke-dasharray":"14 10"});
+  el("circle",{cx:530,cy:312,r:46,fill:"var(--cream)",stroke:"var(--black)","stroke-width":1.2});
+  txt({x:530,y:309,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":13,fill:"var(--black)"},"ลานกลาง");
+  txt({x:530,y:325,"text-anchor":"middle","font-family":"Space Grotesk","font-size":9,"letter-spacing":2,fill:"var(--muted)"},"PLAZA");
+  el("ellipse",{cx:780,cy:520,rx:190,ry:72,fill:"var(--water)"});
+  txt({x:780,y:526,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":14,fill:"var(--black)"},"สระน้ำ");
+  [[40,30],[140,26],[300,32],[470,24],[600,30],[760,26],[930,34],[30,590],[180,596],[340,590],[480,598],[590,600],[970,470],[600,470]]
+    .forEach(function(p){el("circle",{cx:p[0],cy:p[1],r:11,fill:"var(--tree)","fill-opacity":.85})});
+  var n=el("g",{transform:"translate(960,80)"});
+  el("polygon",{points:"0,-22 8,8 0,2 -8,8",fill:"var(--black)"},n);
+  txt({x:0,y:-28,"text-anchor":"middle","font-family":"Space Grotesk","font-size":12,fill:"var(--black)"},"N",n);
+  el("rect",{x:40,y:604,width:50,height:5,fill:"var(--black)"});el("rect",{x:90,y:604,width:50,height:5,fill:"none",stroke:"var(--black)"});
+  txt({x:146,y:610,"font-family":"Space Grotesk","font-size":10,fill:"var(--muted)"},"0    10    20 m");
+
+  var plots=[];
+  function block(prefix,x0,y0,cols,rows,w,h,lake){
+    var i=1;
+    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
+      plots.push({id:prefix+"-"+(i<10?"0":"")+i,x:x0+c*(w+6),y:y0+r*(h+6),w:w,h:h,lake:!!lake});i++;
+    }
+  }
+  block("A",40,60,5,2,86,104);block("B",572,60,3,2,112,104);block("C",40,354,5,2,86,104);block("D",572,354,3,1,112,80,true);
+
+  var nodes={}, byId={};
+  plots.forEach(function(p){
+    p.wa=Math.round((p.w*M)*(p.h*M)/4); p.dim=(p.w*M).toFixed(1)+"×"+(p.h*M).toFixed(1)+" ม.";
+    var g=el("g",{class:"plot"+(p.lake?" lake":""),tabindex:0,role:"button"});
+    el("rect",{x:p.x,y:p.y,width:p.w,height:p.h},g);
+    txt({x:p.x+8,y:p.y+18},p.id,g);
+    p.label=txt({x:p.x+8,y:p.y+p.h-10,class:"sz"},p.wa+" ตร.ว.",g);
+    g.addEventListener("click",function(){pick(p)});
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(p)}});
+    nodes[p.id]=g;byId[p.id]=p;
+  });
+
+  // ---- state ----
+  var taken={};      // plot -> {status,name}
+  var mine=null;     // my application from the server
+  var loggedIn=false, selected=null, sending=false;
+  var TN={guest:"ผู้มาเยือน",resident:"ผู้อยู่อาศัย",owner:"เจ้าของบ้าน",developer:"ผู้พัฒนาโครงการ"};
+  var SN={pending:"รออนุมัติ",approved:"อนุมัติแล้ว",rejected:"ไม่ผ่าน"};
+  function tier(){var c=document.querySelector("input[name=tier]:checked");return c?c.value:null}
+  function canLand(){return tier()==="owner"||tier()==="developer"}
+  function isMinePlot(id){return mine&&mine.plot===id&&mine.status!=="rejected"}
+  function locked(){return mine&&mine.status==="approved"}
+
+  function render(){
+    plots.forEach(function(p){
+      var t=taken[p.id], own=isMinePlot(p.id), g=nodes[p.id];
+      var busy=t&&!own;
+      g.classList.toggle("taken",!!busy);
+      g.classList.toggle("sel",!!(selected&&selected.id===p.id));
+      g.setAttribute("tabindex",busy?-1:0);
+      p.label.textContent=busy?(t.status==="approved"||t.status==="reserved"?(t.name||"จองแล้ว"):"รออนุมัติ"):p.wa+" ตร.ว.";
+      g.setAttribute("aria-label","แปลง "+p.id+(busy?" จองแล้ว":" ว่าง "+p.wa+" ตารางวา")+(p.lake?" ริมน้ำ":""));
+    });
+    if(selected){$("chosen").textContent="แปลง "+selected.id+" · "+selected.dim+" · "+selected.wa+" ตร.ว."+(selected.lake?" · ริมน้ำ":"");$("chosen").classList.add("has")}
+    else{$("chosen").textContent=canLand()?"แตะแปลงว่างบนผังเพื่อเลือก":"ระดับนี้ไม่ต้องเลือกแปลง";$("chosen").classList.remove("has")}
+    $("lock").hidden=canLand()&&!locked();
+    var off=locked()||!loggedIn;
+    $("name").disabled=locked();
+    document.querySelectorAll("input[name=tier]").forEach(function(r){r.disabled=locked()});
+    $("submit").hidden=locked();
+    $("submit").disabled=sending;
+    $("submit").textContent=!loggedIn?"เข้าสู่ระบบด้วย LINE ก่อนส่ง":(mine&&mine.status!=="approved"?"บันทึกการแก้ไข":"ส่งใบสมัคร");
+    $("formTitle").textContent=locked()?"ใบสมัครของคุณ":(mine?"แก้ไขใบสมัคร":"ใบสมัคร");
+    renderStatus();
+  }
+
+  function renderStatus(){
+    var box=$("status");
+    if(!mine){box.hidden=true;return}
+    box.hidden=false;
+    box.innerHTML="";
+    var pill=document.createElement("span");pill.className="pill "+mine.status;pill.textContent=SN[mine.status]||mine.status;box.appendChild(pill);
+    var dl=document.createElement("dl");
+    [["ชื่อ",mine.displayName],["ระดับ",TN[mine.tier]||mine.tier],["แปลง",mine.plot||"-"]].forEach(function(r){
+      var dt=document.createElement("dt");dt.textContent=r[0];var dd=document.createElement("dd");dd.textContent=r[1];dl.appendChild(dt);dl.appendChild(dd)});
+    box.appendChild(dl);
+    var p=document.createElement("p");
+    if(mine.status==="pending")p.textContent="ทีมงานกำลังตรวจใบสมัคร แก้ไขได้จนกว่าจะอนุมัติ";
+    else if(mine.status==="approved")p.textContent="ยินดีต้อนรับสู่หมู่บ้าน ถ้าต้องการเปลี่ยนระดับหรือแปลง ทักมาที่ LINE @arstinla";
+    else p.textContent="ใบสมัครนี้ไม่ผ่าน แก้ไขแล้วส่งใหม่ได้ หรือทักมาที่ LINE @arstinla";
+    box.appendChild(p);
+    if(mine.worldLink){var a=document.createElement("a");a.className="enter";a.href=mine.worldLink;a.target="_blank";a.rel="noopener";a.textContent="เข้าหมู่บ้าน →";box.appendChild(a)}
+  }
+
+  function pick(p){
+    var msg=$("msg");
+    if(locked())return;
+    if(!canLand()){msg.textContent="เลือกระดับเจ้าของบ้านหรือผู้พัฒนาโครงการก่อนเลือกแปลง";return}
+    if(taken[p.id]&&!isMinePlot(p.id))return;
+    if(p.lake&&tier()!=="developer"){msg.textContent="แปลงริมน้ำสงวนไว้ให้ระดับผู้พัฒนาโครงการ เลือกแปลงอื่นหรือเปลี่ยนระดับ";return}
+    msg.textContent="";selected=(selected&&selected.id===p.id)?null:p;render();
+  }
+  document.querySelectorAll("input[name=tier]").forEach(function(r){r.addEventListener("change",function(){
+    if(!canLand()||(selected&&selected.lake&&tier()!=="developer"))selected=null;
+    $("msg").textContent="";render();
+  })});
+
+  function applyData(d){
+    taken={};(d.plots||[]).forEach(function(t){taken[t.plot]=t});
+    mine=d.mine||null;
+  }
+  function fillFromMine(){
+    if(!mine)return;
+    $("name").value=mine.displayName||"";
+    var r=document.getElementById("t-"+mine.tier);if(r)r.checked=true;
+    selected=mine.plot&&mine.status!=="rejected"?byId[mine.plot]||null:null;
+  }
+
+  $("form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var msg=$("msg");
+    if(!loggedIn){location.href="/member/?next=%2Fvillage%2F";return}
+    var name=$("name").value.trim();
+    if(!name)return void(msg.textContent="กรอกชื่อในหมู่บ้านก่อนส่ง");
+    if(!tier())return void(msg.textContent="เลือกระดับสมาชิก");
+    if(canLand()&&!selected)return void(msg.textContent="เลือกแปลงที่ดินบนผังก่อนส่ง");
+    msg.textContent="";sending=true;render();
+    fetch("/api/village",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({displayName:name,tier:tier(),plot:canLand()&&selected?selected.id:null})})
+      .then(function(r){return r.json().catch(function(){return{ok:false,error:"เซิร์ฟเวอร์ตอบกลับผิดรูปแบบ ลองใหม่อีกครั้ง"}})})
+      .then(function(d){
+        sending=false;
+        if(!d.ok){
+          msg.textContent=d.error||"ส่งไม่สำเร็จ ลองใหม่อีกครั้ง";
+          return load(true);
+        }
+        applyData(d);fillFromMine();render();
+        $("status").scrollIntoView({behavior:"smooth",block:"nearest"});
+      })
+      .catch(function(){sending=false;msg.textContent="เชื่อมต่อไม่ได้ ตรวจอินเทอร์เน็ตแล้วลองใหม่";render()});
+  });
+
+  function showWho(m){
+    var who=$("who");who.innerHTML="";
+    if(m.picture){var img=document.createElement("img");img.src=m.picture;img.alt="";who.appendChild(img)}else{var ph=document.createElement("span");ph.className="ph";who.appendChild(ph)}
+    var s=document.createElement("span");var b=document.createElement("b");b.textContent=m.name||"สมาชิก";var sm=document.createElement("small");sm.textContent="เชื่อมต่อ LINE แล้ว";
+    s.appendChild(b);s.appendChild(sm);who.appendChild(s);who.hidden=false;$("loginBtn").hidden=true;
+  }
+
+  function load(keepForm){
+    return Promise.all([
+      fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).catch(function(){return{}}),
+      fetch("/api/village",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).catch(function(){return{ok:false}})
+    ]).then(function(x){
+      var me=x[0]&&x[0].member, v=x[1];
+      loggedIn=!!me;
+      if(me)showWho(me);else{$("loginBtn").hidden=false;$("who").hidden=true}
+      if(v&&v.ok){applyData(v);if(!keepForm)fillFromMine()}
+      else if(!keepForm)$("msg").textContent=(v&&v.error)||"โหลดข้อมูลแปลงไม่สำเร็จ ลองรีเฟรชหน้านี้";
+      if(selected&&taken[selected.id]&&!isMinePlot(selected.id))selected=null;
+      render();
+    });
+  }
+  render();load(false);
+})();
+</script>
+</body>
+</html>
