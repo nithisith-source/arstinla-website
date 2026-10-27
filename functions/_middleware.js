@@ -13,6 +13,10 @@ const isLockedFile = pathname => /\/downloads\/[^/]+\.(epub|pdf|zip)$/i.test(pat
 export async function onRequest(context) {
   const { request, env, next, waitUntil } = context;
   const url = new URL(request.url);
+  // Google Search Console verification file — served verbatim (Pages would otherwise 308 *.html → extensionless).
+  if (url.pathname === "/googleeb08599e4cee6cba.html") {
+    return new Response("google-site-verification: googleeb08599e4cee6cba.html", { headers: { "Content-Type": "text/html; charset=utf-8" } });
+  }
   const need = requiredTier(url.pathname);
 
   if (!need || request.method !== "GET" || !(isPage(url.pathname) || isLockedFile(url.pathname)) || !gateEnabled(env) || !authConfigured(env)) {
