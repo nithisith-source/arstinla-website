@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /member/
+
+Sitemap: https://www.arstinla.com/sitemap.xml
