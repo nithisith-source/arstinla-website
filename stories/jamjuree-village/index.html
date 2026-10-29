@@ -75,6 +75,8 @@
     .download-button:hover:not(:disabled){background:#b96770}
     .download-button:disabled{border-color:#4b4c48;background:#282926;color:#8f9089;cursor:not-allowed}
     .book-status{min-height:24px;margin:13px 0 0;color:var(--pink-soft);font-size:.77rem}
+    .inapp-open{display:inline-block;margin-top:10px;padding:12px 18px;background:#06C755;color:#fff;font-weight:600;font-size:.85rem;text-decoration:none;border-radius:999px}
+    .book-card.dl-focus{outline:3px solid var(--pink);outline-offset:-3px}
     .reader-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
     .reader-card{border:1px solid var(--line);padding:clamp(30px,5vw,56px);display:flex;flex-direction:column}
     .reader-card h3{margin:20px 0 12px;font-family:var(--font-en),var(--sans);font-size:clamp(2.5rem,4vw,4rem);font-weight:300;line-height:1}
@@ -253,8 +255,39 @@
         }catch{}
       });
     }
+    // In-app browsers (LINE, Facebook, Instagram, TikTok) can't save files: send people to Safari/Chrome instead.
+    const UA=navigator.userAgent;
+    const IN_LINE=/\bLine\//i.test(UA);
+    const IN_APP=IN_LINE||/FBAN|FBAV|FB_IAB|Instagram|musical_ly|BytedanceWebview|TikTok/i.test(UA);
+    function externalUrl(book){
+      const u=new URL(location.href);
+      u.hash="";u.search="";
+      u.searchParams.set("openExternalBrowser","1");
+      u.searchParams.set("dl",book);
+      return u.href;
+    }
+    (function focusRequestedBook(){
+      const book=new URLSearchParams(location.search).get("dl");
+      if(!book)return;
+      const btn=document.querySelector(`[data-epub-download][data-book="${CSS.escape(book)}"]`);
+      const card=btn&&btn.closest(".book-card");
+      if(!card)return;
+      card.classList.add("dl-focus");
+      setTimeout(()=>card.scrollIntoView({behavior:"smooth",block:"center"}),300);
+      const st=card.querySelector("[data-book-status]");
+      if(st)st.textContent="กดปุ่มดาวน์โหลด EPUB อีกครั้งเพื่อบันทึกไฟล์";
+    })();
     document.querySelectorAll("[data-epub-download]").forEach(button=>{
       button.addEventListener("click",async()=>{
+        if(IN_APP){
+          const st=button.parentElement.querySelector("[data-book-status]");
+          if(IN_LINE){
+            st.innerHTML='เบราว์เซอร์ในแอป LINE บันทึกไฟล์ไม่ได้ กดปุ่มด้านล่างเพื่อเปิดหน้านี้ใน Safari หรือ Chrome แล้วกดดาวน์โหลดอีกครั้ง<br><a class="inapp-open" href="'+externalUrl(button.dataset.book)+'">เปิดใน Safari / Chrome</a>';
+          }else{
+            st.textContent="เบราว์เซอร์ในแอปนี้บันทึกไฟล์ไม่ได้ กดเมนู ⋯ มุมขวาบน แล้วเลือก \"เปิดในเบราว์เซอร์\" จากนั้นกดดาวน์โหลดอีกครั้ง";
+          }
+          return;
+        }
         const file=button.dataset.file;
         const status=button.parentElement.querySelector("[data-book-status]");
         const bookTitle=button.closest(".book-card")?.querySelector("h3")?.textContent.trim()||"หมู่บ้านจามจุรี";
