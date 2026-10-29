@@ -23,6 +23,9 @@ h2{font-size:1rem;margin:28px 0 10px}
 .btn{padding:8px 16px;border:1px solid var(--black);background:var(--black);color:var(--cream);cursor:pointer}
 .btn.ghost{background:transparent;color:var(--black)}
 .btn.sm{padding:4px 10px;font-size:.85rem}
+.btn.ok{background:#2e7d4f;border-color:#2e7d4f;color:#fff;font-weight:600}
+.btn.no{background:transparent;border-color:#a3341f;color:#a3341f}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
 .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
 .kpi div{background:var(--cream);border:1px solid var(--line);padding:12px 14px}
 .kpi b{display:block;font:500 1.6rem "Space Grotesk",sans-serif}
@@ -60,7 +63,7 @@ h2{font-size:1rem;margin:28px 0 10px}
   <div id="out" hidden>
     <div class="kpi" id="kpi"></div>
     <h2>ใบสมัครเข้าหมู่บ้าน</h2>
-    <p class="msg" style="margin-top:0">กด “อนุมัติแล้ว” ผู้สมัครจะเห็นปุ่ม “เข้าหมู่บ้าน” ในหน้า /village/ ทันที (ใช้ลิงก์หมู่บ้านหลัก) ช่องลิงก์ใส่เฉพาะเมื่อต้องการส่งคนนั้นไปห้องอื่น — ส่งข้อความแจ้งทาง LINE @arstinla ด้วยตัวเอง · “ไม่ผ่าน” จะคืนแปลงให้คนอื่นจอง</p>
+    <p class="msg" style="margin-top:0">กดปุ่มเขียว “✓ อนุมัติ” ท้ายแถว ระบบจะบันทึกและส่งข้อความแจ้งผู้สมัครทาง LINE @arstinla ให้อัตโนมัติ ผู้สมัครจะเห็นปุ่ม “เข้าหมู่บ้าน” ในหน้า /village/ ทันที · “ไม่ผ่าน” จะคืนแปลงให้คนอื่นจอง · ช่องลิงก์ใส่เฉพาะเมื่อต้องการส่งคนนั้นไปห้องอื่น</p>
     <div class="scroll"><table class="tbl" id="apps"></table></div>
   </div>
 </div>
@@ -102,8 +105,10 @@ h2{font-size:1rem;margin:28px 0 10px}
           '<td><select class="status st-'+esc(m.status)+'">'+opts+'</select></td>'+
           '<td><input class="link" type="url" placeholder="ลิงก์หมู่บ้านหลัก" value="'+esc(m.world_link||"")+'"></td>'+
           '<td>'+(m.friend?'<span class="yes">✓</span>':"-")+'</td><td>'+d(m.updated_at)+'</td>'+
-          '<td><button class="btn sm ghost save">บันทึก</button></td></tr>'}).join("")
+          '<td><div class="acts">'+(m.status!=="approved"?'<button class="btn sm ok quick" data-to="approved">✓ อนุมัติ</button>':'')+(m.status==="pending"?'<button class="btn sm no quick" data-to="rejected">ไม่ผ่าน</button>':'')+'<button class="btn sm ghost save">บันทึก</button></div></td></tr>'}).join("")
       :'<tr><td colspan="9">ยังไม่มีใบสมัคร</td></tr>');
+    document.querySelectorAll("#apps .quick").forEach(function(q){q.onclick=function(){
+      var tr=q.closest("tr");tr.querySelector(".status").value=q.dataset.to;tr.querySelector(".save").click()}});
     document.querySelectorAll("#apps .save").forEach(function(b){b.onclick=function(){
       var tr=b.closest("tr");b.disabled=true;
       var link=tr.querySelector(".link").value.trim();
