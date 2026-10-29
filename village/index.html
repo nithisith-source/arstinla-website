@@ -231,12 +231,13 @@ legend{padding:0;margin-bottom:6px}
       g.classList.toggle("taken",!!busy);
       g.classList.toggle("sel",!!(selected&&selected.id===p.id));
       g.setAttribute("tabindex",busy?-1:0);
-      p.label.textContent=busy?(t.status==="approved"||t.status==="reserved"?(t.name||"จองแล้ว"):"รออนุมัติ"):p.wa+" ตร.ว.";
+      p.label.textContent=busy?(t.status==="approved"||t.status==="reserved"?(t.name||"จองแล้ว"):"รออนุมัติ"):(own&&mine.status==="approved"?(mine.displayName||"แปลงของคุณ"):p.wa+" ตร.ว.");
       g.setAttribute("aria-label","แปลง "+p.id+(busy?" จองแล้ว":" ว่าง "+p.wa+" ตารางวา")+(p.lake?" ริมน้ำ":""));
     });
     if(selected){$("chosen").textContent="แปลง "+selected.id+" · "+selected.dim+" · "+selected.wa+" ตร.ว."+(selected.lake?" · ริมน้ำ":"");$("chosen").classList.add("has")}
     else{$("chosen").textContent=canLand()?"แตะแปลงว่างบนผังเพื่อเลือก":"ระดับนี้ไม่ต้องเลือกแปลง";$("chosen").classList.remove("has")}
-    $("lock").hidden=canLand()&&!locked();
+    // Approved members see the full map (their plot + neighbours); the overlay is only for picking a tier first.
+    $("lock").hidden=locked()||canLand();
     var off=locked()||!loggedIn;
     $("name").disabled=locked();
     document.querySelectorAll("input[name=tier]").forEach(function(r){r.disabled=locked()});
