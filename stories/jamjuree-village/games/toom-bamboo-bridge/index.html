@@ -60,7 +60,7 @@ ul.checks li{display:flex;gap:8px}
 .seg{height:22px;border:2px dashed var(--muted);border-radius:6px;position:relative;min-width:0}
 .seg.now{border-color:var(--accent);border-style:solid;animation:glow 1s infinite}
 @keyframes glow{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}}
-.seg.fill{border:0;background:repeating-linear-gradient(90deg,var(--bamboo) 0 18px,var(--bamboo-dark) 18px 20px)}
+.seg.fill{border:0;background:repeating-linear-gradient(90deg,var(--bamboo) 0 calc(var(--u,20px) - 2px),var(--bamboo-dark) calc(var(--u,20px) - 2px) var(--u,20px))}
 .seg.crack::after{content:"⚡";position:absolute;inset:-4px 0 0;text-align:center;font-size:18px;line-height:22px;filter:hue-rotate(-40deg)}
 .seg.fixable{cursor:pointer;outline:3px solid var(--warn);outline-offset:2px}
 .seg.broken{background:none;border:2px dashed var(--warn)}
@@ -70,7 +70,7 @@ ul.checks li{display:flex;gap:8px}
 .walker.fall{top:120px}
 .planks{display:flex;gap:10px;flex-wrap:wrap}
 .plank{flex:1 1 30%;display:flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:.85rem}
-.plank i{display:block;height:16px;border-radius:5px;background:repeating-linear-gradient(90deg,var(--bamboo) 0 18px,var(--bamboo-dark) 18px 20px)}
+.plank i{display:block;height:22px;max-width:none;border-radius:5px;background:repeating-linear-gradient(90deg,var(--bamboo) 0 calc(var(--u,20px) - 2px),var(--bamboo-dark) calc(var(--u,20px) - 2px) var(--u,20px))}
 </style>
 </head>
 <body>
@@ -149,8 +149,16 @@ function renderBridge(){
 function renderPlanks(){
   const L=NEED[S.i];const opts=[...new Set([L,L===2?3:L-1,L===4?2:L+1])].slice(0,3).sort(()=>Math.random()-.5);
   $("planks").innerHTML="";opts.forEach((o,k)=>{const b=document.createElement("button");b.className="plank";b.id="plank"+k;b.dataset.len=o;
-    b.innerHTML=`<i style="width:${o*24}%"></i>ยาว ${o} ช่วงแขน`;b.onclick=()=>place(o,b);$("planks").appendChild(b)});
+    b.innerHTML=`<i data-len="${o}"></i>ยาว ${o} ช่วงแขน`;b.onclick=()=>place(o,b);$("planks").appendChild(b)});
+  sizePlanks();
 }
+// Draw each plank at the same scale as the gaps on the bridge (1 ช่วงแขน = same pixels).
+function unitPx(){
+  for(let k=0;k<NEED.length;k++){const s=$("seg"+k);if(s&&s.offsetWidth)return s.getBoundingClientRect().width/NEED[k]}
+  return 24;
+}
+function sizePlanks(){const u=unitPx();document.documentElement.style.setProperty("--u",u+"px");document.querySelectorAll("#planks .plank i").forEach(i=>{i.style.width=(Number(i.dataset.len)*u)+"px"})}
+addEventListener("resize",sizePlanks);
 function place(o,b){
   if(o!==NEED[S.i]){sfx.uhoh();shake(b);fb(o<NEED[S.i]?"สั้นไป ไม่ถึงอีกฝั่ง ลองแผ่นอื่นนะ":"ยาวเกินไป ลองแผ่นอื่นนะ",false);return}
   S.placed.push(o);S.i++;sfx.pop();fb("",true);
