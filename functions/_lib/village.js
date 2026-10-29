@@ -7,8 +7,9 @@ export const LAND_TIERS = ["owner", "developer"];
 
 // Plot IDs must match the site plan drawn in /village/index.html.
 const range = (prefix, n) => Array.from({ length: n }, (_, i) => `${prefix}-${String(i + 1).padStart(2, "0")}`);
-export const PLOTS = [...range("A", 10), ...range("B", 6), ...range("C", 10), ...range("D", 3)];
-export const LAKE_PLOTS = new Set(range("D", 3));          // lakeside: developer only
+export const PLOTS = [...range("A", 10), ...range("B", 10), ...range("C", 10), ...range("E", 10),
+  ...range("F", 4), ...range("G", 4), ...range("D", 8)];
+export const LAKE_PLOTS = new Set(range("D", 8));          // central island: developer only
 export const RESERVED_PLOTS = { "A-01": "บ้านสถาปนิก" };   // never bookable
 
 // Default link into the village world (WorkAdventure). An approved member gets this
@@ -52,7 +53,7 @@ export function validateApplication({ displayName, tier, plot }) {
   if (needsLand) {
     if (!plot) return "เลือกแปลงที่ดินบนผังก่อนส่ง";
     if (!PLOTS.includes(plot) || RESERVED_PLOTS[plot]) return "แปลงนี้จองไม่ได้";
-    if (LAKE_PLOTS.has(plot) && tier !== "developer") return "แปลงริมน้ำสงวนไว้ให้ระดับผู้พัฒนาโครงการ";
+    if (LAKE_PLOTS.has(plot) && tier !== "developer") return "แปลงบนเกาะกลางสงวนไว้ให้ระดับผู้พัฒนาโครงการ";
   }
   return null;
 }

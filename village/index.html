@@ -90,8 +90,8 @@ legend{padding:0;margin-bottom:6px}
 .plot.sel .lot,.plot.sel:hover .lot{fill:var(--mine);stroke:var(--mine)}
 .plot.sel .env{stroke:#55554f}
 .plot.sel .fp{fill:#3b3b36;stroke:#6a6a62}.plot.sel .ridge{stroke:#6a6a62}
-.plot text{font:600 11px "Space Grotesk",sans-serif;letter-spacing:.06em;fill:#3c4232;pointer-events:none}
-.plot .sz{font:400 10px "IBM Plex Sans Thai",sans-serif;letter-spacing:0;fill:#7a806c}
+.plot text{font:600 8.5px "Space Grotesk",sans-serif;letter-spacing:.06em;fill:#3c4232;pointer-events:none}
+.plot .sz{font:400 7.5px "IBM Plex Sans Thai",sans-serif;letter-spacing:0;fill:#7a806c}
 .plot.taken .sz{fill:#4b473f;font-weight:500}
 .plot.sel text,.plot.sel .sz{fill:var(--cream)}
 .plot:focus{outline:none}
@@ -142,7 +142,7 @@ legend{padding:0;margin-bottom:6px}
           <label class="tier"><input type="radio" name="tier" id="t-guest" value="guest"><span><b>ผู้มาเยือน</b><span class="en">GUEST</span></span><span class="tag">ลงทะเบียน</span><span class="desc">เดินเที่ยวลานกลางและพื้นที่สาธารณะ</span></label>
           <label class="tier"><input type="radio" name="tier" id="t-resident" value="resident"><span><b>ผู้อยู่อาศัย</b><span class="en">RESIDENT</span></span><span class="tag">ลงทะเบียน</span><span class="desc">เข้าห้องกิจกรรม ร่วมอีเวนต์ประกวดบ้าน</span></label>
           <label class="tier land"><input type="radio" name="tier" id="t-owner" value="owner"><span><b>เจ้าของบ้าน</b><span class="en">HOMEOWNER</span></span><span class="tag">จองที่ดิน</span><span class="desc">จองแปลงที่ดิน 1 แปลง พร้อมห้องส่วนตัวไว้แต่ง</span></label>
-          <label class="tier top"><input type="radio" name="tier" id="t-developer" value="developer"><span><b>ผู้พัฒนาโครงการ</b><span class="en">DEVELOPER</span></span><span class="tag">ที่ดิน + ริมน้ำ</span><span class="desc">เลือกแปลงริมสระได้ เข้าเลานจ์ริมน้ำ และได้สิทธิพิเศษ</span></label>
+          <label class="tier top"><input type="radio" name="tier" id="t-developer" value="developer"><span><b>ผู้พัฒนาโครงการ</b><span class="en">DEVELOPER</span></span><span class="tag">ที่ดิน + เกาะกลาง</span><span class="desc">เลือกแปลงบนเกาะกลางรอบสระได้ เข้าเลานจ์ริมน้ำ และได้สิทธิพิเศษ</span></label>
         </div>
       </fieldset>
 
@@ -161,7 +161,7 @@ legend{padding:0;margin-bottom:6px}
         <h2 id="mapTitle" style="margin:0">ผังแปลงที่ดิน</h2>
         <div class="legend">
           <span><i class="sw" style="background:var(--plot)"></i>ว่าง</span>
-          <span><i class="sw" style="background:var(--lake);border-color:var(--lake-edge)"></i>ริมน้ำ</span>
+          <span><i class="sw" style="background:var(--lake);border-color:var(--lake-edge)"></i>เกาะกลาง</span>
           <span><i class="sw" style="background:var(--owned);border-color:#b3aea3"></i>จองแล้ว</span>
           <span><i class="sw" style="background:var(--mine);border-color:var(--mine)"></i>แปลงของคุณ</span>
         </div>
@@ -170,7 +170,7 @@ legend{padding:0;margin-bottom:6px}
         <svg id="map" viewBox="0 0 1000 620" role="group" aria-label="ผังหมู่บ้าน เลือกแปลงที่ดิน"></svg>
         <div class="lock" id="lock"><div>เลือกระดับ “เจ้าของบ้าน” หรือ “ผู้พัฒนาโครงการ” เพื่อจองที่ดิน<small>ระดับผู้มาเยือนและผู้อยู่อาศัยส่งใบสมัครได้เลยโดยไม่ต้องเลือกแปลง</small></div></div>
       </div>
-      <p class="mapnote">บนมือถือเลื่อนซ้ายขวาเพื่อดูทั้งผัง · ขนาดแปลงคิดตามมาตราส่วนผัง 1:500 (1 ตร.ว. = 4 ตร.ม.) · แปลงริมน้ำ D-01 ถึง D-03 สำหรับระดับผู้พัฒนาโครงการ</p>
+      <p class="mapnote">หมู่บ้านริมน้ำ ทุกแปลงติดคลอง · บนมือถือเลื่อนซ้ายขวาเพื่อดูทั้งผัง · แปลงบนเกาะกลาง D-01 ถึง D-08 ล้อมสระกลาง สำหรับระดับผู้พัฒนาโครงการ</p>
     </section>
   </div>
 </div>
@@ -185,83 +185,93 @@ legend{padding:0;margin-bottom:6px}
   var $=function(id){return document.getElementById(id)};
 
   // ---- site plan (plot IDs must match functions/_lib/village.js) ----
+  // Water village: a canal ring around a central island + 4 long fingers + 2 short arms.
+  // Every plot fronts water. 1 plan unit = 0.4 m.
+  M=0.4;
   var defs=el("defs",{});
   defs.innerHTML='<pattern id="grass" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" fill="#c9d3b6"/><circle cx="10" cy="10" r=".7" fill="#d3dbc2"/></pattern>'+
-    '<radialGradient id="water" cx="45%" cy="40%" r="70%"><stop offset="0" stop-color="#cfe2e3"/><stop offset="1" stop-color="#a9c7cb"/></radialGradient>'+
+    '<linearGradient id="water" gradientUnits="userSpaceOnUse" x1="0" y1="20" x2="0" y2="600"><stop offset="0" stop-color="#bcd6d8"/><stop offset=".5" stop-color="#aecbce"/><stop offset="1" stop-color="#bcd6d8"/></linearGradient>'+
+    '<radialGradient id="pond" cx="50%" cy="45%" r="65%"><stop offset="0" stop-color="#d3e5e6"/><stop offset="1" stop-color="#a3c2c6"/></radialGradient>'+
     '<pattern id="pave" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f1ece0"/><path d="M0 0H8M0 0V8" stroke="#e3dccd" stroke-width=".6"/></pattern>';
-  // land
   el("rect",{x:0,y:0,width:1000,height:620,fill:"#eef0e3"});
   el("rect",{x:0,y:0,width:1000,height:620,fill:"url(#grass)"});
-  // block pads with hedge edge
-  [[28,48,470,230],[562,48,370,230],[28,344,470,232],[562,344,370,100]].forEach(function(r){
-    el("rect",{x:r[0],y:r[1],width:r[2],height:r[3],rx:8,fill:"#e5ead8",stroke:"#aebd97","stroke-width":2.2,"stroke-dasharray":"1 5","stroke-linecap":"round"});
-  });
-  // roads: sidewalk, asphalt, curb, centre line
-  el("rect",{x:0,y:282,width:1000,height:60,fill:"#e8e3d6"});
-  el("rect",{x:500,y:0,width:60,height:620,fill:"#e8e3d6"});
-  el("rect",{x:0,y:290,width:1000,height:44,fill:"var(--road)"});
-  el("rect",{x:508,y:0,width:44,height:620,fill:"var(--road)"});
-  [[0,290,1000,290],[0,334,1000,334],[508,0,508,620],[552,0,552,620]].forEach(function(l){el("line",{x1:l[0],y1:l[1],x2:l[2],y2:l[3],stroke:"#bdb4a2","stroke-width":1})});
-  el("line",{x1:0,y1:312,x2:1000,y2:312,stroke:"#fbf9f3","stroke-width":1.6,"stroke-dasharray":"16 12"});
-  el("line",{x1:530,y1:0,x2:530,y2:620,stroke:"#fbf9f3","stroke-width":1.6,"stroke-dasharray":"16 12"});
-  // plaza roundabout
-  el("circle",{cx:530,cy:312,r:62,fill:"#e8e3d6",stroke:"#bdb4a2","stroke-width":1});
-  el("circle",{cx:530,cy:312,r:52,fill:"url(#pave)",stroke:"#cfc6b4","stroke-width":1});
-  el("circle",{cx:530,cy:312,r:38,fill:"none",stroke:"#ddd5c4","stroke-width":1});
-  el("circle",{cx:530,cy:296,r:9,fill:"url(#water)",stroke:"#93b3b7","stroke-width":1});
-  txt({x:530,y:324,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":12,"font-weight":500,fill:"var(--black)"},"ลานกลาง");
-  txt({x:530,y:337,"text-anchor":"middle","font-family":"Space Grotesk","font-size":7.5,"letter-spacing":2.4,fill:"var(--muted)"},"PLAZA");
-  // lake: organic shore + water + ripples + pier
-  var lake="M600 488 C 620 452, 720 446, 800 452 C 880 458, 990 462, 1000 480 L 1000 612 C 930 618, 840 606, 760 602 C 680 598, 606 586, 596 548 C 590 524, 588 506, 600 488 Z";
-  el("path",{d:lake,fill:"#efe6cf",stroke:"#efe6cf","stroke-width":16,"stroke-linejoin":"round"});
-  el("path",{d:lake,fill:"url(#water)",stroke:"#8fb0b4","stroke-width":1.2});
-  ["M690 520 q 18 -6 36 0","M780 548 q 22 -7 44 0","M850 505 q 16 -5 32 0","M720 575 q 14 -5 28 0","M900 560 q 18 -6 36 0"].forEach(function(d){el("path",{d:d,fill:"none",stroke:"#e6f0f0","stroke-width":1.4,"stroke-linecap":"round"})});
-  el("rect",{x:640,y:446,width:12,height:46,fill:"#d4b886",stroke:"#a98a55","stroke-width":.8});
-  el("rect",{x:628,y:488,width:36,height:14,fill:"#d4b886",stroke:"#a98a55","stroke-width":.8});
-  txt({x:820,y:536,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":14,"font-weight":500,fill:"#3d5a5e"},"สระน้ำ");
-  txt({x:820,y:551,"text-anchor":"middle","font-family":"Space Grotesk","font-size":8,"letter-spacing":2.4,fill:"#5d7d81"},"POND");
-  // trees: shadow + canopy + highlight
   function tree(x,y,r){
     el("circle",{cx:x+r*.28,cy:y+r*.34,r:r,fill:"rgba(70,80,50,.16)"});
     el("circle",{cx:x,cy:y,r:r,fill:"#a5bd8f",stroke:"#7f9a6c","stroke-width":1});
     el("circle",{cx:x-r*.28,cy:y-r*.28,r:r*.48,fill:"#bcd0a8"});
   }
-  // street trees along both roads (skip the plaza)
-  for(var tx=24;tx<1000;tx+=58){ if(Math.abs(tx-530)<78)continue; tree(tx,286,5); tree(tx+29,338,5); }
-  for(var ty=24;ty<620;ty+=58){ if(Math.abs(ty-312)<78)continue; tree(504,ty,5); tree(556,ty+29,5); }
-  // canopy clusters at the edges
-  [[16,18,12],[250,20,10],[470,16,11],[600,18,10],[985,26,13],[14,600,12],[250,604,10],[470,606,11],[590,452,9],[985,440,12]].forEach(function(t){tree(t[0],t[1],t[2])});
-  // north arrow + scale bar
-  var n=el("g",{transform:"translate(962,92)"});
-  el("circle",{r:16,fill:"#f7f5ef",stroke:"#bdb4a2","stroke-width":1},n);
-  el("polygon",{points:"0,-12 6,8 0,3",fill:"var(--black)"},n);el("polygon",{points:"0,-12 -6,8 0,3",fill:"#fff",stroke:"var(--black)","stroke-width":.8},n);
-  txt({x:0,y:-21,"text-anchor":"middle","font-family":"Space Grotesk","font-size":10,"font-weight":600,fill:"var(--black)"},"N",n);
-  var sb=el("g",{transform:"translate(40,600)"});
-  el("rect",{x:-6,y:-12,width:150,height:22,rx:3,fill:"rgba(247,245,239,.9)"},sb);
-  el("rect",{x:0,y:0,width:50,height:4,fill:"var(--black)"},sb);el("rect",{x:50,y:0,width:50,height:4,fill:"#fff",stroke:"var(--black)","stroke-width":.8},sb);
-  [0,50,100].forEach(function(x,i){txt({x:x,y:-3,"text-anchor":"middle","font-family":"Space Grotesk","font-size":8,fill:"var(--muted)"},String(i*10),sb)});
-  txt({x:112,y:5,"font-family":"Space Grotesk","font-size":8,fill:"var(--muted)"},"m",sb);
+  // water shapes (one compound path drawn twice: sandy bank + water)
+  var W=[
+    "M336 196 Q336 150 382 150 L618 150 Q664 150 664 196 L664 424 Q664 470 618 470 L382 470 Q336 470 336 424 Z", // ring canal (outer)
+    "M44 150 L340 150 L340 190 L44 190 Q24 190 24 170 Q24 150 44 150 Z",       // upper-left finger
+    "M44 430 L340 430 L340 470 L44 470 Q24 470 24 450 Q24 430 44 430 Z",       // lower-left finger
+    "M660 150 L956 150 Q976 150 976 170 Q976 190 956 190 L660 190 Z",          // upper-right finger
+    "M660 430 L956 430 Q976 430 976 450 Q976 470 956 470 L660 470 Z",          // lower-right finger
+    "M480 154 L480 44 Q480 24 500 24 Q520 24 520 44 L520 154 Z",               // top arm
+    "M480 466 L480 576 Q480 596 500 596 Q520 596 520 576 L520 466 Z"           // bottom arm
+  ];
+  W.forEach(function(d){el("path",{d:d,fill:"#ece2c8",stroke:"#ece2c8","stroke-width":10,"stroke-linejoin":"round"})});
+  W.forEach(function(d){el("path",{d:d,fill:"#8fb0b4",stroke:"#8fb0b4","stroke-width":2.2,"stroke-linejoin":"round"})});  // edge (union, no seams)
+  W.forEach(function(d){el("path",{d:d,fill:"url(#water)"})});
+  ["M60 166 q14 -4 28 0","M200 176 q16 -5 32 0","M740 166 q14 -4 28 0","M880 176 q16 -5 32 0","M90 446 q14 -4 28 0","M250 456 q16 -5 32 0","M770 446 q14 -4 28 0","M900 456 q16 -5 32 0","M350 250 q0 14 0 28","M650 360 q0 14 0 28","M494 80 q6 10 0 20","M494 520 q6 10 0 20"]
+    .forEach(function(d){el("path",{d:d,fill:"none",stroke:"#e3eeee","stroke-width":1.3,"stroke-linecap":"round"})});
+  // central island with ring road and inner pond
+  el("rect",{x:380,y:196,width:240,height:228,rx:30,fill:"#e8e3d6",stroke:"#bdb4a2","stroke-width":1});
+  el("rect",{x:394,y:210,width:212,height:200,rx:20,fill:"#e5ead8",stroke:"#bdb4a2","stroke-width":.8});
+  el("rect",{x:387,y:203,width:226,height:214,rx:25,fill:"none",stroke:"#fbf9f3","stroke-width":1.2,"stroke-dasharray":"10 8"});
+  el("rect",{x:440,y:272,width:120,height:76,rx:22,fill:"#ece2c8"});
+  el("rect",{x:444,y:276,width:112,height:68,rx:19,fill:"url(#pond)",stroke:"#8fb0b4","stroke-width":1});
+  el("circle",{cx:500,cy:300,r:5,fill:"#e9f3f3",stroke:"#8fb0b4","stroke-width":.8});
+  txt({x:500,y:322,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":10.5,"font-weight":500,fill:"#3d5a5e"},"สระกลาง");
+  txt({x:500,y:334,"text-anchor":"middle","font-family":"Space Grotesk","font-size":6.5,"letter-spacing":2,fill:"#5d7d81"},"ISLAND POND");
+  // entrance road from the west + bridge onto the island; footpath + bridge on the east
+  el("rect",{x:0,y:292,width:336,height:36,fill:"#e8e3d6"});
+  el("rect",{x:0,y:298,width:336,height:24,fill:"var(--road)"});
+  el("line",{x1:0,y1:310,x2:336,y2:310,stroke:"#fbf9f3","stroke-width":1.4,"stroke-dasharray":"14 10"});
+  el("rect",{x:334,y:296,width:48,height:28,fill:"#cfc6b4",stroke:"#a89f8c","stroke-width":1});
+  el("line",{x1:334,y1:296,x2:382,y2:296,stroke:"#8e8574","stroke-width":2});el("line",{x1:334,y1:324,x2:382,y2:324,stroke:"#8e8574","stroke-width":2});
+  el("rect",{x:664,y:302,width:336,height:16,fill:"url(#pave)",stroke:"#d6cdbb","stroke-width":.8});
+  el("rect",{x:618,y:302,width:48,height:16,fill:"#d4b886",stroke:"#a98a55","stroke-width":.8});
+  txt({x:150,y:288,"font-family":"Space Grotesk","font-size":8,"letter-spacing":2,fill:"var(--muted)"},"MAIN ENTRANCE →");
+  // green strips with trees between the fingers
+  for(var tx=40;tx<330;tx+=36){tree(tx,272,6);tree(tx+18,348,6)}
+  for(var tx2=690;tx2<990;tx2+=36){tree(tx2,282,6);tree(tx2+18,338,6)}
+  [[18,40,12],[220,26,10],[430,18,9],[575,18,9],[780,24,11],[985,40,12],[18,590,12],[220,600,10],[430,604,9],[575,604,9],[780,598,11],[985,588,12],[360,126,7],[640,126,7],[360,494,7],[640,494,7]].forEach(function(t){tree(t[0],t[1],t[2])});
+  // north arrow + scale bar (10 m = 25 units)
+  var n=el("g",{transform:"translate(962,100)"});
+  el("circle",{r:15,fill:"#f7f5ef",stroke:"#bdb4a2","stroke-width":1},n);
+  el("polygon",{points:"0,-11 6,8 0,3",fill:"var(--black)"},n);el("polygon",{points:"0,-11 -6,8 0,3",fill:"#fff",stroke:"var(--black)","stroke-width":.8},n);
+  txt({x:0,y:-20,"text-anchor":"middle","font-family":"Space Grotesk","font-size":10,"font-weight":600,fill:"var(--black)"},"N",n);
+  var sb=el("g",{transform:"translate(30,606)"});
+  el("rect",{x:-6,y:-12,width:84,height:20,rx:3,fill:"rgba(247,245,239,.9)"},sb);
+  el("rect",{x:0,y:0,width:25,height:4,fill:"var(--black)"},sb);el("rect",{x:25,y:0,width:25,height:4,fill:"#fff",stroke:"var(--black)","stroke-width":.8},sb);
+  [0,25,50].forEach(function(x,i){txt({x:x,y:-3,"text-anchor":"middle","font-family":"Space Grotesk","font-size":7.5,fill:"var(--muted)"},String(i*10),sb)});
+  txt({x:58,y:5,"font-family":"Space Grotesk","font-size":7.5,fill:"var(--muted)"},"m",sb);
 
+  // ---- plots ----
   var plots=[];
-  function block(prefix,x0,y0,cols,rows,w,h,lake){
-    var i=1;
-    for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
-      plots.push({id:prefix+"-"+(i<10?"0":"")+i,x:x0+c*(w+6),y:y0+r*(h+6),w:w,h:h,lake:!!lake});i++;
-    }
-  }
-  block("A",40,60,5,2,86,104);block("B",572,60,3,2,112,104);block("C",40,354,5,2,86,104);block("D",572,354,3,1,112,80,true);
+  function row(prefix,start,x0,y,n,w,h,gap,isl){for(var k=0;k<n;k++){var i=start+k;plots.push({id:prefix+"-"+(i<10?"0":"")+i,x:x0+k*(w+gap),y:y,w:w,h:h,lake:!!isl})}}
+  function col(prefix,start,x,y0,n,w,h,gap){for(var k=0;k<n;k++){var i=start+k;plots.push({id:prefix+"-"+(i<10?"0":"")+i,x:x,y:y0+k*(h+gap),w:w,h:h})}}
+  row("A",1,40,94,5,52,52,6);  row("A",6,40,194,5,52,52,6);    // upper-left finger, both banks
+  row("C",1,40,374,5,52,52,6); row("C",6,40,474,5,52,52,6);    // lower-left finger
+  row("B",1,672,94,5,52,52,6); row("B",6,672,194,5,52,52,6);   // upper-right finger
+  row("E",1,672,374,5,52,52,6);row("E",6,672,474,5,52,52,6);   // lower-right finger
+  col("F",1,424,36,2,52,52,6); col("F",3,524,36,2,52,52,6);    // top arm
+  col("G",1,424,474,2,52,52,6);col("G",3,524,474,2,52,52,6);   // bottom arm
+  row("D",1,400,214,3,62,54,7,true); row("D",4,400,352,3,62,54,7,true);  // island: around the inner pond
+  plots.push({id:"D-07",x:400,y:274,w:36,h:72,lake:true}); plots.push({id:"D-08",x:564,y:274,w:36,h:72,lake:true});
 
   var nodes={}, byId={};
   plots.forEach(function(p){
     p.wa=Math.round((p.w*M)*(p.h*M)/4); p.dim=(p.w*M).toFixed(1)+"×"+(p.h*M).toFixed(1)+" ม.";
     var g=el("g",{class:"plot"+(p.lake?" lake":""),tabindex:0,role:"button"});
     el("rect",{class:"lot",x:p.x,y:p.y,width:p.w,height:p.h,rx:2},g);
-    el("rect",{class:"env",x:p.x+9,y:p.y+26,width:p.w-18,height:p.h-48},g);
-    var fw=p.w-26,fh=Math.min(p.h-60,58),fx=p.x+13,fy=p.y+28;
+    el("rect",{class:"env",x:p.x+5,y:p.y+17,width:p.w-10,height:p.h-30},g);
+    var fw=p.w-12,fh=p.h-34,fx=p.x+6,fy=p.y+18;
     el("rect",{class:"fp",x:fx,y:fy,width:fw,height:fh},g);
     el("line",{class:"ridge",x1:fx,y1:fy+fh/2,x2:fx+fw,y2:fy+fh/2},g);
-    txt({x:p.x+8,y:p.y+17},p.id,g);
-    p.label=txt({x:p.x+8,y:p.y+p.h-10,class:"sz"},p.wa+" ตร.ว.",g);
+    txt({x:p.x+5,y:p.y+12},p.id,g);
+    p.label=txt({x:p.x+5,y:p.y+p.h-5,class:"sz"},p.wa+" ตร.ว.",g);
     g.addEventListener("click",function(){pick(p)});
     g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(p)}});
     nodes[p.id]=g;byId[p.id]=p;
@@ -278,6 +288,7 @@ legend{padding:0;margin-bottom:6px}
   function isMinePlot(id){return mine&&mine.plot===id&&mine.status!=="rejected"}
   function locked(){return mine&&mine.status==="approved"}
 
+  function short(t){t=String(t);return t.length>9?t.slice(0,8)+"…":t}
   function render(){
     plots.forEach(function(p){
       var t=taken[p.id], own=isMinePlot(p.id), g=nodes[p.id];
@@ -285,10 +296,10 @@ legend{padding:0;margin-bottom:6px}
       g.classList.toggle("taken",!!busy);
       g.classList.toggle("sel",!!(selected&&selected.id===p.id));
       g.setAttribute("tabindex",busy?-1:0);
-      p.label.textContent=busy?(t.status==="approved"||t.status==="reserved"?(t.name||"จองแล้ว"):"รออนุมัติ"):(own&&mine.status==="approved"?(mine.displayName||"แปลงของคุณ"):p.wa+" ตร.ว.");
-      g.setAttribute("aria-label","แปลง "+p.id+(busy?" จองแล้ว":" ว่าง "+p.wa+" ตารางวา")+(p.lake?" ริมน้ำ":""));
+      p.label.textContent=busy?(t.status==="approved"||t.status==="reserved"?short(t.name||"จองแล้ว"):"รออนุมัติ"):(own&&mine.status==="approved"?short(mine.displayName||"แปลงของคุณ"):p.wa+" ตร.ว.");
+      g.setAttribute("aria-label","แปลง "+p.id+(busy?" จองแล้ว":" ว่าง "+p.wa+" ตารางวา")+(p.lake?" เกาะกลาง":""));
     });
-    if(selected){$("chosen").textContent="แปลง "+selected.id+" · "+selected.dim+" · "+selected.wa+" ตร.ว."+(selected.lake?" · ริมน้ำ":"");$("chosen").classList.add("has")}
+    if(selected){$("chosen").textContent="แปลง "+selected.id+" · "+selected.dim+" · "+selected.wa+" ตร.ว."+(selected.lake?" · เกาะกลาง":"");$("chosen").classList.add("has")}
     else{$("chosen").textContent=canLand()?"แตะแปลงว่างบนผังเพื่อเลือก":"ระดับนี้ไม่ต้องเลือกแปลง";$("chosen").classList.remove("has")}
     // Approved members see the full map (their plot + neighbours); the overlay is only for picking a tier first.
     $("lock").hidden=locked()||canLand();
@@ -325,7 +336,7 @@ legend{padding:0;margin-bottom:6px}
     if(locked())return;
     if(!canLand()){msg.textContent="เลือกระดับเจ้าของบ้านหรือผู้พัฒนาโครงการก่อนเลือกแปลง";return}
     if(taken[p.id]&&!isMinePlot(p.id))return;
-    if(p.lake&&tier()!=="developer"){msg.textContent="แปลงริมน้ำสงวนไว้ให้ระดับผู้พัฒนาโครงการ เลือกแปลงอื่นหรือเปลี่ยนระดับ";return}
+    if(p.lake&&tier()!=="developer"){msg.textContent="แปลงบนเกาะกลางสงวนไว้ให้ระดับผู้พัฒนาโครงการ เลือกแปลงอื่นหรือเปลี่ยนระดับ";return}
     msg.textContent="";selected=(selected&&selected.id===p.id)?null:p;render();
   }
   document.querySelectorAll("input[name=tier]").forEach(function(r){r.addEventListener("change",function(){
