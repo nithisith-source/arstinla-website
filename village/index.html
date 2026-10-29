@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--muted:#6b6b63;--line:rgba(23,24,22,.16);--green:#06c755;
-  --plot:#dfe6d2;--plot-edge:#8fa585;--lake:#f1e3bf;--lake-edge:#a97b1e;--owned:#cfcbc2;--road:#ddd8cc;--water:#bcd5d9;--tree:#86a374;--mine:#171816}
+  --plot:#f6f6ee;--plot-edge:#9aaa86;--lake:#f8efd6;--lake-edge:#c39a43;--owned:#ddd8cd;--road:#d9d3c6;--water:#b9d3d6;--tree:#9fb88a;--mine:#171816}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--black);font:15px/1.65 "IBM Plex Sans Thai",system-ui,sans-serif}
 a{color:inherit}
@@ -70,19 +70,29 @@ legend{padding:0;margin-bottom:6px}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:13px;height:13px;border:1px solid var(--plot-edge);display:inline-block}
-.mapbox{position:relative;overflow-x:auto;border:1px solid var(--line);background:#f7f5ef;margin-top:12px}
-.mapbox svg{display:block;min-width:760px;width:100%;height:auto}
+.mapbox{position:relative;overflow-x:auto;border:1px solid var(--line);background:#eef0e3;margin-top:12px}
+.mapbox svg{display:block;width:100%;height:auto}
+@media(max-width:700px){.mapbox svg{min-width:720px}}
 .lock{position:absolute;inset:0;display:grid;place-items:center;background:rgba(243,240,232,.78);text-align:center;padding:20px;font-weight:600}
 .lock small{display:block;font-weight:400;color:var(--muted)}
 .plot{cursor:pointer}
-.plot rect{fill:var(--plot);stroke:var(--plot-edge);stroke-width:1.2;transition:fill .15s}
-.plot:hover rect{fill:#c9d8b8}
-.plot.lake rect{fill:var(--lake);stroke:var(--lake-edge)}
+.plot .lot{fill:var(--plot);stroke:var(--plot-edge);stroke-width:1;transition:fill .15s}
+.plot .env{fill:none;stroke:#bdc7aa;stroke-width:.8;stroke-dasharray:3 3}
+.plot .fp{fill:#d2ccbf;stroke:#a39b8b;stroke-width:.8;opacity:0;transition:opacity .2s}
+.plot .ridge{stroke:#a39b8b;stroke-width:.8;opacity:0}
+.plot:hover .lot{fill:#e6eed8}
+.plot.lake .lot{fill:var(--lake);stroke:var(--lake-edge)}
+.plot.lake .env{stroke:#dcc58f}
 .plot.taken{cursor:not-allowed}
-.plot.taken rect{fill:var(--owned);stroke:#b3aea3}
-.plot.sel rect{fill:var(--mine);stroke:var(--mine)}
-.plot text{font:500 12px "Space Grotesk",sans-serif;fill:var(--black);pointer-events:none}
-.plot .sz{font:400 10px "IBM Plex Sans Thai",sans-serif;fill:var(--muted)}
+.plot.taken .lot,.plot.taken:hover .lot{fill:var(--owned);stroke:#b2ab9c}
+.plot.taken .fp,.plot.taken .ridge,.plot.sel .fp,.plot.sel .ridge{opacity:1}
+.plot.taken .env{opacity:0}
+.plot.sel .lot,.plot.sel:hover .lot{fill:var(--mine);stroke:var(--mine)}
+.plot.sel .env{stroke:#55554f}
+.plot.sel .fp{fill:#3b3b36;stroke:#6a6a62}.plot.sel .ridge{stroke:#6a6a62}
+.plot text{font:600 11px "Space Grotesk",sans-serif;letter-spacing:.06em;fill:#3c4232;pointer-events:none}
+.plot .sz{font:400 10px "IBM Plex Sans Thai",sans-serif;letter-spacing:0;fill:#7a806c}
+.plot.taken .sz{fill:#4b473f;font-weight:500}
 .plot.sel text,.plot.sel .sz{fill:var(--cream)}
 .plot:focus{outline:none}
 .mapnote{font-size:.8rem;color:var(--muted);margin:10px 0 0}
@@ -160,7 +170,7 @@ legend{padding:0;margin-bottom:6px}
         <svg id="map" viewBox="0 0 1000 620" role="group" aria-label="ผังหมู่บ้าน เลือกแปลงที่ดิน"></svg>
         <div class="lock" id="lock"><div>เลือกระดับ “เจ้าของบ้าน” หรือ “ผู้พัฒนาโครงการ” เพื่อจองที่ดิน<small>ระดับผู้มาเยือนและผู้อยู่อาศัยส่งใบสมัครได้เลยโดยไม่ต้องเลือกแปลง</small></div></div>
       </div>
-      <p class="mapnote">เลื่อนซ้ายขวาเพื่อดูทั้งผัง · ขนาดแปลงคิดตามมาตราส่วนผัง 1:500 (1 ตร.ว. = 4 ตร.ม.) · แปลงริมน้ำ D-01 ถึง D-03 สำหรับระดับผู้พัฒนาโครงการ</p>
+      <p class="mapnote">บนมือถือเลื่อนซ้ายขวาเพื่อดูทั้งผัง · ขนาดแปลงคิดตามมาตราส่วนผัง 1:500 (1 ตร.ว. = 4 ตร.ม.) · แปลงริมน้ำ D-01 ถึง D-03 สำหรับระดับผู้พัฒนาโครงการ</p>
     </section>
   </div>
 </div>
@@ -175,22 +185,62 @@ legend{padding:0;margin-bottom:6px}
   var $=function(id){return document.getElementById(id)};
 
   // ---- site plan (plot IDs must match functions/_lib/village.js) ----
+  var defs=el("defs",{});
+  defs.innerHTML='<pattern id="grass" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" fill="#c9d3b6"/><circle cx="10" cy="10" r=".7" fill="#d3dbc2"/></pattern>'+
+    '<radialGradient id="water" cx="45%" cy="40%" r="70%"><stop offset="0" stop-color="#cfe2e3"/><stop offset="1" stop-color="#a9c7cb"/></radialGradient>'+
+    '<pattern id="pave" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f1ece0"/><path d="M0 0H8M0 0V8" stroke="#e3dccd" stroke-width=".6"/></pattern>';
+  // land
+  el("rect",{x:0,y:0,width:1000,height:620,fill:"#eef0e3"});
+  el("rect",{x:0,y:0,width:1000,height:620,fill:"url(#grass)"});
+  // block pads with hedge edge
+  [[28,48,470,230],[562,48,370,230],[28,344,470,232],[562,344,370,100]].forEach(function(r){
+    el("rect",{x:r[0],y:r[1],width:r[2],height:r[3],rx:8,fill:"#e5ead8",stroke:"#aebd97","stroke-width":2.2,"stroke-dasharray":"1 5","stroke-linecap":"round"});
+  });
+  // roads: sidewalk, asphalt, curb, centre line
+  el("rect",{x:0,y:282,width:1000,height:60,fill:"#e8e3d6"});
+  el("rect",{x:500,y:0,width:60,height:620,fill:"#e8e3d6"});
   el("rect",{x:0,y:290,width:1000,height:44,fill:"var(--road)"});
   el("rect",{x:508,y:0,width:44,height:620,fill:"var(--road)"});
-  el("line",{x1:0,y1:312,x2:1000,y2:312,stroke:"#b9b3a5","stroke-dasharray":"14 10"});
-  el("line",{x1:530,y1:0,x2:530,y2:620,stroke:"#b9b3a5","stroke-dasharray":"14 10"});
-  el("circle",{cx:530,cy:312,r:46,fill:"var(--cream)",stroke:"var(--black)","stroke-width":1.2});
-  txt({x:530,y:309,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":13,fill:"var(--black)"},"ลานกลาง");
-  txt({x:530,y:325,"text-anchor":"middle","font-family":"Space Grotesk","font-size":9,"letter-spacing":2,fill:"var(--muted)"},"PLAZA");
-  el("ellipse",{cx:780,cy:520,rx:190,ry:72,fill:"var(--water)"});
-  txt({x:780,y:526,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":14,fill:"var(--black)"},"สระน้ำ");
-  [[40,30],[140,26],[300,32],[470,24],[600,30],[760,26],[930,34],[30,590],[180,596],[340,590],[480,598],[590,600],[970,470],[600,470]]
-    .forEach(function(p){el("circle",{cx:p[0],cy:p[1],r:11,fill:"var(--tree)","fill-opacity":.85})});
-  var n=el("g",{transform:"translate(960,80)"});
-  el("polygon",{points:"0,-22 8,8 0,2 -8,8",fill:"var(--black)"},n);
-  txt({x:0,y:-28,"text-anchor":"middle","font-family":"Space Grotesk","font-size":12,fill:"var(--black)"},"N",n);
-  el("rect",{x:40,y:604,width:50,height:5,fill:"var(--black)"});el("rect",{x:90,y:604,width:50,height:5,fill:"none",stroke:"var(--black)"});
-  txt({x:146,y:610,"font-family":"Space Grotesk","font-size":10,fill:"var(--muted)"},"0    10    20 m");
+  [[0,290,1000,290],[0,334,1000,334],[508,0,508,620],[552,0,552,620]].forEach(function(l){el("line",{x1:l[0],y1:l[1],x2:l[2],y2:l[3],stroke:"#bdb4a2","stroke-width":1})});
+  el("line",{x1:0,y1:312,x2:1000,y2:312,stroke:"#fbf9f3","stroke-width":1.6,"stroke-dasharray":"16 12"});
+  el("line",{x1:530,y1:0,x2:530,y2:620,stroke:"#fbf9f3","stroke-width":1.6,"stroke-dasharray":"16 12"});
+  // plaza roundabout
+  el("circle",{cx:530,cy:312,r:62,fill:"#e8e3d6",stroke:"#bdb4a2","stroke-width":1});
+  el("circle",{cx:530,cy:312,r:52,fill:"url(#pave)",stroke:"#cfc6b4","stroke-width":1});
+  el("circle",{cx:530,cy:312,r:38,fill:"none",stroke:"#ddd5c4","stroke-width":1});
+  el("circle",{cx:530,cy:296,r:9,fill:"url(#water)",stroke:"#93b3b7","stroke-width":1});
+  txt({x:530,y:324,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":12,"font-weight":500,fill:"var(--black)"},"ลานกลาง");
+  txt({x:530,y:337,"text-anchor":"middle","font-family":"Space Grotesk","font-size":7.5,"letter-spacing":2.4,fill:"var(--muted)"},"PLAZA");
+  // lake: organic shore + water + ripples + pier
+  var lake="M600 488 C 620 452, 720 446, 800 452 C 880 458, 990 462, 1000 480 L 1000 612 C 930 618, 840 606, 760 602 C 680 598, 606 586, 596 548 C 590 524, 588 506, 600 488 Z";
+  el("path",{d:lake,fill:"#efe6cf",stroke:"#efe6cf","stroke-width":16,"stroke-linejoin":"round"});
+  el("path",{d:lake,fill:"url(#water)",stroke:"#8fb0b4","stroke-width":1.2});
+  ["M690 520 q 18 -6 36 0","M780 548 q 22 -7 44 0","M850 505 q 16 -5 32 0","M720 575 q 14 -5 28 0","M900 560 q 18 -6 36 0"].forEach(function(d){el("path",{d:d,fill:"none",stroke:"#e6f0f0","stroke-width":1.4,"stroke-linecap":"round"})});
+  el("rect",{x:640,y:446,width:12,height:46,fill:"#d4b886",stroke:"#a98a55","stroke-width":.8});
+  el("rect",{x:628,y:488,width:36,height:14,fill:"#d4b886",stroke:"#a98a55","stroke-width":.8});
+  txt({x:820,y:536,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":14,"font-weight":500,fill:"#3d5a5e"},"สระน้ำ");
+  txt({x:820,y:551,"text-anchor":"middle","font-family":"Space Grotesk","font-size":8,"letter-spacing":2.4,fill:"#5d7d81"},"POND");
+  // trees: shadow + canopy + highlight
+  function tree(x,y,r){
+    el("circle",{cx:x+r*.28,cy:y+r*.34,r:r,fill:"rgba(70,80,50,.16)"});
+    el("circle",{cx:x,cy:y,r:r,fill:"#a5bd8f",stroke:"#7f9a6c","stroke-width":1});
+    el("circle",{cx:x-r*.28,cy:y-r*.28,r:r*.48,fill:"#bcd0a8"});
+  }
+  // street trees along both roads (skip the plaza)
+  for(var tx=24;tx<1000;tx+=58){ if(Math.abs(tx-530)<78)continue; tree(tx,286,5); tree(tx+29,338,5); }
+  for(var ty=24;ty<620;ty+=58){ if(Math.abs(ty-312)<78)continue; tree(504,ty,5); tree(556,ty+29,5); }
+  // canopy clusters at the edges
+  [[16,18,12],[250,20,10],[470,16,11],[600,18,10],[985,26,13],[14,600,12],[250,604,10],[470,606,11],[590,452,9],[985,440,12]].forEach(function(t){tree(t[0],t[1],t[2])});
+  // north arrow + scale bar
+  var n=el("g",{transform:"translate(962,92)"});
+  el("circle",{r:16,fill:"#f7f5ef",stroke:"#bdb4a2","stroke-width":1},n);
+  el("polygon",{points:"0,-12 6,8 0,3",fill:"var(--black)"},n);el("polygon",{points:"0,-12 -6,8 0,3",fill:"#fff",stroke:"var(--black)","stroke-width":.8},n);
+  txt({x:0,y:-21,"text-anchor":"middle","font-family":"Space Grotesk","font-size":10,"font-weight":600,fill:"var(--black)"},"N",n);
+  var sb=el("g",{transform:"translate(40,600)"});
+  el("rect",{x:-6,y:-12,width:150,height:22,rx:3,fill:"rgba(247,245,239,.9)"},sb);
+  el("rect",{x:0,y:0,width:50,height:4,fill:"var(--black)"},sb);el("rect",{x:50,y:0,width:50,height:4,fill:"#fff",stroke:"var(--black)","stroke-width":.8},sb);
+  [0,50,100].forEach(function(x,i){txt({x:x,y:-3,"text-anchor":"middle","font-family":"Space Grotesk","font-size":8,fill:"var(--muted)"},String(i*10),sb)});
+  txt({x:112,y:5,"font-family":"Space Grotesk","font-size":8,fill:"var(--muted)"},"m",sb);
 
   var plots=[];
   function block(prefix,x0,y0,cols,rows,w,h,lake){
@@ -205,8 +255,12 @@ legend{padding:0;margin-bottom:6px}
   plots.forEach(function(p){
     p.wa=Math.round((p.w*M)*(p.h*M)/4); p.dim=(p.w*M).toFixed(1)+"×"+(p.h*M).toFixed(1)+" ม.";
     var g=el("g",{class:"plot"+(p.lake?" lake":""),tabindex:0,role:"button"});
-    el("rect",{x:p.x,y:p.y,width:p.w,height:p.h},g);
-    txt({x:p.x+8,y:p.y+18},p.id,g);
+    el("rect",{class:"lot",x:p.x,y:p.y,width:p.w,height:p.h,rx:2},g);
+    el("rect",{class:"env",x:p.x+9,y:p.y+26,width:p.w-18,height:p.h-48},g);
+    var fw=p.w-26,fh=Math.min(p.h-60,58),fx=p.x+13,fy=p.y+28;
+    el("rect",{class:"fp",x:fx,y:fy,width:fw,height:fh},g);
+    el("line",{class:"ridge",x1:fx,y1:fy+fh/2,x2:fx+fw,y2:fy+fh/2},g);
+    txt({x:p.x+8,y:p.y+17},p.id,g);
     p.label=txt({x:p.x+8,y:p.y+p.h-10,class:"sz"},p.wa+" ตร.ว.",g);
     g.addEventListener("click",function(){pick(p)});
     g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(p)}});
