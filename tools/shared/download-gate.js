@@ -147,22 +147,24 @@
     request.resolve(allowed);
   }
 
-  // Logged-in members (LINE login) skip the add-friend gate entirely.
-  let memberCheck=null;
-  function isMember(){
-    if(!memberCheck){
-      memberCheck=Promise.race([
-        fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>Boolean(d&&d.member)).catch(()=>false),
-        new Promise(r=>setTimeout(()=>r(false),3000))
-      ]).then(ok=>{if(!ok)memberCheck=null;return ok});
+  // Logged-in members who are already friends of LINE OA @arstinla skip the add-friend gate.
+  // Non-friends get a server re-check (they may have added the OA after logging in).
+  let friendCheck=null;
+  function isFriendMember(refresh){
+    if(!friendCheck||refresh){
+      const url="/api/auth/me"+(refresh?"?refreshFriend=1":"");
+      friendCheck=Promise.race([
+        fetch(url,{credentials:"same-origin",cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>Boolean(d&&d.member&&d.member.friend)).catch(()=>false),
+        new Promise(r=>setTimeout(()=>r(false),4000))
+      ]);
     }
-    return memberCheck;
+    return friendCheck;
   }
-  isMember();
+  isFriendMember(false);
 
   async function request(options={}){
     if(activeRequest)return false;
-    if(await isMember()){recordAction("member_download");return true;}
+    if(await isFriendMember(false)||await isFriendMember(true)){recordAction("member_download");return true;}
     return openGate(options);
   }
 
