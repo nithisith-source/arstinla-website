@@ -1,6 +1,32 @@
 // Admin: list village applications, approve/reject, store the world link.  Header: x-admin-key
 import { json } from "../../_lib/member.js";
-import { ensureVillageSchema, STATUSES } from "../../_lib/village.js";
+import { ensureVillageSchema, STATUSES, worldUrl } from "../../_lib/village.js";
+
+const TIER_TH = { guest: "ผู้มาเยือน", resident: "ผู้อยู่อาศัย", owner: "เจ้าของบ้าน", developer: "ผู้พัฒนาโครงการ" };
+
+// Push a LINE message from OA @arstinla to the applicant (works only if they are a friend of the OA).
+async function notify(env, app, origin) {
+  if (!env.LINE_CHANNEL_ACCESS_TOKEN) return { sent: false, error: "LINE token is not configured" };
+  const page = `${origin}/village/`;
+  let text;
+  if (app.status === "approved") {
+    text = `🎉 ใบสมัคร ARSTINLA Village ของคุณได้รับการอนุมัติแล้ว\n\nชื่อในหมู่บ้าน: ${app.display_name}\nระดับ: ${TIER_TH[app.tier] || app.tier}` +
+      (app.plot ? `\nแปลงที่ดิน: ${app.plot}` : "") +
+      `\n\nเข้าหมู่บ้าน: ${app.world_link || worldUrl(env)}\nดูใบสมัคร: ${page}\n\nยินดีต้อนรับสู่หมู่บ้านครับ 🏡`;
+  } else if (app.status === "rejected") {
+    text = `ใบสมัคร ARSTINLA Village (${app.display_name}) ยังไม่ผ่านการอนุมัติครับ\nแก้ไขแล้วส่งใหม่ได้ที่ ${page}\nหรือพิมพ์ถามในแชตนี้ได้เลยครับ`;
+  } else return { sent: false, error: "No message for this status" };
+  try {
+    const r = await fetch("https://api.line.me/v2/bot/message/push", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env.LINE_CHANNEL_ACCESS_TOKEN}` },
+      body: JSON.stringify({ to: app.member_id, messages: [{ type: "text", text }] })
+    });
+    if (r.ok) return { sent: true };
+    const err = await r.json().catch(() => ({}));
+    return { sent: false, error: r.status === 400 || r.status === 403 ? "ผู้สมัครยังไม่ได้เป็นเพื่อน LINE OA หรือบล็อก OA อยู่" : (err.message || `LINE API ${r.status}`) };
+  } catch { return { sent: false, error: "Could not reach LINE" }; }
+}
 
 function denied(request, env) {
   const key = request.headers.get("x-admin-key") || "";
@@ -31,6 +57,7 @@ export async function onRequestPost({ request, env }) {
   if (worldLink && !/^https:\/\//.test(worldLink)) return json({ ok: false, error: "World link must start with https://" }, 400);
   const db = env.MEMBERS_DB;
   await ensureVillageSchema(db);
+  const before = await db.prepare("SELECT status FROM village_apps WHERE member_id = ?").bind(id).first();
   try {
     const res = await db
       .prepare(`UPDATE village_apps SET status = COALESCE(?1, status), world_link = COALESCE(?2, world_link),
@@ -44,5 +71,11 @@ export async function onRequestPost({ request, env }) {
     throw e;
   }
   const app = await db.prepare("SELECT * FROM village_apps WHERE member_id = ?").bind(id).first();
-  return json({ ok: true, app });
+  // Tell the applicant on LINE when the status actually changes to approved / rejected (or when asked to resend).
+  let notified = null;
+  const changed = before && app && before.status !== app.status;
+  if (app && (app.status === "approved" || app.status === "rejected") && (changed || body.resend)) {
+    notified = await notify(env, app, new URL(request.url).origin);
+  }
+  return json({ ok: true, app, notified });
 }

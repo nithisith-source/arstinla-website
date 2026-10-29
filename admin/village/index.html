@@ -111,7 +111,9 @@ h2{font-size:1rem;margin:28px 0 10px}
         body:JSON.stringify({id:tr.dataset.id,status:tr.querySelector(".status").value,worldLink:link||null})})
       .then(function(r){return r.json()}).then(function(j){b.disabled=false;
         if(!j.ok){msg("บันทึกไม่สำเร็จ: "+(j.error||""),true);return}
-        var m=data.apps.find(function(x){return x.member_id===j.app.member_id});Object.assign(m,j.app);render();msg("บันทึก "+(m.display_name||"")+" แล้ว")})
+        var m=data.apps.find(function(x){return x.member_id===j.app.member_id});Object.assign(m,j.app);render();
+        var n=j.notified;
+        msg("บันทึก "+(m.display_name||"")+" แล้ว"+(n?(n.sent?" · ส่งข้อความแจ้งทาง LINE แล้ว ✓":" · ส่ง LINE ไม่สำเร็จ: "+(n.error||"")+" (ทักบอกเองทาง LINE OA)"):""),n&&!n.sent)})
       .catch(function(){b.disabled=false;msg("บันทึกไม่สำเร็จ",true)})}});
   }
 
