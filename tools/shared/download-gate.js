@@ -147,7 +147,26 @@
     request.resolve(allowed);
   }
 
-  function request(options={}){
+  // Logged-in members (LINE login) skip the add-friend gate entirely.
+  let memberCheck=null;
+  function isMember(){
+    if(!memberCheck){
+      memberCheck=Promise.race([
+        fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>Boolean(d&&d.member)).catch(()=>false),
+        new Promise(r=>setTimeout(()=>r(false),3000))
+      ]).then(ok=>{if(!ok)memberCheck=null;return ok});
+    }
+    return memberCheck;
+  }
+  isMember();
+
+  async function request(options={}){
+    if(activeRequest)return false;
+    if(await isMember()){recordAction("member_download");return true;}
+    return openGate(options);
+  }
+
+  function openGate(options){
     const gate=ensureGate();
     if(activeRequest)return Promise.resolve(false);
     const tool=String(options.tool||document.title||"ARSTINLA Tool");
