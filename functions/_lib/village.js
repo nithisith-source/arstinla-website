@@ -8,7 +8,7 @@ export const LAND_TIERS = ["owner", "developer"];
 // Plot IDs must match the site plan drawn in /village/index.html.
 const range = (prefix, n) => Array.from({ length: n }, (_, i) => `${prefix}-${String(i + 1).padStart(2, "0")}`);
 export const PLOTS = [...range("A", 10), ...range("B", 10), ...range("C", 10), ...range("E", 10),
-  ...range("F", 4), ...range("G", 4), ...range("D", 6)];
+  "F-01", "F-03", "G-02", "G-04", ...range("D", 6)];
 export const LAKE_PLOTS = new Set(range("D", 6));          // central island: developer only
 export const RESERVED_PLOTS = { "A-01": "บ้านสถาปนิก" };   // never bookable
 
