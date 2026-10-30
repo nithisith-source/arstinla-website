@@ -224,19 +224,37 @@ legend{padding:0;margin-bottom:6px}
   el("circle",{cx:500,cy:300,r:5,fill:"#e9f3f3",stroke:"#8fb0b4","stroke-width":.8});
   txt({x:500,y:322,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":10.5,"font-weight":500,fill:"#3d5a5e"},"สระกลาง");
   txt({x:500,y:334,"text-anchor":"middle","font-family":"Space Grotesk","font-size":6.5,"letter-spacing":2,fill:"#5d7d81"},"ISLAND POND");
-  // entrance road from the west + bridge onto the island; footpath + bridge on the east
-  el("rect",{x:0,y:292,width:336,height:36,fill:"#e8e3d6"});
-  el("rect",{x:0,y:298,width:336,height:24,fill:"var(--road)"});
-  el("line",{x1:0,y1:310,x2:336,y2:310,stroke:"#fbf9f3","stroke-width":1.4,"stroke-dasharray":"14 10"});
-  el("rect",{x:334,y:296,width:48,height:28,fill:"#cfc6b4",stroke:"#a89f8c","stroke-width":1});
-  el("line",{x1:334,y1:296,x2:382,y2:296,stroke:"#8e8574","stroke-width":2});el("line",{x1:334,y1:324,x2:382,y2:324,stroke:"#8e8574","stroke-width":2});
-  el("rect",{x:664,y:302,width:336,height:16,fill:"url(#pave)",stroke:"#d6cdbb","stroke-width":.8});
-  el("rect",{x:618,y:302,width:48,height:16,fill:"#d4b886",stroke:"#a98a55","stroke-width":.8});
+  // ---- roads: every plot has a road at its back and water at its front ----
+  // lanes (x,y,w,h) — 14-unit service roads; main roads are 24 units with a centre line
+  var LANES=[
+    [6,74,14,474],[980,74,14,474],                    // west + east perimeter roads
+    [6,74,412,14],[582,74,412,14],                    // north lanes behind A-01..05 / B-01..05 (to the F lanes)
+    [6,250,330,14],[664,250,330,14],                  // behind A-06..10 / B-06..10
+    [6,356,330,14],[664,356,330,14],                  // behind C-01..05 / E-01..05
+    [6,532,412,14],[582,532,412,14],                  // south lanes behind C-06..10 / E-06..10 (to the G lanes)
+    [404,24,14,126],[582,24,14,126],                  // beside F plots (north arm)
+    [404,470,14,126],[582,470,14,126]                 // beside G plots (south arm)
+  ];
+  LANES.forEach(function(r){el("rect",{x:r[0]-2,y:r[1]-2,width:r[2]+4,height:r[3]+4,rx:3,fill:"#e8e3d6"})});
+  LANES.forEach(function(r){el("rect",{x:r[0],y:r[1],width:r[2],height:r[3],rx:2,fill:"var(--road)"})});
+  // main roads west + east, both bridging onto the island ring road
+  [[0,336],[664,1000]].forEach(function(x){
+    el("rect",{x:x[0],y:292,width:x[1]-x[0],height:36,fill:"#e8e3d6"});
+    el("rect",{x:x[0],y:298,width:x[1]-x[0],height:24,fill:"var(--road)"});
+    el("line",{x1:x[0],y1:310,x2:x[1],y2:310,stroke:"#fbf9f3","stroke-width":1.4,"stroke-dasharray":"14 10"});
+  });
+  [334,618].forEach(function(bx){
+    el("rect",{x:bx,y:296,width:48,height:28,fill:"#cfc6b4",stroke:"#a89f8c","stroke-width":1});
+    el("line",{x1:bx,y1:296,x2:bx+48,y2:296,stroke:"#8e8574","stroke-width":2});el("line",{x1:bx,y1:324,x2:bx+48,y2:324,stroke:"#8e8574","stroke-width":2});
+  });
+  // lane centre ticks
+  LANES.forEach(function(r){var h=r[2]>r[3];el("line",{x1:h?r[0]+6:r[0]+r[2]/2,y1:h?r[1]+r[3]/2:r[1]+6,x2:h?r[0]+r[2]-6:r[0]+r[2]/2,y2:h?r[1]+r[3]/2:r[1]+r[3]-6,stroke:"#f4f1ea","stroke-width":.8,"stroke-dasharray":"6 8"})});
   txt({x:150,y:288,"font-family":"Space Grotesk","font-size":8,"letter-spacing":2,fill:"var(--muted)"},"MAIN ENTRANCE →");
-  // green strips with trees between the fingers
-  for(var tx=40;tx<330;tx+=36){tree(tx,272,6);tree(tx+18,348,6)}
-  for(var tx2=690;tx2<990;tx2+=36){tree(tx2,282,6);tree(tx2+18,338,6)}
-  [[18,40,12],[220,26,10],[430,18,9],[575,18,9],[780,24,11],[985,40,12],[18,590,12],[220,600,10],[430,604,9],[575,604,9],[780,598,11],[985,588,12],[360,126,7],[640,126,7],[360,494,7],[640,494,7]].forEach(function(t){tree(t[0],t[1],t[2])});
+  txt({x:850,y:288,"text-anchor":"middle","font-family":"Space Grotesk","font-size":8,"letter-spacing":2,fill:"var(--muted)"},"← EAST GATE");
+  // green strips with trees between lanes and main roads
+  for(var tx=40;tx<330;tx+=36){if(tx<130||tx>270)tree(tx,279,5);tree(tx+18,341,5)}
+  for(var tx2=690;tx2<975;tx2+=36){if(tx2<790||tx2>910)tree(tx2,279,5);tree(tx2+18,341,5)}
+  [[30,30,11],[220,30,10],[780,30,11],[968,30,11],[30,590,11],[220,594,10],[780,594,11],[968,590,11],[370,126,7],[630,126,7],[370,494,7],[630,494,7]].forEach(function(t){tree(t[0],t[1],t[2])});
   // north arrow + scale bar (10 m = 25 units)
   var n=el("g",{transform:"translate(962,100)"});
   el("circle",{r:15,fill:"#f7f5ef",stroke:"#bdb4a2","stroke-width":1},n);
