@@ -142,7 +142,7 @@ legend{padding:0;margin-bottom:6px}
           <label class="tier"><input type="radio" name="tier" id="t-guest" value="guest"><span><b>ผู้มาเยือน</b><span class="en">GUEST</span></span><span class="tag">ลงทะเบียน</span><span class="desc">เดินเที่ยวลานกลางและพื้นที่สาธารณะ</span></label>
           <label class="tier"><input type="radio" name="tier" id="t-resident" value="resident"><span><b>ผู้อยู่อาศัย</b><span class="en">RESIDENT</span></span><span class="tag">ลงทะเบียน</span><span class="desc">เข้าห้องกิจกรรม ร่วมอีเวนต์ประกวดบ้าน</span></label>
           <label class="tier land"><input type="radio" name="tier" id="t-owner" value="owner"><span><b>เจ้าของบ้าน</b><span class="en">HOMEOWNER</span></span><span class="tag">จองที่ดิน</span><span class="desc">จองแปลงที่ดิน 1 แปลง พร้อมห้องส่วนตัวไว้แต่ง</span></label>
-          <label class="tier top"><input type="radio" name="tier" id="t-developer" value="developer"><span><b>ผู้พัฒนาโครงการ</b><span class="en">DEVELOPER</span></span><span class="tag">ที่ดิน + เกาะกลาง</span><span class="desc">เลือกแปลงบนเกาะกลางรอบสระได้ เข้าเลานจ์ริมน้ำ และได้สิทธิพิเศษ</span></label>
+          <label class="tier top"><input type="radio" name="tier" id="t-developer" value="developer"><span><b>ผู้พัฒนาโครงการ</b><span class="en">DEVELOPER</span></span><span class="tag">ที่ดิน + เกาะกลาง</span><span class="desc">เลือกแปลงบนเกาะกลางรอบสวนวงเวียนได้ เข้าเลานจ์ริมน้ำ และได้สิทธิพิเศษ</span></label>
         </div>
       </fieldset>
 
@@ -170,7 +170,7 @@ legend{padding:0;margin-bottom:6px}
         <svg id="map" viewBox="0 0 1000 620" role="group" aria-label="ผังหมู่บ้าน เลือกแปลงที่ดิน"></svg>
         <div class="lock" id="lock"><div>เลือกระดับ “เจ้าของบ้าน” หรือ “ผู้พัฒนาโครงการ” เพื่อจองที่ดิน<small>ระดับผู้มาเยือนและผู้อยู่อาศัยส่งใบสมัครได้เลยโดยไม่ต้องเลือกแปลง</small></div></div>
       </div>
-      <p class="mapnote">หมู่บ้านริมน้ำ ทุกแปลงติดคลอง · บนมือถือเลื่อนซ้ายขวาเพื่อดูทั้งผัง · แปลงบนเกาะกลาง D-01 ถึง D-08 ล้อมสระกลาง สำหรับระดับผู้พัฒนาโครงการ</p>
+      <p class="mapnote">หมู่บ้านริมน้ำ ทุกแปลงติดคลอง · บนมือถือเลื่อนซ้ายขวาเพื่อดูทั้งผัง · แปลงบนเกาะกลาง D-01 ถึง D-06 รอบสวนวงเวียนกลาง สำหรับระดับผู้พัฒนาโครงการ</p>
     </section>
   </div>
 </div>
@@ -200,67 +200,68 @@ legend{padding:0;margin-bottom:6px}
     el("circle",{cx:x,cy:y,r:r,fill:"#a5bd8f",stroke:"#7f9a6c","stroke-width":1});
     el("circle",{cx:x-r*.28,cy:y-r*.28,r:r*.48,fill:"#bcd0a8"});
   }
-  // water shapes (one compound path drawn twice: sandy bank + water)
+  // water: ring canal around the island + 4 long fingers + 2 short arms (square joins, no notches)
   var W=[
-    "M336 196 Q336 150 382 150 L618 150 Q664 150 664 196 L664 424 Q664 470 618 470 L382 470 Q336 470 336 424 Z", // ring canal (outer)
+    "M336 150 L664 150 L664 470 L336 470 Z",                                    // ring canal (outer edge)
     "M44 150 L340 150 L340 190 L44 190 Q24 190 24 170 Q24 150 44 150 Z",       // upper-left finger
     "M44 430 L340 430 L340 470 L44 470 Q24 470 24 450 Q24 430 44 430 Z",       // lower-left finger
     "M660 150 L956 150 Q976 150 976 170 Q976 190 956 190 L660 190 Z",          // upper-right finger
     "M660 430 L956 430 Q976 430 976 450 Q976 470 956 470 L660 470 Z",          // lower-right finger
-    "M480 154 L480 44 Q480 24 500 24 Q520 24 520 44 L520 154 Z",               // top arm
-    "M480 466 L480 576 Q480 596 500 596 Q520 596 520 576 L520 466 Z"           // bottom arm
+    "M480 154 L480 40 Q480 28 492 28 L508 28 Q520 28 520 40 L520 154 Z",       // top arm
+    "M480 466 L480 580 Q480 592 492 592 L508 592 Q520 592 520 580 L520 466 Z"  // bottom arm
   ];
   W.forEach(function(d){el("path",{d:d,fill:"#ece2c8",stroke:"#ece2c8","stroke-width":10,"stroke-linejoin":"round"})});
   W.forEach(function(d){el("path",{d:d,fill:"#8fb0b4",stroke:"#8fb0b4","stroke-width":2.2,"stroke-linejoin":"round"})});  // edge (union, no seams)
   W.forEach(function(d){el("path",{d:d,fill:"url(#water)"})});
-  ["M60 166 q14 -4 28 0","M200 176 q16 -5 32 0","M740 166 q14 -4 28 0","M880 176 q16 -5 32 0","M90 446 q14 -4 28 0","M250 456 q16 -5 32 0","M770 446 q14 -4 28 0","M900 456 q16 -5 32 0","M350 250 q0 14 0 28","M650 360 q0 14 0 28","M494 80 q6 10 0 20","M494 520 q6 10 0 20"]
+  ["M60 166 q14 -4 28 0","M200 176 q16 -5 32 0","M740 166 q14 -4 28 0","M880 176 q16 -5 32 0","M90 446 q14 -4 28 0","M250 456 q16 -5 32 0","M770 446 q14 -4 28 0","M900 456 q16 -5 32 0","M352 236 q0 14 0 28","M648 360 q0 14 0 28","M420 168 q14 -4 28 0","M560 452 q14 -4 28 0","M494 80 q6 10 0 20","M494 520 q6 10 0 20"]
     .forEach(function(d){el("path",{d:d,fill:"none",stroke:"#e3eeee","stroke-width":1.3,"stroke-linecap":"round"})});
-  // central island with ring road and inner pond
-  el("rect",{x:380,y:196,width:240,height:228,rx:30,fill:"#e8e3d6",stroke:"#bdb4a2","stroke-width":1});
-  el("rect",{x:394,y:210,width:212,height:200,rx:20,fill:"#e5ead8",stroke:"#bdb4a2","stroke-width":.8});
-  el("rect",{x:387,y:203,width:226,height:214,rx:25,fill:"none",stroke:"#fbf9f3","stroke-width":1.2,"stroke-dasharray":"10 8"});
-  el("rect",{x:440,y:272,width:120,height:76,rx:22,fill:"#ece2c8"});
-  el("rect",{x:444,y:276,width:112,height:68,rx:19,fill:"url(#pond)",stroke:"#8fb0b4","stroke-width":1});
-  el("circle",{cx:500,cy:300,r:5,fill:"#e9f3f3",stroke:"#8fb0b4","stroke-width":.8});
-  txt({x:500,y:322,"text-anchor":"middle","font-family":"IBM Plex Sans Thai","font-size":10.5,"font-weight":500,fill:"#3d5a5e"},"สระกลาง");
-  txt({x:500,y:334,"text-anchor":"middle","font-family":"Space Grotesk","font-size":6.5,"letter-spacing":2,fill:"#5d7d81"},"ISLAND POND");
-  // ---- roads: every plot has a road at its back and water at its front ----
-  // lanes (x,y,w,h) — 14-unit service roads; main roads are 24 units with a centre line
+  // central island (land)
+  el("rect",{x:380,y:196,width:240,height:228,rx:14,fill:"#e5ead8",stroke:"#aebd97","stroke-width":1.2});
+
+  // ---- roads (every plot has water at the front and a road at the back) ----
   var LANES=[
-    [6,74,14,474],[980,74,14,474],                    // west + east perimeter roads
-    [6,74,412,14],[582,74,412,14],                    // north lanes behind A-01..05 / B-01..05 (to the F lanes)
-    [6,250,330,14],[664,250,330,14],                  // behind A-06..10 / B-06..10
-    [6,356,330,14],[664,356,330,14],                  // behind C-01..05 / E-01..05
-    [6,532,412,14],[582,532,412,14],                  // south lanes behind C-06..10 / E-06..10 (to the G lanes)
-    [404,24,14,126],[582,24,14,126],                  // beside F plots (north arm)
-    [404,470,14,126],[582,470,14,126]                 // beside G plots (south arm)
+    [6,74,14,472],[980,74,14,472],                    // west + east perimeter roads
+    [6,74,412,14],[582,74,412,14],                    // north lanes behind A-01..05 / B-01..05
+    [404,10,14,78],[582,10,14,78],[404,10,192,14],    // around the north arm (behind F plots) + crossing over its head
+    [6,532,412,14],[582,532,412,14],                  // south lanes behind C-06..10 / E-06..10
+    [404,532,14,78],[582,532,14,78],[404,596,192,14]  // around the south arm (behind G plots) + crossing
   ];
   LANES.forEach(function(r){el("rect",{x:r[0]-2,y:r[1]-2,width:r[2]+4,height:r[3]+4,rx:3,fill:"#e8e3d6"})});
   LANES.forEach(function(r){el("rect",{x:r[0],y:r[1],width:r[2],height:r[3],rx:2,fill:"var(--road)"})});
-  // main roads west + east, both bridging onto the island ring road
-  [[0,336],[664,1000]].forEach(function(x){
-    el("rect",{x:x[0],y:292,width:x[1]-x[0],height:36,fill:"#e8e3d6"});
-    el("rect",{x:x[0],y:298,width:x[1]-x[0],height:24,fill:"var(--road)"});
-    el("line",{x1:x[0],y1:310,x2:x[1],y2:310,stroke:"#fbf9f3","stroke-width":1.4,"stroke-dasharray":"14 10"});
-  });
+  LANES.forEach(function(r){var h=r[2]>r[3];el("line",{x1:h?r[0]+6:r[0]+r[2]/2,y1:h?r[1]+r[3]/2:r[1]+6,x2:h?r[0]+r[2]-6:r[0]+r[2]/2,y2:h?r[1]+r[3]/2:r[1]+r[3]-6,stroke:"#f4f1ea","stroke-width":.8,"stroke-dasharray":"6 8"})});
+  // main road: west gate → across the island → east gate
+  el("rect",{x:0,y:292,width:1000,height:36,fill:"#e8e3d6"});
+  el("rect",{x:0,y:298,width:1000,height:24,fill:"var(--road)"});
+  el("line",{x1:0,y1:310,x2:1000,y2:310,stroke:"#fbf9f3","stroke-width":1.4,"stroke-dasharray":"14 10"});
   [334,618].forEach(function(bx){
     el("rect",{x:bx,y:296,width:48,height:28,fill:"#cfc6b4",stroke:"#a89f8c","stroke-width":1});
     el("line",{x1:bx,y1:296,x2:bx+48,y2:296,stroke:"#8e8574","stroke-width":2});el("line",{x1:bx,y1:324,x2:bx+48,y2:324,stroke:"#8e8574","stroke-width":2});
   });
-  // lane centre ticks
-  LANES.forEach(function(r){var h=r[2]>r[3];el("line",{x1:h?r[0]+6:r[0]+r[2]/2,y1:h?r[1]+r[3]/2:r[1]+6,x2:h?r[0]+r[2]-6:r[0]+r[2]/2,y2:h?r[1]+r[3]/2:r[1]+r[3]-6,stroke:"#f4f1ea","stroke-width":.8,"stroke-dasharray":"6 8"})});
-  txt({x:150,y:288,"font-family":"Space Grotesk","font-size":8,"letter-spacing":2,fill:"var(--muted)"},"MAIN ENTRANCE →");
-  txt({x:850,y:288,"text-anchor":"middle","font-family":"Space Grotesk","font-size":8,"letter-spacing":2,fill:"var(--muted)"},"← EAST GATE");
-  // green strips with trees between lanes and main roads
-  for(var tx=40;tx<330;tx+=36){if(tx<130||tx>270)tree(tx,279,5);tree(tx+18,341,5)}
-  for(var tx2=690;tx2<975;tx2+=36){if(tx2<790||tx2>910)tree(tx2,279,5);tree(tx2+18,341,5)}
-  [[30,30,11],[220,30,10],[780,30,11],[968,30,11],[30,590,11],[220,594,10],[780,594,11],[968,590,11],[370,126,7],[630,126,7],[370,494,7],[630,494,7]].forEach(function(t){tree(t[0],t[1],t[2])});
+  // roundabout + central garden on the island
+  el("circle",{cx:500,cy:310,r:42,fill:"#e8e3d6"});
+  el("circle",{cx:500,cy:310,r:38,fill:"var(--road)"});
+  el("circle",{cx:500,cy:310,r:31,fill:"none",stroke:"#fbf9f3","stroke-width":1.2,"stroke-dasharray":"8 7"});
+  el("circle",{cx:500,cy:310,r:24,fill:"#d6e2c3",stroke:"#9fb08a","stroke-width":1});
+  txt({x:24,y:306,"font-family":"Space Grotesk","font-size":6.5,"font-weight":600,"letter-spacing":1.6,fill:"#7c7466"},"MAIN ENTRANCE →");
+  txt({x:976,y:306,"text-anchor":"end","font-family":"Space Grotesk","font-size":6.5,"font-weight":600,"letter-spacing":1.6,fill:"#7c7466"},"← EAST GATE");
+
+  // ---- gardens + trees ----
+  [[334,92,64,56],[602,92,64,56],[334,472,64,56],[602,472,64,56]].forEach(function(g){
+    el("rect",{x:g[0],y:g[1],width:g[2],height:g[3],rx:14,fill:"#d9e4c6",stroke:"#aebd97","stroke-width":1,"stroke-dasharray":"1 4","stroke-linecap":"round"});
+    el("path",{d:"M"+(g[0]+8)+" "+(g[1]+g[3]-10)+" Q"+(g[0]+g[2]/2)+" "+(g[1]+g[3]/2)+" "+(g[0]+g[2]-8)+" "+(g[1]+12),fill:"none",stroke:"#efe9da","stroke-width":3,"stroke-linecap":"round"});
+    tree(g[0]+16,g[1]+16,9);tree(g[0]+g[2]-16,g[1]+g[3]-16,9);tree(g[0]+g[2]-20,g[1]+18,6);tree(g[0]+18,g[1]+g[3]-16,6);
+  });
+  tree(500,304,11);tree(489,316,7);tree(512,317,7);   // garden in the roundabout
+  [[30,32,11],[220,42,10],[780,42,10],[30,588,11],[220,578,10],[780,578,10],[968,588,11],[300,40,7],[700,40,7],[300,580,7],[700,580,7]].forEach(function(t){tree(t[0],t[1],t[2])});
+  for(var tx=24;tx<334;tx+=29){tree(tx,294,3.6);tree(tx+14,326,3.6)}
+  for(var tx2=676;tx2<1000;tx2+=29){tree(tx2,294,3.6);tree(tx2+14,326,3.6)}
+
   // north arrow + scale bar (10 m = 25 units)
-  var n=el("g",{transform:"translate(962,100)"});
+  var n=el("g",{transform:"translate(960,40)"});
   el("circle",{r:15,fill:"#f7f5ef",stroke:"#bdb4a2","stroke-width":1},n);
   el("polygon",{points:"0,-11 6,8 0,3",fill:"var(--black)"},n);el("polygon",{points:"0,-11 -6,8 0,3",fill:"#fff",stroke:"var(--black)","stroke-width":.8},n);
   txt({x:0,y:-20,"text-anchor":"middle","font-family":"Space Grotesk","font-size":10,"font-weight":600,fill:"var(--black)"},"N",n);
-  var sb=el("g",{transform:"translate(30,606)"});
+  var sb=el("g",{transform:"translate(40,602)"});
   el("rect",{x:-6,y:-12,width:84,height:20,rx:3,fill:"rgba(247,245,239,.9)"},sb);
   el("rect",{x:0,y:0,width:25,height:4,fill:"var(--black)"},sb);el("rect",{x:25,y:0,width:25,height:4,fill:"#fff",stroke:"var(--black)","stroke-width":.8},sb);
   [0,25,50].forEach(function(x,i){txt({x:x,y:-3,"text-anchor":"middle","font-family":"Space Grotesk","font-size":7.5,fill:"var(--muted)"},String(i*10),sb)});
@@ -270,14 +271,15 @@ legend{padding:0;margin-bottom:6px}
   var plots=[];
   function row(prefix,start,x0,y,n,w,h,gap,isl){for(var k=0;k<n;k++){var i=start+k;plots.push({id:prefix+"-"+(i<10?"0":"")+i,x:x0+k*(w+gap),y:y,w:w,h:h,lake:!!isl})}}
   function col(prefix,start,x,y0,n,w,h,gap){for(var k=0;k<n;k++){var i=start+k;plots.push({id:prefix+"-"+(i<10?"0":"")+i,x:x,y:y0+k*(h+gap),w:w,h:h})}}
-  row("A",1,40,94,5,52,52,6);  row("A",6,40,194,5,52,52,6);    // upper-left finger, both banks
-  row("C",1,40,374,5,52,52,6); row("C",6,40,474,5,52,52,6);    // lower-left finger
-  row("B",1,672,94,5,52,52,6); row("B",6,672,194,5,52,52,6);   // upper-right finger
-  row("E",1,672,374,5,52,52,6);row("E",6,672,474,5,52,52,6);   // lower-right finger
-  col("F",1,424,36,2,52,52,6); col("F",3,524,36,2,52,52,6);    // top arm
-  col("G",1,424,474,2,52,52,6);col("G",3,524,474,2,52,52,6);   // bottom arm
-  row("D",1,400,214,3,62,54,7,true); row("D",4,400,352,3,62,54,7,true);  // island: around the inner pond
-  plots.push({id:"D-07",x:400,y:274,w:36,h:72,lake:true}); plots.push({id:"D-08",x:564,y:274,w:36,h:72,lake:true});
+  row("A",1,40,94,5,52,52,6);  row("A",6,40,194,5,52,94,6);    // upper-left finger: lane side / main-road side (deeper)
+  row("C",1,40,332,5,52,94,6); row("C",6,40,474,5,52,52,6);    // lower-left finger
+  row("B",1,672,94,5,52,52,6); row("B",6,672,194,5,52,94,6);   // upper-right finger
+  row("E",1,672,332,5,52,94,6);row("E",6,672,474,5,52,52,6);   // lower-right finger
+  col("F",1,424,36,2,52,52,6); col("F",3,524,36,2,52,52,6);    // north arm
+  col("G",1,424,474,2,52,52,6);col("G",3,524,474,2,52,52,6);   // south arm
+  // island: canal in front, main road / roundabout behind
+  plots.push({id:"D-01",x:392,y:200,w:62,h:90,lake:true},{id:"D-02",x:468,y:200,w:62,h:64,lake:true},{id:"D-03",x:544,y:200,w:62,h:90,lake:true},
+             {id:"D-04",x:392,y:330,w:62,h:90,lake:true},{id:"D-05",x:468,y:356,w:62,h:64,lake:true},{id:"D-06",x:544,y:330,w:62,h:90,lake:true});
 
   var nodes={}, byId={};
   plots.forEach(function(p){
