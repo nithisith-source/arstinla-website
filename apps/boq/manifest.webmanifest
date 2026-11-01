@@ -1,0 +1,15 @@
+{
+  "name": "ARSTINLA BOQ",
+  "short_name": "BOQ บ้าน",
+  "description": "เครื่องคิด BOQ บ้าน 1–2 ชั้น 10 หมวดงาน ส่งออก Excel ภาษาไทย",
+  "lang": "th",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EFEDE8",
+  "theme_color": "#171816",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
