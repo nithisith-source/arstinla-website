@@ -246,6 +246,21 @@
       "genre": "luktung",
       "mood": "happy",
       "updatedAt": "2026-11-01T14:48:39.154Z"
+    },
+    {
+      "id": "track-1793544782166-b0e5cb87",
+      "title": "Out Of Control (หยุดควบคุม)",
+      "artist": "ARSTINLA",
+      "file": "/assets/audio/library/track-1793544782166-b0e5cb87.mp3",
+      "size": 5747984,
+      "lyrics": "",
+      "chords": "",
+      "songbook": [],
+      "genre": "rock",
+      "mood": "life",
+      "subtitle": "",
+      "createdAt": "2026-11-01T14:53:06.658Z",
+      "protected": false
     }
   ]
 }
