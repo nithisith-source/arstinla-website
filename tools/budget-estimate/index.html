@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ประเมินงบสร้างบ้านและค่าออกแบบ | ARSTINLA Budget</title>
+<meta name="description" content="ใส่พื้นที่และระดับการตกแต่ง แล้วรู้ช่วงงบก่อสร้าง ค่าออกแบบ และงวดชำระ ก่อนคุยกับสถาปนิก โดย ARSTINLA Design & Consult ภ.สถ.11869">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500&display=swap">
+<link rel="stylesheet" href="/knowledge/article-shell.css">
+<style>
+:root{--bg:#F3F0E8;--card:#FAF8F3;--ink:#1E1C18;--ink2:#5C574D;--ink3:#8A8477;--line:rgba(92,87,77,.22);--accent:#C36B48;--accent-d:#A65335;--c1:#3a3833;--c2:#C36B48;--c3:#c9bfa9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.75 "IBM Plex Sans Thai",sans-serif}
+.wrap{width:min(calc(100% - 32px),980px);margin:0 auto 80px}
+.eyebrow{font:500 11px/1.4 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+h1{font-weight:500;font-size:clamp(30px,5.5vw,46px);line-height:1.2;margin:10px 0 12px}
+.lede{color:var(--ink2);font-size:17px;max-width:680px}
+.grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px;margin-top:24px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1px solid var(--line);padding:18px}
+.f{margin-bottom:16px}
+.f>span{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--line);background:#fff}
+.seg button{border:0;background:transparent;padding:9px 6px;font:500 13px "IBM Plex Sans Thai",sans-serif;color:var(--ink2);cursor:pointer;line-height:1.3}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button small{display:block;font-size:11px;opacity:.75}
+input[type=number],select{width:100%;font:15px "IBM Plex Mono",monospace;padding:9px 10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.hint{font-size:13px;color:var(--ink3);margin-top:4px}
+details{border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+summary{cursor:pointer;font-size:14px;color:var(--accent-d)}
+.rates{display:grid;grid-template-columns:1fr 90px 90px;gap:6px;align-items:center;font-size:13px;margin-top:8px}
+.rates input{padding:5px 6px;font-size:13px}
+.out{display:flex;flex-direction:column;gap:14px}
+.big{background:var(--ink);color:#F3F0E8;padding:22px}
+.big .eyebrow{color:#b9b3a6}
+.big .v{font:500 clamp(30px,5vw,44px)/1.15 "Space Grotesk","IBM Plex Sans Thai",sans-serif;margin:6px 0}
+.big p{color:#d6d1c5;font-size:14px}
+.bar{display:flex;height:16px;margin:14px 0 8px;border-radius:2px;overflow:hidden}
+.bar i{display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:#d6d1c5}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;background:var(--c)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);padding:16px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:2px}
+.card .v{font:500 22px/1.3 "Space Grotesk","IBM Plex Sans Thai",sans-serif;margin:4px 0}
+.card p{font-size:13px;color:var(--ink2)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+th{font:500 11px "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--ink3);text-transform:uppercase}
+td.n{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border:1px solid var(--ink);padding:18px;background:#fff}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:#06C755;color:#fff;text-decoration:none;font-weight:600;border-radius:999px}
+.btn.out{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.refs{font-size:13px;color:var(--ink3);line-height:1.7}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<nav class="article-nav" aria-label="Tool navigation">
+  <a class="article-brand" href="/">ARSTINLA<small>Design &amp; Consult</small></a>
+  <a class="article-back" href="/#tools">← Tools</a>
+</nav>
+<main class="wrap">
+  <div class="eyebrow">Budget Estimate · ก่อนคุยกับสถาปนิก</div>
+  <h1>ประเมินงบสร้างบ้าน<br>และค่าออกแบบ</h1>
+  <p class="lede">ใส่พื้นที่และระดับการตกแต่ง แล้วดูช่วงงบก่อสร้าง ค่าออกแบบตามแพ็กเกจของ ARSTINLA และงวดที่ต้องจ่าย ใช้ตั้งงบคร่าวๆ ก่อนเริ่มโครงการ</p>
+
+  <div class="grid">
+    <section class="panel">
+      <div class="f"><span>ประเภทงาน</span>
+        <div class="seg" id="type"><button data-v="new" class="on">สร้างบ้านใหม่</button><button data-v="ext">ต่อเติม</button><button data-v="reno">รีโนเวท</button></div></div>
+      <div class="f"><span>พื้นที่ใช้สอย (ตร.ม.)</span><input type="number" id="area" value="150" min="1" step="1">
+        <p class="hint" id="areaHint">รวมทุกชั้น ไม่รวมพื้นที่ภายนอกที่ไม่มีหลังคา</p></div>
+      <div class="f" id="floorsF"><span>จำนวนชั้น</span>
+        <div class="seg" id="floors"><button data-v="1">1</button><button data-v="2" class="on">2</button><button data-v="3">3</button><button data-v="4">4+</button></div></div>
+      <div class="f" id="levelF"><span>ระดับวัสดุและงานตกแต่ง</span>
+        <div class="seg" id="level"><button data-v="0">ประหยัด</button><button data-v="1" class="on">มาตรฐาน</button><button data-v="2">ดี</button><button data-v="3">พรีเมียม</button></div></div>
+      <div class="f" id="renoF" hidden><span>ขอบเขตการรีโนเวท</span>
+        <div class="seg" id="reno"><button data-v="0">ผิวเปลือก<small>สี พื้น ฝ้า</small></button><button data-v="1" class="on">ปานกลาง<small>ห้องน้ำ ครัว ระบบ</small></button><button data-v="2">หนัก<small>รื้อปรับโครงสร้าง</small></button></div></div>
+      <div class="f" id="pkgF"><span>บริการที่ต้องการ</span>
+        <div class="seg" id="pkg"><button data-v="design" class="on">ออกแบบ<small>450–600 บ./ตร.ม.</small></button><button data-v="inspect">ออกแบบ + ตรวจงาน<small>650–800 บ./ตร.ม.</small></button></div></div>
+      <div class="f"><span>ที่ตั้ง</span>
+        <select id="loc"><option value="1">กรุงเทพฯ และปริมณฑล</option><option value="0.95">ต่างจังหวัด (เมืองใหญ่)</option><option value="0.92">ต่างจังหวัด (อำเภอรอบนอก)</option></select></div>
+      <details><summary>ปรับเรทค่าก่อสร้างเอง (บาท/ตร.ม.)</summary>
+        <div class="rates" id="rates"></div>
+        <p class="hint">ค่าเริ่มต้นเป็นช่วงราคาตลาดโดยประมาณ ปรับให้ตรงกับใบเสนอราคาที่มีได้</p>
+      </details>
+    </section>
+
+    <section class="out">
+      <div class="big">
+        <div class="eyebrow">งบรวมโดยประมาณ</div>
+        <div class="v" id="total">—</div>
+        <p id="totalNote"></p>
+        <div class="bar" id="bar"></div>
+        <div class="legend"><span style="--c:var(--c3)">ค่าก่อสร้าง</span><span style="--c:var(--c2)">ค่าออกแบบ</span><span style="--c:transparent;opacity:.8">ค่าวิศวกรโครงสร้าง/งานระบบ คิดแยกต่างหาก</span></div>
+      </div>
+      <div class="cards">
+        <div class="card"><h3>ค่าก่อสร้าง</h3><div class="v" id="build">—</div><p id="buildNote"></p></div>
+        <div class="card"><h3>ค่าออกแบบ ARSTINLA</h3><div class="v" id="design">—</div><p id="designNote"></p></div>
+        <div class="card"><h3>เทียบเกณฑ์สมาคมสถาปนิกสยามฯ</h3><div class="v" id="asa">—</div><p id="asaNote"></p></div>
+      </div>
+      <div class="card" id="payCard">
+        <h3>งวดชำระค่าออกแบบ (คิดจากค่ากลาง)</h3>
+        <table><thead><tr><th>งวด</th><th>จ่ายเมื่อ</th><th style="text-align:right">%</th><th style="text-align:right">บาท</th></tr></thead><tbody id="pay"></tbody></table>
+      </div>
+      <div class="cta">
+        <div><b>ส่งผลประเมินนี้ให้สถาปนิก</b><div style="font-size:14px;color:var(--ink2)">ปรึกษาและดูหน้างาน 2,500–3,500 บาท หักคืนเต็มจำนวนถ้าจ้างออกแบบต่อ</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" id="lineBtn" target="_blank" rel="noopener" href="#">ส่งทาง LINE</a><a class="btn out" href="/services/">ดูแพ็กเกจ</a></div>
+      </div>
+      <p class="refs">ตัวเลขเป็นการประเมินเบื้องต้น ค่าก่อสร้างจริงขึ้นกับแบบ วัสดุ ที่ดิน และช่วงเวลา ไม่รวมค่าที่ดิน งานฐานรากพิเศษ เฟอร์นิเจอร์ลอยตัว งานภูมิทัศน์ และสระว่ายน้ำ · ค่าออกแบบตามแพ็กเกจที่ <a href="/services/">arstinla.com/services</a> ราคาสุดท้ายแจ้งในใบเสนอราคา · เกณฑ์อ้างอิงสมาคมสถาปนิกสยามฯ สำหรับบ้านพักอาศัย: ค่าก่อสร้างต่ำกว่า 5 ล้านบาท 10% และ 5–10 ล้านบาท 7.5%</p>
+    </section>
+  </div>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+// default market-range rates (THB per sqm) — editable
+const R={
+  new:[["ประหยัด",12000,15000],["มาตรฐาน",15000,20000],["ดี",20000,28000],["พรีเมียม",28000,40000]],
+  reno:[["ผิวเปลือก",3000,6000],["ปานกลาง",6000,12000],["หนัก",12000,20000]]
+};
+const st={type:"new",floors:2,level:1,reno:1,pkg:"design"};
+function seg(id,key,num){$(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{$(id).querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));st[key]=num?+b.dataset.v:b.dataset.v;ui();calc()})}
+seg("type","type");seg("floors","floors",true);seg("level","level",true);seg("reno","reno",true);seg("pkg","pkg");
+["area","loc"].forEach(id=>$(id).oninput=calc);
+function rateRows(){
+  const set=st.type==="reno"?R.reno:R.new;
+  $("rates").innerHTML='<b></b><b style="font-size:12px;color:var(--ink3)">ต่ำ</b><b style="font-size:12px;color:var(--ink3)">สูง</b>'+set.map((r,i)=>`<span>${r[0]}</span><input type="number" data-i="${i}" data-k="1" value="${r[1]}"><input type="number" data-i="${i}" data-k="2" value="${r[2]}">`).join("");
+  $("rates").querySelectorAll("input").forEach(inp=>inp.oninput=()=>{set[+inp.dataset.i][+inp.dataset.k]=+inp.value||0;calc()});
+}
+function ui(){
+  const reno=st.type==="reno";
+  $("levelF").hidden=reno;$("renoF").hidden=!reno;$("floorsF").hidden=st.type!=="new";$("pkgF").hidden=st.type!=="new";
+  $("areaHint").textContent=st.type==="new"?"รวมทุกชั้น ไม่รวมพื้นที่ภายนอกที่ไม่มีหลังคา":st.type==="ext"?"พื้นที่ส่วนที่ต่อเติมใหม่":"พื้นที่ส่วนที่ปรับปรุง";
+  rateRows();
+}
+const fmt=n=>Math.round(n).toLocaleString("th-TH");
+const mb=n=>n>=1e6?(n/1e6).toFixed(n>=1e7?1:2).replace(/\.?0+$/,"")+" ล้าน":fmt(n);
+function calc(){
+  const a=Math.max(0,+$("area").value||0),loc=+$("loc").value;
+  let lo,hi,note;
+  if(st.type==="reno"){const r=R.reno[st.reno];lo=r[1]*a;hi=r[2]*a;note=`${r[0]} ${fmt(r[1])}–${fmt(r[2])} บ./ตร.ม.`}
+  else{const r=R.new[st.level];let f=1;if(st.type==="new"&&st.floors>=3)f+=0.05*(st.floors-2);if(st.type==="ext")f*=1.1;
+    lo=r[1]*a*f;hi=r[2]*a*f;note=`${r[0]} ${fmt(r[1])}–${fmt(r[2])} บ./ตร.ม.`+(st.type==="ext"?" +10% งานต่อเชื่อมกับของเดิม":"")+(st.floors>=3&&st.type==="new"?` +${(st.floors-2)*5}% อาคารสูง ${st.floors>=4?"4+":st.floors} ชั้น`:"")}
+  lo*=loc;hi*=loc;
+  let dlo,dhi,dnote;
+  if(st.type==="new"){const p=st.pkg==="design"?[450,600]:[650,800];dlo=p[0]*a;dhi=p[1]*a;dnote=(st.pkg==="design"?"แพ็กเกจออกแบบบ้าน":"แพ็กเกจออกแบบ + ตรวจงาน 4–6 ครั้ง")+` ${p[0]}–${p[1]} บ./ตร.ม. แก้แบบได้ 2 รอบ`}
+  else{dlo=20000;dhi=null;dnote="แพ็กเกจต่อเติม/รีโนเวท เริ่มต้น 20,000 บาท รวมแบบยื่นขออนุญาต ราคาจริงประเมินหลังดูหน้างาน"}
+  $("build").textContent=a?`${mb(lo)} – ${mb(hi)} บาท`:"—";$("buildNote").textContent=note;
+  $("design").textContent=a?(dhi?`${fmt(dlo)} – ${fmt(dhi)} บาท`:`เริ่มต้น ${fmt(dlo)} บาท`):"—";$("designNote").textContent=dnote;
+  const mid=(lo+hi)/2,pct=mid<5e6?0.10:mid<=1e7?0.075:null;
+  $("asa").textContent=a&&pct&&st.type==="new"?`${fmt(lo*pct)} – ${fmt(hi*pct)} บาท`:"—";
+  $("asaNote").textContent=st.type!=="new"?"ใช้เทียบกับงานสร้างบ้านใหม่":pct?`ค่าก่อสร้าง${mid<5e6?"ต่ำกว่า 5 ล้าน":"5–10 ล้าน"}บาท ใช้อัตรา ${pct*100}% เป็นเพดานอ้างอิงงานบริการเต็มรูปแบบ`:"ค่าก่อสร้างเกิน 10 ล้านบาท ใช้อัตราอื่น";
+  const tlo=lo+dlo,thi=hi+(dhi||dlo);
+  $("total").textContent=a?`${mb(tlo)} – ${mb(thi)} บาท`:"—";
+  $("totalNote").textContent=a?`ค่าก่อสร้าง + ค่าออกแบบ สำหรับพื้นที่ ${fmt(a)} ตร.ม.${st.type==="new"?` · เฉลี่ย ${fmt(thi/a)} บ./ตร.ม. ที่ปลายบน`:""}`:"ใส่พื้นที่ก่อน";
+  const dm=dhi?(dlo+dhi)/2:dlo,cm=(lo+hi)/2,sum=cm+dm;
+  $("bar").innerHTML=a?`<i style="width:${cm/sum*100}%;background:var(--c3)"></i><i style="width:${dm/sum*100}%;background:var(--c2)"></i>`:"";
+  const P=[["เซ็นสัญญา",10],["ส่งแบบร่างครั้งแรก",20],["แบบร่างและงานออกแบบเสร็จ",30],["เขียนแบบขออนุญาตเสร็จ",30],["ได้รับใบอนุญาตก่อสร้าง",10]];
+  $("payCard").hidden=!dhi||!a;
+  $("pay").innerHTML=P.map((p,i)=>`<tr><td>งวด ${i+1}</td><td>${p[0]}</td><td class="n">${p[1]}%</td><td class="n">${fmt(dm*p[1]/100)}</td></tr>`).join("")+`<tr><td colspan="3"><b>รวม</b></td><td class="n"><b>${fmt(dm)}</b></td></tr>`;
+  const T={new:"สร้างบ้านใหม่",ext:"ต่อเติม",reno:"รีโนเวท"}[st.type];
+  const msg=`สวัสดีครับ ผมประเมินงบจากเว็บ arstinla.com\nงาน: ${T} ${fmt(a)} ตร.ม.`+(st.type==="new"?` ${st.floors>=4?"4+":st.floors} ชั้น ระดับ${R.new[st.level][0]}`:st.type==="reno"?` ขอบเขต${R.reno[st.reno][0]}`:` ระดับ${R.new[st.level][0]}`)+
+    `\nที่ตั้ง: ${$("loc").selectedOptions[0].text}\nงบก่อสร้างประมาณ ${mb(lo)}–${mb(hi)} บาท\nอยากปรึกษาเรื่องออกแบบครับ`;
+  $("lineBtn").href="https://line.me/R/oaMessage/%40arstinla/?"+encodeURIComponent(msg);
+}
+ui();calc();
+})();
+</script>
+</body>
+</html>

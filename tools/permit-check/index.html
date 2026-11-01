@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ต่อเติมแบบนี้ ต้องขออนุญาตไหม? | ARSTINLA Permit Check</title>
+<meta name="description" content="ตอบคำถามไม่กี่ข้อ รู้ว่างานต่อเติม รีโนเวท ต้องขออนุญาตก่อสร้าง แจ้งเจ้าพนักงาน หรือไม่ต้องขอ พร้อมเช็กระยะห่างเขตที่ดินและที่ว่าง 30% โดยสถาปนิก ภ.สถ.11869">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500&display=swap">
+<link rel="stylesheet" href="/knowledge/article-shell.css">
+<style>
+:root{--bg:#F3F0E8;--card:#FAF8F3;--ink:#1E1C18;--ink2:#5C574D;--ink3:#8A8477;--line:rgba(92,87,77,.22);--accent:#C36B48;--accent-d:#A65335;--ok:#2e7d4f;--warn:#b7791f;--no:#a3341f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.75 "IBM Plex Sans Thai",sans-serif}
+.wrap{width:min(calc(100% - 32px),760px);margin:0 auto 80px}
+.eyebrow{font:500 11px/1.4 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+h1{font-weight:500;font-size:clamp(30px,5.5vw,46px);line-height:1.2;margin:10px 0 12px}
+.lede{color:var(--ink2);font-size:17px}
+.q{background:var(--card);border:1px solid var(--line);padding:20px 20px 16px;margin-top:16px}
+.q h2{font-size:18px;font-weight:600;line-height:1.4;margin:4px 0 4px}
+.q .why{font-size:14px;color:var(--ink2);margin-bottom:10px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);background:#fff;padding:11px 12px;cursor:pointer;font-size:15px;line-height:1.5}
+.opt:hover{border-color:var(--ink3)}
+.opt input{margin-top:5px;accent-color:var(--accent)}
+.opt small{display:block;color:var(--ink3);font-size:13px}
+.opt.sel{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.nums label{font-size:14px;color:var(--ink2);display:flex;flex-direction:column;gap:4px}
+.nums input,.nums select{font:15px "IBM Plex Mono",monospace;padding:9px 10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.result{margin-top:26px;border:1px solid var(--ink);background:var(--card)}
+.verdict{padding:22px 22px 18px;border-bottom:1px solid var(--line)}
+.verdict .tag{display:inline-block;font:600 12px "IBM Plex Mono",monospace;letter-spacing:.08em;padding:4px 10px;color:#fff}
+.verdict h2{font-size:clamp(22px,4vw,30px);font-weight:600;line-height:1.3;margin:10px 0 6px}
+.verdict p{color:var(--ink2)}
+.t-ok{background:var(--ok)}.t-warn{background:var(--warn)}.t-no{background:var(--no)}
+.block{padding:16px 22px;border-bottom:1px solid var(--line)}
+.block h3{font-size:15px;font-weight:600;margin-bottom:6px}
+.block ul{margin-left:20px;font-size:15px;color:var(--ink2)}
+.block li{margin:4px 0}
+.chk{list-style:none;margin-left:0!important}
+.chk li{padding-left:24px;position:relative}
+.chk li:before{position:absolute;left:0;top:0;font-weight:700}
+.chk li.ok:before{content:"✓";color:var(--ok)}.chk li.bad:before{content:"✕";color:var(--no)}.chk li.info:before{content:"!";color:var(--warn)}
+.cta{padding:20px 22px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#fff}
+.cta b{font-size:16px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:#06C755;color:#fff;text-decoration:none;font-weight:600;border-radius:999px}
+.btn.out{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.refs{font-size:13px;color:var(--ink3);margin-top:18px;line-height:1.7}
+.reset{background:none;border:0;color:var(--accent-d);text-decoration:underline;cursor:pointer;font:inherit;font-size:14px;margin-top:10px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<nav class="article-nav" aria-label="Tool navigation">
+  <a class="article-brand" href="/">ARSTINLA<small>Design &amp; Consult</small></a>
+  <a class="article-back" href="/#tools">← Tools</a>
+</nav>
+<main class="wrap">
+  <div class="eyebrow">Permit Check · เช็กก่อนต่อเติม</div>
+  <h1>ต่อเติมแบบนี้<br>ต้องขออนุญาตไหม?</h1>
+  <p class="lede">ตอบคำถามสั้นๆ แล้วรู้ว่างานของคุณต้องขออนุญาตก่อสร้าง ต้องแจ้งเจ้าพนักงาน หรือทำได้เลย พร้อมเช็กระยะห่างจากเขตที่ดินและที่ว่างตามกฎหมาย</p>
+
+  <section class="q" id="q1">
+    <div class="eyebrow">ข้อ 1</div>
+    <h2>งานที่จะทำคืออะไร</h2>
+    <div class="opts" data-name="work">
+      <label class="opt"><input type="radio" name="work" value="same"><span>ซ่อมหรือเปลี่ยนโครงสร้างเดิม ด้วยวัสดุ ขนาด และจำนวนเท่าเดิม<small>เช่น เปลี่ยนเสาไม้ผุ เปลี่ยนจันทันไม้</small></span></label>
+      <label class="opt"><input type="radio" name="work" value="nonstruct"><span>เปลี่ยนส่วนที่ไม่ใช่โครงสร้าง<small>เช่น เปลี่ยนพื้นปาร์เกต์เป็นกระเบื้อง เปลี่ยนหน้าต่าง ทาสี กั้นผนังเบา</small></span></label>
+      <label class="opt"><input type="radio" name="work" value="floor"><span>ต่อเติมพื้นที่ใหม่ หรือขยายพื้น<small>เช่น ต่อครัวหลังบ้าน เพิ่มห้อง ทำชั้นลอย ขยายระเบียง</small></span></label>
+      <label class="opt"><input type="radio" name="work" value="roof"><span>ต่อหลังคาหรือกันสาด<small>เช่น หลังคาโรงรถ กันสาดหน้าบ้าน หลังคาบนดาดฟ้า</small></span></label>
+      <label class="opt"><input type="radio" name="work" value="solar"><span>ติดแผงโซลาร์บนหลังคาบ้าน</span></label>
+      <label class="opt"><input type="radio" name="work" value="new"><span>สร้างใหม่ เพิ่มชั้น หรือรื้อถอนอาคาร</span></label>
+    </div>
+  </section>
+
+  <section class="q" id="q-same" hidden>
+    <div class="eyebrow">ข้อ 2</div>
+    <h2>โครงสร้างเดิมเป็นวัสดุอะไร</h2>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="mat" value="other"><span>ไม้ หรือวัสดุอื่นที่ไม่ใช่คอนกรีตหรือเหล็กรูปพรรณ</span></label>
+      <label class="opt"><input type="radio" name="mat" value="rc"><span>คอนกรีตเสริมเหล็ก คอนกรีตอัดแรง หรือเหล็กโครงสร้างรูปพรรณ</span></label>
+    </div>
+  </section>
+
+  <section class="q" id="q-weight" hidden>
+    <div class="eyebrow">ข้อ 2</div>
+    <h2>วัสดุใหม่หนักกว่าเดิมมากไหม</h2>
+    <p class="why">กฎหมายยกเว้นให้ ถ้าน้ำหนักที่เพิ่มต่อโครงสร้างเดิมไม่เกิน 10%</p>
+    <div class="opts">
+      <label class="opt"><input type="radio" name="wt" value="same"><span>วัสดุเดิม หรือน้ำหนักใกล้เคียงเดิม</span></label>
+      <label class="opt"><input type="radio" name="wt" value="heavy"><span>หนักขึ้นชัดเจน<small>เช่น เปลี่ยนผนังเบาเป็นผนังก่ออิฐ เทพื้นปูนทับพื้นไม้ ปูหินแกรนิตทั้งชั้น</small></span></label>
+      <label class="opt"><input type="radio" name="wt" value="unsure"><span>ไม่แน่ใจ</span></label>
+    </div>
+  </section>
+
+  <section class="q" id="q-area" hidden>
+    <div class="eyebrow">ข้อ 2</div>
+    <h2 id="areaTitle">พื้นที่ที่เพิ่มหรือลดรวมกันกี่ตารางเมตร</h2>
+    <div class="nums">
+      <label>พื้นที่รวม (ตร.ม.)<input type="number" id="area" min="0" step="0.5" placeholder="เช่น 12"></label>
+      <label>ต้องเพิ่มเสาหรือคานใหม่ไหม<select id="cols"><option value="">เลือก</option><option value="no">ไม่ต้อง ใช้โครงสร้างเดิม</option><option value="yes">ต้องเพิ่มเสาหรือคาน</option></select></label>
+    </div>
+  </section>
+
+  <section class="q" id="q-solar" hidden>
+    <div class="eyebrow">ข้อ 2</div>
+    <h2>ขนาดระบบโซลาร์</h2>
+    <div class="nums">
+      <label>พื้นที่แผงรวม (ตร.ม.)<input type="number" id="sArea" min="0" step="1" placeholder="เช่น 30"></label>
+      <label>น้ำหนักรวมต่อพื้นที่ (กก./ตร.ม.)<input type="number" id="sKg" min="0" step="0.5" placeholder="ส่วนใหญ่ 12–18"></label>
+    </div>
+  </section>
+
+  <section class="q" id="q-site" hidden>
+    <div class="eyebrow">ข้อ 3 · เช็กระยะตามกฎหมาย</div>
+    <h2>ส่วนที่ต่อเติมอยู่ห่างเขตที่ดินเท่าไร</h2>
+    <p class="why">กฎข้อนี้ใช้กับทุกงานที่สร้างใหม่หรือต่อเติม แม้งานที่ไม่ต้องขออนุญาตก็ต้องทำตาม</p>
+    <div class="nums">
+      <label>ระยะถึงเขตที่ดินข้างเคียงที่ใกล้ที่สุด (ม.)<input type="number" id="dist" min="0" step="0.05" placeholder="เช่น 1.50"></label>
+      <label>ผนังด้านนั้นมีหน้าต่าง ประตู ช่องลม หรือระเบียงไหม<select id="open"><option value="">เลือก</option><option value="yes">มีช่องเปิดหรือระเบียง</option><option value="no">ผนังทึบ</option></select></label>
+      <label>ความสูงอาคาร<select id="hgt"><option value="low">ไม่เกิน 2 ชั้น หรือไม่เกิน 9 ม.</option><option value="high">3 ชั้นขึ้นไป หรือสูงเกิน 9 ม.</option></select></label>
+      <label>ขนาดที่ดิน (ตร.ม.) <small style="color:var(--ink3)">ไม่ใส่ก็ได้</small><input type="number" id="land" min="0" step="1" placeholder="เช่น 200 (= 50 ตร.ว.)"></label>
+      <label>พื้นที่ที่อาคารคลุมดินหลังต่อเติม (ตร.ม.)<input type="number" id="foot" min="0" step="1" placeholder="รวมหลังคาที่คลุมดิน"></label>
+      <label>อยู่ในกรุงเทพฯ ไหม<select id="bkk"><option value="yes">กรุงเทพมหานคร</option><option value="no">จังหวัดอื่น</option></select></label>
+    </div>
+  </section>
+
+  <div class="result" id="result" hidden></div>
+  <button class="reset" id="reset" hidden>เริ่มใหม่</button>
+
+  <p class="refs">อ้างอิง: พ.ร.บ.ควบคุมอาคาร พ.ศ. 2522 (มาตรา 4 นิยาม "ดัดแปลง" และมาตรา 39 ทวิ การแจ้งแทนการขออนุญาต) · กฎกระทรวง ฉบับที่ 11 (พ.ศ. 2528) แก้ไขโดยฉบับที่ 65 (พ.ศ. 2558) การกระทำที่ไม่ถือเป็นการดัดแปลงอาคาร · กฎกระทรวง ฉบับที่ 55 (พ.ศ. 2543) ระยะห่างเขตที่ดินและที่ว่าง · ข้อบัญญัติกรุงเทพมหานคร เรื่อง ควบคุมอาคาร พ.ศ. 2544 ข้อ 52–56<br>ผลนี้เป็นการประเมินเบื้องต้นจากคำตอบของคุณ บางท้องที่มีข้อบัญญัติท้องถิ่นหรือผังเมืองเข้มกว่านี้ ก่อนลงมือควรให้สถาปนิกหรือสำนักงานเขต/เทศบาลยืนยันอีกครั้ง</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const A={};
+const show=(id,on)=>{$(id).hidden=!on};
+document.querySelectorAll(".opt input").forEach(i=>i.addEventListener("change",()=>{
+  document.querySelectorAll(`input[name="${i.name}"]`).forEach(x=>x.closest(".opt").classList.toggle("sel",x.checked));
+  A[i.name]=i.value;
+  if(i.name==="work"){["mat","wt"].forEach(k=>delete A[k]);document.querySelectorAll('input[name="mat"],input[name="wt"]').forEach(x=>{x.checked=false;x.closest(".opt").classList.remove("sel")})}
+  flow();
+}));
+["area","cols","sArea","sKg","dist","open","hgt","land","foot","bkk"].forEach(id=>$(id).addEventListener("input",flow));
+
+function flow(){
+  const w=A.work;
+  show("q-same",w==="same");show("q-weight",w==="nonstruct");show("q-area",w==="floor"||w==="roof");show("q-solar",w==="solar");
+  $("areaTitle").textContent=w==="roof"?"พื้นที่หลังคาที่เพิ่มหรือลดรวมกันกี่ตารางเมตร":"ขนาดพื้นที่เพิ่มหรือลดรวมกันกี่ตารางเมตร (ทุกชั้นรวมกัน)";
+  const stepDone=w&&((w==="same"&&A.mat)||(w==="nonstruct"&&A.wt)||((w==="floor"||w==="roof")&&$("area").value!==""&&$("cols").value)||(w==="solar"&&$("sArea").value!==""&&$("sKg").value!=="")||w==="new");
+  show("q-site",!!stepDone&&(w==="floor"||w==="roof"||w==="new"));
+  if(stepDone)render();else{show("result",false);show("reset",false)}
+}
+
+function render(){
+  const w=A.work;let v,tag,title,text;const needs=[];
+  // ---- verdict on the work itself (กฎกระทรวง ฉบับที่ 11) ----
+  if(w==="same"){
+    if(A.mat==="other"){v="ok";title="ไม่ต้องขออนุญาต";text="การเปลี่ยนโครงสร้างด้วยวัสดุ ขนาด และจำนวนเดิม ที่ไม่ใช่คอนกรีตเสริมเหล็ก คอนกรีตอัดแรง หรือเหล็กรูปพรรณ ไม่ถือเป็นการดัดแปลงอาคาร"}
+    else{v="no";title="ต้องขออนุญาต (หรือแจ้งตามมาตรา 39 ทวิ)";text="การเปลี่ยนโครงสร้างคอนกรีตหรือเหล็ก แม้ใช้วัสดุเดิม ไม่อยู่ในข้อยกเว้น ต้องมีวิศวกรโยธาออกแบบและรับรอง"}
+  }else if(w==="nonstruct"){
+    if(A.wt==="same"){v="ok";title="ไม่ต้องขออนุญาต";text="เปลี่ยนส่วนที่ไม่ใช่โครงสร้าง โดยน้ำหนักที่เพิ่มต่อโครงสร้างเดิมไม่เกิน 10% ไม่ถือเป็นการดัดแปลงอาคาร"}
+    else if(A.wt==="heavy"){v="no";title="น่าจะต้องขออนุญาต";text="ถ้าน้ำหนักที่เพิ่มเกิน 10% ของโครงสร้างเดิม จะถือเป็นการดัดแปลงอาคาร ควรให้วิศวกรคำนวณน้ำหนักก่อน";needs.push("ให้วิศวกรโยธาคำนวณน้ำหนักที่เพิ่ม เทียบกับโครงสร้างเดิม")}
+    else{v="warn";title="ต้องให้วิศวกรประเมินก่อน";text="ตัดสินจากน้ำหนักที่เพิ่ม ถ้าไม่เกิน 10% ไม่ต้องขออนุญาต ถ้าเกินต้องขอ";needs.push("ให้วิศวกรโยธาคำนวณน้ำหนักที่เพิ่ม เทียบกับโครงสร้างเดิม")}
+  }else if(w==="floor"||w==="roof"){
+    const a=+$("area").value,cols=$("cols").value==="yes",what=w==="roof"?"หลังคา":"พื้น";
+    if(a<=5&&!cols){v="ok";title="ไม่ต้องขออนุญาต";text=`เพิ่มหรือลดพื้นที่${what}รวมไม่เกิน 5 ตร.ม. และไม่เพิ่มหรือลดเสาหรือคาน ไม่ถือเป็นการดัดแปลงอาคาร`}
+    else{v="no";title="ต้องขออนุญาต (หรือแจ้งตามมาตรา 39 ทวิ)";
+      text=(a>5?`ขนาด${what}ที่เพิ่มหรือลดรวม ${a} ตร.ม. เกิน 5 ตร.ม.`:"")+(a>5&&cols?" และ":"")+(cols?"มีการเพิ่มเสาหรือคาน":"")+" จึงถือเป็นการดัดแปลงอาคาร"}
+  }else if(w==="solar"){
+    const sa=+$("sArea").value,kg=+$("sKg").value;
+    if(sa<=160&&kg<=20){v="warn";title="ไม่ต้องขออนุญาต แต่ต้องแจ้งก่อนติดตั้ง";text="แผงบนหลังคาบ้านอยู่อาศัย พื้นที่ไม่เกิน 160 ตร.ม. น้ำหนักรวมไม่เกิน 20 กก./ตร.ม. ได้รับยกเว้น โดยต้องมีวิศวกรโยธารับรองความมั่นคงแข็งแรง และแจ้งเจ้าพนักงานท้องถิ่นก่อนติดตั้ง";
+      needs.push("หนังสือรับรองความมั่นคงแข็งแรงของโครงสร้างหลังคา โดยวิศวกรโยธา","แจ้งเจ้าพนักงานท้องถิ่น (สำนักงานเขต/เทศบาล) ก่อนเริ่มติดตั้ง","ขออนุญาตเชื่อมต่อระบบกับการไฟฟ้าแยกต่างหาก")}
+    else{v="no";title="ต้องขออนุญาต";text=(sa>160?"พื้นที่แผงเกิน 160 ตร.ม. ":"")+(kg>20?"น้ำหนักเกิน 20 กก./ตร.ม. ":"")+"จึงไม่อยู่ในข้อยกเว้น"}
+  }else{v="no";title="ต้องขออนุญาต (หรือแจ้งตามมาตรา 39 ทวิ)";text="การก่อสร้างใหม่ เพิ่มชั้น หรือรื้อถอน ต้องยื่นขออนุญาตหรือแจ้งก่อนเริ่มงานเสมอ"}
+  tag=v==="ok"?"ทำได้เลย":v==="warn"?"มีเงื่อนไข":"ต้องยื่น";
+
+  // ---- distance / open-space checks (กฎกระทรวงฉบับที่ 55, ข้อบัญญัติ กทม.) ----
+  const checks=[];
+  if(!$("q-site").hidden){
+    const d=$("dist").value===""?null:+$("dist").value,op=$("open").value,hi=$("hgt").value==="high";
+    if(d!=null&&op){
+      if(op==="yes"){const need=hi?3:2;checks.push(d>=need?["ok",`ผนังที่มีช่องเปิด ห่างเขตที่ดิน ${d} ม. ผ่านเกณฑ์ขั้นต่ำ ${need} ม.`]:["bad",`ผนังที่มีหน้าต่าง ประตู ช่องลม หรือระเบียง ต้องห่างเขตที่ดินอย่างน้อย ${need} ม. ตอนนี้ห่าง ${d} ม. ต้องเปลี่ยนเป็นผนังทึบหรือขยับแนว`])}
+      else{checks.push(d>=0.5?["ok",`ผนังทึบ ห่างเขตที่ดิน ${d} ม. (ไม่ต่ำกว่า 0.50 ม.)`]:["info",`ผนังทึบห่างเขตที่ดินน้อยกว่า 0.50 ม. หรือชิดเขต ต้องมีหนังสือยินยอมจากเจ้าของที่ดินข้างเคียง`])}
+    }
+    const land=+$("land").value,foot=+$("foot").value;
+    if(land>0&&foot>0){const open=(land-foot)/land*100;
+      checks.push(open>=30?["ok",`เหลือที่ว่างไม่มีหลังคาคลุม ${open.toFixed(0)}% ของที่ดิน (ต้องไม่น้อยกว่า 30% สำหรับบ้านอยู่อาศัย)`]:["bad",`ที่ว่างเหลือ ${open.toFixed(0)}% ต่ำกว่า 30% ที่กฎหมายกำหนดสำหรับบ้านอยู่อาศัย ต้องลดพื้นที่คลุมดินลงอีก ${Math.ceil(foot-land*0.7)} ตร.ม.`])}
+    checks.push(["info","ต่อเติมด้านหน้าบ้าน ต้องไม่ล้ำแนวร่นจากถนน (ถนนกว้างไม่ถึง 6 ม. ร่นอย่างน้อย 3 ม. จากกึ่งกลางถนน)"]);
+    if(v==="ok")checks.push(["info","แม้ไม่ต้องขออนุญาต งานต่อเติมยังต้องไม่ผิดระยะและที่ว่างตามกฎหมาย และถ้าอยู่ในหมู่บ้านจัดสรร ควรขอความเห็นนิติบุคคลก่อน"]);
+  }
+  const docs=v==="no"?["แบบแปลนและรายการประกอบแบบ ลงนามโดยสถาปนิกและวิศวกรผู้มีใบอนุญาต","รายการคำนวณโครงสร้าง","สำเนาโฉนดที่ดิน และหนังสือยินยอมของเจ้าของที่ดิน (ถ้าไม่ใช่เจ้าของเอง)","สำเนาใบอนุญาตก่อสร้างเดิมของบ้าน (ถ้ามี)","หนังสือยินยอมเจ้าของที่ดินข้างเคียง (กรณีผนังทึบชิดเขต)","แบบคำขออนุญาตก่อสร้าง/ดัดแปลง (ข.1) หรือแบบแจ้งตามมาตรา 39 ทวิ ของสำนักงานเขต/เทศบาล"]:[];
+  const extra=v==="no"?"<p style=\"margin-top:8px;font-size:14px\">ทางเลือก: <b>แจ้งตามมาตรา 39 ทวิ</b> ใช้สถาปนิกและวิศวกรรับรองแบบ แล้วเริ่มงานได้เร็วกว่ารอใบอนุญาต แต่ผู้ออกแบบต้องรับผิดชอบความถูกต้องเต็มที่</p>":"";
+
+  const lineText=encodeURIComponent(`สวัสดีครับ ผมเช็กงานต่อเติมจากเว็บ arstinla.com\nงาน: ${document.querySelector('input[name=work]:checked').closest(".opt").querySelector("span").firstChild.textContent.trim()}\nผล: ${title}\nอยากปรึกษาเรื่องแบบและการยื่นขออนุญาตครับ`);
+  $("result").innerHTML=`
+    <div class="verdict"><span class="tag t-${v}">${tag}</span><h2>${title}</h2><p>${text}</p>${extra}</div>
+    ${needs.length?`<div class="block"><h3>สิ่งที่ต้องทำก่อนเริ่ม</h3><ul>${needs.map(x=>`<li>${x}</li>`).join("")}</ul></div>`:""}
+    ${checks.length?`<div class="block"><h3>เช็กระยะและที่ว่าง</h3><ul class="chk">${checks.map(c=>`<li class="${c[0]}">${c[1]}</li>`).join("")}</ul></div>`:""}
+    ${docs.length?`<div class="block"><h3>เอกสารที่มักต้องเตรียม</h3><ul>${docs.map(x=>`<li>${x}</li>`).join("")}</ul></div>`:""}
+    <div class="cta"><div><b>${v==="no"?"ให้สถาปนิกช่วยเขียนแบบและยื่นขออนุญาต":"อยากให้สถาปนิกดูหน้างานก่อนลงมือ"}</b><div style="font-size:14px;color:var(--ink2)">${v==="no"?"แพ็กเกจต่อเติม/รีโนเวท เริ่มต้น 20,000 บาท รวมแบบยื่นขออนุญาต":"ปรึกษาและดูหน้างาน 2,500–3,500 บาท หักคืนถ้าจ้างต่อ"}</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="https://line.me/R/oaMessage/%40arstinla/?${lineText}" target="_blank" rel="noopener">ส่งผลนี้ทาง LINE</a><a class="btn out" href="/services/">ดูค่าบริการ</a></div></div>`;
+  show("result",true);show("reset",true);
+}
+$("reset").onclick=()=>{location.reload()};
+})();
+</script>
+</body>
+</html>
