@@ -1,4 +1,8 @@
 const STORE_PATH = "media-data.json";
+// Music library filters (keys must match /media/ and /admin/media/)
+const GENRES = ["easy", "rock", "luktung", "instrumental"];
+const MOODS = ["happy", "sad", "life"];
+const pick = (value, list) => { const v = String(value || "").trim(); return list.includes(v) ? v : ""; };
 const AUDIO_DIRECTORY = "assets/audio/library";
 const SUBTITLE_DIRECTORY = "assets/subtitles/library";
 const MAX_AUDIO_SIZE = 20 * 1024 * 1024;
@@ -280,6 +284,8 @@ export async function onRequestPost({ request, env }) {
     const songbook = songbookFromText(lyrics, chords);
     const audio = formData.get("audio");
     const subtitle = formData.get("subtitle");
+    const genre = pick(formData.get("genre"), GENRES);
+    const mood = pick(formData.get("mood"), MOODS);
 
     if (!title) {
       return json({ ok: false, error: "กรุณาใส่ชื่อเพลง" }, 400);
@@ -338,6 +344,8 @@ export async function onRequestPost({ request, env }) {
         lyrics,
         chords,
         songbook,
+        genre,
+        mood,
         subtitle: timedLyrics ? `/${subtitlePath}` : "",
         createdAt: new Date().toISOString(),
         protected: false
@@ -429,13 +437,16 @@ export async function onRequestPatch({ request, env }) {
       track.lyrics = lyricsFromSongbook(track.songbook);
       track.chords = chordsFromSongbook(track.songbook);
     }
-    else {
+    else if (formData.has("lyrics") || formData.has("chords")) {
       track.lyrics = songText(formData.get("lyrics"));
       track.chords = songText(formData.get("chords"));
       track.songbook = songbookFromText(track.lyrics, track.chords);
     }
+    const tagsOnly = formData.has("genre") || formData.has("mood");
+    if (formData.has("genre")) track.genre = pick(formData.get("genre"), GENRES);
+    if (formData.has("mood")) track.mood = pick(formData.get("mood"), MOODS);
     track.updatedAt = new Date().toISOString();
-    await writeStore(config, snapshot, `Update lyrics and chords: ${track.title}`);
+    await writeStore(config, snapshot, tagsOnly && songbookValue === null && !timedLyrics ? `Update music tags: ${track.title}` : `Update lyrics and chords: ${track.title}`);
 
     return json({ ok: true, track });
   }
