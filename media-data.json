@@ -175,7 +175,10 @@
       "songbook": [],
       "subtitle": "",
       "createdAt": "2026-10-02T12:41:34.372Z",
-      "protected": false
+      "protected": false,
+      "genre": "instrumental",
+      "mood": "happy",
+      "updatedAt": "2026-11-01T14:47:57.273Z"
     },
     {
       "id": "track-1790944920507-238a43ce",
