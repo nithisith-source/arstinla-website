@@ -223,7 +223,10 @@
       "songbook": [],
       "subtitle": "",
       "createdAt": "2026-10-02T12:58:28.866Z",
-      "protected": false
+      "protected": false,
+      "genre": "pop",
+      "mood": "happy",
+      "updatedAt": "2026-11-01T14:48:25.113Z"
     },
     {
       "id": "track-1790945956492-9579c09e",
