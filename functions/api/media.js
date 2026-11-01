@@ -1,8 +1,8 @@
 const STORE_PATH = "media-data.json";
 // Music library filters (keys must match /media/ and /admin/media/)
-const GENRES = ["easy", "rock", "luktung", "instrumental"];
+const GENRES = ["pop", "acoustic", "rock", "luktung", "instrumental"];
 const MOODS = ["happy", "sad", "life"];
-const pick = (value, list) => { const v = String(value || "").trim(); return list.includes(v) ? v : ""; };
+const pick = (value, list) => { let v = String(value || "").trim(); if (v === "easy" && list.includes("pop")) v = "pop"; return list.includes(v) ? v : ""; };
 const AUDIO_DIRECTORY = "assets/audio/library";
 const SUBTITLE_DIRECTORY = "assets/subtitles/library";
 const MAX_AUDIO_SIZE = 20 * 1024 * 1024;

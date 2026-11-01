@@ -99,7 +99,7 @@
     const uploadForm = document.getElementById("uploadForm");
     const titleInput = document.getElementById("titleInput");
     const artistInput = document.getElementById("artistInput");
-    const GENRE_OPTS = [["","— แนวเพลง —"],["easy","Easy"],["rock","Rock & Nu Metal"],["luktung","Luktung"],["instrumental","Instrumental"]];
+    const GENRE_OPTS = [["","— แนวเพลง —"],["pop","Pop"],["acoustic","Acoustic"],["rock","Rock & Nu Metal"],["luktung","Luktung"],["instrumental","Instrumental"]];
     const MOOD_OPTS = [["","— อารมณ์ —"],["happy","Happiness"],["sad","Sadness"],["life","For Life"]];
     const optionsMarkup = (opts, value) => opts.map(([v, t]) => `<option value="${v}"${v === (value || "") ? " selected" : ""}>${t}</option>`).join("");
     document.getElementById("genreInput").innerHTML = optionsMarkup(GENRE_OPTS, "");
@@ -183,7 +183,7 @@
         <article class="track-card">
           <span class="track-index">${String(index + 1).padStart(2, "0")}</span>
           <div class="track-main"><h3 class="track-title">${escapeHtml(track.title)}</h3><p class="track-meta">${escapeHtml(track.artist || "ARSTINLA")} · ${formatSize(track.size)}${track.instrumental ? " · INSTRUMENTAL" : ""}</p><audio controls preload="none" src="${escapeHtml(track.file)}"></audio>
-            <div class="tag-row"><select data-genre-id="${escapeHtml(track.id)}" aria-label="แนวเพลง">${optionsMarkup(GENRE_OPTS, track.genre || (track.instrumental ? "instrumental" : ""))}</select><select data-mood-id="${escapeHtml(track.id)}" aria-label="อารมณ์">${optionsMarkup(MOOD_OPTS, track.mood)}</select><button class="save-copy-button" type="button" data-save-tags-id="${escapeHtml(track.id)}">Save tags</button><span class="editor-status" data-tags-status="${escapeHtml(track.id)}">${track.genre || track.mood ? "" : "ยังไม่ได้ติดป้าย"}</span></div>
+            <div class="tag-row"><select data-genre-id="${escapeHtml(track.id)}" aria-label="แนวเพลง">${optionsMarkup(GENRE_OPTS, (track.genre === "easy" ? "pop" : track.genre) || (track.instrumental ? "instrumental" : ""))}</select><select data-mood-id="${escapeHtml(track.id)}" aria-label="อารมณ์">${optionsMarkup(MOOD_OPTS, track.mood)}</select><button class="save-copy-button" type="button" data-save-tags-id="${escapeHtml(track.id)}">Save tags</button><span class="editor-status" data-tags-status="${escapeHtml(track.id)}">${track.genre || track.mood ? "" : "ยังไม่ได้ติดป้าย"}</span></div>
             <details class="copy-editor">
               <summary>Lyrics · Chords · Subtitle</summary>
               <div class="editor-grid">
