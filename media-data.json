@@ -239,7 +239,10 @@
       "songbook": [],
       "subtitle": "",
       "createdAt": "2026-10-02T12:59:21.048Z",
-      "protected": false
+      "protected": false,
+      "genre": "luktung",
+      "mood": "happy",
+      "updatedAt": "2026-11-01T14:48:39.154Z"
     }
   ]
 }
