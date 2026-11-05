@@ -768,8 +768,11 @@ const hIn=$("selectedHeight");
 function setRoomH(final){const room=rooms.find(i=>i.id===selectedId);if(!room)return;const v=hIn.value.trim();if(v==="")delete room.h;else{const n=Number(v);if(!Number.isFinite(n))return;room.h=round2(clamp(n,0,12))}renderAll(true,!final)}
 hIn.addEventListener("input",()=>setRoomH(false));hIn.addEventListener("blur",()=>setRoomH(true));
 $("selectedLevel").addEventListener("change",e=>{const room=rooms.find(i=>i.id===selectedId);if(!room)return;room.level=Number(e.target.value);S.active=room.level;saveS();renderAll()});
+function clearSel(){if(!selectedId&&!S.selRoof&&(typeof selectedColumnId==="undefined"||!selectedColumnId))return;selectedId=null;S.selRoof=null;if(typeof selectedColumnId!=="undefined")selectedColumnId=null;saveS();renderAll(false)}
+$("planBoard").addEventListener("click",e=>{if(!e.target.closest(".room-block,.column-block,.roof-outline,.roof-chip,[data-roof],[data-col],button,input,select"))clearSel()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.target.closest("input,select,textarea"))clearSel()});
 svg.addEventListener("click",e=>{const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
-  const el=e.target.closest("[data-id]");if(el&&typeof selectRoom==="function"){selectRoom(el.dataset.id);$("selectedEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}});
+  const el=e.target.closest("[data-id]");if(!el){clearSel();return}if(el&&typeof selectRoom==="function"){selectRoom(el.dataset.id);$("selectedEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}});
 
 /* ---------- PNG export (isometric) ---------- */
 async function isoCanvas(){
