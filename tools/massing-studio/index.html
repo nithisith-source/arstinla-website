@@ -310,6 +310,7 @@ document.head.insertAdjacentHTML("beforeend",`<style id="isoStyle">
 .iso-tools button.th{font:500 11px var(--font-th);letter-spacing:0;text-transform:none}
 .iso-tools button:hover{background:var(--sand);border-color:var(--sand);color:#fff}
 .iso-tools button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.iso-cams{flex-wrap:wrap}.iso-cams button{padding:0 9px}.iso-cams .sep{width:1px;height:22px;background:#aaa69b;margin:0 2px}
 .iso-tools input[type=range]{width:140px;accent-color:var(--sand)}
 .iso-tools output{min-width:40px;color:var(--ink);font-variant-numeric:tabular-nums}
 .iso-board{display:block;width:100%;height:auto;background:#f7f4ed;user-select:none}
@@ -348,6 +349,7 @@ planWrap.insertAdjacentHTML("beforeend",`<span class="iso-floor-badge" id="isoFl
 const wrap=document.createElement("div");wrap.className="iso-wrap";wrap.id="isoWrap";wrap.hidden=true;
 wrap.innerHTML=`<div class="iso-tools">
   <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
+  <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
   <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
   <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button></div>
 </div>
@@ -391,7 +393,13 @@ $("selectedEditor").querySelector(".field-row").insertAdjacentHTML("afterend",`<
 function T(x,y,W,D,k){switch(k){case 1:return[D-y,x];case 2:return[W-x,D-y];case 3:return[y,W-x];default:return[x,y]}}
 function TV(dx,dy,k){switch(k){case 1:return[-dy,dx];case 2:return[-dx,-dy];case 3:return[dy,-dx];default:return[dx,dy]}}
 function TR(x0,y0,x1,y1,W,D,k){const a=T(x0,y0,W,D,k),b=T(x1,y1,W,D,k);return[Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.max(a[0],b[0]),Math.max(a[1],b[1])]}
-const P=(x,y,z=0)=>[(x-y)*C30*SC,(x+y)*S30*SC-z*SC];
+const PROJ={iso:(x,y,z=0)=>[(x-y)*C30*SC,(x+y)*S30*SC-z*SC],top:(x,y)=>[x*SC,y*SC],bottom:(x,y)=>[x*SC,-y*SC],elev:(x,y,z=0)=>[x*SC,-z*SC]};
+let P=PROJ.iso;
+// orthographic views: which plan rotation puts the viewer on rotated +Y (elevations), view vector, painter key
+const ORTHO={front:{k:0,az:180},right:{k:1,az:90},back:{k:2,az:0},left:{k:3,az:270}};
+function viewMode(){return ["top","bottom","front","back","left","right"].includes(S.cam)?S.cam:"iso"}
+function viewK(){const m=viewMode();return ORTHO[m]?ORTHO[m].k:m==="iso"?S.rot:0}
+function viewVec(){const m=viewMode();return m==="top"?[0,0,1]:m==="bottom"?[0,0,-1]:ORTHO[m]?[0,1,0]:[1,1,1]}
 const pts=a=>a.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
 function hull(p){p=p.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
   for(const q of p){while(lo.length>1&&cr(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}
@@ -444,7 +452,7 @@ const sideName=az=>compassName((az-northAngle()+360)%360);
 let last=null;
 const WALL=["#fbf9f4","#ddd8cc","#c6c1b5"],WSEL=["#c47a55","#e8cdbb","#d9b49c"],COL=["#4a4e49","#343834","#2a2d2a"],SLABC=["#e2ded4","#c9c4b8","#b3aea2"];
 function scene(){
-  const size=site(),W=size.w,D=size.d,k=S.rot,Wr=k%2?D:W,Dr=k%2?W:D;
+  const size=site(),W=size.w,D=size.d,k=viewK(),Wr=k%2?D:W,Dr=k%2?W:D,VV=viewVec();
   const t=wallThickness(),al=$("wallAlignment").value,e=al==="inside"?0:al==="center"?t/2:t;
   const top=S.upTo<0?nF()-1:Math.min(S.upTo,nF()-1);
   const objs=[],ground=[],labels=[];let zmax=0;
@@ -480,17 +488,19 @@ function scene(){
       const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
-      return{kind:f.kind,vp,n,depth:fc[0]+fc[1]+fc[2]*.5}}).filter(f=>dot(f.n,[1,1,1])>1e-3).sort((a,b)=>a.depth-b.depth);
+      return{kind:f.kind,vp,n,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)}}).filter(f=>dot(f.n,VV)>1e-3).sort((a,b)=>a.depth-b.depth);
     put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
-  return{W,D,Wr,Dr,k,t,top,objs:order(objs),ground,labels,zmax};
+  const m=viewMode(),ord=m==="iso"?order(objs):objs.slice().sort(m==="top"?(a,b)=>a.z1-b.z1||a.z0-b.z0:m==="bottom"?(a,b)=>b.z0-a.z0||b.z1-a.z1:(a,b)=>a.y1-b.y1||a.z0-b.z0);
+  return{W,D,Wr,Dr,k,t,top,objs:ord,ground,labels,zmax,mode:m};
 }
 
 /* ---------- draw ---------- */
 const LIGHT=norm([-.35,.25,1]);
 function draw(){
-  const sc=scene(),{Wr,Dr,k}=sc,parts=[];
+  {const m=viewMode();P=m==="iso"?PROJ.iso:m==="top"?PROJ.top:m==="bottom"?PROJ.bottom:PROJ.elev}
+  const sc=scene(),{Wr,Dr,k}=sc,parts=[],mode=sc.mode,ortho=mode!=="iso";
   const ext=[[-2,-2],[Wr+3.5,-2],[Wr+3.5,Dr+2],[-2,Dr+2]],pp=[];ext.forEach(([x,y])=>{pp.push(P(x,y,0));pp.push(P(x,y,sc.zmax+.6))});
   const minX=Math.min(...pp.map(p=>p[0])),maxX=Math.max(...pp.map(p=>p[0])),minY=Math.min(...pp.map(p=>p[1])),maxY=Math.max(...pp.map(p=>p[1]));
   const vb={x:minX,y:minY,w:maxX-minX,h:maxY-minY};svg.setAttribute("viewBox",`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
@@ -502,7 +512,7 @@ function draw(){
   sc.ground.forEach(f=>parts.push(`<polygon class="rm" data-id="${f.id}" points="${pts([P(f.x0,f.y0),P(f.x1,f.y0),P(f.x1,f.y1),P(f.x0,f.y1)])}" fill="${f.color}"${f.sel?' stroke="#c47a55" stroke-width="2.5" vector-effect="non-scaling-stroke"':""}/>`));
   // shadows on the ground
   let sun=null;
-  if($("showSun").checked){sun=sunNow();if(sun.elevation>2){const a=toPlanAzimuth(sun.azimuth)*Math.PI/180,[vx,vy]=TV(Math.sin(a),-Math.cos(a),k),L=1/Math.tan(sun.elevation*Math.PI/180),dx=-vx*L,dy=-vy*L,pr=([x,y,z])=>[x+dx*z,y+dy*z];
+  if($("showSun").checked){sun=sunNow();if(sun.elevation>2&&(mode==="iso"||mode==="top")){const a=toPlanAzimuth(sun.azimuth)*Math.PI/180,[vx,vy]=TV(Math.sin(a),-Math.cos(a),k),L=1/Math.tan(sun.elevation*Math.PI/180),dx=-vx*L,dy=-vy*L,pr=([x,y,z])=>[x+dx*z,y+dy*z];
     const sh=sc.objs.map(o=>{const v=o.roof?o.all:(()=>{const zs=o.zs||o.z1,c=[[o.x0,o.y0],[o.x1,o.y0],[o.x1,o.y1],[o.x0,o.y1]];return c.map(([x,y])=>[x,y,o.z0]).concat(c.map(([x,y])=>[x,y,zs]))})();return hull(v.map(pr)).map(([x,y])=>P(x,y,0))});
     parts.push(`<clipPath id="isoClip"><polygon points="${pts([P(-2,-2),P(Wr+2,-2),P(Wr+2,Dr+2),P(-2,Dr+2)])}"/></clipPath><g clip-path="url(#isoClip)" opacity=".17">${sh.map(p=>`<polygon points="${pts(p)}" fill="#171816"/>`).join("")}</g>`)}}
   // objects
@@ -511,21 +521,27 @@ function draw(){
     const tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:"";
     if(o.roof){parts.push(`<g${tag} ${stroke}>${o.faces.map(f=>{const col=f.kind==="slope"?shade(o.color,.78+.42*Math.max(0,dot(f.n,LIGHT))):shade("#ece8df",.86+.14*Math.max(0,dot(f.n,LIGHT)));return`<polygon points="${pts(f.vp.map(p=>P(...p)))}" fill="${col}" ${ve}/>`}).join("")}</g>`);return}
     const{x0,y0,x1,y1,z0,z1}=o,[top,fy,fx]=o.c;
+    if(mode==="top"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`);return}
+    if(mode==="bottom"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0)])}" fill="${fx}" ${ve}/></g>`);return}
+    if(ortho){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/></g>`);return}
     parts.push(`<g${tag} ${stroke}>`+
       `<polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/>`+
       `<polygon points="${pts([P(x1,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x1,y0,z1)])}" fill="${fx}" ${ve}/>`+
       `<polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`)});
   // north arrow
   const na=northAngle()*Math.PI/180,[nx,ny]=TV(Math.sin(na),-Math.cos(na),k),cx=Wr+1.9,cy=1.2,tip=P(cx+nx*1.1,cy+ny*1.1),tl=P(cx-nx*.8,cy-ny*.8),l=P(cx-nx*.2-ny*.35,cy-ny*.2+nx*.35),r=P(cx-nx*.2+ny*.35,cy-ny*.2-nx*.35),lab=P(cx+nx*1.7,cy+ny*1.7);
-  parts.push(`<g id="isoNorth"><line x1="${tl[0]}" y1="${tl[1]}" x2="${tip[0]}" y2="${tip[1]}" stroke="#171816" stroke-width="1.2" ${ve}/><polygon points="${pts([tip,l,r])}" fill="#171816"/><text x="${lab[0]}" y="${lab[1]+5}" text-anchor="middle" font-size="15" font-weight="600" fill="#171816" font-family="Instrument Sans, sans-serif">N</text></g>`);
+  if(mode==="iso"||mode==="top")parts.push(`<g id="isoNorth"><line x1="${tl[0]}" y1="${tl[1]}" x2="${tip[0]}" y2="${tip[1]}" stroke="#171816" stroke-width="1.2" ${ve}/><polygon points="${pts([tip,l,r])}" fill="#171816"/><text x="${lab[0]}" y="${lab[1]+5}" text-anchor="middle" font-size="15" font-weight="600" fill="#171816" font-family="Instrument Sans, sans-serif">N</text></g>`);
   // labels
   const lab2=sc.labels.map(L=>{const p=P(L.x,L.y,L.z);return{x:p[0],y:p[1],name:L.name,sub:L.sub}});
-  parts.push(`<g id="isoLabels" pointer-events="none">${lab2.map(L=>`<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-size="16" font-weight="500" fill="#171816" stroke="#f7f4ed" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${escapeHtml(L.name)}<tspan x="${L.x.toFixed(1)}" dy="17" font-size="12" font-weight="400" fill="#5d5e57">${L.sub}</tspan></text>`).join("")}</g>`);
+  if(mode!=="bottom")parts.push(`<g id="isoLabels" pointer-events="none">${lab2.map(L=>`<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-size="16" font-weight="500" fill="#171816" stroke="#f7f4ed" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${escapeHtml(L.name)}<tspan x="${L.x.toFixed(1)}" dy="17" font-size="12" font-weight="400" fill="#5d5e57">${L.sub}</tspan></text>`).join("")}</g>`);
   svg.innerHTML=parts.join("");
   last={vb,labels:lab2};
   // toolbar + note
-  const viewAz=(VIEW_AZ[k]-northAngle()+360)%360;
-  $("isoRotLabel").textContent=`View from ${compassName(viewAz)}`;
+  const viewAz=((ORTHO[mode]?ORTHO[mode].az:VIEW_AZ[k])-northAngle()+360)%360;
+  const VN={top:"Top",bottom:"Bottom",front:"Front",back:"Back",left:"Left",right:"Right"};
+  $("isoRotLabel").textContent=mode==="top"||mode==="bottom"?`${VN[mode]} view`:ortho?`${VN[mode]} · from ${compassName(viewAz)}`:`Iso · from ${compassName(viewAz)}`;
+  for(let i=0;i<4;i++){const b=wrap.querySelector(`[data-cam="iso${i}"]`);if(b)b.textContent=compassName((VIEW_AZ[i]-northAngle()+360)%360)}
+  document.querySelectorAll("[data-cam]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.cam===(mode==="iso"?"iso"+k:mode))));
   $("isoHour").value=S.hour;$("isoHourOut").textContent=hhmm(S.hour);
   $("isoCut").setAttribute("aria-pressed",String(!!S.cut));$("isoRoofBtn").setAttribute("aria-pressed",String(!!S.roofOn));
   $("isoUpTo").innerHTML=`<option value="-1">แสดงทุกชั้น</option>`+S.floors.slice(0,-1).map((f,i)=>`<option value="${i}">แสดงถึง${fl(i)}</option>`).join("");
@@ -642,8 +658,9 @@ window.downloadPng=async function(...a){
   return isoPng()};
 
 /* ---------- controls ---------- */
-$("isoRotL").addEventListener("click",()=>{S.rot=(S.rot+3)%4;saveS();draw()});
-$("isoRotR").addEventListener("click",()=>{S.rot=(S.rot+1)%4;saveS();draw()});
+wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.cam;if(v.startsWith("iso")){S.cam="iso";S.rot=+v.slice(3)}else S.cam=v;saveS();draw()}));
+$("isoRotL").addEventListener("click",()=>{if(viewMode()!=="iso")S.cam="iso";S.rot=(S.rot+3)%4;saveS();draw()});
+$("isoRotR").addEventListener("click",()=>{if(viewMode()!=="iso")S.cam="iso";S.rot=(S.rot+1)%4;saveS();draw()});
 $("isoHour").addEventListener("input",e=>{S.hour=Number(e.target.value);saveS();draw()});
 $("isoCut").addEventListener("click",()=>{S.cut=!S.cut;saveS();draw()});
 $("isoRoofBtn").addEventListener("click",()=>{S.roofOn=!S.roofOn;saveS();draw()});
