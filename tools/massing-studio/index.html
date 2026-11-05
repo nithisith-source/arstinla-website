@@ -501,7 +501,7 @@ const LIGHT=norm([-.35,.25,1]);
 function draw(){
   {const m=viewMode();P=m==="iso"?PROJ.iso:m==="top"?PROJ.top:m==="bottom"?PROJ.bottom:PROJ.elev}
   const sc=scene(),{Wr,Dr,k}=sc,parts=[],mode=sc.mode,ortho=mode!=="iso";
-  const ext=[[-2,-2],[Wr+3.5,-2],[Wr+3.5,Dr+2],[-2,Dr+2]],pp=[];ext.forEach(([x,y])=>{pp.push(P(x,y,0));pp.push(P(x,y,sc.zmax+.6))});
+  const ext=ORTHO[mode]?[[-5.2,-2],[Wr+2,-2],[Wr+2,Dr+2],[-5.2,Dr+2]]:[[-2,-2],[Wr+3.5,-2],[Wr+3.5,Dr+2],[-2,Dr+2]],pp=[];ext.forEach(([x,y])=>{pp.push(P(x,y,ORTHO[mode]?-.9:0));pp.push(P(x,y,sc.zmax+(ORTHO[mode]?1.1:.6)))});
   const minX=Math.min(...pp.map(p=>p[0])),maxX=Math.max(...pp.map(p=>p[0])),minY=Math.min(...pp.map(p=>p[1])),maxY=Math.max(...pp.map(p=>p[1]));
   const vb={x:minX,y:minY,w:maxX-minX,h:maxY-minY};svg.setAttribute("viewBox",`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
   parts.push(`<rect x="${vb.x}" y="${vb.y}" width="${vb.w}" height="${vb.h}" fill="#f7f4ed"/>`);
@@ -530,6 +530,20 @@ function draw(){
       `<polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`)});
   // north arrow
   const na=northAngle()*Math.PI/180,[nx,ny]=TV(Math.sin(na),-Math.cos(na),k),cx=Wr+1.9,cy=1.2,tip=P(cx+nx*1.1,cy+ny*1.1),tl=P(cx-nx*.8,cy-ny*.8),l=P(cx-nx*.2-ny*.35,cy-ny*.2+nx*.35),r=P(cx-nx*.2+ny*.35,cy-ny*.2-nx*.35),lab=P(cx+nx*1.7,cy+ny*1.7);
+  // level lines on elevations: FFL of each floor + roof top
+  if(ORTHO[mode]){const lv=[];for(let L=0;L<nF();L++)lv.push({z:base(L),t:`${fl(L)} FFL`});lv.push({z:base(nF()),t:"ระดับบนผนังชั้นบนสุด"});
+    if(sc.zmax>base(nF())+.05)lv.push({z:sc.zmax,t:"ยอดหลังคา",roof:true});
+    const xa=-4.9,xb=Wr+1.4;
+    parts.push(`<g id="isoLevels" pointer-events="none">`+lv.map(v=>{const a=P(xa,0,v.z),b=P(xb,0,v.z),c=P(-.6,0,v.z),lab=(v.z>=0?"+":"")+v.z.toFixed(2);
+      return`<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="${v.roof?"#c47a55":"#171816"}" stroke-width=".8" stroke-dasharray="${v.roof?"4 4":"10 5 2 5"}" ${ve}/>`+
+        `<polygon points="${(c[0]-9).toFixed(1)},${(c[1]-14).toFixed(1)} ${(c[0]+9).toFixed(1)},${(c[1]-14).toFixed(1)} ${c[0].toFixed(1)},${c[1].toFixed(1)}" fill="${v.roof?"#c47a55":"#171816"}"/>`+
+        `<text x="${(a[0]+4).toFixed(1)}" y="${(a[1]-6).toFixed(1)}" font-size="15" font-weight="600" fill="${v.roof?"#c47a55":"#171816"}" font-family="Instrument Sans, sans-serif">${lab}</text>`+
+        `<text x="${(a[0]+4).toFixed(1)}" y="${(a[1]+15).toFixed(1)}" font-size="12" fill="#6f7069">${v.t}</text>`}).join("")+
+      // floor-height dimensions between levels
+      S.floors.map((f,L)=>{const z0=base(L),z1=base(L+1),xd=-1.7,p0=P(xd,0,z0),p1=P(xd,0,z1),mid=(p0[1]+p1[1])/2;
+        return`<line x1="${p0[0].toFixed(1)}" y1="${p0[1].toFixed(1)}" x2="${p1[0].toFixed(1)}" y2="${p1[1].toFixed(1)}" stroke="#6f7069" stroke-width=".8" ${ve}/>`+
+          [p0,p1].map(q=>`<line x1="${(q[0]-5).toFixed(1)}" y1="${(q[1]+5).toFixed(1)}" x2="${(q[0]+5).toFixed(1)}" y2="${(q[1]-5).toFixed(1)}" stroke="#6f7069" stroke-width="1.2" ${ve}/>`).join("")+
+          `<text x="${(p0[0]-8).toFixed(1)}" y="${(mid+4).toFixed(1)}" text-anchor="end" font-size="12" fill="#6f7069" font-family="Instrument Sans, sans-serif">${format2(f.h)} m</text>`}).join("")+`</g>`)}
   if(mode==="iso"||mode==="top")parts.push(`<g id="isoNorth"><line x1="${tl[0]}" y1="${tl[1]}" x2="${tip[0]}" y2="${tip[1]}" stroke="#171816" stroke-width="1.2" ${ve}/><polygon points="${pts([tip,l,r])}" fill="#171816"/><text x="${lab[0]}" y="${lab[1]+5}" text-anchor="middle" font-size="15" font-weight="600" fill="#171816" font-family="Instrument Sans, sans-serif">N</text></g>`);
   // labels
   const lab2=sc.labels.map(L=>{const p=P(L.x,L.y,L.z);return{x:p[0],y:p[1],name:L.name,sub:L.sub}});
