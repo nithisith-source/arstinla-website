@@ -177,7 +177,7 @@ function calc(){
 (function(){const q=new URLSearchParams(location.search);const a=+q.get("area");if(a>0)$("area").value=Math.round(a);
   const f=+q.get("floors");if(f>=1){st.floors=Math.min(4,f);$("floors").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.v===st.floors))}
   if(q.get("from")==="planner"&&a>0){const net=+q.get("net");const box=$("fromPlanner");box.hidden=false;
-    box.innerHTML=`ข้อมูลจาก <b>Schematic Planner</b><br>พื้นที่ห้องรวม ${net?net.toLocaleString("th-TH"):"-"} ตร.ม. + ผนังและทางเดินประมาณ 20% = <b>${Math.round(a).toLocaleString("th-TH")} ตร.ม.</b> ปรับตัวเลขได้ด้านล่าง`}})();
+    const fl=Math.max(1,f||1);box.innerHTML=`ข้อมูลจาก <b>Schematic Planner</b><br>พื้นที่ห้องต่อชั้น ${net?net.toLocaleString("th-TH"):"-"} ตร.ม. + ผนังและทางเดินประมาณ 20%${fl>1?` × ${fl} ชั้น`:""} = <b>${Math.round(a).toLocaleString("th-TH")} ตร.ม.</b> ปรับตัวเลขได้ด้านล่าง`}})();
 ui();calc();
 })();
 </script>
