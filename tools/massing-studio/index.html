@@ -157,7 +157,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
     </div>
     <div class="plan-layout">
       <div>
-        <div class="plan-wrap"><span class="plan-north" id="planNorth">N ↑</span><div class="plan-board" id="planBoard" aria-label="แปลนชั้นที่เลือก"><div id="roomLayer"></div></div></div>
+        <div class="plan-wrap"><span class="plan-north" id="planNorth">N ↑</span><div class="plan-board" id="planBoard" aria-label="แปลนชั้นที่เลือก"><div id="roomLayer"></div><svg id="opLayer" aria-hidden="true" preserveAspectRatio="none"></svg></div></div>
         <div class="legend"><span>1.00 m grid</span><span id="wallLegend"></span><span>Dashed = floor below · ⌂ = roof outline</span></div>
       </div>
     </div>
@@ -317,6 +317,7 @@ document.head.insertAdjacentHTML("beforeend",`<style id="isoStyle">
 .iso-board .rm,.iso-board .rf{cursor:pointer}.iso-board text{font-family:"Noto Sans Thai",var(--font-en),sans-serif}
 .iso-note{margin:10px 0 0;font:10px/1.7 var(--font-en);letter-spacing:.06em;text-transform:uppercase;color:#6f7069}.iso-note b{color:var(--ink);font-weight:600}
 body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout>div:first-child>.legend{display:none}
+#opLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible}
 #roomLayer .room-block.iso-ghost{opacity:.28;pointer-events:none;border-style:dashed;z-index:0}
 .iso-floor-badge{position:absolute;right:25px;top:6px;font:600 9px var(--font-en);letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
@@ -673,6 +674,19 @@ function removeFloor(L){
   S.floors.splice(L,1);
   S.active=clamp(S.active>L?S.active-1:S.active,0,nF()-1);if(S.upTo>=nF()-1)S.upTo=-1;saveS();renderAll();
 }
+function renderPlanOps(){const svgEl=$("opLayer");if(!svgEl)return;const s=site(),t=wallThickness(),bg="#eee9df",ink="#171816";
+  svgEl.setAttribute("viewBox",`0 0 ${s.w} ${s.d}`);const out=[],ve='vector-effect="non-scaling-stroke"',f=n=>n.toFixed(3);
+  rooms.forEach(r=>{if(lvl(r)!==S.active||!Array.isArray(r.op))return;const len={N:r.w,S:r.w,W:r.d,E:r.d};
+    r.op.forEach(o=>{const L=len[o.side]||r.w,mn=.02,w=clamp(Number(o.w)||.9,.3,Math.max(.3,L-2*(t+mn))),a=clamp(Number(o.off)||0,t+mn,Math.max(t+mn,L-w-t-mn));
+      const M=(u,v)=>o.side==="N"?[r.x+u,r.y+v]:o.side==="S"?[r.x+u,r.y+r.d-v]:o.side==="W"?[r.x+v,r.y+u]:[r.x+r.w-v,r.y+u];
+      const poly=pts=>pts.map(([u,v])=>M(u,v).map(f).join(",")).join(" ");
+      out.push(`<polygon points="${poly([[a,-t],[a+w,-t],[a+w,t],[a,t]])}" fill="${bg}"/>`);
+      out.push(`<polyline points="${poly([[a,0],[a,t]])}" stroke="${ink}" stroke-width="1.6" ${ve}/><polyline points="${poly([[a+w,0],[a+w,t]])}" stroke="${ink}" stroke-width="1.6" ${ve}/>`);
+      if(o.kind==="door"){const arc=[];for(let i=0;i<=24;i++){const q=i/24*Math.PI/2;arc.push([a+w*Math.cos(q),t+w*Math.sin(q)])}
+        out.push(`<polyline points="${poly(arc)}" fill="none" stroke="${ink}" stroke-width=".8" stroke-dasharray="3 2" ${ve}/><polyline points="${poly([[a,t],[a,t+w]])}" stroke="${ink}" stroke-width="2" ${ve}/>`)}
+      else out.push(`<polyline points="${poly([[a,0],[a+w,0]])}" stroke="${ink}" stroke-width=".9" ${ve}/><polyline points="${poly([[a,t*.5],[a+w,t*.5]])}" stroke="#4f7f92" stroke-width="1.4" ${ve}/><polyline points="${poly([[a,t],[a+w,t]])}" stroke="${ink}" stroke-width=".9" ${ve}/>`)})});
+  svgEl.innerHTML=out.join("")}
+const _dragMove=window.dragMove;window.dragMove=function(...a){const o=_dragMove.apply(this,a);try{renderPlanOps()}catch(e){}return o};
 function applyFloorFilter(){
   document.querySelectorAll("#roomLayer .room-block").forEach(el=>{const r=rooms.find(i=>i.id===el.dataset.id),L=r?lvl(r):0;
     el.classList.toggle("iso-ghost",L===S.active-1);el.style.display=(L===S.active||L===S.active-1)?"":"none"});
@@ -690,7 +704,7 @@ const _renderAll=window.renderAll;
 window.renderAll=function(...a){
   rooms.forEach(r=>{if(!seen.has(r.id)){seen.add(r.id);if(r.level===undefined)r.level=S.active}});
   const out=_renderAll.apply(this,a);
-  try{applyFloorFilter();renderRoofOverlay();renderPanel();if(nF()>1)$("sheetSize").textContent+=` · ${nF()} floors`;if(S.view==="iso")draw()}catch(err){console.error("[iso]",err)}
+  try{applyFloorFilter();renderPlanOps();renderRoofOverlay();renderPanel();if(nF()>1)$("sheetSize").textContent+=` · ${nF()} floors`;if(S.view==="iso")draw()}catch(err){console.error("[iso]",err)}
   return out};
 const _renderEditor=window.renderEditor;
 window.renderEditor=function(...a){const out=_renderEditor.apply(this,a);const room=rooms.find(i=>i.id===selectedId);
