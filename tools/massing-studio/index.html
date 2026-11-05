@@ -635,7 +635,7 @@ function roofDirOptions(R){
   if(R.type==="shed")return[[0,"บน"],[1,"ขวา"],[2,"ล่าง"],[3,"ซ้าย"]].map(([v,s])=>[v,`ลาดลงด้าน${s}ของผัง · ทิศ ${sideName(v*90)}`]);
   return[[0,"ขนานแนวนอนของผัง (ซ้าย–ขวา)"],[1,"ขนานแนวตั้งของผัง (บน–ล่าง)"]];
 }
-const busy=el=>el.contains(document.activeElement);
+const busy=el=>{const a=document.activeElement;return!!a&&el.contains(a)&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)};
 function renderPanel(){
   S.active=clamp(S.active,0,nF()-1);
   chips.innerHTML=S.floors.map((f,i)=>`<button type="button" data-fl="${i}" aria-pressed="${i===S.active}">${fl(i)}</button>`).join("");
