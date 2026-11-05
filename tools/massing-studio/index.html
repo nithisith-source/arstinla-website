@@ -387,7 +387,16 @@ $("showGrid").closest(".control-section").insertAdjacentHTML("beforebegin",`<sec
 $("selectedEditor").querySelector(".field-row").insertAdjacentHTML("afterend",`<div class="field-row">
   <div class="field"><label for="selectedLevel">ชั้น</label><select id="selectedLevel"></select></div>
   <div class="field"><label for="selectedHeight">ความสูงผนัง</label><div class="unit-input"><input id="selectedHeight" type="number" min="0" max="12" step="0.05"><span>ม.</span></div></div>
-</div><p class="field-hint" style="margin-top:6px">ความสูงเว้นว่าง = ใช้ความสูงชั้น · 0 = ไม่มีผนัง เช่น ลานโล่ง ที่จอดรถ</p>`);
+</div><p class="field-hint" style="margin-top:6px">ความสูงเว้นว่าง = ใช้ความสูงชั้น · 0 = ไม่มีผนัง เช่น ลานโล่ง ที่จอดรถ</p>
+<div class="op-box"><div class="op-head"><span>ช่องเปิด ประตู · หน้าต่าง</span><span><button type="button" id="opAddDoor">+ ประตู</button><button type="button" id="opAddWin">+ หน้าต่าง</button></span></div>
+<div id="opList"></div><p class="field-hint">ด้าน = ตามแปลน (บน/ล่าง/ซ้าย/ขวา) · ระยะ = จากมุมซ้ายหรือมุมบนของห้อง ถึงขอบช่อง · ดูผลในมุมมอง Isometric และรูปด้าน</p></div>`);
+document.head.insertAdjacentHTML("beforeend",`<style>
+.op-box{margin-top:12px;border-top:1px solid #3a3a35;padding-top:10px}.op-head{display:flex;flex-direction:column;align-items:flex-start;gap:7px;font-size:13px;color:#e8e2d6}
+.op-head button{margin:0 6px 0 0!important}.op-head button,.op-item .op-del{background:#2a2b27;border:1px solid #6c523f;color:#f0e6d8;font:inherit;font-size:12px;padding:4px 8px;cursor:pointer;margin-left:4px}.op-head button:hover{border-color:#c47a55}
+.op-item{border:1px solid #34352f;padding:8px;margin-top:8px;background:#171815}.op-item .op-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#c47a55;margin-bottom:6px}
+.op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.op-grid label{display:block;font-size:10.5px;color:#9a978d;margin-bottom:2px}.op-grid input,.op-grid select{width:100%;box-sizing:border-box;background:#0f100e;border:1px solid #3a3a35;color:#f0ece4;font:inherit;font-size:12px;padding:4px}
+.op-grid input:disabled{opacity:.45}
+</style>`);
 
 /* ---------- geometry ---------- */
 function T(x,y,W,D,k){switch(k){case 1:return[D-y,x];case 2:return[W-x,D-y];case 3:return[y,W-x];default:return[x,y]}}
@@ -405,6 +414,19 @@ function hull(p){p=p.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=
   for(const q of p){while(lo.length>1&&cr(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}
   for(let i=p.length-1;i>=0;i--){const q=p[i];while(up.length>1&&cr(up[up.length-2],up[up.length-1],q)<=0)up.pop();up.push(q)}
   up.pop();lo.pop();return lo.concat(up)}
+// door / window opening on a room wall (plan coords). side: N S W E (top/bottom/left/right of plan)
+function opGeom(r,o,t,e){const hz=o.side==="N"||o.side==="S",len=hz?r.w:r.d,mn=Math.max(0,t-e)+.02;
+  let w=clamp(Number(o.w)||.9,.3,Math.max(.3,len-2*mn)),off=clamp(Number(o.off)||0,mn,Math.max(mn,len-w-mn));
+  const h=clamp(Number(o.h)||2.1,.2,12),sill=o.kind==="door"?0:clamp(Number(o.sill)||0,0,12),B=t+.03;
+  const line=o.side==="N"?r.y:o.side==="S"?r.y+r.d:o.side==="W"?r.x:r.x+r.w,mid=(o.side==="N"||o.side==="W"?line-e:line+e-t)+t/2,a=(hz?r.x:r.y)+off;
+  return hz?{x0:a,x1:a+w,y0:line-B,y1:line+B,px0:a,px1:a+w,py0:mid-.025,py1:mid+.025,h,sill}
+           :{y0:a,y1:a+w,x0:line-B,x1:line+B,py0:a,py1:a+w,px0:mid-.025,px1:mid+.025,h,sill}}
+function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
+    if(!(a.x0<C.x1-1e-6&&C.x0<a.x1-1e-6&&a.y0<C.y1-1e-6&&C.y0<a.y1-1e-6&&a.z0<C.z1-1e-6&&C.z0<a.z1-1e-6)){nx.push(a);return}
+    const X0=Math.max(a.x0,C.x0),X1=Math.min(a.x1,C.x1),Y0=Math.max(a.y0,C.y0),Y1=Math.min(a.y1,C.y1);
+    if(a.x0<X0)nx.push({...a,x1:X0});if(X1<a.x1)nx.push({...a,x0:X1});
+    if(a.y0<Y0)nx.push({...a,x0:X0,x1:X1,y1:Y0});if(Y1<a.y1)nx.push({...a,x0:X0,x1:X1,y0:Y1});
+    if(a.z0<C.z0)nx.push({x0:X0,x1:X1,y0:Y0,y1:Y1,z0:a.z0,z1:Math.max(a.z0,C.z0)});if(C.z1<a.z1)nx.push({x0:X0,x1:X1,y0:Y0,y1:Y1,z0:Math.min(a.z1,C.z1),z1:a.z1})});out=nx});return out}
 function order(o){ // painter's order for boxes, viewer at +X +Y +Z
   // screen overlap of two iso boxes = overlap of their ranges in (x-y), (x-z), (y-z)
   const ovl=(a0,a1,b0,b1)=>a0<b1-EPS&&b0<a1-EPS;
@@ -459,6 +481,12 @@ function scene(){
   const put=o=>{if(o.x1-o.x0>1e-4&&o.y1-o.y0>1e-4&&o.z1-o.z0>1e-4){objs.push(o);zmax=Math.max(zmax,o.z1)}};
   const shown=S.roofOn?S.roofs.filter(r=>{const L=roofLevel(r);return L<top||(L===top&&top===nF()-1)}):[];
   const covers=(rf,x,y,w,d)=>rf.x<=x+EPS&&rf.y<=y+EPS&&rf.x+rf.w>=x+w-EPS&&rf.y+rf.d>=y+d-EPS;
+  const cutters=[],GLASS=["#d3e6ec","#a8c8d4","#8db3c2"],DOOR=["#9a7656","#7d5d42","#6a4e37"];
+  rooms.forEach(r=>{const L=lvl(r);if(L>top||!Array.isArray(r.op))return;const zb=base(L)+(L>0?SLAB:0),sel=r.id===selectedId;
+    r.op.forEach(o=>{const g=opGeom(r,o,t,e);if(!g)return;const za=zb+g.sill,zt=za+g.h;
+      cutters.push({x0:g.x0,y0:g.y0,x1:g.x1,y1:g.y1,z0:za,z1:zt});
+      const pane=o.kind==="door"?{c:DOOR}:{c:GLASS,glass:true};
+      const[a,b2,c2,d]=TR(g.px0,g.py0,g.px1,g.py1,W,D,k);put(Object.assign({id:r.id,x0:a,y0:b2,x1:c2,y1:d,z0:za,z1:zt,zs:za+.001,sel,pane:true},pane))})});
   rooms.forEach(r=>{
     const L=lvl(r);if(L>top)return;
     const b=base(L),sl=L>0?SLAB:0,h=roomH(r),sel=r.id===selectedId,col=roomTypes[r.type].color;
@@ -471,8 +499,11 @@ function scene(){
     if(S.labels&&L===top&&!roofed)labels.push({x:(X0+X1)/2,y:(Y0+Y1)/2,z:b+sl,name:r.name,sub:`${fl(L)} · h ${format2(h)} m`});
     if(h-sl<=0)return;
     const z0=b+sl,z1=b+h,zc=S.cut?Math.min(z1,z0+1):z1,c=sel?WSEL:WALL,a0=X0-e,b0=Y0-e,a1=X1+e,b1=Y1+e;
-    const add=(x0,y0,x1,y1,zt)=>put({id:r.id,x0,y0,x1,y1,z0,z1:zt,zs:z1,c,sel});
-    add(a0,b0,a1,b0+t,z1);add(a0,b1-t,a1,b1,zc);add(a0,b0+t,a0+t,b1-t,z1);add(a1-t,b0+t,a1,b1-t,zc);
+    const px0=r.x-e,py0=r.y-e,px1=r.x+r.w+e,py1=r.y+r.d+e;
+    [[px0,py0,px1,py0+t],[px0,py1-t,px1,py1],[px0,py0+t,px0+t,py1-t],[px1-t,py0+t,px1,py1-t]].forEach(([x0,y0,x1,y1])=>
+      cutBox({x0,y0,x1,y1,z0,z1},cutters).forEach(q=>{const[qa,qb,qc,qd]=TR(q.x0,q.y0,q.x1,q.y1,W,D,k);
+        const front=qb>=b1-t-1e-6||qa>=a1-t-1e-6,zt=front?Math.min(q.z1,zc):q.z1;
+        if(zt>q.z0+1e-4)put({id:r.id,x0:qa,y0:qb,x1:qc,y1:qd,z0:q.z0,z1:zt,zs:q.z1,c,sel})}));
   });
   if($("showColumns").checked){const ztop=base(top)+S.floors[top].h;columns.forEach(c=>{const[x0,y0,x1,y1]=TR(c.x-c.w/2,c.y-c.d/2,c.x+c.w/2,c.y+c.d/2,W,D,k);put({col:true,x0,y0,x1,y1,z0:0,z1:ztop,c:COL})})}
   // roofs: each one covers its own outline (plus eave), sitting on top of its floor
@@ -513,14 +544,14 @@ function draw(){
   // shadows on the ground
   let sun=null;
   if($("showSun").checked){sun=sunNow();if(sun.elevation>2&&(mode==="iso"||mode==="top")){const a=toPlanAzimuth(sun.azimuth)*Math.PI/180,[vx,vy]=TV(Math.sin(a),-Math.cos(a),k),L=1/Math.tan(sun.elevation*Math.PI/180),dx=-vx*L,dy=-vy*L,pr=([x,y,z])=>[x+dx*z,y+dy*z];
-    const sh=sc.objs.map(o=>{const v=o.roof?o.all:(()=>{const zs=o.zs||o.z1,c=[[o.x0,o.y0],[o.x1,o.y0],[o.x1,o.y1],[o.x0,o.y1]];return c.map(([x,y])=>[x,y,o.z0]).concat(c.map(([x,y])=>[x,y,zs]))})();return hull(v.map(pr)).map(([x,y])=>P(x,y,0))});
+    const sh=sc.objs.filter(o=>!o.glass).map(o=>{const v=o.roof?o.all:(()=>{const zs=o.zs||o.z1,c=[[o.x0,o.y0],[o.x1,o.y0],[o.x1,o.y1],[o.x0,o.y1]];return c.map(([x,y])=>[x,y,o.z0]).concat(c.map(([x,y])=>[x,y,zs]))})();return hull(v.map(pr)).map(([x,y])=>P(x,y,0))});
     parts.push(`<clipPath id="isoClip"><polygon points="${pts([P(-2,-2),P(Wr+2,-2),P(Wr+2,Dr+2),P(-2,Dr+2)])}"/></clipPath><g clip-path="url(#isoClip)" opacity=".17">${sh.map(p=>`<polygon points="${pts(p)}" fill="#171816"/>`).join("")}</g>`)}}
   // objects
   const stroke=`stroke="#171816" stroke-width=".7" stroke-linejoin="round"`,ve=`vector-effect="non-scaling-stroke"`;
   sc.objs.forEach(o=>{
-    const tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:"";
+    let tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:"";
     if(o.roof){parts.push(`<g${tag} ${stroke}>${o.faces.map(f=>{const col=f.kind==="slope"?shade(o.color,.78+.42*Math.max(0,dot(f.n,LIGHT))):shade("#ece8df",.86+.14*Math.max(0,dot(f.n,LIGHT)));return`<polygon points="${pts(f.vp.map(p=>P(...p)))}" fill="${col}" ${ve}/>`}).join("")}</g>`);return}
-    const{x0,y0,x1,y1,z0,z1}=o,[top,fy,fx]=o.c;
+    const{x0,y0,x1,y1,z0,z1}=o,[top,fy,fx]=o.c;if(o.glass)tag+=' fill-opacity=".55"';
     if(mode==="top"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`);return}
     if(mode==="bottom"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0)])}" fill="${fx}" ${ve}/></g>`);return}
     if(ortho){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/></g>`);return}
@@ -664,7 +695,18 @@ window.renderAll=function(...a){
 const _renderEditor=window.renderEditor;
 window.renderEditor=function(...a){const out=_renderEditor.apply(this,a);const room=rooms.find(i=>i.id===selectedId);
   if(room){$("selectedLevel").innerHTML=S.floors.map((f,i)=>`<option value="${i}">${fl(i)}</option>`).join("");$("selectedLevel").value=String(lvl(room));
-    $("selectedHeight").value=hasOwnH(room)?format2(room.h):"";$("selectedHeight").placeholder=format2(S.floors[lvl(room)].h)}return out};
+    $("selectedHeight").value=hasOwnH(room)?format2(room.h):"";$("selectedHeight").placeholder=format2(S.floors[lvl(room)].h)}renderOps(room);return out};
+const SIDES={N:"บน",S:"ล่าง",W:"ซ้าย",E:"ขวา"};
+function renderOps(room){const el=$("opList");if(!el)return;const ops=room&&Array.isArray(room.op)?room.op:[];
+  el.innerHTML=ops.map((o,i)=>`<div class="op-item" data-i="${i}"><div class="op-top"><span>${o.kind==="door"?"ประตู":"หน้าต่าง"} ${i+1}</span><button type="button" class="op-del" data-del="${i}" aria-label="ลบช่องเปิด">ลบ</button></div><div class="op-grid">
+    <div><label>ด้าน</label><select data-k="side">${Object.entries(SIDES).map(([v,t])=>`<option value="${v}"${o.side===v?" selected":""}>${t}</option>`).join("")}</select></div>
+    <div><label>ระยะ ม.</label><input data-k="off" type="number" step="0.05" min="0" value="${format2(o.off)}"></div>
+    <div><label>กว้าง ม.</label><input data-k="w" type="number" step="0.05" min="0.3" value="${format2(o.w)}"></div>
+    <div><label>สูง ม.</label><input data-k="h" type="number" step="0.05" min="0.2" value="${format2(o.h)}"></div>
+    <div><label>ขอบล่าง ม.</label><input data-k="sill" type="number" step="0.05" min="0" value="${format2(o.kind==="door"?0:o.sill)}"${o.kind==="door"?" disabled":""}></div></div></div>`).join("")}
+function addOp(kind){const room=rooms.find(i=>i.id===selectedId);if(!room)return;if(!Array.isArray(room.op))room.op=[];
+  const side=kind==="door"?"S":"N",len=room.w,w=kind==="door"?.9:Math.min(1.2,Math.max(.6,len-.6)),o={kind,side,w,h:kind==="door"?2.1:1.2,sill:kind==="door"?0:.9,off:round2(Math.max(0,(len-w)/2))};
+  room.op.push(o);renderAll();typeof toast==="function"&&toast(kind==="door"?"เพิ่มประตูแล้ว":"เพิ่มหน้าต่างแล้ว")}
 const _selectRoom=window.selectRoom;
 window.selectRoom=function(id,...a){const r=rooms.find(i=>i.id===id);if(r){S.active=lvl(r);S.selRoof=null;saveS()}return _selectRoom.call(this,id,...a)};
 const _download=window.downloadPng;
@@ -699,6 +741,12 @@ $("isoRoofDelete").addEventListener("click",()=>{const r=selRoof();if(r)removeRo
 ["isoRoofX","isoRoofY","isoRoofW","isoRoofD","isoEave"].forEach(id=>$(id).addEventListener("blur",()=>renderAll()));
 $("isoLabelsChk").checked=!!S.labels;$("isoLabelsChk").addEventListener("change",e=>{S.labels=e.target.checked;saveS();draw()});
 $("isoResetH").addEventListener("click",()=>{rooms.forEach(r=>{delete r.h});renderAll();typeof toast==="function"&&toast("ทุกห้องใช้ความสูงตามชั้นแล้ว")});
+$("opAddDoor").addEventListener("click",()=>addOp("door"));$("opAddWin").addEventListener("click",()=>addOp("window"));
+const opEdit=(e,final)=>{const it=e.target.closest(".op-item"),k=e.target.dataset.k,room=rooms.find(i=>i.id===selectedId);if(!it||!k||!room||!room.op)return;const o=room.op[+it.dataset.i];if(!o)return;
+  if(k==="side"){o.side=e.target.value;const len=o.side==="N"||o.side==="S"?room.w:room.d;o.off=round2(clamp(o.off,0,Math.max(0,len-o.w)))}else{const n=Number(e.target.value);if(e.target.value===""||!Number.isFinite(n))return;o[k]=round2(Math.max(0,n))}
+  renderAll(true,!final)};
+$("opList").addEventListener("input",e=>opEdit(e,false));$("opList").addEventListener("change",e=>opEdit(e,true));
+$("opList").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(!b)return;const room=rooms.find(i=>i.id===selectedId);if(!room||!room.op)return;room.op.splice(+b.dataset.del,1);renderAll();typeof toast==="function"&&toast("ลบช่องเปิดแล้ว")});
 const hIn=$("selectedHeight");
 function setRoomH(final){const room=rooms.find(i=>i.id===selectedId);if(!room)return;const v=hIn.value.trim();if(v==="")delete room.h;else{const n=Number(v);if(!Number.isFinite(n))return;room.h=round2(clamp(n,0,12))}renderAll(true,!final)}
 hIn.addEventListener("input",()=>setRoomH(false));hIn.addEventListener("blur",()=>setRoomH(true));
