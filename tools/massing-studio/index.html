@@ -486,10 +486,10 @@ function scene(){
   rooms.forEach(r=>{const L=lvl(r);if(L>top||!Array.isArray(r.op))return;const zb=base(L)+(L>0?SLAB:0),sel=r.id===selectedId;
     r.op.forEach(o=>{const g=opGeom(r,o,t,e);if(!g)return;const za=zb+g.sill,zt=za+g.h;
       cutters.push({x0:g.x0,y0:g.y0,x1:g.x1,y1:g.y1,z0:za,z1:zt});
-      const hz=o.side==="N"||o.side==="S",mid=hz?(g.py0+g.py1)/2:(g.px0+g.px1)/2,u0=hz?g.px0:g.py0,u1=hz?g.px1:g.py1,F=.06,win=o.kind!=="door",FR=win?FRW:FRD;
+      const hz=o.side==="N"||o.side==="S",mid=hz?(g.py0+g.py1)/2:(g.px0+g.px1)/2,u0=hz?g.px0:g.py0,u1=hz?g.px1:g.py1,F=.05,win=o.kind!=="door",FR=win?FRW:FRD;
       const bx=(a0,a1,zz0,zz1,dp,extra)=>{const q=hz?[a0,mid-dp,a1,mid+dp]:[mid-dp,a0,mid+dp,a1],[A,B,C,E]=TR(q[0],q[1],q[2],q[3],W,D,k);put(Object.assign({id:r.id,x0:A,y0:B,x1:C,y1:E,z0:zz0,z1:zz1,zs:zz0+.001,sel,pane:true},extra))};
       bx(u0+F,u1-F,win?za+F:za,zt-F,.025,win?{c:GLASS,glass:true}:{c:DOOR});
-      bx(u0,u0+F,za,zt,.06,{c:FR});bx(u1-F,u1,za,zt,.06,{c:FR});bx(u0+F,u1-F,zt-F,zt,.06,{c:FR});if(win)bx(u0+F,u1-F,za,za+F,.06,{c:FR})})});
+      bx(u0,u0+F,za,zt,.05,{c:FR});bx(u1-F,u1,za,zt,.05,{c:FR});bx(u0+F,u1-F,zt-F,zt,.05,{c:FR});if(win)bx(u0+F,u1-F,za,za+F,.05,{c:FR})})});
   rooms.forEach(r=>{
     const L=lvl(r);if(L>top)return;
     const b=base(L),sl=L>0?SLAB:0,h=roomH(r),sel=r.id===selectedId,col=roomTypes[r.type].color;
@@ -683,7 +683,7 @@ function renderPlanOps(){const svgEl=$("opLayer");if(!svgEl)return;const s=site(
       const M=(u,v)=>o.side==="N"?[r.x+u,r.y+v]:o.side==="S"?[r.x+u,r.y+r.d-v]:o.side==="W"?[r.x+v,r.y+u]:[r.x+r.w-v,r.y+u];
       const poly=pts=>pts.map(([u,v])=>M(u,v).map(f).join(",")).join(" ");
       out.push(`<polygon points="${poly([[a,-t],[a+w,-t],[a+w,t],[a,t]])}" fill="${bg}"/>`);
-      const F=.06,v0=Math.max(0,t/2-.06),v1=Math.min(t,t/2+.06),fr=(u0,u1)=>`<polygon points="${poly([[u0,v0],[u1,v0],[u1,v1],[u0,v1]])}" fill="#fbf9f4" stroke="${ink}" stroke-width="1" ${ve}/>`;
+      const F=.05,v0=Math.max(0,t/2-.05),v1=Math.min(t,t/2+.05),fr=(u0,u1)=>`<polygon points="${poly([[u0,v0],[u1,v0],[u1,v1],[u0,v1]])}" fill="#fbf9f4" stroke="${ink}" stroke-width="1" ${ve}/>`;
       if(o.kind==="door"){const L2=w-2*F,arc=[];for(let i=0;i<=24;i++){const q=i/24*Math.PI/2;arc.push([a+F+L2*Math.cos(q),v1+L2*Math.sin(q)])}
         out.push(`<polyline points="${poly(arc)}" fill="none" stroke="${ink}" stroke-width=".8" stroke-dasharray="3 2" ${ve}/><polygon points="${poly([[a+F,v1],[a+F+.04,v1],[a+F+.04,v1+L2],[a+F,v1+L2]])}" fill="#fbf9f4" stroke="${ink}" stroke-width="1.2" ${ve}/>`)}
       else out.push(`<polyline points="${poly([[a+F,t*.5-.015],[a+w-F,t*.5-.015]])}" stroke="#4f7f92" stroke-width="1.2" ${ve}/><polyline points="${poly([[a+F,t*.5+.015],[a+w-F,t*.5+.015]])}" stroke="#4f7f92" stroke-width="1.2" ${ve}/><polyline points="${poly([[a,t],[a+w,t]])}" stroke="${ink}" stroke-width=".7" ${ve}/>`);
