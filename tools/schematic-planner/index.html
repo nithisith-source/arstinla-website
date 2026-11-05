@@ -63,6 +63,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
 .room-nudge{transform:none;touch-action:manipulation;background:transparent;border:0;box-shadow:none}
 .room-nudge button{background:#2b2c2899;border-color:#5a5b5499}
 .field-hint{margin:0;color:#77786f;font-size:9px;line-height:1.5}
+.to-budget{display:inline-flex;margin-top:12px;padding:10px 14px;border:1px solid #c47752;color:#c47752;font-size:.82rem;font-weight:600;text-decoration:none;letter-spacing:.02em}.to-budget:hover{background:#c47752;color:#fff}.to-budget[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -212,7 +213,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
         <aside class="environment-info">
           <article><div class="section-label sun-key">Sun chart</div><strong id="sunTitle">Solar study</strong><p id="sunSummary"></p><div class="data-row" id="sunData"></div></article>
           <article><div class="section-label wind-key">Wind</div><strong id="windTitle">Seasonal wind</strong><p id="windSummary"></p><div class="data-row" id="windData"></div></article>
-          <article><div class="section-label">Area schedule</div><strong id="areaTotal">0 sq.m.</strong><p id="areaSummary"></p></article>
+          <article><div class="section-label">Area schedule</div><strong id="areaTotal">0 sq.m.</strong><p id="areaSummary"></p><a id="toBudget" class="to-budget" href="/knowledge/budget-estimate/" target="_blank" rel="noopener">ประเมินงบก่อสร้างจากผังนี้ →</a></article>
         </aside>
       </div>
 
@@ -430,7 +431,8 @@ function renderColumnEditor(){
 }
 function renderAnalysis(){
   const size=site();const total=rooms.reduce((sum,room)=>sum+room.w*room.d,0);const coverage=Math.round(total/(size.w*size.d)*100);
-  $("areaTotal").textContent=`${format2(total)} sq.m.`;$("areaSummary").textContent=`พื้นที่ฟังก์ชันรวม ${coverage}% ของกรอบผัง ${format2(size.w*size.d)} ตร.ม. พื้นที่ที่เหลือใช้สำหรับผนัง ทางสัญจร ช่องว่าง และพื้นที่ภายนอก`;
+  $("areaTotal").textContent=`${format2(total)} sq.m.`;
+  {const gross=Math.round(total*1.2);const a=$("toBudget");a.href=`/knowledge/budget-estimate/?from=planner&net=${Math.round(total*10)/10}&area=${gross}&floors=1`;a.hidden=!total;a.title=`พื้นที่ห้อง ${format2(total)} ตร.ม. + ผนังและทางเดิน 20% ≈ ${gross} ตร.ม.`}$("areaSummary").textContent=`พื้นที่ฟังก์ชันรวม ${coverage}% ของกรอบผัง ${format2(size.w*size.d)} ตร.ม. พื้นที่ที่เหลือใช้สำหรับผนัง ทางสัญจร ช่องว่าง และพื้นที่ภายนอก`;
   const westRooms=rooms.filter(room=>["W","SW","NW"].includes(zoneFor(room))&&!roomTypes[room.type].prefs.includes(zoneFor(room))).length;
   $("designReading").textContent=westRooms?`พบ ${westRooms} ห้องที่ควรทบทวนด้านแดดบ่าย ใช้พื้นที่บริการ ชายคา ระแนง ต้นไม้ หรือผนังทึบเป็นแนวกันความร้อน และจัดช่องเปิดตรงข้ามกันเพื่อสร้างลมผ่าน`:`ตำแหน่งห้องหลักสอดคล้องกับคำแนะนำเบื้องต้น ควรพัฒนาต่อด้วยทางเข้า วิว ความเป็นส่วนตัว และช่องเปิดสำหรับลมข้ามอาคาร`;
   $("reportList").innerHTML=rooms.map(room=>{const review=roomReview(room);return `<article class="report-item ${review.preferred?"":"review"}"><header><strong>${escapeHtml(room.name)}</strong><b>${review.status}</b></header><p>${format2(room.w)} × ${format2(room.d)} ม. · ${format2(room.w*room.d)} ตร.ม. · ${review.message}</p></article>`}).join("");

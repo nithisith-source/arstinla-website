@@ -56,6 +56,7 @@ td.n{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:#06C755;color:#fff;text-decoration:none;font-weight:600;border-radius:999px}
 .btn.out{background:transparent;color:var(--ink);border:1px solid var(--ink)}
 .refs{font-size:13px;color:var(--ink3);line-height:1.7}
+.from-planner{margin:-4px 0 16px;padding:10px 12px;border-left:3px solid var(--accent);background:#fff;font-size:13px;color:var(--ink2);line-height:1.6}.from-planner b{color:var(--ink)}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -73,6 +74,7 @@ td.n{text-align:right;font-family:"IBM Plex Mono",monospace;white-space:nowrap}
     <section class="panel">
       <div class="f"><span>ประเภทงาน</span>
         <div class="seg" id="type"><button data-v="new" class="on">สร้างบ้านใหม่</button><button data-v="ext">ต่อเติม</button><button data-v="reno">รีโนเวท</button></div></div>
+      <div class="from-planner" id="fromPlanner" hidden></div>
       <div class="f"><span>พื้นที่ใช้สอย (ตร.ม.)</span><input type="number" id="area" value="150" min="1" step="1">
         <p class="hint" id="areaHint">รวมทุกชั้น ไม่รวมพื้นที่ภายนอกที่ไม่มีหลังคา</p></div>
       <div class="f" id="floorsF"><span>จำนวนชั้น</span>
@@ -171,6 +173,11 @@ function calc(){
     `\nที่ตั้ง: ${$("loc").selectedOptions[0].text}\nงบก่อสร้างประมาณ ${mb(lo)}–${mb(hi)} บาท\nอยากปรึกษาเรื่องออกแบบครับ`;
   $("lineBtn").href="https://line.me/R/oaMessage/%40arstinla/?"+encodeURIComponent(msg);
 }
+// prefill from Schematic Planner: ?from=planner&net=<room area>&area=<gross>&floors=<n>
+(function(){const q=new URLSearchParams(location.search);const a=+q.get("area");if(a>0)$("area").value=Math.round(a);
+  const f=+q.get("floors");if(f>=1){st.floors=Math.min(4,f);$("floors").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.v===st.floors))}
+  if(q.get("from")==="planner"&&a>0){const net=+q.get("net");const box=$("fromPlanner");box.hidden=false;
+    box.innerHTML=`ข้อมูลจาก <b>Schematic Planner</b><br>พื้นที่ห้องรวม ${net?net.toLocaleString("th-TH"):"-"} ตร.ม. + ผนังและทางเดินประมาณ 20% = <b>${Math.round(a).toLocaleString("th-TH")} ตร.ม.</b> ปรับตัวเลขได้ด้านล่าง`}})();
 ui();calc();
 })();
 </script>
