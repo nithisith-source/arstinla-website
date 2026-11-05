@@ -587,6 +587,16 @@ document.addEventListener("keydown",event=>{
 })();
 
 $("budgetFloorsSel").addEventListener("change",()=>updateBudgetLink(rooms.reduce((sum,room)=>sum+room.w*room.d,0)));
+
+// Click on empty board space (or press Esc) to clear the selection.
+(function(){
+  const board=document.getElementById("planBoard");if(!board)return;let down=null;
+  const isEmpty=t=>!t.closest(".room-block,.column-block,#roomNudge,button,input,select,a,label,[data-nudge]");
+  board.addEventListener("pointerdown",e=>{down=e.button===0&&isEmpty(e.target)?{x:e.clientX,y:e.clientY}:null},true);
+  board.addEventListener("pointerup",e=>{if(!down)return;const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y)>4;down=null;
+    if(!moved&&isEmpty(e.target)&&(selectedId||selectedColumnId)){selectedId=null;selectedColumnId=null;renderAll(false)}},true);
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&(selectedId||selectedColumnId)&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||"")){selectedId=null;selectedColumnId=null;renderAll(false)}});
+})();
 </script>
 </body>
 </html>
