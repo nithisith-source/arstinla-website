@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://www.arstinla.com/siamsi/">
 <meta property="og:image" content="https://www.arstinla.com/assets/hero.jpg">
 <link rel="icon" href="/favicon.ico?v=2" sizes="any">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Charmonman:wght@700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500&display=swap">
 <link rel="stylesheet" href="/knowledge/article-shell.css">
 <style>
 :root{--bg:#F3F0E8;--card:#FAF8F3;--ink:#1E1C18;--ink2:#5C574D;--ink3:#8A8477;--line:rgba(92,87,77,.22);--accent:#C36B48;--accent-d:#A65335;--red:#9b2f22;--gold:#d9b36a}
@@ -29,8 +29,8 @@ h1{font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:10px 0 
 @keyframes shake{from{transform:rotate(-11deg) translateY(-2px)}to{transform:rotate(11deg) translateY(2px)}}
 .shaking #sticks{animation:rattle .08s linear infinite alternate}
 @keyframes rattle{from{transform:translateY(0)}to{transform:translateY(-7px)}}
-#drop{position:absolute;left:93px;top:30px;width:14px;height:160px;opacity:0;pointer-events:none;border-radius:3px;background:linear-gradient(90deg,#e6cf9c,#f4e6c3 50%,#d8bc82);box-shadow:0 2px 6px rgba(0,0,0,.18)}
-#drop b{position:absolute;left:50%;top:14px;font:700 15px/1 "IBM Plex Sans Thai";color:var(--red);white-space:nowrap;transform:translate(-50%,-50%)}
+#drop{position:absolute;left:93px;top:30px;width:14px;height:160px;opacity:0;pointer-events:none;border-radius:3px;background:linear-gradient(180deg,#b3261e 0 9px,transparent 9px),linear-gradient(90deg,#e6cf9c,#f4e6c3 50%,#d8bc82);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+#drop b{position:absolute;left:50%;top:22px;font:700 15px/1 "IBM Plex Sans Thai";color:var(--red);white-space:nowrap;transform:translate(-50%,-50%)}
 .out #drop b{animation:keep 1.1s cubic-bezier(.3,.7,.3,1) forwards}
 @keyframes keep{0%,45%{transform:translate(-50%,-50%) rotate(0)}100%{transform:translate(-50%,-50%) rotate(-78deg)}}
 #dropTag{position:absolute;left:214px;top:96px;width:86px;height:86px;border-radius:50%;background:#FAF8F3;border:2px solid var(--red);color:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 40px/1 "IBM Plex Sans Thai";box-shadow:0 6px 18px rgba(0,0,0,.12);opacity:0;transform:scale(.4);pointer-events:none}
@@ -94,14 +94,37 @@ h1{font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:10px 0 
           <linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#d8bc82"/><stop offset=".5" stop-color="#f4e6c3"/><stop offset="1" stop-color="#cfae6f"/></linearGradient>
           <linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#a8823d"/><stop offset=".5" stop-color="#f0d38f"/><stop offset="1" stop-color="#a8823d"/></linearGradient>
         </defs>
+        <filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+        <filter id="dry" x="-10%" y="-20%" width="120%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".05 .9" numOctaves="2" seed="9" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.6" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in" result="c"/><feDisplacementMap in="c" in2="n" scale="2.4"/></filter>
+        <filter id="brush" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".04 .7" numOctaves="2" seed="5" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.75" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in" result="c"/><feDisplacementMap in="c" in2="n" scale="1.6"/></filter>
+        <filter id="paper" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="3" seed="2" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.6" result="d"/><feColorMatrix in="t" type="saturate" values="0" result="g"/><feComponentTransfer in="g" result="g2"><feFuncA type="linear" slope=".12"/></feComponentTransfer><feComposite in="g2" in2="d" operator="in" result="tx"/><feMerge><feMergeNode in="d"/><feMergeNode in="tx"/></feMerge></filter>
+        <linearGradient id="lac" x1="0" x2="1"><stop offset="0" stop-color="#4f120c"/><stop offset=".18" stop-color="#8e2417"/><stop offset=".36" stop-color="#c2422b"/><stop offset=".46" stop-color="#a83321"/><stop offset=".78" stop-color="#7a1d13"/><stop offset="1" stop-color="#3f0d08"/></linearGradient>
+        <ellipse cx="100" cy="312" rx="62" ry="7" fill="#000" opacity=".14"/>
         <g id="sticks"></g>
-        <rect x="46" y="96" width="108" height="210" rx="10" fill="url(#tg)"/>
-        <ellipse cx="100" cy="98" rx="54" ry="10" fill="#4a130d"/>
-        <rect x="44" y="104" width="112" height="10" fill="url(#gg)"/>
-        <rect x="44" y="282" width="112" height="10" fill="url(#gg)"/>
-        <rect x="58" y="150" width="84" height="96" fill="none" stroke="#e9c987" stroke-width="1.5"/>
-        <text x="100" y="204" text-anchor="middle" font-family="IBM Plex Sans Thai" font-weight="600" font-size="21" fill="#f0d38f" textLength="70" lengthAdjust="spacingAndGlyphs">เซียมซี</text>
-        <text x="100" y="232" text-anchor="middle" font-family="Space Grotesk" font-size="9" letter-spacing="2" fill="#e9c987">ARSTINLA</text>
+        <rect x="46" y="96" width="108" height="210" rx="10" fill="url(#lac)"/>
+        <g clip-path="url(#tubeClip)">
+          <path d="M40 132 C70 120 110 128 160 116" stroke="#1b0b08" stroke-width="9" fill="none" stroke-linecap="round" opacity=".55" filter="url(#dry)"/>
+          <path d="M44 146 C80 140 120 146 158 138" stroke="#1b0b08" stroke-width="3" fill="none" stroke-linecap="round" opacity=".45" filter="url(#dry)"/>
+          <path d="M42 278 C78 268 118 284 160 270" stroke="#1b0b08" stroke-width="10" fill="none" stroke-linecap="round" opacity=".5" filter="url(#dry)"/>
+          <g fill="#1b0b08" opacity=".5"><circle cx="58" cy="122" r="1.6"/><circle cx="64" cy="117" r=".9"/><circle cx="147" cy="128" r="1.2"/><circle cx="54" cy="286" r="1.4"/><circle cx="146" cy="262" r="1"/></g>
+          <g fill="#f0d38f" opacity=".7"><circle cx="56" cy="170" r=".7"/><circle cx="145" cy="200" r=".6"/><circle cx="58" cy="236" r=".8"/><circle cx="142" cy="244" r=".5"/></g>
+          <rect x="46" y="96" width="108" height="210" fill="url(#gloss)"/>
+        </g>
+        <clipPath id="tubeClip"><rect x="46" y="96" width="108" height="210" rx="10"/></clipPath>
+        <linearGradient id="gloss" x1="0" x2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".37" stop-color="#fff" stop-opacity=".2"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        <ellipse cx="100" cy="98" rx="54" ry="10" fill="#2a0905"/>
+        <ellipse cx="100" cy="98" rx="54" ry="10" fill="none" stroke="#c99b4d" stroke-width="1.2"/>
+        <rect x="44" y="104" width="112" height="9" fill="url(#gg)"/><rect x="44" y="106.5" width="112" height=".6" fill="#7a5a22"/><rect x="44" y="110" width="112" height=".6" fill="#7a5a22"/>
+        <rect x="44" y="284" width="112" height="9" fill="url(#gg)"/><rect x="44" y="286.5" width="112" height=".6" fill="#7a5a22"/><rect x="44" y="290" width="112" height=".6" fill="#7a5a22"/>
+        <g filter="url(#paper)"><rect x="62" y="134" width="76" height="132" fill="#f2e8d2"/></g>
+        <rect x="66" y="138" width="68" height="124" fill="none" stroke="#a83321" stroke-width=".6" opacity=".6"/>
+        <path d="M117 160 A29 29 0 1 0 128 183" stroke="#1d1410" stroke-width="6" fill="none" stroke-linecap="round" filter="url(#brush)" opacity=".88"/>
+        <path d="M120 164 A29 29 0 0 1 126 175" stroke="#1d1410" stroke-width="2" fill="none" stroke-linecap="round" filter="url(#brush)" opacity=".5"/>
+        <text x="100" y="191" text-anchor="middle" font-family="Charmonman, 'IBM Plex Sans Thai', serif" font-weight="700" font-size="19" fill="#1d1410" stroke="#f2e8d2" stroke-width="2.4" paint-order="stroke" textLength="62" lengthAdjust="spacingAndGlyphs">เซียมซี</text>
+        <path d="M78 207 C92 203 110 209 124 204" stroke="#a83321" stroke-width="2.4" fill="none" stroke-linecap="round" filter="url(#brush)"/>
+        <text x="100" y="226" text-anchor="middle" font-family="Charmonman, 'IBM Plex Sans Thai', serif" font-size="9" fill="#5a4636">ทำนายบ้าน · ดวงดี</text>
+        <g transform="translate(113 235) rotate(-5)"><rect width="17" height="17" rx="1.5" fill="#b3261e"/><rect x="1.8" y="1.8" width="13.4" height="13.4" rx="1" fill="none" stroke="#f2e8d2" stroke-width=".7"/><text x="8.5" y="11.2" text-anchor="middle" font-family="Charmonman, 'IBM Plex Sans Thai'" font-size="7.6" font-weight="700" fill="#f2e8d2">ดวง</text></g>
+        <text x="72" y="250" font-family="Space Grotesk" font-size="6" letter-spacing="1.3" fill="#5a4636">ARSTINLA</text>
       </svg>
       <span id="drop"><b id="dropNo"></b></span><span id="dropTag"><small>ใบที่</small><span id="tagNo"></span></span>
     </button>
@@ -176,7 +199,7 @@ let cur=-1,busy=false;
 const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),1800)};
 
 // sticks in the tube
-$("sticks").innerHTML=Array.from({length:15},(_,i)=>{const x=56+i*6.2,h=40+((i*37)%28),y=98-h;return`<rect x="${x.toFixed(1)}" y="${y}" width="5" height="${h+20}" rx="1.5" fill="url(#sg)" stroke="#b8975a" stroke-width=".4"/>`}).join("");
+$("sticks").innerHTML=Array.from({length:15},(_,i)=>{const x=56+i*6.2,h=40+((i*37)%28),y=98-h;return`<rect x="${x.toFixed(1)}" y="${y}" width="5" height="${h+20}" rx="1.5" fill="url(#sg)" stroke="#b8975a" stroke-width=".4"/><rect x="${x.toFixed(1)}" y="${y}" width="5" height="7" rx="1.5" fill="#b3261e"/>`}).join("");
 
 function renderCol(){const got=store.get();$("col").innerHTML=`สะสมแล้ว <b>${got.length}</b> / 28 ใบ<div class="grid">${S.map((_,i)=>`<span class="${got.includes(i+1)?"got":""}" data-n="${i+1}" title="ใบที่ ${i+1}">${i+1}</span>`).join("")}</div>`}
 $("col").addEventListener("click",e=>{const s=e.target.closest(".got");if(s){show(+s.dataset.n-1,true)}});
