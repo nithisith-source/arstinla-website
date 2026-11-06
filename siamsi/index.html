@@ -29,8 +29,16 @@ h1{font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:10px 0 
 @keyframes shake{from{transform:rotate(-11deg) translateY(-2px)}to{transform:rotate(11deg) translateY(2px)}}
 .shaking #sticks{animation:rattle .08s linear infinite alternate}
 @keyframes rattle{from{transform:translateY(0)}to{transform:translateY(-7px)}}
-#drop{position:absolute;left:96px;top:34px;width:10px;height:150px;opacity:0;pointer-events:none;border-radius:3px;background:linear-gradient(90deg,#e6cf9c,#f4e6c3 50%,#d8bc82);box-shadow:0 2px 6px rgba(0,0,0,.18)}
-#drop b{position:absolute;left:50%;top:6px;transform:translateX(-50%);font:600 9px/1 "IBM Plex Sans Thai";color:var(--red);writing-mode:vertical-rl}
+#drop{position:absolute;left:93px;top:30px;width:14px;height:160px;opacity:0;pointer-events:none;border-radius:3px;background:linear-gradient(90deg,#e6cf9c,#f4e6c3 50%,#d8bc82);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+#drop b{position:absolute;left:50%;top:14px;font:700 15px/1 "IBM Plex Sans Thai";color:var(--red);white-space:nowrap;transform:translate(-50%,-50%)}
+.out #drop b{animation:keep 1.1s cubic-bezier(.3,.7,.3,1) forwards}
+@keyframes keep{0%,45%{transform:translate(-50%,-50%) rotate(0)}100%{transform:translate(-50%,-50%) rotate(-78deg)}}
+#dropTag{position:absolute;left:214px;top:96px;width:86px;height:86px;border-radius:50%;background:#FAF8F3;border:2px solid var(--red);color:var(--red);display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 40px/1 "IBM Plex Sans Thai";box-shadow:0 6px 18px rgba(0,0,0,.12);opacity:0;transform:scale(.4);pointer-events:none}
+#dropTag small{font:500 10px/1 "IBM Plex Mono",monospace;letter-spacing:.1em;color:var(--ink3);margin-bottom:4px}
+.landed #dropTag{animation:pop .45s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes pop{to{opacity:1;transform:scale(1)}}
+@media(max-width:420px){#dropTag{left:150px;top:-10px}.stage.out #drop{animation-name:outm}}
+@keyframes outm{0%{opacity:1;transform:translateY(0) rotate(0)}45%{opacity:1;transform:translateY(-120px) rotate(0)}100%{opacity:1;transform:translate(62px,150px) rotate(78deg)}}
 .out #drop{animation:out 1.1s cubic-bezier(.3,.7,.3,1) forwards}
 @keyframes out{0%{opacity:1;transform:translateY(0) rotate(0)}45%{opacity:1;transform:translateY(-120px) rotate(0)}100%{opacity:1;transform:translate(120px,150px) rotate(78deg)}}
 .hint{margin-top:10px;font-size:14px;color:var(--ink3);text-align:center;min-height:24px}
@@ -96,7 +104,7 @@ h1{font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:10px 0 
         <text x="100" y="214" text-anchor="middle" font-family="IBM Plex Sans Thai" font-weight="600" font-size="22" fill="#f0d38f">ซี</text>
         <text x="100" y="244" text-anchor="middle" font-family="Space Grotesk" font-size="9" letter-spacing="2" fill="#e9c987">ARSTINLA</text>
       </svg>
-      <span id="drop"><b id="dropNo"></b></span>
+      <span id="drop"><b id="dropNo"></b></span><span id="dropTag"><small>ใบที่</small><span id="tagNo"></span></span>
     </button>
     <div class="hint" id="hint">แตะกระบอก หรือกดปุ่มด้านล่าง</div>
     <div class="btns">
@@ -187,11 +195,12 @@ function show(i,scroll){cur=i;const[l,t,v1,v2,h,tip,href]=S[i],n=i+1;
   if(scroll)setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),60)}
 
 function draw(){if(busy)return;busy=true;$("shakeBtn").disabled=true;
-  const st=$("stage");st.classList.remove("out");st.classList.add("shaking");$("hint").textContent="กำลังเขย่า… ตั้งจิตไว้";
+  const st=$("stage");st.classList.remove("out","landed");st.classList.add("shaking");$("hint").textContent="กำลังเขย่า… ตั้งจิตไว้";
   if(navigator.vibrate)try{navigator.vibrate([40,60,40,60,40])}catch(e){}
   let i;do{i=Math.floor(Math.random()*S.length)}while(i===cur&&S.length>1);
-  setTimeout(()=>{st.classList.remove("shaking");$("dropNo").textContent=thn(i+1);void st.offsetWidth;st.classList.add("out");$("hint").textContent=`ไม้เซียมซีหมายเลข ${i+1} ตกออกมาแล้ว`;
-    setTimeout(()=>{const got=store.get();if(!got.includes(i+1)){got.push(i+1);store.set(got)}renderCol();show(i,true);busy=false;$("shakeBtn").disabled=false},1000)},1600)}
+  setTimeout(()=>{st.classList.remove("shaking");$("dropNo").textContent=thn(i+1);$("tagNo").textContent=thn(i+1);void st.offsetWidth;st.classList.add("out");$("hint").textContent="ไม้เซียมซีตกออกมาแล้ว…";
+    setTimeout(()=>{st.classList.add("landed");$("hint").textContent=`ได้ไม้หมายเลข ${i+1} รอเปิดใบเซียมซีสักครู่…`},1100);
+    setTimeout(()=>{$("hint").textContent=`ไม้เซียมซีหมายเลข ${i+1}`;const got=store.get();if(!got.includes(i+1)){got.push(i+1);store.set(got)}renderCol();show(i,true);busy=false;$("shakeBtn").disabled=false},4100)},1600)}
 $("shakeBtn").onclick=draw;$("tubeBtn").onclick=draw;
 
 // shake the phone
