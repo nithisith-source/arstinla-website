@@ -95,35 +95,13 @@ h1{font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:10px 0 
           <linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#a8823d"/><stop offset=".5" stop-color="#f0d38f"/><stop offset="1" stop-color="#a8823d"/></linearGradient>
         </defs>
         <g id="sticks"></g>
-        <clipPath id="body"><rect x="46" y="96" width="108" height="210" rx="10"/></clipPath>
-        <radialGradient id="bub" cx=".35" cy=".32" r=".7"><stop offset="0" stop-color="#f06a55"/><stop offset=".45" stop-color="#b8201b"/><stop offset="1" stop-color="#5e0b0c"/></radialGradient>
-        <radialGradient id="drk" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#5a2422"/><stop offset="1" stop-color="#2a0f0f"/></radialGradient>
-        <linearGradient id="shade" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".32"/><stop offset=".22" stop-color="#000" stop-opacity="0"/><stop offset=".36" stop-color="#fff" stop-opacity=".22"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset=".8" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></linearGradient>
-        <g clip-path="url(#body)">
-          <rect x="46" y="96" width="108" height="210" fill="#ece8df"/>
-          <g fill="#dcd8ca" stroke="#bdb8a8" stroke-width=".8">
-            <rect x="56" y="112" width="68" height="70" rx="8"/><rect x="100" y="206" width="60" height="62" rx="8"/><rect x="40" y="252" width="52" height="46" rx="7"/><rect x="118" y="100" width="40" height="34" rx="6"/>
-          </g>
-          <g fill="url(#drk)">
-            <rect x="52" y="136" width="58" height="54" rx="7"/><rect x="104" y="122" width="46" height="42" rx="6"/><rect x="84" y="268" width="44" height="40" rx="6"/>
-            <circle cx="132" cy="176" r="19"/><circle cx="64" cy="232" r="14"/><circle cx="138" cy="270" r="17"/>
-          </g>
-          <g id="stains"></g>
-          <g fill="none" stroke="#b3261e" stroke-width="2">
-            <rect x="50" y="126" width="62" height="92" /><rect x="90" y="108" width="58" height="60"/><rect x="100" y="186" width="50" height="96"/><rect x="58" y="244" width="50" height="46"/>
-          </g>
-          <g fill="none" stroke="#f4f1ea" stroke-width="1.1">
-            <rect x="66" y="176" width="11" height="11" rx="1.5"/><rect x="112" y="150" width="9" height="9" rx="1.5"/><rect x="122" y="236" width="8" height="8" rx="1.5"/>
-          </g>
-          <g id="bubbles"></g>
-          <rect x="62" y="196" width="76" height="40" rx="6" fill="#2a0f0f" fill-opacity=".92"/>
-          <text x="100" y="218" text-anchor="middle" font-family="IBM Plex Sans Thai" font-weight="600" font-size="17" fill="#f4ede0" textLength="58" lengthAdjust="spacingAndGlyphs">เซียมซี</text>
-          <text x="100" y="230" text-anchor="middle" font-family="Space Grotesk" font-size="6.5" letter-spacing="1.6" fill="#e0a49a">ARSTINLA</text>
-          <rect x="46" y="96" width="108" height="210" fill="url(#shade)"/>
-        </g>
-        <ellipse cx="100" cy="98" rx="54" ry="10" fill="#2a0f0f"/>
-        <rect x="44" y="104" width="112" height="5" fill="#3a1414"/>
-        <rect x="44" y="290" width="112" height="5" fill="#3a1414"/>
+        <rect x="46" y="96" width="108" height="210" rx="10" fill="url(#tg)"/>
+        <ellipse cx="100" cy="98" rx="54" ry="10" fill="#4a130d"/>
+        <rect x="44" y="104" width="112" height="10" fill="url(#gg)"/>
+        <rect x="44" y="282" width="112" height="10" fill="url(#gg)"/>
+        <rect x="58" y="150" width="84" height="96" fill="none" stroke="#e9c987" stroke-width="1.5"/>
+        <text x="100" y="204" text-anchor="middle" font-family="IBM Plex Sans Thai" font-weight="600" font-size="21" fill="#f0d38f" textLength="70" lengthAdjust="spacingAndGlyphs">เซียมซี</text>
+        <text x="100" y="232" text-anchor="middle" font-family="Space Grotesk" font-size="9" letter-spacing="2" fill="#e9c987">ARSTINLA</text>
       </svg>
       <span id="drop"><b id="dropNo"></b></span><span id="dropTag"><small>ใบที่</small><span id="tagNo"></span></span>
     </button>
@@ -197,14 +175,6 @@ const store={get(){try{return JSON.parse(localStorage.getItem("arstinla-siamsi")
 let cur=-1,busy=false;
 const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),1800)};
 
-// red bubble clusters on the tube
-(()=>{let seed=7;const r=()=>(seed=(seed*16807)%2147483647)/2147483647,g=()=>(r()+r()+r()-1.5)/1.5;
-  const C=[[84,160,13,30],[128,146,9,20],[118,190,9,16],[76,262,11,24],[138,262,9,20],[96,124,7,12],[56,206,6,10],[148,214,6,10],[104,288,7,10]],out=[],st=[];
-  C.forEach(([cx,cy,sd,n])=>{st.push(`<circle cx="${cx}" cy="${cy}" r="${sd*1.6}" fill="#b8201b" opacity=".16"/>`);
-    for(let k=0;k<n;k++){const x=cx+g()*sd,y=cy+g()*sd;if(x>60&&x<140&&y>194&&y<238)continue;const rad=(1+r()*r()*6.2).toFixed(2);
-      out.push(r()<.14?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad}" fill="none" stroke="#c0281f" stroke-width=".7"/>`:`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad}" fill="url(#bub)"/>`)}});
-  for(let k=0;k<26;k++){const x=50+r()*100,y=100+r()*200;if(x>60&&x<140&&y>194&&y<238)continue;out.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(.5+r()*1.4).toFixed(2)}" fill="#a3181a" opacity="${(.5+r()*.5).toFixed(2)}"/>`)}
-  $("stains").innerHTML=st.join("");$("bubbles").innerHTML=out.join("")})();
 // sticks in the tube
 $("sticks").innerHTML=Array.from({length:15},(_,i)=>{const x=56+i*6.2,h=40+((i*37)%28),y=98-h;return`<rect x="${x.toFixed(1)}" y="${y}" width="5" height="${h+20}" rx="1.5" fill="url(#sg)" stroke="#b8975a" stroke-width=".4"/>`}).join("");
 
