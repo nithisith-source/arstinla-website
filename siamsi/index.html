@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>เซียมซีบ้าน | ARSTINLA</title>
+<meta name="description" content="เขย่าเซียมซีบ้าน 28 ใบ คำทำนายเรื่องบ้านและชีวิต พร้อมเคล็ดลับออกแบบจริงจากสถาปนิก ARSTINLA">
+<link rel="canonical" href="https://www.arstinla.com/siamsi/">
+<meta property="og:title" content="เซียมซีบ้าน · ARSTINLA">
+<meta property="og:description" content="เขย่าแล้วรับใบเซียมซีเรื่องบ้าน พร้อมเคล็ดออกแบบจากสถาปนิก">
+<meta property="og:url" content="https://www.arstinla.com/siamsi/">
+<meta property="og:image" content="https://www.arstinla.com/assets/hero.jpg">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500&display=swap">
+<link rel="stylesheet" href="/knowledge/article-shell.css">
+<style>
+:root{--bg:#F3F0E8;--card:#FAF8F3;--ink:#1E1C18;--ink2:#5C574D;--ink3:#8A8477;--line:rgba(92,87,77,.22);--accent:#C36B48;--accent-d:#A65335;--red:#9b2f22;--gold:#d9b36a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.75 "IBM Plex Sans Thai",sans-serif;overflow-x:hidden}
+.wrap{width:min(calc(100% - 32px),720px);margin:0 auto 80px}
+.eyebrow{font:500 11px/1.4 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+h1{font-weight:500;font-size:clamp(32px,6vw,48px);line-height:1.2;margin:10px 0 10px}
+.lede{color:var(--ink2);font-size:17px}
+.stage{position:relative;display:flex;flex-direction:column;align-items:center;margin:26px 0 8px;padding:24px 0 10px}
+.tube-btn{border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;width:200px;height:320px}
+.tube-btn:focus-visible{outline:2px solid var(--accent);outline-offset:6px}
+#tube{width:200px;height:320px;transform-origin:50% 92%;overflow:visible}
+.shaking #tube{animation:shake .16s ease-in-out infinite alternate}
+@keyframes shake{from{transform:rotate(-11deg) translateY(-2px)}to{transform:rotate(11deg) translateY(2px)}}
+.shaking #sticks{animation:rattle .08s linear infinite alternate}
+@keyframes rattle{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+#drop{position:absolute;left:96px;top:34px;width:10px;height:150px;opacity:0;pointer-events:none;border-radius:3px;background:linear-gradient(90deg,#e6cf9c,#f4e6c3 50%,#d8bc82);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+#drop b{position:absolute;left:50%;top:6px;transform:translateX(-50%);font:600 9px/1 "IBM Plex Sans Thai";color:var(--red);writing-mode:vertical-rl}
+.out #drop{animation:out 1.1s cubic-bezier(.3,.7,.3,1) forwards}
+@keyframes out{0%{opacity:1;transform:translateY(0) rotate(0)}45%{opacity:1;transform:translateY(-120px) rotate(0)}100%{opacity:1;transform:translate(120px,150px) rotate(78deg)}}
+.hint{margin-top:10px;font-size:14px;color:var(--ink3);text-align:center;min-height:24px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:500 15px "IBM Plex Sans Thai";padding:11px 20px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;text-decoration:none;line-height:1.3}
+.btn:hover{background:#000}
+.btn.out{background:transparent;color:var(--ink)}.btn.out:hover{background:rgba(0,0,0,.05)}
+.btn.line{background:#06c755;border-color:#06c755}.btn.line:hover{background:#05b04b}
+.btn.small{font-size:13.5px;padding:8px 14px}
+.btn[disabled]{opacity:.5;cursor:default}
+.slip{margin-top:28px;background:var(--card);border:1px solid var(--ink);position:relative;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s}
+.slip.show{opacity:1;transform:none}
+.slip::before{content:"";position:absolute;inset:7px;border:1px solid var(--line);pointer-events:none}
+.slip-head{text-align:center;padding:30px 24px 18px;border-bottom:1px solid var(--line)}
+.no{font:600 15px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--ink3)}
+.no big{display:block;font:500 64px/1.05 "IBM Plex Sans Thai";letter-spacing:0;color:var(--red);margin-top:8px}
+.lvl{display:inline-block;margin-top:12px;font:600 12px "IBM Plex Mono",monospace;letter-spacing:.1em;padding:4px 12px;color:#fff}
+.l0{background:#b8862f}.l1{background:#2e7d4f}.l2{background:#5c574d}.l3{background:#a3341f}
+.slip h2{font-size:clamp(24px,4.5vw,32px);font-weight:600;line-height:1.3;margin:12px 0 0}
+.verse{margin-top:14px;font-size:18px;line-height:1.9;color:var(--ink2)}
+.sec{padding:18px 26px;border-bottom:1px solid var(--line)}
+.sec:last-of-type{border-bottom:0}
+.sec h3{font:500 11px/1.4 "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-d);margin-bottom:4px}
+.sec p{font-size:16px}
+.sec a{color:var(--accent-d)}
+.slip-foot{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:18px 20px 24px;border-top:1px solid var(--line)}
+.col{margin-top:26px;font-size:14px;color:var(--ink2);text-align:center}
+.grid{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;max-width:520px;margin:10px auto 0}
+.grid span{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:500 11px "IBM Plex Mono",monospace;border:1px solid var(--line);color:var(--ink3);background:#fff;cursor:default}
+.grid span.got{background:var(--red);border-color:var(--red);color:#fff;cursor:pointer}
+@media(max-width:520px){.grid{grid-template-columns:repeat(7,1fr)}}
+.note{margin-top:30px;font-size:13px;color:var(--ink3);text-align:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:50}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.shaking #tube,.shaking #sticks{animation:none}.out #drop{animation:none}}
+</style>
+</head>
+<body>
+<nav class="article-nav" aria-label="Navigation">
+  <a class="article-brand" href="/">ARSTINLA<small>Design &amp; Consult</small></a>
+  <a class="article-back" href="/">← Home</a>
+</nav>
+<main class="wrap">
+  <div class="eyebrow">Play &amp; Learn · Ban Siam Si</div>
+  <h1>เซียมซีบ้าน</h1>
+  <p class="lede">ตั้งจิตนึกถึงบ้าน ครอบครัว หรือเรื่องที่อยากรู้ แล้วกดเขย่า ใบเซียมซีทั้ง 28 ใบมีคำทำนายและเคล็ดออกแบบบ้านที่ใช้ได้จริง</p>
+
+  <div class="stage" id="stage">
+    <button class="tube-btn" id="tubeBtn" type="button" aria-label="เขย่าเซียมซี">
+      <svg id="tube" viewBox="0 0 200 320" aria-hidden="true">
+        <defs>
+          <linearGradient id="tg" x1="0" x2="1"><stop offset="0" stop-color="#6f1f16"/><stop offset=".35" stop-color="#b53b28"/><stop offset=".6" stop-color="#9b2f22"/><stop offset="1" stop-color="#5d1912"/></linearGradient>
+          <linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#d8bc82"/><stop offset=".5" stop-color="#f4e6c3"/><stop offset="1" stop-color="#cfae6f"/></linearGradient>
+          <linearGradient id="gg" x1="0" x2="1"><stop offset="0" stop-color="#a8823d"/><stop offset=".5" stop-color="#f0d38f"/><stop offset="1" stop-color="#a8823d"/></linearGradient>
+        </defs>
+        <g id="sticks"></g>
+        <rect x="46" y="96" width="108" height="210" rx="10" fill="url(#tg)"/>
+        <ellipse cx="100" cy="98" rx="54" ry="10" fill="#4a130d"/>
+        <rect x="44" y="104" width="112" height="10" fill="url(#gg)"/>
+        <rect x="44" y="282" width="112" height="10" fill="url(#gg)"/>
+        <rect x="70" y="140" width="60" height="118" fill="none" stroke="#e9c987" stroke-width="1.5"/>
+        <text x="100" y="186" text-anchor="middle" font-family="IBM Plex Sans Thai" font-weight="600" font-size="22" fill="#f0d38f">เซียม</text>
+        <text x="100" y="214" text-anchor="middle" font-family="IBM Plex Sans Thai" font-weight="600" font-size="22" fill="#f0d38f">ซี</text>
+        <text x="100" y="244" text-anchor="middle" font-family="Space Grotesk" font-size="9" letter-spacing="2" fill="#e9c987">ARSTINLA</text>
+      </svg>
+      <span id="drop"><b id="dropNo"></b></span>
+    </button>
+    <div class="hint" id="hint">แตะกระบอก หรือกดปุ่มด้านล่าง</div>
+    <div class="btns">
+      <button class="btn" id="shakeBtn" type="button">เขย่าเซียมซี</button>
+      <button class="btn out" id="motionBtn" type="button" hidden>เขย่าด้วยมือถือ</button>
+    </div>
+  </div>
+
+  <article class="slip" id="slip" hidden aria-live="polite"></article>
+
+  <div class="col" id="col"></div>
+  <p class="note">เซียมซีนี้ทำขึ้นเพื่อความสนุก คำทำนายไม่ใช่คำพยากรณ์จริง ส่วนเคล็ดออกแบบเป็นหลักการทั่วไป บ้านแต่ละหลังควรให้สถาปนิกและวิศวกรดูหน้างานจริง</p>
+</main>
+<div class="toast" id="toast"></div>
+<canvas id="cv" width="1080" height="1350" hidden></canvas>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const LV=["ดีมาก","ดี","ปานกลาง","ระวัง"];
+const LINKS={
+ "/knowledge/site-checklist/":"อ่านที่ดินก่อนหาแบบ",
+ "/knowledge/house-200-sqm/":"บ้าน 200 ตร.ม. ไม่เหมือนกัน",
+ "/knowledge/home-inspection-checklist/":"เช็กลิสต์ตรวจรับบ้านด้วยตัวเอง",
+ "/knowledge/permit-check/":"ต่อเติมแบบนี้ ต้องขออนุญาตไหม",
+ "/knowledge/budget-estimate/":"ประเมินงบสร้างบ้าน",
+ "/knowledge/drawing-types/":"แบบ 5 ชนิด ใครทำ ใช้ทำอะไร",
+ "/knowledge/design-fee-2569/":"ค่าออกแบบบ้าน 2569 คิดยังไง",
+ "/tools/massing-studio/":"ลองใน Massing Studio",
+ "/tools/schematic-planner/":"ลองวางผังใน Schematic Planner",
+ "/services/":"ดูบริการออกแบบของ ARSTINLA",
+ "/village/":"เดินเล่น Village หมู่บ้านเสมือน",
+ "/stories/jamjuree-village/":"อ่านนิทานหมู่บ้านจามจุรี",
+ "/apps/tangluer/":"ลองแอปตังค์เหลือ บันทึกรายรับรายจ่าย"
+};
+// [level, title, verse1, verse2, house, design tip, link]
+const S=[
+[0,"ลมดีพัดผ่าน","ลมใต้พัดผ่านช่องบานใหญ่","บ้านเย็นสบายไม่ต้องพึ่งแอร์","ช่วงนี้เหมาะกับการปรับบ้านให้โปร่ง ย้ายของที่ขวางทางลมออก แล้วบ้านจะดูกว้างขึ้นทันที ใจก็โล่งตาม","หน้าต่างสองบานที่อยู่คนละผนังของห้อง ช่วยให้ลมไหลผ่านทั้งห้องได้ดีกว่ามีหน้าต่างหลายบานบนผนังเดียว","/knowledge/site-checklist/"],
+[1,"แดดเช้าเรียกโชค","แดดเช้าส่องทักที่ชานบ้าน","ใจเบิกบานตั้งแต่ก้าวแรก","เรื่องดีมักมาตอนเช้า ลองตื่นเร็วขึ้นแล้วใช้มุมที่แดดเช้าส่องเป็นที่นั่งทำงานหรือดื่มกาแฟ","ห้องนอนและมุมนั่งเล่นตอนเช้าหันทิศตะวันออกได้ดี ส่วนทิศตะวันตกควรมีชายคายื่นยาวหรือแผงบังแดดบ่าย","/knowledge/house-200-sqm/"],
+[0,"ฐานรากมั่นคง","ฐานแน่นหนาไม่หวั่นไหว","สร้างสิ่งใดก็ยืนยาว","เรื่องที่ตั้งใจไว้นานถึงเวลาลงมือ เริ่มจากวางแผนให้ชัด แล้วงานจะเดินได้อย่างมั่นคง","ก่อนออกแบบบ้าน ควรเจาะสำรวจดิน หรืออย่างน้อยถามข้อมูลเสาเข็มของบ้านข้างเคียง ฐานรากที่เลือกถูกตั้งแต่ต้นประหยัดกว่าซ่อมทีหลังมาก","/knowledge/site-checklist/"],
+[2,"ประตูรอเปิด","ประตูปิดไว้ไม่ลงกลอน","รอเพียงคนกล้าเอื้อมมือ","โอกาสอยู่ใกล้กว่าที่คิด แต่คุณต้องเป็นฝ่ายเริ่มก่อน ลองติดต่อคนที่อยากคุยด้วยแต่ผัดไว้","ประตูห้องนอนและห้องน้ำไม่ควรเปิดชนกันในโถงแคบ เว้นพื้นที่หน้าประตูอย่างน้อย 1.00–1.20 ม. ให้เดินสวนกันได้","/tools/massing-studio/"],
+[3,"หลังคารอซ่อม","ฝนยังไม่มาแต่ฟ้าครึ้ม","ซ่อมหลังคาก่อนจะเปียกชุ่ม","เรื่องเล็กที่ปล่อยไว้กำลังจะโตขึ้น รีบจัดการตอนนี้ยังเสียน้อย อย่ารอให้ถึงหน้าฝน","ตรวจรอยต่อหลังคา รางน้ำ และปลายท่อลงทุกปีก่อนหน้าฝน ใบไม้อุดรางน้ำทำให้น้ำล้นเข้าฝ้าได้บ่อยกว่าที่คิด","/knowledge/home-inspection-checklist/"],
+[1,"ลานกลางบ้าน","มีลานโล่งกลางเรือน","มิตรมาเยือนไม่ขาดสาย","คนรอบตัวพร้อมช่วยเหลือคุณ ชวนครอบครัวหรือเพื่อนมากินข้าวด้วยกัน แล้วจะได้ไอเดียดีๆ กลับมา","คอร์ทกลางบ้านช่วยให้ทุกห้องได้แสงและลม เหมาะกับที่ดินหน้าแคบลึก แต่ต้องวางทางระบายน้ำฝนให้ดีตั้งแต่แบบร่าง","/knowledge/house-200-sqm/"],
+[0,"ต้นไม้ใหญ่ให้ร่ม","ไม้ใหญ่แผ่กิ่งให้ร่มเงา","บ้านเราเย็นทั้งปีไม่ร้อนรน","สิ่งที่ลงแรงปลูกไว้เริ่มให้ผล ทั้งงาน ความสัมพันธ์ และเงินเก็บ อดทนอีกนิดจะเห็นผลชัด","ต้นไม้ทรงพุ่มกว้างทางทิศตะวันตกช่วยลดความร้อนเข้าผนังได้มาก แต่ไม้รากแข็งแรงอย่างไทรหรือหูกวาง ควรปลูกให้ห่างฐานรากหลายเมตร","/knowledge/site-checklist/"],
+[1,"บันไดขั้นต่อขั้น","ก้าวทีละขั้นอย่าเร่งรีบ","ถึงชั้นบนได้ปลอดภัย","งานใหญ่ให้แบ่งเป็นขั้นเล็กๆ ทำเสร็จทีละขั้น แล้วจะถึงเป้าหมายเร็วกว่าที่คิด","กฎหมายกำหนดบันไดบ้านพักอาศัยให้ลูกตั้งไม่เกิน 20 ซม. ลูกนอนไม่น้อยกว่า 22 ซม. แต่ถ้าอยากเดินสบาย ใช้ลูกตั้งราว 17–18 ซม. ลูกนอน 25–28 ซม.","/knowledge/drawing-types/"],
+[2,"ห้องเก็บของล้น","ของเก่าเก็บไว้เต็มห้อง","ใจก็หมองเพราะไร้ที่ว่าง","ถึงเวลาปล่อยวางบางอย่าง เคลียร์ของที่ไม่ได้ใช้มาเกินหนึ่งปี แล้วพื้นที่ใหม่ในชีวิตจะเปิดขึ้น","เผื่อพื้นที่เก็บของไว้ตั้งแต่ออกแบบ เช่น ใต้บันได ตู้บิลท์อินตามผนัง และห้องเก็บของใกล้ทางเข้า บ้านจะเป็นระเบียบโดยไม่ต้องซื้อตู้เพิ่มทีหลัง","/knowledge/house-200-sqm/"],
+[1,"บ่อน้ำใสหน้าบ้าน","น้ำใสสะท้อนฟ้าหน้าเรือน","เงินทองเหมือนน้ำไหลมา","มีโชคด้านการเงินเล็กๆ แต่ต้องรู้จักเก็บ น้ำที่ไหลเข้าต้องมีที่กักไว้ ไม่อย่างนั้นก็ไหลผ่านไป","บ่อน้ำหรือสระใกล้บ้านช่วยให้ลมที่พัดผ่านเย็นลง วางไว้ด้านที่ลมประจำพัดเข้า ซึ่งในไทยส่วนใหญ่คือทิศใต้และตะวันตกเฉียงใต้","/village/"],
+[3,"ผนังร้าวเตือนใจ","รอยร้าวเล็กบนผนังขาว","อย่ามองข้ามเรื่องราวที่ซ่อนไว้","มีสัญญาณบางอย่างที่คุณมองข้าม ทั้งเรื่องสุขภาพ งาน หรือความสัมพันธ์ ลองหยุดสังเกต แล้วแก้ตั้งแต่ยังเล็ก","รอยร้าวแนวทแยงที่มุมประตูหน้าต่างมักมาจากการทรุดตัว ส่วนรอยร้าวลายงาเล็กๆ มักเป็นแค่ผิวปูน ถ้าร้าวทแยงและกว้างขึ้นเรื่อยๆ ควรให้วิศวกรตรวจ","/knowledge/home-inspection-checklist/"],
+[1,"หน้าต่างบานใหม่","เปิดหน้าต่างบานใหม่","เห็นทางไกลกว่าที่เคย","มุมมองใหม่จะพาคุณไปเจอทางออก ลองฟังความเห็นจากคนนอกวงการ หรือไปในที่ที่ไม่เคยไป","หน้าต่างห้องนั่งเล่นที่ขอบล่างสูงราว 0.80–0.90 ม. ทำให้นั่งแล้วเห็นวิว ส่วนห้องน้ำใช้ขอบล่างสูง 1.50 ม. ขึ้นไปเพื่อความเป็นส่วนตัว","/tools/massing-studio/"],
+[0,"ชายคายาวคุ้มเรือน","ชายคายาวคุ้มฝนคุ้มแดด","บ้านไม่แผดร้อน คนในยิ้มได้","มีผู้ใหญ่หรือคนมีประสบการณ์คอยปกป้องคุณ อย่าลังเลที่จะขอคำปรึกษา","ชายคายื่นอย่างน้อย 1.00–1.20 ม. ช่วยกันฝนสาดและแดดเข้าผนังได้มาก สำหรับบ้านในเมืองร้อนชื้นอย่างไทย คุ้มกว่าการพึ่งแอร์อย่างเดียว","/services/"],
+[2,"ทางเดินคดเคี้ยว","ทางเดินในบ้านวกวน","เสียเวลาล้นทุกวันไม่รู้ตัว","ชีวิตช่วงนี้มีขั้นตอนเยอะเกินจำเป็น ลองตัดสิ่งที่ซ้ำซ้อนออก แล้วจะมีเวลาเหลือมากขึ้น","ครัว ซักล้าง และที่จอดรถควรอยู่ใกล้กัน ขนของจากรถเข้าครัวได้โดยไม่ต้องผ่านห้องรับแขก ผังที่ทางเดินสั้นใช้ง่ายและไม่เปลืองพื้นที่","/tools/schematic-planner/"],
+[1,"เสาเอกตั้งตรง","ตั้งเสาเอกด้วยใจมั่น","ทุกสิ่งพลันเป็นดั่งหวัง","เป็นช่วงเริ่มต้นที่ดี ถ้ากำลังคิดเรื่องสร้างบ้าน ต่อเติม หรือเริ่มงานใหม่ เตรียมแผนและงบให้ชัดก่อนลงมือ","ก่อนลงเสาเอก ควรมีแบบที่ได้รับอนุญาต ผังเสาจากวิศวกร และหมุดเขตที่ดินที่ตรวจแล้ว ตัวบ้านจะได้ไม่ล้ำแนวเขตหรือระยะร่น","/knowledge/permit-check/"],
+[2,"ฝนตกไม่ทั่วฟ้า","ฝนโปรยบางหย่อมบางที่","รออีกทีฟ้าจะเป็นใจ","บางเรื่องยังไม่ถึงเวลา อย่าฝืน ใช้ช่วงนี้เตรียมตัวให้พร้อม แล้วโอกาสจะมาเอง","ระดับพื้นชั้นล่างควรสูงกว่าถนนหน้าบ้าน และสูงกว่าระดับน้ำท่วมสูงสุดของย่านนั้น ถามเพื่อนบ้านเรื่องน้ำท่วมย้อนหลังก่อนกำหนดระดับ","/knowledge/site-checklist/"],
+[0,"เรือนใต้ถุนสูง","ใต้ถุนสูงลมพัดเย็น","น้ำหลากมาไม่หวั่นไหว","ปัญหาที่กังวลจะผ่านไปได้ เพราะคุณเตรียมตัวไว้ดีกว่าที่คิด ใช้ความรู้จากคนรุ่นก่อนให้เป็นประโยชน์","ใต้ถุนยกสูงช่วยระบายความชื้นและรับมือน้ำท่วม ภูมิปัญญานี้ปรับใช้กับบ้านสมัยใหม่ได้ เช่น ยกชั้นล่างเป็นที่จอดรถหรือลานนั่งเล่น","/stories/jamjuree-village/"],
+[1,"ครัวไฟลุกโชน","เตาไฟในครัวลุกโชน","ทำมาหากินรุ่งโรจน์มีเงินเข้า","รายได้กำลังดี แต่ระวังใช้จ่ายตามอารมณ์ ลองจดรายรับรายจ่ายสักเดือน แล้วจะเห็นเงินเหลือมากขึ้น","ครัวไทยที่ผัดทอดหนัก ควรแยกครัวร้อนไว้ติดผนังภายนอกหรือนอกตัวบ้าน มีหน้าต่างระบายควัน และเครื่องดูดควันที่ต่อท่อออกนอกอาคาร","/apps/tangluer/"],
+[3,"ต่อเติมเกินเขต","ต่อเติมเพลินจนลืมเส้น","เพื่อนบ้านเห็นจะเป็นความ","ระวังเรื่องที่ทำไปโดยไม่ถามความเห็นคนรอบข้าง คุยกันให้ชัดก่อนลงมือ จะได้ไม่บาดหมางทีหลัง","ผนังที่มีหน้าต่างหรือช่องเปิด ต้องห่างเขตที่ดินอย่างน้อย 2 ม. สำหรับอาคารสูงไม่เกิน 9 ม. ส่วนผนังทึบต้องห่างอย่างน้อย 0.50 ม. ถ้าจะชิดเขต ต้องได้รับความยินยอมจากเพื่อนบ้าน","/knowledge/permit-check/"],
+[1,"แสงจากหลังคา","แสงส่องลงจากฟ้า","กลางบ้านพาให้สว่างใจ","ความคิดสร้างสรรค์กำลังมา จดไอเดียที่ผุดขึ้นไว้ทุกครั้ง แล้วจะเจอเรื่องที่ต่อยอดได้","ช่องแสงหลังคาช่วยให้กลางบ้านสว่างโดยไม่ต้องเปิดไฟ แต่ควรใช้กระจกลดความร้อนหรือมีแผงบังแดด และเปิดระบายลมร้อนด้านบนได้","/tools/massing-studio/"],
+[2,"สีใหม่บ้านเก่า","ทาสีใหม่ให้บ้านเก่า","หัวใจเราก็พลอยสดใส","เรื่องเดิมที่เบื่อ ลองเปลี่ยนวิธีทำนิดเดียวก็รู้สึกใหม่ ไม่จำเป็นต้องรื้อทั้งหมด","สีอ่อนบนหลังคาและผนังด้านที่โดนแดดช่วยสะท้อนความร้อน งานรีโนเวทหลายงานแค่เปลี่ยนสี แสง และวัสดุพื้น ก็ได้บ้านที่รู้สึกใหม่ในงบไม่สูง","/knowledge/budget-estimate/"],
+[0,"บ้านอบอุ่นพร้อมหน้า","โต๊ะกินข้าวพร้อมหน้า","รอยยิ้มพาบ้านอบอุ่น","ครอบครัวคือพลังของคุณช่วงนี้ เวลาที่ใช้ร่วมกันจะให้ผลดีกว่าที่คิด ทั้งเรื่องใจและเรื่องงาน","วางโต๊ะกินข้าวให้มองเห็นครัวและห้องนั่งเล่น ทุกคนอยู่ในสายตากัน ผังแบบเปิดทำให้คนในบ้านคุยกันมากขึ้น","/knowledge/house-200-sqm/"],
+[1,"รั้วโปร่งเพื่อนมาก","รั้วโปร่งมองเห็นกัน","ไมตรีนั้นงอกงามรอบด้าน","ความเปิดเผยจะนำมิตรภาพและโอกาสใหม่มาให้ ลองแบ่งปันสิ่งที่คุณรู้ให้คนอื่นบ้าง","รั้วโปร่งบางส่วนช่วยให้ลมผ่านเข้าบ้าน และคนในบ้านมองเห็นถนน ช่วยเรื่องความปลอดภัย ต่างจากรั้วทึบสูงที่ทำให้บ้านอับลม","/village/"],
+[3,"งบบานปลาย","เปลี่ยนใจทีละนิดหน่อย","เงินก็ค่อยค่อยไหลหาย","ระวังค่าใช้จ่ายเล็กๆ ที่สะสมจนเป็นก้อนใหญ่ ตั้งงบให้ชัด และกันเงินสำรองไว้อีกส่วน","การเปลี่ยนแบบระหว่างก่อสร้างคือสาเหตุหลักที่งบบานปลาย สรุปแบบและรายการวัสดุให้ครบก่อนเซ็นสัญญาผู้รับเหมา และเผื่องบสำรองราว 10–15%","/knowledge/budget-estimate/"],
+[1,"ห้องนอนเงียบสงบ","ห้องนอนเงียบสงบเย็น","หลับเต็มตาตื่นมาสดใส","สุขภาพและการพักผ่อนสำคัญที่สุดช่วงนี้ นอนให้พอ แล้วงานที่ค้างจะคลี่คลายเอง","ห้องนอนไม่ควรติดผนังครัวหรือที่จอดรถ ถ้าเลี่ยงไม่ได้ ใช้ตู้เสื้อผ้าหรือผนังสองชั้นคั่นกันเสียง และวางเตียงไม่ให้โดนแดดบ่ายโดยตรง","/tools/schematic-planner/"],
+[2,"แบบยังไม่นิ่ง","แบบร่างยังขีดฆ่า","คิดอีกคราจึงลงตัว","ยังไม่ต้องรีบตัดสินใจเรื่องใหญ่ หาข้อมูลเพิ่มอีกนิด เปรียบเทียบให้รอบด้าน แล้วคำตอบจะชัดเอง","ตอนเป็นแบบร่าง การแก้ไขแทบไม่มีค่าใช้จ่าย แต่แก้ตอนก่อสร้างแพงมาก ใช้ช่วงออกแบบทดลองหลายทางเลือกให้เต็มที่","/knowledge/drawing-types/"],
+[0,"ฤกษ์ดีขึ้นบ้านใหม่","ฤกษ์งามยามดีมาถึง","สมใจที่พึงทุกประการ","เรื่องที่รอคอยกำลังจะสำเร็จ ช่วงนี้เหมาะกับการเริ่มต้นใหม่ ย้ายที่ หรือเปิดโครงการที่ตั้งใจไว้","ก่อนย้ายเข้าบ้านใหม่ ตรวจรับงานให้ครบทั้งระบบน้ำ ไฟ ประตูหน้าต่าง และรอยรั่วซึม จดรายการให้ผู้รับเหมาแก้ภายในระยะรับประกัน","/knowledge/home-inspection-checklist/"],
+[2,"ผังวนไปวนมา","วาดผังวนไปวนมา","หาที่ว่างก็ยังไม่เจอ","คุณกำลังพยายามใส่ทุกอย่างลงในที่เดียว เลือกสิ่งที่สำคัญที่สุดสามอย่างก่อน แล้วที่เหลือจะลงตัว","จัดลำดับความต้องการก่อนออกแบบ เช่น ห้องนอนกี่ห้อง ที่จอดรถกี่คัน ห้องพระหรือห้องทำงาน แล้วเทียบกับพื้นที่ที่สร้างได้จริงบนที่ดิน","/knowledge/design-fee-2569/"]
+];
+const TH="๐๑๒๓๔๕๖๗๘๙",thn=n=>String(n).replace(/\d/g,d=>TH[d]);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(){try{return JSON.parse(localStorage.getItem("arstinla-siamsi")||"[]")}catch(e){return[]}},set(v){try{localStorage.setItem("arstinla-siamsi",JSON.stringify(v))}catch(e){}}};
+let cur=-1,busy=false;
+const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),1800)};
+
+// sticks in the tube
+$("sticks").innerHTML=Array.from({length:15},(_,i)=>{const x=56+i*6.2,h=40+((i*37)%28),y=98-h;return`<rect x="${x.toFixed(1)}" y="${y}" width="5" height="${h+20}" rx="1.5" fill="url(#sg)" stroke="#b8975a" stroke-width=".4"/>`}).join("");
+
+function renderCol(){const got=store.get();$("col").innerHTML=`สะสมแล้ว <b>${got.length}</b> / 28 ใบ<div class="grid">${S.map((_,i)=>`<span class="${got.includes(i+1)?"got":""}" data-n="${i+1}" title="ใบที่ ${i+1}">${i+1}</span>`).join("")}</div>`}
+$("col").addEventListener("click",e=>{const s=e.target.closest(".got");if(s){show(+s.dataset.n-1,true)}});
+
+function show(i,scroll){cur=i;const[l,t,v1,v2,h,tip,href]=S[i],n=i+1;
+  const el=$("slip");el.hidden=false;el.classList.remove("show");
+  el.innerHTML=`<div class="slip-head"><div class="no">ใบที่<big>${thn(n)}</big></div><span class="lvl l${l}">${LV[l]}</span><h2>${esc(t)}</h2><p class="verse">${esc(v1)}<br>${esc(v2)}</p></div>
+  <div class="sec"><h3>เรื่องบ้านและชีวิต</h3><p>${esc(h)}</p></div>
+  <div class="sec"><h3>เคล็ดออกแบบจากสถาปนิก</h3><p>${esc(tip)}</p></div>
+  <div class="sec"><h3>อ่านต่อ</h3><p><a href="${href}">${esc(LINKS[href]||href)} →</a></p></div>
+  <div class="slip-foot"><button class="btn small" type="button" id="saveImg">บันทึกเป็นรูป</button><button class="btn small out" type="button" id="shareBtn">แชร์ใบนี้</button><a class="btn small line" id="lineBtn" target="_blank" rel="noopener" href="https://line.me/R/oaMessage/%40arstinla/?${encodeURIComponent(`สวัสดีครับ ผมได้เซียมซีบ้านใบที่ ${n} "${t}" จากเว็บ arstinla.com อยากปรึกษาเรื่องบ้านครับ`)}">ปรึกษาสถาปนิกทาง LINE</a><button class="btn small out" type="button" id="againBtn">เขย่าอีกครั้ง</button></div>`;
+  requestAnimationFrame(()=>el.classList.add("show"));
+  try{history.replaceState(null,"","?n="+n)}catch(e){}
+  $("saveImg").onclick=saveImage;$("shareBtn").onclick=share;$("againBtn").onclick=()=>{window.scrollTo({top:$("stage").offsetTop-40,behavior:"smooth"});setTimeout(draw,350)};
+  if(scroll)setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),60)}
+
+function draw(){if(busy)return;busy=true;$("shakeBtn").disabled=true;
+  const st=$("stage");st.classList.remove("out");st.classList.add("shaking");$("hint").textContent="กำลังเขย่า… ตั้งจิตไว้";
+  if(navigator.vibrate)try{navigator.vibrate([40,60,40,60,40])}catch(e){}
+  let i;do{i=Math.floor(Math.random()*S.length)}while(i===cur&&S.length>1);
+  setTimeout(()=>{st.classList.remove("shaking");$("dropNo").textContent=thn(i+1);void st.offsetWidth;st.classList.add("out");$("hint").textContent=`ไม้เซียมซีหมายเลข ${i+1} ตกออกมาแล้ว`;
+    setTimeout(()=>{const got=store.get();if(!got.includes(i+1)){got.push(i+1);store.set(got)}renderCol();show(i,true);busy=false;$("shakeBtn").disabled=false},1000)},1600)}
+$("shakeBtn").onclick=draw;$("tubeBtn").onclick=draw;
+
+// shake the phone
+let motionOn=false,lastShake=0;
+function onMotion(e){const a=e.accelerationIncludingGravity||e.acceleration;if(!a)return;const m=Math.hypot(a.x||0,a.y||0,a.z||0);const now=Date.now();if(m>24&&now-lastShake>2500){lastShake=now;draw()}}
+function enableMotion(){if(motionOn)return;motionOn=true;window.addEventListener("devicemotion",onMotion);$("motionBtn").hidden=true;$("hint").textContent="เขย่ามือถือได้เลย";}
+if("DeviceMotionEvent" in window&&matchMedia("(pointer:coarse)").matches){
+  if(typeof DeviceMotionEvent.requestPermission==="function"){$("motionBtn").hidden=false;$("motionBtn").onclick=()=>DeviceMotionEvent.requestPermission().then(r=>{if(r==="granted")enableMotion();else toast("ไม่ได้รับอนุญาต ใช้ปุ่มเขย่าแทนได้")}).catch(()=>toast("ใช้ปุ่มเขย่าแทนได้"))}
+  else enableMotion()}
+
+function share(){const[,t]=S[cur],n=cur+1,url=`https://www.arstinla.com/siamsi/?n=${n}`,text=`เซียมซีบ้านใบที่ ${n} "${t}" · ลองเขย่าของคุณดู`;
+  if(navigator.share){navigator.share({title:"เซียมซีบ้าน ARSTINLA",text,url}).catch(()=>{});return}
+  window.open("https://social-plugins.line.me/lineit/share?url="+encodeURIComponent(url),"_blank","noopener")}
+
+// card image
+function lines(ctx,text,maxW){let segs;try{segs=[...new Intl.Segmenter("th",{granularity:"word"}).segment(text)].map(s=>s.segment)}catch(e){segs=[...text]}
+  const out=[];let line="";for(const s of segs){const t=line+s;if(ctx.measureText(t).width>maxW&&line){out.push(line.trimEnd());line=s.trimStart()}else line=t}if(line)out.push(line);return out}
+async function saveImage(){const b=$("saveImg");b.disabled=true;try{await document.fonts.ready;
+  const[l,t,v1,v2,h,tip]=S[cur],n=cur+1,c=$("cv"),x=c.getContext("2d"),W=1080,H=1350,F='"IBM Plex Sans Thai",sans-serif';
+  x.fillStyle="#F3F0E8";x.fillRect(0,0,W,H);x.fillStyle="#FAF8F3";x.fillRect(60,60,W-120,H-120);
+  x.strokeStyle="#1E1C18";x.lineWidth=3;x.strokeRect(60,60,W-120,H-120);x.strokeStyle="rgba(92,87,77,.35)";x.lineWidth=1.5;x.strokeRect(78,78,W-156,H-156);
+  x.textAlign="center";x.fillStyle="#8A8477";x.font=`500 26px "IBM Plex Mono",monospace`;x.fillText("ARSTINLA · เซียมซีบ้าน",W/2,150);
+  x.fillStyle="#9b2f22";x.font=`500 150px ${F}`;x.fillText(thn(n),W/2,320);
+  const lc=["#b8862f","#2e7d4f","#5c574d","#a3341f"][l];x.font=`600 30px ${F}`;const tw=x.measureText(LV[l]).width+50;x.fillStyle=lc;x.fillRect(W/2-tw/2,355,tw,52);x.fillStyle="#fff";x.fillText(LV[l],W/2,392);
+  x.fillStyle="#1E1C18";x.font=`600 62px ${F}`;x.fillText(t,W/2,500);
+  x.fillStyle="#5C574D";x.font=`400 38px ${F}`;x.fillText(v1,W/2,580);x.fillText(v2,W/2,636);
+  x.strokeStyle="rgba(92,87,77,.3)";x.beginPath();x.moveTo(140,690);x.lineTo(W-140,690);x.stroke();
+  x.textAlign="left";let y=750;
+  const block=(head,body)=>{x.fillStyle="#A65335";x.font=`500 24px "IBM Plex Mono",monospace`;x.fillText(head,140,y);y+=48;x.fillStyle="#1E1C18";x.font=`400 31px ${F}`;for(const ln of lines(x,body,W-280)){x.fillText(ln,140,y);y+=48}y+=28};
+  block("เรื่องบ้านและชีวิต",h);block("เคล็ดออกแบบจากสถาปนิก",tip);
+  x.textAlign="center";x.fillStyle="#8A8477";x.font=`500 26px "IBM Plex Mono",monospace`;x.fillText("www.arstinla.com/siamsi",W/2,H-110);
+  const blob=await new Promise(r=>c.toBlob(r,"image/png")),name=`siamsi-${n}.png`,file=new File([blob],name,{type:"image/png"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})&&matchMedia("(pointer:coarse)").matches){await navigator.share({files:[file],title:"เซียมซีบ้าน"}).catch(()=>{})}
+  else{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast("บันทึกรูปแล้ว")}
+ }catch(e){toast("บันทึกรูปไม่สำเร็จ")}b.disabled=false}
+
+renderCol();
+const q=+new URLSearchParams(location.search).get("n");if(q>=1&&q<=S.length){show(q-1,false);$("hint").textContent="นี่คือใบที่มีคนแชร์มา ลองเขย่าของคุณเองดู"}
+})();
+</script>
+</body>
+</html>
