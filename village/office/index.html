@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Pixelify+Sans:wght@500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--muted:#6b6b63;--line:rgba(23,24,22,.16);--night:#1d1f2b}
+:root{--black:#171816;--cream:#f3f0e8;--paper:#e9e5dc;--orange:#c36b48;--muted:#6b6b63;--line:rgba(23,24,22,.16);--night:#2a2a2d}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--black);font:15px/1.65 "IBM Plex Sans Thai",system-ui,sans-serif}
 a{color:inherit}
@@ -77,7 +77,7 @@ canvas{display:block;width:100%;height:auto;image-rendering:pixelated;image-rend
     </section>
     <aside class="panel">
       <h2>ทีมงานในออฟฟิศ</h2>
-      <p class="sub">6 คน · หัวหน้า 1 + ผู้ช่วย AI 5</p>
+      <p class="sub">6 คน · หัวหน้า 1 + ผู้ช่วย AI 5 · มีแมวกับหมาประจำออฟฟิศด้วย</p>
       <ul class="staff" id="staff"></ul>
       <p class="note">ออฟฟิศนี้เป็นภาพจำลอง ตัวละครทำกิจกรรมแบบสุ่ม ยังไม่ได้เชื่อมกับงานจริง</p>
     </aside>
@@ -98,22 +98,22 @@ const block=(x0,y0,w,h)=>{for(let y=y0;y<y0+h;y++)for(let x=x0;x<x0+w;x++)solid[
 open(1,3,22,22);open(24,3,38,14);open(24,16,38,22);open(23,11,23,13);open(30,15,32,15);
 
 // ---------- floors & walls ----------
-R("#141522",0,0,W,H);
+R("#5e5e60",0,0,W,H);
 // wood planks (work room)
-for(let y=3;y<=22;y++)for(let x=1;x<=22;x++){const px=x*T,py=y*T,alt=(y%2)?8:0;R("#a8683e",px,py,T,T);R("#b77846",px,py,T,7);R("#9a5d36",px,py+15,T,1);R("#8f5532",px+((x*7+alt)%16),py,1,T)}
+for(let y=3;y<=22;y++)for(let x=1;x<=22;x++){const px=x*T,py=y*T,alt=(y%2)?8:0;R("#1b1b1d",px,py,T,T);R("#2b2b2e",px+1,py+1,T-2,T-2);R("#313134",px+1,py+1,T-2,1)}
 // carpet (lounge)
-for(let y=3;y<=14;y++)for(let x=24;x<=38;x++){R("#4b6aa3",x*T,y*T,T,T);if((x+y)%3===0)R("#5274ad",x*T+5,y*T+6,2,2)}
+for(let y=3;y<=14;y++)for(let x=24;x<=38;x++){R("#1b1b1d",x*T,y*T,T,T);R("#2b2b2e",x*T+1,y*T+1,T-2,T-2);R("#313134",x*T+1,y*T+1,T-2,1)}
 // checker (kitchen)
 for(let y=16;y<=22;y++)for(let x=24;x<=38;x++){R(((x+y)%2)?"#f0efe9":"#2b2b31",x*T,y*T,T,T)}
 // doors
-for(let y=11;y<=13;y++)R("#8a6a52",23*T,y*T,T,T);for(let x=30;x<=32;x++)R("#c9c4b6",x*T,15*T,T,T);
+for(let y=11;y<=13;y++){R("#1b1b1d",23*T,y*T,T,T);R("#2b2b2e",23*T+1,y*T+1,T-2,T-2)}for(let x=30;x<=32;x++)R("#c9c4b6",x*T,15*T,T,T);
 // top wall face
 const wallFace=(x0,x1,c,trim)=>{R(c,x0*T,1*T,(x1-x0+1)*T,2*T);R(trim,x0*T,3*T-3,(x1-x0+1)*T,3)};
-wallFace(1,22,"#2d3350","#1d2238");wallFace(24,38,"#2b3048","#1d2238");
-R("#2b3048",24*T,15*T-6,15*T,6);R("#1d2238",24*T,15*T,6*T,T);R("#1d2238",33*T,15*T,6*T,T);R("#2b3048",24*T,15*T,6*T,7);R("#2b3048",33*T,15*T,6*T,7);
+wallFace(1,22,"#9a9a9c","#6e6e70");wallFace(24,38,"#9a9a9c","#6e6e70");
+R("#8a8a8c",24*T,15*T-6,15*T,6);R("#6e6e70",24*T,15*T,6*T,T);R("#6e6e70",33*T,15*T,6*T,T);R("#8a8a8c",24*T,15*T,6*T,7);R("#8a8a8c",33*T,15*T,6*T,7);
 // partition walls
-R("#1d2238",23*T,1*T,T,10*T);R("#1d2238",23*T,14*T,T,9*T);R("#2b3048",23*T+3,14*T,T-6,9*T);R("#2b3048",23*T+3,1*T,T-6,10*T);
-R("#1d2238",0,23*T,W,T);R("#262b44",0,0,W,T);
+R("#6e6e70",23*T,1*T,T,10*T);R("#6e6e70",23*T,14*T,T,9*T);R("#8a8a8c",23*T+3,14*T,T-6,9*T);R("#8a8a8c",23*T+3,1*T,T-6,10*T);
+R("#6e6e70",0,23*T,W,T);R("#6e6e70",0,0,W,T);
 // ---------- decor helpers ----------
 function shelf(x,y){const px=x*T,py=y*T;R("#5a3a24",px,py,64,22);R("#3f2818",px,py+10,64,2);R("#3f2818",px,py+20,64,2);
   const cols=["#c94b3b","#e8c75a","#4f8fbf","#6bb36b","#f1efe6","#9b6ac9","#e58a3a"];for(let i=0;i<14;i++){R(cols[(i*3)%7],px+3+i*4,py+2+(i%3),3,8-(i%3));R(cols[(i*5+2)%7],px+3+i*4,py+12+(i%2),3,8-(i%2))}}
@@ -148,7 +148,7 @@ R("#7b4a2c",boss[0]*T+33,boss[1]*T+T*2+3,14,9);R("#5d3720",boss[0]*T+33,boss[1]*
 // plotter
 (()=>{const px=17*T,py=20*T;R("#d8dbe6",px,py,4*T,T+4);R("#9aa0b3",px,py+T+4,4*T,4);R("#2a2f45",px+6,py+4,4*T-12,4);R("#f6f3e8",px+10,py+14,4*T-20,10);R("#3fd17c",px+4*T-8,py+3,3,3);block(17,20,4,2)})();
 // lounge sofas & tables
-function sofa(x,y,w,dir){const px=x*T,py=y*T,c="#b8344a",d="#8f2438";if(dir==="h"){R(d,px,py,w*T,T);R(c,px+2,py+2,w*T-4,T-6);R(d,px,py+T-4,w*T,4)}else{R(d,px,py,T,w*T);R(c,px+3,py+2,T-6,w*T-4)}block(x,y,dir==="h"?w:1,dir==="h"?1:w)}
+function sofa(x,y,w,dir){const px=x*T,py=y*T,c=dir==="h"?"#1f45c4":"#e0662e",d=dir==="h"?"#132f8f":"#a8461c";if(dir==="h"){R(d,px,py,w*T,T);R(c,px+2,py+2,w*T-4,T-6);R(d,px,py+T-4,w*T,4)}else{R(d,px,py,T,w*T);R(c,px+3,py+2,T-6,w*T-4)}block(x,y,dir==="h"?w:1,dir==="h"?1:w)}
 sofa(28,5,5,"h");sofa(28,10,5,"h");sofa(26,7,2,"v");sofa(34,7,2,"v");
 (()=>{const px=29*T,py=7*T;R("#c8955c",px+2,py+2,3*T-4,2*T-4);R("#e2b47a",px+2,py+2,3*T-4,4);R("#f1efe6",px+20,py+12,6,6);R("#7a4a2c",px+22,py+14,2,2);block(29,7,3,2)})();
 R("#2b2b31",36*T,3*T,2*T,T);R("#3a3f5c",36*T+2,3*T-14,2*T-4,14);R("#7fb6ff",36*T+4,3*T-12,2*T-8,10);block(36,3,2,1);
@@ -158,7 +158,7 @@ R("#2b2b31",36*T,3*T,2*T,T);R("#3a3f5c",36*T+2,3*T-14,2*T-4,14);R("#7fb6ff",36*T
   R("#c8955c",33*T,19*T,2*T,2*T-4);R("#e2b47a",33*T,19*T,2*T,4);block(33,19,2,2);R("#7b5534",32*T+3,20*T+2,10,9);R("#7b5534",35*T+3,20*T+2,10,9);
   R("#cfe8f5",25*T+3,21*T-10,10,12);R("#e9ecf2",25*T+2,21*T+2,12,13);block(25,21,1,1)})();
 // rug outline in lounge
-b.strokeStyle="rgba(255,255,255,.18)";b.strokeRect(27*T+.5,4*T+.5,7*T,6*T);
+
 
 // ---------- characters ----------
 const SKIN=["#f1c7a1","#d9a27a","#b97a52","#8a5a3b"];
@@ -243,12 +243,22 @@ function setFocus(id){focus=focus===id?null:id;const s=STAFF.find(x=>x.id===id);
 cv.addEventListener("click",e=>{const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*W/r.width,y=(e.clientY-r.top)*H/r.height;let best=null,bd=1e9;STAFF.forEach(s=>{const d=Math.hypot(s.x-x,(s.y-12)-y);if(d<bd){bd=d;best=s}});if(best&&bd<22)setFocus(best.id)});
 document.getElementById("meet").onclick=meeting;document.getElementById("brk").onclick=coffeeBreak;
 
+// ---------- pets ----------
+const PETS=[{kind:"cat",x:12*T,y:9*T,path:[],t:2,dir:"right",frame:0},{kind:"dog",x:20*T,y:13*T,path:[],t:4,dir:"left",frame:0}];
+function petWander(p){for(let i=0;i<20;i++){const x=1+Math.floor(Math.random()*37),y=3+Math.floor(Math.random()*19);if(!solid[y][x]){p.path=bfs(Math.floor(p.x/T),Math.floor((p.y-1)/T),x,y);if(p.path.length)return}}}
+function petStep(p,dt){p.frame+=dt*8;if(p.path.length){const[nx,ny]=p.path[0],gx=nx*T+T/2,gy=ny*T+T-2,dx=gx-p.x,dy=gy-p.y,d=Math.hypot(dx,dy),sp=(p.kind==="cat"?34:40)*dt;if(dx)p.dir=dx>0?"right":"left";if(d<=sp){p.x=gx;p.y=gy;p.path.shift();if(!p.path.length)p.t=3+Math.random()*7}else{p.x+=dx/d*sp;p.y+=dy/d*sp}return}p.t-=dt;if(p.t<=0)petWander(p)}
+function drawPet(g,p){const f=p.dir==="left"?-1:1,X=p.x,Y=p.y,mv=p.path.length&&(Math.floor(p.frame)%2),P=(c,x,y,w,h)=>{g.fillStyle=c;g.fillRect(Math.round(X+(f>0?x:-x-w)),Math.round(Y+y),w,h)};
+  P("rgba(0,0,0,.25)",-6,-1,12,2);
+  if(p.kind==="cat"){const c="#4a4a52",e="#5c5c66";P(c,-5,-6,9,4);P(c,-5,-2,2,2-(mv?1:0));P(c,2,-2,2,2-(mv?0:1));P(c,4,-9,5,5);P(c,4,-10,1,1);P(c,8,-10,1,1);P("#e7d36a",7,-8,1,1);P("#e58aa0",8,-6,1,1);P(e,-7,-9,2,4);P(e,-8,-11,2,2);P(e,-4,-6,7,1)}
+  else{const c="#c98a47",w="#f3e2c6",d="#8c5a2b";P(c,-6,-8,11,5);P(w,-4,-4,7,1);P(c,-6,-3,2,3-(mv?1:0));P(c,3,-3,2,3-(mv?0:1));P(c,4,-13,6,6);P(w,6,-9,4,2);P("#1b1b1b",9,-9,1,1);P("#1b1b1b",7,-11,1,1);P(d,4,-15,2,2);P(d,8,-15,2,2);P(c,-8,-11,2,3);P(c,-9,-12,2,2)}}
+
 // ---------- loop ----------
 let last=performance.now(),mins=9*60;
 const clock=document.getElementById("clock");
 const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 function step(dt){
   mins+=dt*2;if(mins>=18*60)mins=9*60;clock.textContent="ARSTINLA-OFFICE · "+String(Math.floor(mins/60)).padStart(2,"0")+":"+String(Math.floor(mins%60)).padStart(2,"0");
+  PETS.forEach(p=>petStep(p,dt));
   STAFF.forEach(s=>{s.frame+=dt*6;if(s.sayT>0)s.sayT-=dt;
     if(s.path.length){const[nx,ny]=s.path[0],gx=nx*T+T/2,gy=ny*T+T,dx=gx-s.x,dy=gy-s.y,dist=Math.hypot(dx,dy),sp=46*dt;
       if(Math.abs(dx)>Math.abs(dy))s.dir=dx>0?"right":"left";else if(dy)s.dir=dy>0?"down":"up";
@@ -258,7 +268,7 @@ function step(dt){
   })}
 function draw(){
   ctx.drawImage(bg,0,0);
-  [...STAFF].sort((a,b)=>a.y-b.y).forEach(s=>{const lift=s.sit&&!s.path.length&&s.dir==="up"?-2:0;drawChar(ctx,s,s.x,s.y+lift,1);
+  PETS.forEach(p=>drawPet(ctx,p));[...STAFF].sort((a,b)=>a.y-b.y).forEach(s=>{const lift=s.sit&&!s.path.length&&s.dir==="up"?-2:0;drawChar(ctx,s,s.x,s.y+lift,1);
     if(s.state==="work"&&!s.path.length&&s.sit){const on=Math.floor(s.frame)%3;ctx.fillStyle="#fff";for(let i=0;i<3;i++)if(i<=on)ctx.fillRect(Math.round(s.x)-4+i*3,Math.round(s.y)-30,2,2)}
     if(focus===s.id){ctx.strokeStyle="#e7b25a";ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(s.x,s.y,9,3.5,0,0,Math.PI*2);ctx.stroke()}});
   const sc=stage.clientWidth/W;
