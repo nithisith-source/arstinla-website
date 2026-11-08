@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ตู้กาชาปุยปุย | ARSTINLA Play &amp; Learn</title>
+<meta name="description" content="เกมกดตู้กาชาสำหรับเด็ก ลุ้นน้องปุย 5 ตัว สะสมให้ครบ เล่นฟรีบน ARSTINLA">
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+  html,body{margin:0;min-height:100%}
+  body{font-family:'Mali',system-ui,sans-serif;color:#4a3b5c;
+    background:radial-gradient(circle at 20% 10%,#fff4fb 0,transparent 40%),radial-gradient(circle at 90% 30%,#eaf4ff 0,transparent 45%),linear-gradient(180deg,#fdeefe,#e9f0ff);
+    display:flex;flex-direction:column;align-items:center;padding:16px 12px 40px;overflow-x:hidden}
+  .home{align-self:flex-start;font-size:13px;color:#8a76a8;text-decoration:none;background:rgba(255,255,255,.7);padding:4px 12px;border-radius:12px;margin-bottom:6px}
+  h1{margin:4px 0 2px;font-size:28px;color:#e2579b;text-shadow:0 2px 0 #fff,0 4px 0 #f9c7df;letter-spacing:.5px}
+  .sub{margin:0 0 14px;font-size:15px;color:#8a76a8}
+
+  /* ---------- machine ---------- */
+  .machine{position:relative;width:300px;max-width:88vw;display:flex;flex-direction:column;align-items:center}
+  .topcap{width:58%;height:26px;background:linear-gradient(#ff8fc2,#e85d9f);border-radius:20px 20px 6px 6px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
+  .dome{position:relative;width:100%;aspect-ratio:1/0.92;border-radius:46% 46% 14px 14px;
+    background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.95) 0,rgba(255,255,255,.35) 18%,rgba(220,235,255,.25) 45%,rgba(200,220,255,.4) 100%);
+    border:6px solid #fff;box-shadow:0 0 0 4px #f7b6d6,inset 0 -18px 30px rgba(160,180,255,.25);overflow:hidden}
+  .dome .cap{position:absolute;width:31%;transition:transform .3s}
+  .dome.shake .cap{animation:jiggle .16s infinite alternate}
+  @keyframes jiggle{from{transform:translate(-4px,2px) rotate(-8deg)}to{transform:translate(4px,-6px) rotate(8deg)}}
+  .idle{animation:bob 2.6s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-3px) rotate(3deg)}}
+  .glare{position:absolute;left:12%;top:8%;width:22%;height:40%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,0));transform:rotate(18deg);pointer-events:none}
+
+  .base{position:relative;width:100%;height:190px;margin-top:-4px;background:linear-gradient(180deg,#ff9ccb,#ef6aa8);border-radius:10px 10px 26px 26px;
+    box-shadow:inset 0 6px 0 rgba(255,255,255,.35),inset 0 -8px 0 rgba(0,0,0,.08),0 10px 24px rgba(226,87,155,.3)}
+  .label{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:#fff;color:#e2579b;font-weight:700;padding:3px 14px;border-radius:12px;font-size:14px;white-space:nowrap}
+  .knob{position:absolute;left:18px;top:52px;width:96px;height:96px;border-radius:50%;border:none;padding:0;cursor:pointer;
+    background:radial-gradient(circle at 35% 30%,#fff8b0,#ffd23f 55%,#f0a500);box-shadow:0 6px 0 #c98500,0 10px 18px rgba(0,0,0,.18);transition:transform .1s}
+  .knob:active{transform:translateY(3px);box-shadow:0 3px 0 #c98500}
+  .knob .bar{position:absolute;left:50%;top:50%;width:78%;height:22px;margin:-11px 0 0 -39%;border-radius:12px;background:linear-gradient(#fffbe0,#ffe27a);box-shadow:0 2px 0 #d99c00;transition:transform .9s cubic-bezier(.3,1.4,.5,1)}
+  .knob .txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#b35c00;z-index:2;pointer-events:none}
+  .knob.busy{filter:grayscale(.4) brightness(.95);pointer-events:none}
+  .tap-hint{position:absolute;left:30px;top:150px;font-size:13px;color:#fff;font-weight:700;animation:pulse 1.2s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+
+  .chute{position:absolute;right:18px;top:52px;width:130px;height:118px;border-radius:18px;background:#7a3b6b;box-shadow:inset 0 10px 18px rgba(0,0,0,.45);overflow:hidden}
+  .chute .flap{position:absolute;left:0;right:0;top:0;height:26px;background:linear-gradient(#ffc0de,#f5a1c9);border-radius:18px 18px 4px 4px;opacity:.85}
+  .outcap{position:absolute;left:50%;bottom:6px;width:86px;margin-left:-43px;cursor:pointer;display:none}
+  .outcap.show{display:block;animation:drop .9s cubic-bezier(.3,.0,.4,1) both}
+  .outcap.ready{animation:wobble 1s ease-in-out infinite}
+  @keyframes drop{0%{transform:translateY(-140px)}55%{transform:translateY(0)}70%{transform:translateY(-22px)}85%{transform:translateY(0)}92%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+  @keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+  .chute-hint{position:absolute;left:0;right:0;bottom:-24px;text-align:center;color:#fff;font-size:13px;font-weight:700}
+
+  .legs{display:flex;justify-content:space-between;width:80%}
+  .legs span{width:30px;height:14px;background:#e2579b;border-radius:0 0 10px 10px}
+
+  /* ---------- collection ---------- */
+  .shelf{margin-top:22px;width:340px;max-width:94vw;background:rgba(255,255,255,.7);border-radius:22px;padding:12px 12px 14px;box-shadow:0 6px 18px rgba(150,120,200,.15)}
+  .shelf h2{margin:0 0 8px;font-size:17px;display:flex;justify-content:space-between;align-items:center}
+  .shelf h2 small{font-size:13px;color:#a08cc0;font-weight:500}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .slot{position:relative;aspect-ratio:1;border-radius:14px;background:#f4eefc;display:flex;align-items:center;justify-content:center;font-size:22px;color:#c9b8e4;font-weight:700}
+  .slot svg{width:92%;height:92%}
+  .slot .n{position:absolute;right:3px;bottom:1px;font-size:11px;background:#fff;color:#e2579b;border-radius:8px;padding:0 5px}
+  .slot.rare{background:linear-gradient(135deg,#ffe3f1,#e3f3ff,#fff6d6)}
+  .total{margin-top:8px;font-size:13px;color:#8a76a8;display:flex;justify-content:space-between;align-items:center}
+  .reset{border:none;background:#efe6fa;color:#8a76a8;font-family:inherit;font-size:12px;padding:4px 10px;border-radius:10px;cursor:pointer}
+
+  /* ---------- reveal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(74,59,92,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:10;padding:20px}
+  .overlay.on{display:flex}
+  .card{position:relative;width:320px;max-width:92vw;background:#fff;border-radius:30px;padding:18px 16px 20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:popin .35s cubic-bezier(.3,1.5,.5,1)}
+  @keyframes popin{from{transform:scale(.6);opacity:0}}
+  .stage{position:relative;height:230px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .half{position:absolute;width:190px;left:50%;top:50%;margin:-95px 0 0 -95px;z-index:3;transition:transform .7s cubic-bezier(.3,1.2,.5,1),opacity .7s}
+  .half.t{clip-path:inset(0 0 50% 0)}
+  .half.b{clip-path:inset(50% 0 0 0)}
+  .stage.shake .half{animation:jiggle .12s infinite alternate}
+  .stage.open .half.t{transform:translate(-40px,-150px) rotate(-35deg);opacity:0}
+  .stage.open .half.b{transform:translate(30px,140px) rotate(25deg);opacity:0}
+  .critter{width:200px;transform:scale(0);transition:transform .6s cubic-bezier(.3,1.6,.5,1) .15s;z-index:2}
+  .stage.open .critter{transform:scale(1)}
+  .stage.open .critter svg{animation:happy 1.4s ease-in-out .8s infinite}
+  @keyframes happy{50%{transform:translateY(-8px) rotate(-3deg)}}
+  .rays{position:absolute;width:260px;height:260px;border-radius:50%;opacity:0;transition:opacity .5s;background:repeating-conic-gradient(rgba(255,214,90,.35) 0 12deg,transparent 12deg 30deg);animation:spin 8s linear infinite}
+  .stage.open .rays{opacity:1}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .msg{min-height:84px}
+  .msg .hint{font-size:20px;font-weight:700;color:#e2579b;margin-top:6px;animation:pulse 1.2s infinite}
+  .msg .name{font-size:24px;font-weight:700;margin:4px 0 0}
+  .msg .stars{font-size:22px;letter-spacing:2px;color:#ffc02e}
+  .msg .new{display:inline-block;background:#ff5c9d;color:#fff;font-size:13px;padding:1px 10px;border-radius:10px;margin-left:4px;vertical-align:middle}
+  .btn{margin-top:10px;border:none;font-family:inherit;font-weight:700;font-size:18px;color:#fff;background:linear-gradient(#7fc8ff,#4a9cf0);padding:10px 26px;border-radius:18px;box-shadow:0 5px 0 #2f78c7;cursor:pointer;display:none}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #2f78c7}
+  .btn.on{display:inline-block}
+
+  .confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:20;pointer-events:none;border-radius:3px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+  .sparkle{position:absolute;font-size:22px;pointer-events:none;z-index:4;animation:spark .9s ease-out forwards}
+  @keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+</style>
+</head>
+<body>
+
+<!-- shared SVG filters -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="fur" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="furSoft" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="8" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <linearGradient id="rainbow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffa3c8"/><stop offset=".33" stop-color="#ffe08a"/>
+      <stop offset=".66" stop-color="#a8e6c8"/><stop offset="1" stop-color="#a9c8ff"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<a class="home" href="/">← ARSTINLA</a>
+<h1>ตู้กาชาปุยปุย</h1>
+<p class="sub">กดปุ่มเหลือง แล้วลุ้นว่าจะได้น้องตัวไหน!</p>
+
+<div class="machine">
+  <div class="topcap"></div>
+  <div class="dome" id="dome"><div class="glare"></div></div>
+  <div class="base">
+    <div class="label">ตัวละ 1 ครั้ง ✨</div>
+    <button class="knob" id="knob" aria-label="หมุน"><div class="bar" id="bar"></div><div class="txt">กด!</div></button>
+    <div class="tap-hint" id="tapHint">👆 กดตรงนี้</div>
+    <div class="chute"><div class="flap"></div><div class="outcap" id="outcap"></div></div>
+    <div class="chute-hint" id="chuteHint" style="right:18px;left:auto;width:130px;bottom:2px"></div>
+  </div>
+  <div class="legs"><span></span><span></span></div>
+</div>
+
+<div class="shelf">
+  <h2>กล่องสะสมของหนู <small id="found">0/5</small></h2>
+  <div class="grid" id="grid"></div>
+  <div class="total"><span id="total">จับไปแล้ว 0 ครั้ง</span><button class="reset" id="reset">เริ่มใหม่</button></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="card">
+    <div class="stage" id="stage">
+      <div class="rays"></div>
+      <div class="critter" id="critter"></div>
+      <div class="half t" id="halfT"></div>
+      <div class="half b" id="halfB"></div>
+    </div>
+    <div class="msg" id="msg"></div>
+    <button class="btn" id="keep">เก็บเข้ากล่อง 🎁</button>
+  </div>
+</div>
+
+<script>
+const KINDS = [
+  {id:'pink',  name:'น้องชมพูปุย', fur:'#f9a8c8', dark:'#e97fab', stars:1, weight:30, crown:['#ffe27a','#b9a3ff','#a6e3c4']},
+  {id:'blue',  name:'น้องฟ้าใส',   fur:'#9cc6f5', dark:'#6fa3e3', stars:1, weight:30, crown:['#ffb3d1','#fff08a','#c8a8ff']},
+  {id:'purple',name:'น้องม่วงละมุน',fur:'#c9b0ec', dark:'#a68bd9', stars:2, weight:22, crown:['#ffc4dd','#a6e3c4','#fff08a']},
+  {id:'mint',  name:'น้องมิ้นต์',   fur:'#a6e3c8', dark:'#74c9a6', stars:2, weight:12, crown:['#ffb3d1','#c8a8ff','#ffe27a']},
+  {id:'rainbow',name:'น้องรุ้งวิเศษ',fur:'url(#rainbow)', dark:'#f0a8d0', stars:3, weight:6, rare:true, crown:['#ff8fbf','#ffd23f','#7fc8ff']},
+];
+const DOME_COLORS = ['pink','blue','purple','mint','pink','blue','purple','blue','pink','mint','purple','rainbow'];
+
+/* ---------- drawings ---------- */
+function capsuleSVG(k){
+  const fur = k.fur;
+  return `<svg viewBox="0 0 100 100" style="display:block;width:100%;overflow:visible">
+    <circle cx="50" cy="50" r="46" fill="${fur}" filter="url(#fur)"/>
+    <path d="M10 62 Q40 40 90 58 L90 72 Q45 58 12 76Z" fill="#fff" opacity=".85" filter="url(#furSoft)"/>
+    <g filter="url(#furSoft)">
+      <circle cx="28" cy="30" r="3.2" fill="${k.crown[0]}"/><circle cx="35" cy="26" r="3" fill="${k.crown[1]}"/>
+      <circle cx="42" cy="24" r="3.2" fill="${k.crown[2]}"/><circle cx="22" cy="36" r="2.6" fill="${k.crown[1]}"/>
+    </g>
+    <circle cx="50" cy="50" r="47" fill="rgba(235,242,255,.28)" stroke="rgba(255,255,255,.95)" stroke-width="2.5"/>
+    <path d="M4 48 Q50 56 96 48" stroke="rgba(255,255,255,.95)" stroke-width="2" fill="none"/>
+    <path d="M18 28 Q28 12 46 9" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".9"/>
+    <circle cx="74" cy="76" r="4" fill="#fff" opacity=".7"/>
+  </svg>`;
+}
+function critterSVG(k, small){
+  const f = k.fur;
+  return `<svg viewBox="0 0 200 200" style="display:block;width:100%;overflow:visible">
+    <ellipse cx="100" cy="186" rx="58" ry="8" fill="rgba(0,0,0,.08)"/>
+    <ellipse cx="52" cy="58" rx="20" ry="26" fill="${f}" filter="url(#fur)" transform="rotate(-25 52 58)"/>
+    <ellipse cx="148" cy="58" rx="20" ry="26" fill="${f}" filter="url(#fur)" transform="rotate(25 148 58)"/>
+    <ellipse cx="52" cy="60" rx="9" ry="13" fill="#ffd6e6" transform="rotate(-25 52 60)"/>
+    <ellipse cx="148" cy="60" rx="9" ry="13" fill="#ffd6e6" transform="rotate(25 148 60)"/>
+    <circle cx="100" cy="112" r="72" fill="${f}" filter="url(#fur)"/>
+    <ellipse cx="100" cy="140" rx="42" ry="34" fill="#fff" filter="url(#furSoft)"/>
+    <ellipse cx="66" cy="180" rx="16" ry="10" fill="${k.dark}" filter="url(#furSoft)"/>
+    <ellipse cx="134" cy="180" rx="16" ry="10" fill="${k.dark}" filter="url(#furSoft)"/>
+    <ellipse cx="36" cy="128" rx="11" ry="16" fill="${f}" filter="url(#furSoft)" transform="rotate(25 36 128)"/>
+    <ellipse cx="164" cy="128" rx="11" ry="16" fill="${f}" filter="url(#furSoft)" transform="rotate(-25 164 128)"/>
+    <g>
+      <ellipse cx="78" cy="104" rx="9" ry="11" fill="#3b2c4a"/><circle cx="81" cy="99" r="3.5" fill="#fff"/><circle cx="75" cy="108" r="1.6" fill="#fff"/>
+      <ellipse cx="122" cy="104" rx="9" ry="11" fill="#3b2c4a"/><circle cx="125" cy="99" r="3.5" fill="#fff"/><circle cx="119" cy="108" r="1.6" fill="#fff"/>
+      <ellipse cx="62" cy="122" rx="10" ry="6" fill="#ff8fb5" opacity=".6"/>
+      <ellipse cx="138" cy="122" rx="10" ry="6" fill="#ff8fb5" opacity=".6"/>
+      <path d="M92 120 Q100 128 108 120" stroke="#3b2c4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g>
+      ${[[56,52],[70,42],[86,37],[102,35],[118,37],[134,42],[148,52]].map((p,i)=>`
+        <g transform="translate(${p[0]} ${p[1]})">
+          ${[0,72,144,216,288].map(a=>`<circle cx="${Math.cos(a*Math.PI/180)*5}" cy="${Math.sin(a*Math.PI/180)*5}" r="4.2" fill="${k.crown[i%3]}"/>`).join('')}
+          <circle r="2.6" fill="#fff6b0"/>
+        </g>`).join('')}
+    </g>
+    ${k.rare?`<text x="100" y="22" text-anchor="middle" font-size="26">👑</text>`:''}
+  </svg>`;
+}
+
+/* ---------- state ---------- */
+let col = {}, total = 0;
+try{ const s = JSON.parse(localStorage.getItem('gacha-puy')||'{}'); col = s.col||{}; total = s.total||0; }catch(e){}
+function save(){ try{ localStorage.setItem('gacha-puy', JSON.stringify({col,total})); }catch(e){} }
+
+/* ---------- sound ---------- */
+let ac;
+function audio(){ try{ ac = ac || new (window.AudioContext||window.webkitAudioContext)(); if(ac.state==='suspended') ac.resume(); }catch(e){} return ac; }
+function tone(freq, t0, dur, type='sine', vol=.18){
+  const a = audio(); if(!a) return;
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, a.currentTime + t0);
+  g.gain.setValueAtTime(0, a.currentTime + t0);
+  g.gain.linearRampToValueAtTime(vol, a.currentTime + t0 + .01);
+  g.gain.exponentialRampToValueAtTime(.001, a.currentTime + t0 + dur);
+  o.connect(g).connect(a.destination); o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + .05);
+}
+const sfx = {
+  crank(){ for(let i=0;i<6;i++) tone(320+i*25, i*.12, .06, 'square', .06); },
+  drop(){ tone(180,0,.15,'sine',.25); tone(140,.32,.12,'sine',.15); tone(160,.5,.08,'sine',.08); },
+  shake(){ tone(600,0,.05,'triangle',.08); },
+  pop(rare){ const n = rare?[523,659,784,1047,1319,1568]:[523,659,784,1047]; n.forEach((f,i)=>tone(f,i*.09,.3,'triangle',.16)); }
+};
+const buzz = ms => { try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} };
+
+/* ---------- dome ---------- */
+const dome = document.getElementById('dome');
+const spots = [[4,58],[34,62],[64,58],[18,34],[50,36],[74,30],[2,14],[30,10],[58,8],[40,-6],[14,-8],[70,-4]];
+function fillDome(){
+  dome.querySelectorAll('.cap').forEach(e=>e.remove());
+  const cols = DOME_COLORS.slice().sort(()=>Math.random()-.5);
+  spots.forEach((p,i)=>{
+    const d = document.createElement('div');
+    d.className = 'cap';
+    d.style.left = p[0]+'%'; d.style.top = (p[1]+30)*0.95+'%';
+    d.innerHTML = `<div class="idle" style="animation-delay:${-i*.37}s;transform:rotate(${(i*47)%60-30}deg)">${capsuleSVG(KINDS.find(k=>k.id===cols[i]))}</div>`;
+    dome.appendChild(d);
+  });
+}
+
+/* ---------- play ---------- */
+const knob = document.getElementById('knob'), bar = document.getElementById('bar');
+const outcap = document.getElementById('outcap'), chuteHint = document.getElementById('chuteHint');
+let rot = 0, current = null, busy = false;
+
+function pick(){
+  const sum = KINDS.reduce((s,k)=>s+k.weight,0);
+  let r = Math.random()*sum;
+  for(const k of KINDS){ if((r-=k.weight)<0) return k; }
+  return KINDS[0];
+}
+
+knob.addEventListener('click', ()=>{
+  if(busy) return;
+  busy = true; audio();
+  document.getElementById('tapHint').style.display='none';
+  knob.classList.add('busy');
+  rot += 360; bar.style.transform = `rotate(${rot}deg)`;
+  sfx.crank(); buzz(30);
+  dome.classList.add('shake');
+  current = pick();
+  setTimeout(()=>{
+    dome.classList.remove('shake');
+    outcap.innerHTML = capsuleSVG(current);
+    outcap.className = 'outcap show';
+    sfx.drop(); buzz([20,40,20]);
+    setTimeout(()=>{ outcap.className='outcap show ready'; chuteHint.textContent='👆 แตะเพื่อเปิด!'; }, 900);
+  }, 950);
+});
+
+outcap.addEventListener('click', openReveal);
+
+/* ---------- reveal ---------- */
+const overlay = document.getElementById('overlay'), stage = document.getElementById('stage');
+const msg = document.getElementById('msg'), keep = document.getElementById('keep');
+let taps = 0, opened = false;
+
+function openReveal(){
+  if(!current) return;
+  outcap.className = 'outcap'; chuteHint.textContent = '';
+  document.getElementById('halfT').innerHTML = capsuleSVG(current);
+  document.getElementById('halfB').innerHTML = capsuleSVG(current);
+  document.getElementById('critter').innerHTML = critterSVG(current);
+  stage.className = 'stage'; taps = 0; opened = false;
+  msg.innerHTML = `<div class="hint">แตะลูกบอล 3 ครั้งเพื่อเปิด!</div>`;
+  keep.classList.remove('on');
+  overlay.classList.add('on');
+}
+
+stage.addEventListener('click', e=>{
+  if(opened) { sparkles(e); sfx.shake(); return; }
+  taps++; sfx.shake(); buzz(15);
+  stage.classList.add('shake');
+  setTimeout(()=>stage.classList.remove('shake'), 260);
+  if(taps < 3){ msg.innerHTML = `<div class="hint">อีก ${3-taps} ครั้ง! ${'💥'.repeat(taps)}</div>`; return; }
+  opened = true;
+  const isNew = !col[current.id];
+  col[current.id] = (col[current.id]||0)+1; total++; save();
+  setTimeout(()=>{
+    stage.classList.add('open');
+    sfx.pop(current.rare); buzz(current.rare?[50,50,50,50,120]:60);
+    confetti(current.rare?90:45);
+    msg.innerHTML = `${current.rare?'<div style="color:#e2579b;font-weight:700">✨ ตัวหายาก! ✨</div>':''}
+      <div class="name">${current.name}${isNew?'<span class="new">ใหม่!</span>':''}</div>
+      <div class="stars">${'★'.repeat(current.stars)}<span style="color:#e6dcf2">${'★'.repeat(3-current.stars)}</span></div>`;
+    keep.classList.add('on');
+  }, 150);
+});
+
+keep.addEventListener('click', ()=>{
+  overlay.classList.remove('on');
+  current = null; busy = false;
+  knob.classList.remove('busy');
+  renderShelf();
+  if(Math.random()<.35) fillDome();
+});
+
+function sparkles(e){
+  const r = stage.getBoundingClientRect();
+  for(let i=0;i<6;i++){
+    const s = document.createElement('div'); s.className='sparkle';
+    s.textContent = ['✨','💖','⭐','🌸'][i%4];
+    s.style.left = (e.clientX-r.left-10)+'px'; s.style.top = (e.clientY-r.top-10)+'px';
+    s.style.setProperty('--dx', (Math.random()*120-60)+'px'); s.style.setProperty('--dy', (Math.random()*-100-20)+'px');
+    stage.appendChild(s); setTimeout(()=>s.remove(), 900);
+  }
+}
+function confetti(n){
+  const c = ['#ff8fbf','#ffd23f','#7fc8ff','#b9a3ff','#a6e3c4','#fff'];
+  for(let i=0;i<n;i++){
+    const d = document.createElement('div'); d.className='confetti';
+    d.style.left = Math.random()*100+'vw';
+    d.style.background = c[i%c.length];
+    d.style.animationDuration = (1.6+Math.random()*1.8)+'s';
+    d.style.animationDelay = (Math.random()*.4)+'s';
+    d.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(d); setTimeout(()=>d.remove(), 4000);
+  }
+}
+
+/* ---------- shelf ---------- */
+function renderShelf(){
+  const g = document.getElementById('grid'); g.innerHTML='';
+  let found = 0;
+  KINDS.forEach(k=>{
+    const d = document.createElement('div');
+    d.className = 'slot' + (k.rare?' rare':'');
+    if(col[k.id]){ found++; d.innerHTML = critterSVG(k) + (col[k.id]>1?`<span class="n">x${col[k.id]}</span>`:''); }
+    else d.textContent = '?';
+    g.appendChild(d);
+  });
+  document.getElementById('found').textContent = `${found}/${KINDS.length}` + (found===KINDS.length?' 🏆 ครบแล้ว!':'');
+  document.getElementById('total').textContent = `จับไปแล้ว ${total} ครั้ง`;
+}
+let resetArm = false;
+document.getElementById('reset').addEventListener('click', e=>{
+  if(!resetArm){ resetArm = true; e.target.textContent='แน่ใจนะ? กดอีกที'; setTimeout(()=>{resetArm=false;e.target.textContent='เริ่มใหม่';},2500); return; }
+  col = {}; total = 0; save(); renderShelf(); resetArm=false; e.target.textContent='เริ่มใหม่';
+});
+
+fillDome(); renderShelf();
+</script>
+</body>
+</html>
