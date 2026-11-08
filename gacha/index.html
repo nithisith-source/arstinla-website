@@ -167,8 +167,10 @@ const KINDS = [
 const DOME_COLORS = ['pink','blue','purple','mint','pink','blue','purple','blue','pink','mint','purple','rainbow'];
 
 /* ---------- drawings ---------- */
-function capsuleSVG(k){
-  const fur = k.fur;
+// all capsules look the same, so nobody can tell which critter is inside
+const CAP = {fur:'#f7bfd9', crown:['#ffe27a','#b9a3ff','#a6e3c4']};
+function capsuleSVG(){
+  const k = CAP, fur = k.fur;
   return `<svg viewBox="0 0 100 100" style="display:block;width:100%;overflow:visible">
     <circle cx="50" cy="50" r="46" fill="${fur}" filter="url(#fur)"/>
     <path d="M10 62 Q40 40 90 58 L90 72 Q45 58 12 76Z" fill="#fff" opacity=".85" filter="url(#furSoft)"/>
