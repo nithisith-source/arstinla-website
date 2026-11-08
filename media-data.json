@@ -3018,11 +3018,12 @@
           "lyric": "สิ่งที่คิดขึ้นเอง... ปล่อยมันไป"
         }
       ],
-      "genre": "",
-      "mood": "",
+      "genre": "rock",
+      "mood": "life",
       "subtitle": "",
       "createdAt": "2026-11-08T05:06:26.772Z",
-      "protected": false
+      "protected": false,
+      "updatedAt": "2026-11-08T05:07:04.823Z"
     }
   ]
 }
