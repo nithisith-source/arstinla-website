@@ -535,7 +535,7 @@
   @media (max-width:980px){
     .nav-links{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;gap:14px!important;font-size:1.3rem!important;padding-top:96px!important;padding-bottom:40px!important}
     .nav-links .nav-group-btn{pointer-events:none}.nav-links .nav-group-btn span{display:none}
-    .nav-links .nav-drop{display:block!important;margin-top:8px}
+    .nav-links .nav-drop{display:block!important;margin-top:8px;visibility:inherit!important;opacity:1!important;transform:none!important}
     .nav-links .nav-drop b{font-size:1rem}.nav-links .nav-drop small{font-size:.8rem}
     body.menu-open .line-fab,body.menu-open #siteChat{display:none!important}
   }
@@ -9539,6 +9539,18 @@ const submitButton =
   .install-sheet .is-ft{display:flex;justify-content:flex-end;margin-top:16px}
   .install-sheet .is-ft button{font:600 .9rem var(--font-th);padding:9px 20px;border:0;background:var(--black);color:var(--cream);cursor:pointer}
 </style>
+<div class="a2hs" id="a2hs" hidden><button type="button" class="a2hs-go" data-install-site hidden><img src="/apple-touch-icon.png?v=2" alt="" width="28" height="28"><span>เพิ่มไอคอน ARSTINLA<br><small>ลงหน้าจอมือถือ</small></span></button><button type="button" class="a2hs-x" id="a2hsX" aria-label="ปิด">×</button></div>
+<style>
+.a2hs{position:fixed;left:12px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;display:flex;align-items:stretch;background:#171816;color:#f3f0e8;box-shadow:0 8px 24px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);max-width:calc(100vw - 24px)}
+.a2hs[hidden],.a2hs-go[hidden]{display:none!important}
+.a2hs-go{display:flex;align-items:center;gap:9px;background:none;border:0;color:inherit;font:600 .82rem/1.25 var(--font-th),sans-serif;padding:8px 10px 8px 9px;cursor:pointer;text-align:left}
+.a2hs-go img{border-radius:6px;flex:none;width:28px!important;height:28px!important;max-width:none!important;object-fit:cover}
+.a2hs-go span{white-space:nowrap}
+.a2hs-go small{font-weight:400;opacity:.7;font-size:.72rem}
+.a2hs-x{background:none;border:0;border-left:1px solid rgba(255,255,255,.14);color:inherit;font-size:1.2rem;padding:0 11px;cursor:pointer;opacity:.7}
+body.menu-open .a2hs{display:none!important}
+.install-sheet[open]{margin:auto!important;inset:0;width:min(92vw,440px)!important;max-height:90vh}
+</style>
 <dialog class="install-sheet" id="installSheet" aria-labelledby="installSheetTitle">
   <div class="is-in">
     <div class="is-hd"><img src="/apple-touch-icon.png?v=2" alt="" width="52" height="52"><div><b id="installSheetTitle">ARSTINLA</b><span>เพิ่มไอคอนเว็บลงหน้าจอมือถือ</span></div></div>
@@ -9560,6 +9572,9 @@ const submitButton =
   function show(on){for(var i=0;i<els.length;i++)els[i].hidden=!on}
   if(standalone)return;
   if(mobile)show(true);
+  var bar=document.getElementById('a2hs'),KEY='arstinla-a2hs-hide',hideUntil=0;try{hideUntil=+localStorage.getItem(KEY)||0}catch(e){}
+  if(bar&&mobile&&Date.now()>hideUntil)bar.hidden=false;
+  document.getElementById('a2hsX').addEventListener('click',function(){bar.hidden=true;try{localStorage.setItem(KEY,String(Date.now()+7*864e5))}catch(e){}});
   window.addEventListener('beforeinstallprompt',function(e){if(!mobile)return;e.preventDefault();deferred=e;show(true)});
   window.addEventListener('appinstalled',function(){deferred=null;show(false)});
   var sheet=document.getElementById('installSheet'),steps=document.getElementById('installSteps');
@@ -9568,7 +9583,7 @@ const submitButton =
   var dotsIco='<span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></span>';
   function html(){
     if(inApp)return '<ol><li>แอปนี้ (เช่น LINE / Facebook) เพิ่มไอคอนลงหน้าจอไม่ได้</li><li>กดเมนู '+dotsIco+' หรือ "เปิดในเบราว์เซอร์" เพื่อเปิด arstinla.com ใน '+(isIOS?'<b>Safari</b>':'<b>Chrome</b>')+'</li><li>แล้วกดปุ่ม "เพิ่มเว็บ ARSTINLA ลงหน้าจอมือถือ" อีกครั้ง</li></ol>';
-    if(isIOS)return '<ol>'+(iosOtherBrowser?'<li>เปิดหน้านี้ใน <b>Safari</b> (บน iPhone ต้องใช้ Safari)</li>':'')+'<li>แตะปุ่ม <b>แชร์</b> '+shareIco+' ที่แถบด้านล่าง (หรือด้านบนบน iPad)</li><li>เลื่อนลงแล้วแตะ <b>เพิ่มไปยังหน้าจอโฮม</b> '+plusIco+'</li><li>แตะ <b>เพิ่ม</b> มุมขวาบน</li></ol><p class="note">ไอคอนสามเหลี่ยม ARSTINLA จะอยู่บนหน้าจอ แตะเพื่อเปิดเว็บได้ทันที</p>';
+    if(isIOS)return '<ol>'+(iosOtherBrowser?'<li>เปิดหน้านี้ใน <b>Safari</b> (บน iPhone ต้องใช้ Safari)</li>':'')+'<li>แตะปุ่ม <b>แชร์</b> '+shareIco+' ที่แถบด้านล่าง ถ้าไม่เห็น ให้แตะ '+dotsIco+' มุมขวาล่างก่อน แล้วเลือก <b>แชร์</b></li><li>เลื่อนลงแล้วแตะ <b>เพิ่มไปยังหน้าจอโฮม</b> '+plusIco+'</li><li>แตะ <b>เพิ่ม</b> มุมขวาบน</li></ol><p class="note">ไอคอนสามเหลี่ยม ARSTINLA จะอยู่บนหน้าจอ แตะเพื่อเปิดเว็บได้ทันที</p>';
     return '<ol><li>แตะเมนู '+dotsIco+' มุมขวาบนของ Chrome</li><li>เลือก <b>เพิ่มลงในหน้าจอหลัก</b> หรือ <b>ติดตั้งแอป</b></li><li>แตะ <b>เพิ่ม / ติดตั้ง</b></li></ol>';
   }
   function open(e){
