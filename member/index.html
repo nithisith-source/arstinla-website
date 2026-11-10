@@ -162,7 +162,12 @@ h1{margin:14px 0 10px;font:400 clamp(1.9rem,6vw,2.6rem)/1.08 "Space Grotesk","IB
 
   fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
     if(!d.configured){show("vSetup");if(next)$("#goSetup").href=next;return}
-    if(d.member)meView(d.member);else loginView();
+    if(d.member){meView(d.member);return}
+    // Opened inside the LINE app (chat link, rich menu): log in straight away — LINE signs in by itself, no QR / email.
+    var inLine=/\bLine\//i.test(navigator.userAgent);
+    if(inLine&&!q.get("error")&&!(function(){try{return sessionStorage.getItem("arstinla-autologin")}catch(e){return null}})()){try{sessionStorage.setItem("arstinla-autologin","1")}catch(e){}
+      location.replace("/api/auth/login?consent=1&next="+encodeURIComponent(next||"/member/"));return}
+    loginView();
   }).catch(function(){loginView()});
 })();
 </script>
