@@ -140,7 +140,11 @@ h1{margin:14px 0 10px;font:400 clamp(1.9rem,6vw,2.6rem)/1.08 "Space Grotesk","IB
     var name=toolName(next);
     if(name){$("#toolNote").hidden=false;$("#toolNote").textContent="เข้าสู่ระบบเพื่อใช้ "+name}
     var err=q.get("error");if(err&&ERR[err]){$("#errMsg").hidden=false;$("#errMsg").textContent=ERR[err]}
-    $("#lineBtn").href="/api/auth/login?consent=1&next="+encodeURIComponent(next||"/member/");
+    var loginPath="/api/auth/login?consent=1&next="+encodeURIComponent(next||"/member/");
+    $("#lineBtn").href=loginPath;
+    // put the access.line.me URL directly on the button: on a phone the tap opens the LINE app (auto login)
+    function prepLine(){fetch(loginPath+"&format=json",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&d.url)$("#lineBtn").href=d.url}).catch(function(){})}
+    prepLine();setInterval(prepLine,8*60*1000);
   }
 
   function meView(m){

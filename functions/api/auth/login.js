@@ -23,11 +23,19 @@ export async function onRequestGet({ request, env }) {
     scope: "profile openid",
     bot_prompt: "aggressive"
   }).toString();
+  const setCookie = cookie(STATE_COOKIE, stateToken, { maxAge: 600, secure: isSecure(request) });
+  // format=json: the page puts the LINE URL straight on the button, so a tap is a Universal Link
+  // and the phone opens the LINE app (no QR code / email) instead of following a redirect.
+  if (url.searchParams.get("format") === "json") {
+    return new Response(JSON.stringify({ url: auth.toString() }), {
+      headers: { "Content-Type": "application/json", "Set-Cookie": setCookie, "Cache-Control": "no-store" }
+    });
+  }
   return new Response(null, {
     status: 302,
     headers: {
       Location: auth.toString(),
-      "Set-Cookie": cookie(STATE_COOKIE, stateToken, { maxAge: 600, secure: isSecure(request) }),
+      "Set-Cookie": setCookie,
       "Cache-Control": "no-store"
     }
   });
