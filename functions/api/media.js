@@ -406,6 +406,22 @@ export async function onRequestPatch({ request, env }) {
   try {
     const config = getConfig(env);
     const formData = await request.formData();
+    // ARSTINLA recommended playlists (shown to every listener on /media/)
+    if (formData.get("action") === "playlists") {
+      let list;
+      try { list = JSON.parse(String(formData.get("playlists") || "[]")); } catch { list = null; }
+      if (!Array.isArray(list)) return json({ ok: false, error: "ข้อมูลเพลย์ลิสต์ไม่ถูกต้อง" }, 400);
+      const snap = await readStore(config);
+      const known = new Set(snap.data.tracks.map(t => t.id));
+      snap.data.playlists = list.slice(0, 30).map((pl, i) => ({
+        id: String(pl?.id || `rec${Date.now().toString(36)}${i}`).replace(/[^a-z0-9_-]/gi, "").slice(0, 40) || `rec${i}`,
+        name: songText(pl?.name, 60) || `เพลย์ลิสต์ ${i + 1}`,
+        note: songText(pl?.note, 160),
+        ids: [...new Set((Array.isArray(pl?.ids) ? pl.ids : []).map(String).filter(x => known.has(x)))]
+      })).filter(pl => pl.ids.length);
+      await writeStore(config, snap, "Update recommended music playlists");
+      return json({ ok: true, playlists: snap.data.playlists });
+    }
     const id = String(formData.get("id") || "").trim();
     const snapshot = await readStore(config);
     const track = snapshot.data.tracks.find(item => item.id === id);
