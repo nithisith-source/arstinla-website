@@ -20,8 +20,8 @@ export const tierRank = tier => Math.max(0, TIERS.indexOf(tier || "free"));
 export const GATED = {
   "/tools/": "free",
   "/apps/": "free",
-  "/stories/": "free",
-  "/media/": "free"
+  "/stories/": "free"
+  // "/media/" is open: the page asks visitors to add LINE @arstinla as a friend instead of logging in
 };
 
 export function requiredTier(pathname) {

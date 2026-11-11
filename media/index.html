@@ -149,5 +149,36 @@ body{padding-bottom:84px}.mini[hidden]{display:none!important}.mini{position:fix
     ["play","pause","loadedmetadata"].forEach(ev=>player.addEventListener(ev,()=>{if(ev==="play")started=true;syncMini()}));
     fetch(`/media-data.json?v=${Date.now()}`,{cache:"no-store"}).then(response=>{if(!response.ok)throw new Error("โหลดรายการเพลงไม่สำเร็จ");return response.json()}).then(data=>{tracks=Array.isArray(data.tracks)?data.tracks:[];loadOrder();renderFilters();renderTracks();if(tracks.length)selectTrack(order[0]??0,false)}).catch(error=>{trackList.innerHTML=`<p class="empty">${escapeHtml(error.message)}</p>`});
   </script>
+<div class="fgate" id="fgate" hidden>
+  <div class="fgate-card" role="dialog" aria-modal="true" aria-labelledby="fgateT">
+    <p class="fgate-k">ARSTINLA MUSIC</p>
+    <h2 id="fgateT">เพิ่มเพื่อน LINE<br>แล้วฟังเพลงได้เลย</h2>
+    <p>กดปุ่มด้านล่าง เพิ่มเพื่อน <b>@arstinla</b> ในแอป LINE แล้วกลับมาฟังเพลงทั้งหมดได้ทันที ไม่ต้องล็อกอิน</p>
+    <a class="fgate-btn" id="fgateBtn" href="https://line.me/R/ti/p/%40arstinla" target="_blank" rel="noopener">เพิ่มเพื่อน LINE แล้วฟังเพลง</a>
+    <button type="button" class="fgate-done" id="fgateDone">เป็นเพื่อนอยู่แล้ว · เข้าฟังเพลง</button>
+  </div>
+</div>
+<style>
+.fgate{position:fixed;inset:0;z-index:200;background:rgba(23,24,22,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:18px}
+.fgate[hidden]{display:none}
+.fgate-card{background:#f3f0e8;color:#171816;max-width:420px;width:100%;padding:30px 26px 24px;text-align:center;border:1px solid rgba(0,0,0,.2)}
+.fgate-k{margin:0;font:600 .66rem/1 "Space Grotesk",sans-serif;letter-spacing:.24em;color:#c36b48}
+.fgate-card h2{margin:12px 0 10px;font-size:1.7rem;line-height:1.25;font-weight:500}
+.fgate-card p{margin:0 0 20px;color:#5c574d;font-size:.95rem;line-height:1.7}
+.fgate-btn{display:block;background:#06c755;color:#fff;text-decoration:none;font-weight:600;font-size:1.05rem;padding:15px 18px}
+.fgate-done{margin-top:12px;background:none;border:0;color:#5c574d;text-decoration:underline;font:inherit;font-size:.86rem;cursor:pointer}
+</style>
+<script>
+(function(){
+  var KEY="arstinla-music-friend",g=document.getElementById("fgate");
+  function ok(){try{return localStorage.getItem(KEY)==="1"}catch(e){return false}}
+  function unlock(){try{localStorage.setItem(KEY,"1")}catch(e){}g.hidden=true;document.documentElement.style.overflow=""}
+  if(ok())return;
+  fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).then(function(d){if(d&&d.member)unlock();else show()}).catch(show);
+  function show(){if(ok())return;g.hidden=false;document.documentElement.style.overflow="hidden"}
+  document.getElementById("fgateBtn").addEventListener("click",function(){setTimeout(unlock,300)});
+  document.getElementById("fgateDone").addEventListener("click",unlock);
+})();
+</script>
 </body>
 </html>
