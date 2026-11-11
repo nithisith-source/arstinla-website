@@ -176,7 +176,10 @@ body{padding-bottom:84px}.mini[hidden]{display:none!important}.mini{position:fix
   if(ok())return;
   fetch("/api/auth/me",{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).then(function(d){if(d&&d.member)unlock();else show()}).catch(show);
   function show(){if(ok())return;g.hidden=false;document.documentElement.style.overflow="hidden"}
-  document.getElementById("fgateBtn").addEventListener("click",function(){setTimeout(unlock,300)});
+  // On a phone open the LINE app directly (line:// scheme) — the https link can fall back to a QR page in Safari.
+  var btn=document.getElementById("fgateBtn"),phone=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  if(phone){btn.href="line://ti/p/%40arstinla";btn.removeAttribute("target")}
+  btn.addEventListener("click",function(){setTimeout(unlock,300)});
   document.getElementById("fgateDone").addEventListener("click",unlock);
 })();
 </script>
