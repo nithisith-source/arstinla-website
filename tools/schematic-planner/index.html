@@ -194,7 +194,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
   <section class="workspace">
     <div class="stage-bar">
       <div class="stage-title"><strong>Client Preview · Schematic Design</strong><span>คลิกห้องหรือเสาเพื่อใช้ลูกศรขยับทีละ 0.10 ม. · ลากเพื่อย้ายระยะไกล</span></div>
-      <div class="stage-actions"><button id="presentBtn" type="button">Present client view</button><button id="printBtn" type="button">Print / PDF</button><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
+      <div class="stage-actions"><button id="toMassing" type="button" title="ส่งผังนี้ไปขึ้นรูปมวลอาคาร 3D ใน Massing Studio">Build mass →</button><button id="presentBtn" type="button">Present client view</button><button id="printBtn" type="button">Print / PDF</button><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
     </div>
 
     <article class="client-sheet" id="clientSheet">
@@ -687,6 +687,8 @@ $("budgetFloorsSel").addEventListener("change",()=>updateBudgetLink(rooms.reduce
   const apply=()=>{$("planBoard").style.setProperty("--room-fill",v/100);inp.value=v;$("roomFillVal").textContent=v+"%"};
   inp.addEventListener("input",()=>{v=+inp.value;apply();try{localStorage.setItem(K,String(v))}catch(e){}});apply();
   const b=$("planBoard"),setM=()=>b.style.setProperty("--m",`${(b.clientWidth||800)/site().w}px`);if(window.ResizeObserver)new ResizeObserver(setM).observe(b);else addEventListener("resize",setM)})();
+
+$("toMassing").addEventListener("click",()=>{if(!rooms.length){toast("วางห้องก่อนส่งไป Massing Studio");return}saveState();location.href="/tools/massing-studio/?from=planner"});
 </script>
 </body>
 </html>

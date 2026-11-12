@@ -826,7 +826,7 @@ async function houseImage(){
   draw();
   let d=c.toDataURL("image/webp",.8);if(!d.startsWith("data:image/webp"))d=c.toDataURL("image/jpeg",.8);
   return d.length>580000?c.toDataURL("image/jpeg",.55):d}
-window.ARSTINLA_ISO={houseImage,floors:()=>S.floors.map(f=>f.h),level:r=>lvl(r)};
+Object.assign(window.ARSTINLA_ISO,{houseImage,floors:()=>S.floors.map(f=>f.h),level:r=>lvl(r)});
 })();
 </script>
 <script>
@@ -882,6 +882,8 @@ $("downloadBtn").addEventListener("click",async()=>{
   if(gate&&typeof gate.request==="function"){const ok=await gate.request({tool:"ARSTINLA Massing Studio",file:`${$("projectName").value||"Massing"} PNG`,buttonLabel:"ดาวน์โหลด Isometric PNG",shareText:`ดูมวลอาคาร ${$("projectName").value||""} จาก ARSTINLA\n${location.href}`});if(!ok)return}
   downloadPng()});
 renderAll(false);
+if(new URLSearchParams(location.search).get("from")==="planner"){history.replaceState(null,"",location.pathname);
+  setTimeout(()=>{if(!rooms.length||confirm("นำเข้าผังจาก Schematic Planner?\nโมเดลที่เปิดอยู่ใน Massing Studio จะถูกแทนที่"))$("importPlanner").click()},150)}
 })();
 </script>
 </body>
