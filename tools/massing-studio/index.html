@@ -148,7 +148,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 <main class="workspace">
   <div class="stage-bar">
     <div class="stage-title"><strong>Client Preview · Massing</strong><span>Plan: ลากห้องหรือป้ายหลังคาเพื่อย้าย · ลูกศรขยับทีละ 0.10 ม.</span></div>
-    <div class="stage-actions"><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
+    <div class="stage-actions"><button class="primary" id="downloadBtn" type="button">Download PNG</button><button id="villageBtn" type="button" title="วางบ้านหลังนี้ลงแปลงที่ดินของคุณใน ARSTINLA Village">🏡 ส่งไปที่ดิน Village</button></div>
   </div>
   <section class="client-sheet">
     <div class="sheet-head">
@@ -816,6 +816,17 @@ async function isoPng(){
 window.ARSTINLA_ISO={state:S,draw,setView,addFloor,addRoof,selectRoof,canvas:isoCanvas,save:saveS,png:isoPng};
 /* ---------- start ---------- */
 setView(S.view);
+async function houseImage(){
+  const keep=S.selRoof,keepCam=S.cam;S.selRoof=null;S.cam="iso";draw();S.selRoof=keep;S.cam=keepCam;await document.fonts.ready;
+  const clone=svg.cloneNode(true);clone.querySelector("#isoLabels")?.remove();clone.querySelector("#isoNorth")?.remove();clone.querySelector("#isoLevels")?.remove();
+  const{vb}=last,W=1000,s=W/vb.w,H=Math.round(vb.h*s);clone.setAttribute("width",W);clone.setAttribute("height",H);
+  const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.fillStyle="#f7f4ed";x.fillRect(0,0,W,H);
+  const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:"image/svg+xml"}));
+  await new Promise((res,rej)=>{const img=new Image();img.onload=()=>{x.drawImage(img,0,0,W,H);URL.revokeObjectURL(url);res()};img.onerror=rej;img.src=url});
+  draw();
+  let d=c.toDataURL("image/webp",.8);if(!d.startsWith("data:image/webp"))d=c.toDataURL("image/jpeg",.8);
+  return d.length>580000?c.toDataURL("image/jpeg",.55):d}
+window.ARSTINLA_ISO={houseImage,floors:()=>S.floors.map(f=>f.h),level:r=>lvl(r)};
 })();
 </script>
 <script>
@@ -847,6 +858,25 @@ $("importPlanner").addEventListener("click",()=>{
   A.state.active=0;A.state.selRoof=null;A.state.upTo=-1;
   if(!A.state.roofs.length){renderAll(false);A.addRoof();A.state.selRoof=null}
   A.save();renderAll();toast(`นำเข้า ${rooms.length} ห้องจาก Schematic Planner แล้ว`)});
+/* ---------- send the house to my Village plot ---------- */
+$("villageBtn").addEventListener("click",async()=>{
+  const btn=$("villageBtn");if(!rooms.length){toast("ยังไม่มีห้องในโมเดล");return}
+  btn.disabled=true;const old=btn.textContent;btn.textContent="กำลังส่ง…";
+  try{
+    const v=await fetch("/api/village",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json()).catch(()=>null);
+    if(!v||!v.loggedIn){toast("เข้าสู่ระบบด้วย LINE ก่อน");return}
+    const m=v.mine;
+    if(!m||!m.plot||m.status==="rejected"){if(confirm("คุณยังไม่มีแปลงที่ดินใน ARSTINLA Village\nไปจองแปลงก่อนไหม? (บ้านในเครื่องมือนี้ยังอยู่ ไม่หาย)"))location.href="/village/";return}
+    const xs=rooms.map(r=>[r.x,r.x+r.w]).flat(),ys=rooms.map(r=>[r.y,r.y+r.d]).flat(),bw=Math.max(...xs)-Math.min(...xs),bd=Math.max(...ys)-Math.min(...ys);
+    const sizes={"D-02":[12.4,12.8],"D-05":[12.4,12.8]},n=+m.plot.slice(2),pw=/^D-/.test(m.plot)?(sizes[m.plot]||[12.4,18])[0]:10.4,pd=/^D-/.test(m.plot)?(sizes[m.plot]||[12.4,18])[1]:(/^[AB]-/.test(m.plot)?(n<=5?10.4:18.8):/^[CE]-/.test(m.plot)?(n<=5?18.8:10.4):10.4);
+    const over=bw>pw||bd>pd;
+    if(!confirm(`ส่งบ้าน "${$("projectName").value.trim()||"บ้านของฉัน"}" ไปวางบนแปลง ${m.plot} (${pw}×${pd} ม.)?\nขนาดบ้าน ${bw.toFixed(1)}×${bd.toFixed(1)} ม.${over?"\n\n⚠ บ้านใหญ่กว่าแปลง ผังหมู่บ้านจะย่อให้พอดีแปลง":""}${m.status!=="approved"?"\n\nแปลงยังรออนุมัติ บ้านจะขึ้นให้คนอื่นเห็นหลังอนุมัติ":""}`))return;
+    const body={name:$("projectName").value.trim(),rooms:rooms.map(r=>({x:r.x,y:r.y,w:r.w,d:r.d,level:window.ARSTINLA_ISO.level(r),name:r.name||"",color:(roomTypes[r.type]||{}).color})),floors:window.ARSTINLA_ISO.floors(),image:await window.ARSTINLA_ISO.houseImage()};
+    const res=await fetch("/api/village/house",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(body)});const d=await res.json().catch(()=>({}));
+    if(!res.ok||!d.ok){toast(d.error||"ส่งไม่สำเร็จ ลองใหม่อีกครั้ง");return}
+    if(confirm(`วางบ้านบนแปลง ${d.plot} แล้ว\nไปดูในผังหมู่บ้านเลยไหม?`))location.href="/village/?plot="+encodeURIComponent(d.plot);
+  }catch(e){toast("ส่งไม่สำเร็จ ลองใหม่อีกครั้ง")}
+  finally{btn.disabled=false;btn.textContent=old}});
 $("downloadBtn").addEventListener("click",async()=>{
   const gate=window.ARSTINLA_DOWNLOAD_GATE;
   if(gate&&typeof gate.request==="function"){const ok=await gate.request({tool:"ARSTINLA Massing Studio",file:`${$("projectName").value||"Massing"} PNG`,buttonLabel:"ดาวน์โหลด Isometric PNG",shareText:`ดูมวลอาคาร ${$("projectName").value||""} จาก ARSTINLA\n${location.href}`});if(!ok)return}

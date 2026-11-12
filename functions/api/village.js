@@ -8,9 +8,15 @@ const publicApp = (a, env) =>
 
 async function bookedPlots(db) {
   const rows = await db
-    .prepare(`SELECT plot, status, display_name FROM village_apps WHERE plot IS NOT NULL AND status IN ('pending','approved')`)
+    .prepare(`SELECT a.plot, a.status, a.display_name, h.data AS house, (h.image IS NOT NULL) AS has_image FROM village_apps a
+              LEFT JOIN village_houses h ON h.member_id = a.member_id AND h.plot = a.plot
+              WHERE a.plot IS NOT NULL AND a.status IN ('pending','approved')`)
     .all();
-  const plots = (rows.results || []).map(r => ({ plot: r.plot, status: r.status, name: r.status === "approved" ? r.display_name : null }));
+  const plots = (rows.results || []).map(r => {
+    const out = { plot: r.plot, status: r.status, name: r.status === "approved" ? r.display_name : null };
+    if (r.status === "approved" && r.house) { try { out.house = JSON.parse(r.house); out.house.image = !!r.has_image; } catch {} }
+    return out;
+  });
   for (const [plot, name] of Object.entries(RESERVED_PLOTS)) plots.push({ plot, status: "reserved", name });
   return plots;
 }

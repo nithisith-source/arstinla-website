@@ -73,7 +73,7 @@ legend{padding:0;margin-bottom:6px}
 .mapbox{position:relative;overflow-x:auto;border:1px solid var(--line);background:#eef0e3;margin-top:12px}
 .mapbox svg{display:block;width:100%;height:auto}
 @media(max-width:700px){.mapbox svg{min-width:720px}}
-.lock{position:absolute;inset:0;display:grid;place-items:center;background:rgba(243,240,232,.78);text-align:center;padding:20px;font-weight:600}
+.lock{position:absolute;inset:0;display:grid;place-items:center;background:rgba(243,240,232,.78);text-align:center;padding:20px;font-weight:600;pointer-events:none}
 .lock small{display:block;font-weight:400;color:var(--muted)}
 .plot{cursor:pointer}
 .plot .lot{fill:var(--plot);stroke:var(--plot-edge);stroke-width:1;transition:fill .15s}
@@ -84,6 +84,15 @@ legend{padding:0;margin-bottom:6px}
 .plot.lake .lot{fill:var(--lake);stroke:var(--lake-edge)}
 .plot.lake .env{stroke:#dcc58f}
 .plot.taken{cursor:not-allowed}
+.plot.has-house{cursor:pointer}.plot.has-house .fp,.plot.has-house .ridge{opacity:0!important}
+.plot .house rect{vector-effect:non-scaling-stroke}
+.hmodal{position:fixed;inset:0;z-index:300;background:rgba(23,24,22,.6);display:flex;align-items:center;justify-content:center;padding:16px}.hmodal[hidden]{display:none}
+.hcard{background:#f7f5ef;max-width:720px;width:100%;max-height:92vh;overflow:auto;border:1px solid rgba(0,0,0,.2)}
+.hcard img{display:block;width:100%;height:auto;background:#f7f4ed}
+.hcard .hb{padding:16px 20px 20px}.hcard .hk{margin:0;font:600 .66rem "Space Grotesk",sans-serif;letter-spacing:.2em;color:#c36b48}
+.hcard h3{margin:6px 0 4px;font-size:1.35rem;font-weight:500}.hcard p{margin:0;color:#6b6b63;font-size:.9rem}
+.hcard .hact{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.hcard .hact a,.hcard .hact button{font:600 .85rem inherit;padding:9px 14px;border:1px solid #171816;background:none;color:#171816;text-decoration:none;cursor:pointer}
+.hcard .hact a.dark{background:#171816;color:#fff}
 .plot.taken .lot,.plot.taken:hover .lot{fill:var(--owned);stroke:#b2ab9c}
 .plot.taken .fp,.plot.taken .ridge,.plot.sel .fp,.plot.sel .ridge{opacity:1}
 .plot.taken .env{opacity:0}
@@ -170,6 +179,7 @@ legend{padding:0;margin-bottom:6px}
       </div>
       <div class="mapbox">
         <svg id="map" viewBox="0 0 1000 620" role="group" aria-label="ผังหมู่บ้าน เลือกแปลงที่ดิน"></svg>
+        <div class="hmodal" id="hmodal" hidden><div class="hcard" role="dialog" aria-modal="true" aria-label="บ้านบนแปลง" id="hbody"></div></div>
         <div class="lock" id="lock"><div>เลือกระดับ “เจ้าของบ้าน” หรือ “ผู้พัฒนาโครงการ” เพื่อจองที่ดิน<small>ระดับผู้มาเยือนและผู้อยู่อาศัยส่งใบสมัครได้เลยโดยไม่ต้องเลือกแปลง</small></div></div>
       </div>
       <p class="mapnote">หมู่บ้านริมน้ำ ทุกแปลงติดคลอง · บนมือถือเลื่อนซ้ายขวาเพื่อดูทั้งผัง · แปลงบนเกาะกลาง D-01 ถึง D-06 รอบสวนวงเวียนกลาง สำหรับระดับผู้พัฒนาโครงการ</p>
@@ -343,7 +353,8 @@ legend{padding:0;margin-bottom:6px}
       g.classList.toggle("sel",!!(selected&&selected.id===p.id));
       g.setAttribute("tabindex",busy?-1:0);
       p.label.textContent=busy?(t.status==="approved"||t.status==="reserved"?short(t.name||"จองแล้ว"):"รออนุมัติ"):(own&&mine.status==="approved"?short(mine.displayName||"แปลงของคุณ"):p.wa+" ตร.ว.");
-      g.setAttribute("aria-label","แปลง "+p.id+(busy?" จองแล้ว":" ว่าง "+p.wa+" ตารางวา")+(p.lake?" เกาะกลาง":""));
+      g.setAttribute("aria-label","แปลง "+p.id+(busy?" จองแล้ว":" ว่าง "+p.wa+" ตารางวา")+(p.lake?" เกาะกลาง":"")+(t&&t.house?" มีบ้าน แตะเพื่อดู":""));
+      drawHouse(p,t&&t.house);
     });
     if(selected){$("chosen").textContent="แปลง "+selected.id+" · "+selected.dim+" · "+selected.wa+" ตร.ว."+(selected.lake?" · เกาะกลาง":"");$("chosen").classList.add("has")}
     else{$("chosen").textContent=canLand()?"แตะแปลงว่างบนผังเพื่อเลือก":"ระดับนี้ไม่ต้องเลือกแปลง";$("chosen").classList.remove("has")}
@@ -377,8 +388,37 @@ legend{padding:0;margin-bottom:6px}
     if(mine.worldLink){var a=document.createElement("a");a.className="enter";a.href=mine.worldLink;a.target="_blank";a.rel="noopener";a.textContent="เข้าหมู่บ้าน →";box.appendChild(a)}
   }
 
+  // ---- houses built in Massing Studio ----
+  function drawHouse(p,h){
+    var g=nodes[p.id];if(p.hg){p.hg.remove();p.hg=null}g.classList.toggle("has-house",!!h);if(!h||!h.rooms||!h.rooms.length)return;
+    var R=h.rooms,x0=Math.min.apply(null,R.map(function(r){return r.x})),y0=Math.min.apply(null,R.map(function(r){return r.y})),
+        bw=Math.max.apply(null,R.map(function(r){return r.x+r.w}))-x0,bd=Math.max.apply(null,R.map(function(r){return r.y+r.d}))-y0;
+    var ex=p.x+5,ey=p.y+17,ew=p.w-10,eh=p.h-30,k=Math.min(1/M,ew/bw,eh/bd),ox=ex+(ew-bw*k)/2,oy=ey+(eh-bd*k)/2;
+    var hg=el("g",{class:"house"},g);p.hg=hg;
+    R.slice().sort(function(a,b){return a.level-b.level}).forEach(function(r){
+      var a={x:ox+(r.x-x0)*k,y:oy+(r.y-y0)*k,width:Math.max(.6,r.w*k),height:Math.max(.6,r.d*k)};
+      if(r.level>0){a.fill="none";a.stroke="#3b3b36";a["stroke-width"]=.7;a["stroke-dasharray"]="2 1.4"}else{a.fill=r.color||"#c8bcae";a.stroke="#5d584e";a["stroke-width"]=.6}
+      el("rect",a,hg)});
+    var lv=Math.max.apply(null,R.map(function(r){return r.level}))+1;
+    if(lv>1)txt({x:p.x+p.w-5,y:p.y+12,"text-anchor":"end","font-family":"Space Grotesk","font-size":7,fill:"#c36b48","font-weight":600},lv+"F",hg);
+  }
+  function openHouse(id){
+    var m=$("hmodal");m.hidden=false;$("hbody").innerHTML='<div class="hb"><p>กำลังโหลดบ้าน…</p></div>';
+    fetch("/api/village/house?plot="+encodeURIComponent(id),{credentials:"same-origin",cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
+      if(!d||!d.ok){$("hbody").innerHTML='<div class="hb"><p>'+esc((d&&d.error)||"โหลดบ้านไม่สำเร็จ")+'</p></div>';return}
+      var h=d.house||{},lv=Math.max.apply(null,(h.rooms||[{level:0}]).map(function(r){return r.level}))+1;
+      $("hbody").innerHTML=(d.image?'<img alt="ภาพ Isometric บ้านบนแปลง '+esc(id)+'" src="'+d.image+'">':'')+
+        '<div class="hb"><p class="hk">แปลง '+esc(id)+' · '+d.size.w+'×'+d.size.d+' ม.</p><h3>'+esc(h.name||"บ้านในหมู่บ้าน")+'</h3><p>ของ '+esc(d.owner||"")+' · '+lv+' ชั้น · '+(h.rooms||[]).length+' ห้อง · ออกแบบด้วย ARSTINLA Massing Studio</p>'+
+        '<div class="hact"><a class="dark" href="/tools/massing-studio/">'+(d.mine?"แก้บ้านใน Massing Studio":"ออกแบบบ้านของคุณเอง")+' →</a><button type="button" id="hclose">ปิด</button></div></div>';
+    }).catch(function(){$("hbody").innerHTML='<div class="hb"><p>โหลดบ้านไม่สำเร็จ</p></div>'});
+  }
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  $("hmodal").addEventListener("click",function(e){if(e.target.id==="hmodal"||e.target.id==="hclose")$("hmodal").hidden=true});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")$("hmodal").hidden=true});
+
   function pick(p){
     var msg=$("msg");
+    if(taken[p.id]&&taken[p.id].house&&(locked()||!isMinePlot(p.id))){openHouse(p.id);return}
     if(locked())return;
     if(!canLand()){msg.textContent="เลือกระดับเจ้าของบ้านหรือผู้พัฒนาโครงการก่อนเลือกแปลง";return}
     if(taken[p.id]&&!isMinePlot(p.id))return;
@@ -444,6 +484,7 @@ legend{padding:0;margin-bottom:6px}
       else if(!keepForm)$("msg").textContent=(v&&v.error)||"โหลดข้อมูลแปลงไม่สำเร็จ ลองรีเฟรชหน้านี้";
       if(selected&&taken[selected.id]&&!isMinePlot(selected.id))selected=null;
       render();
+      var q=new URLSearchParams(location.search).get("plot");if(q&&taken[q]&&taken[q].house&&!load.shown){load.shown=1;openHouse(q)}
     });
   }
   render();load(false);

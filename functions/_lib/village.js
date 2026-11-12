@@ -37,7 +37,15 @@ export async function ensureVillageSchema(db) {
     )`),
     // One active booking per plot. Rejected rows don't hold the plot.
     db.prepare(`CREATE UNIQUE INDEX IF NOT EXISTS village_plot_taken
-      ON village_apps(plot) WHERE plot IS NOT NULL AND status IN ('pending','approved')`)
+      ON village_apps(plot) WHERE plot IS NOT NULL AND status IN ('pending','approved')`),
+    // A house built in Massing Studio and placed on the member's plot.
+    db.prepare(`CREATE TABLE IF NOT EXISTS village_houses (
+      member_id TEXT PRIMARY KEY,
+      plot TEXT NOT NULL,
+      data TEXT NOT NULL,
+      image TEXT,
+      updated_at TEXT NOT NULL
+    )`)
   ]);
   ready = true;
 }
@@ -56,4 +64,33 @@ export function validateApplication({ displayName, tier, plot }) {
     if (LAKE_PLOTS.has(plot) && tier !== "developer") return "แปลงบนเกาะกลางสงวนไว้ให้ระดับผู้พัฒนาโครงการ";
   }
   return null;
+}
+
+// Plot sizes in metres (same numbers as the site plan in /village/index.html, 1 plan unit = 0.2 m).
+const SZ = (w, h) => ({ w: +(w * 0.2).toFixed(1), d: +(h * 0.2).toFixed(1) });
+export function plotSize(plot) {
+  if (/^D-0[25]$/.test(plot)) return SZ(62, 64);
+  if (/^D-/.test(plot)) return SZ(62, 90);
+  if (/^[FG]-/.test(plot)) return SZ(52, 52);
+  const n = Number(String(plot).slice(2));
+  if (/^[AB]-/.test(plot)) return n <= 5 ? SZ(52, 52) : SZ(52, 94);
+  if (/^[CE]-/.test(plot)) return n <= 5 ? SZ(52, 94) : SZ(52, 52);
+  return SZ(52, 52);
+}
+
+// Cleans a house sent from Massing Studio. Returns {house} or {error}.
+export function cleanHouse(body) {
+  const num = (v, lo, hi) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, Math.round(n * 100) / 100)) : lo; };
+  const rooms = (Array.isArray(body?.rooms) ? body.rooms : []).slice(0, 80).map(r => ({
+    x: num(r?.x, -5, 40), y: num(r?.y, -5, 40), w: num(r?.w, 0.3, 40), d: num(r?.d, 0.3, 40),
+    level: Math.round(num(r?.level, 0, 9)),
+    name: String(r?.name || "").slice(0, 40),
+    color: /^#[0-9a-f]{6}$/i.test(String(r?.color || "")) ? r.color : "#c8bcae"
+  }));
+  if (!rooms.length) return { error: "ยังไม่มีห้องในโมเดล" };
+  const floors = (Array.isArray(body?.floors) ? body.floors : []).slice(0, 10).map(f => num(f, 0, 12));
+  const image = String(body?.image || "");
+  if (image && !/^data:image\/(webp|jpeg|png);base64,[A-Za-z0-9+/=]+$/.test(image)) return { error: "ภาพบ้านไม่ถูกต้อง" };
+  if (image.length > 600000) return { error: "ภาพบ้านใหญ่เกินไป" };
+  return { house: { name: String(body?.name || "").trim().slice(0, 60), rooms, floors }, image: image || null };
 }
