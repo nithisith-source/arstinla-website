@@ -48,6 +48,7 @@
 .room-block.is-void::after{background:repeating-linear-gradient(45deg,transparent 0 7px,rgba(25,26,24,.28) 7px 8px)!important;opacity:1!important}
 .room-block.is-void::before{border:2px dashed #c36b48!important;inset:0!important}
 .room-block.is-void .room-content strong{color:#c36b48}
+.snap-guides{position:absolute;inset:0;pointer-events:none;z-index:8}.snap-guides i{position:absolute;background:#c36b48}.snap-guides .gx{top:0;bottom:0;width:1.5px;margin-left:-.75px}.snap-guides .gy{left:0;right:0;height:1.5px;margin-top:-.75px}
 .trace-hint{margin:6px 0 10px;font-size:11px;line-height:1.6;color:#999}
 .trace-file{display:block;cursor:pointer}.trace-file input{position:absolute;opacity:0;width:1px;height:1px}
 .trace-file span{display:flex;align-items:center;justify-content:center;height:40px;border:1px dashed #6b6c64;font-size:12px;color:#ddd}.trace-file:hover span{border-color:#c36b48;color:#fff}
@@ -551,10 +552,17 @@ function startColumnDrag(event){
 }
 function dragMove(event){
   if(!dragState)return;const size=site(),dx=(event.clientX-dragState.startX)/dragState.rect.width*size.w,dy=(event.clientY-dragState.startY)/dragState.rect.height*size.d;
-  if(dragState.kind==="room"){const room=rooms.find(item=>item.id===dragState.id);room.x=clamp(snap(dragState.x+dx),0,size.w-room.w);room.y=clamp(snap(dragState.y+dy),0,size.d-room.d);dragState.element.style.left=`${room.x/size.w*100}%`;dragState.element.style.top=`${room.y/size.d*100}%`;dragState.element.querySelector(".zone").textContent=zoneFor(room)}else{const column=columns.find(item=>item.id===dragState.id);column.x=snap(dragState.x+dx);column.y=snap(dragState.y+dy);clampColumn(column);dragState.element.style.left=`${(column.x-column.w/2)/size.w*100}%`;dragState.element.style.top=`${(column.y-column.d/2)/size.d*100}%`}
+  if(dragState.kind==="room"){const room=rooms.find(item=>item.id===dragState.id);room.x=clamp(snap(dragState.x+dx),0,size.w-room.w);room.y=clamp(snap(dragState.y+dy),0,size.d-room.d);{const sn=edgeSnap(room,room.x,room.y,rooms.filter(o=>o!==room),size.w,size.d);room.x=clamp(sn.x,0,size.w-room.w);room.y=clamp(sn.y,0,size.d-room.d);showGuides(sn.gx,sn.gy)}dragState.element.style.left=`${room.x/size.w*100}%`;dragState.element.style.top=`${room.y/size.d*100}%`;dragState.element.querySelector(".zone").textContent=zoneFor(room)}else{const column=columns.find(item=>item.id===dragState.id);column.x=snap(dragState.x+dx);column.y=snap(dragState.y+dy);clampColumn(column);dragState.element.style.left=`${(column.x-column.w/2)/size.w*100}%`;dragState.element.style.top=`${(column.y-column.d/2)/size.d*100}%`}
   renderNudge();
 }
-function endDrag(event){event.currentTarget.removeEventListener("pointermove",dragMove);dragState=null;renderAll()}
+function endDrag(event){event.currentTarget.removeEventListener("pointermove",dragMove);dragState=null;showGuides(null,null);renderAll()}
+function showGuides(gx,gy){const b=$("planBoard"),s=site();let g=b.querySelector(".snap-guides");if(!g){g=document.createElement("div");g.className="snap-guides";b.appendChild(g)}g.innerHTML=(gx!=null?`<i class="gx" style="left:${gx/s.w*100}%"></i>`:"")+(gy!=null?`<i class="gy" style="top:${gy/s.d*100}%"></i>`:"")}
+/* ---------- edge snap: room edges stick to other rooms' edges and the site boundary ---------- */
+function edgeSnap(r,x,y,others,W,D,tol){tol=tol||.25;const best=(edges,targets)=>{let m=null;edges.forEach(([off])=>targets.forEach(t=>{const d=t-off;if(Math.abs(d)<=tol&&(!m||Math.abs(d)<Math.abs(m.d)))m={d,t}}));return m};
+  const tx=[0,W],ty=[0,D];others.forEach(o=>{tx.push(o.x,o.x+o.w);ty.push(o.y,o.y+o.d)});
+  const mx=best([[x],[x+r.w]],tx),my=best([[y],[y+r.d]],ty);
+  return{x:mx?Math.round((x+mx.d)*1000)/1000:x,y:my?Math.round((y+my.d)*1000)/1000:y,gx:mx&&mx.t,gy:my&&my.t}}
+
 function moveRoom(room,dx,dy){const size=site();room.x=clamp(round2(room.x+dx),0,size.w-room.w);room.y=clamp(round2(room.y+dy),0,size.d-room.d)}
 function moveColumn(column,dx,dy){column.x=snap(column.x+dx);column.y=snap(column.y+dy);clampColumn(column)}
 function nudgeSelected(direction){const item=rooms.find(target=>target.id===selectedId)||columns.find(target=>target.id===selectedColumnId);if(!item)return;const delta={up:[0,-.1],down:[0,.1],left:[-.1,0],right:[.1,0]}[direction];if(!delta)return;selectedId?moveRoom(item,delta[0],delta[1]):moveColumn(item,delta[0],delta[1]);renderAll()}

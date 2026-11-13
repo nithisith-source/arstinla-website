@@ -237,8 +237,14 @@ let drag=null;
 function startDrag(e){if(e.button!==0)return;const el=e.currentTarget,r=rooms.find(i=>i.id===el.dataset.id);if(!r)return;
   if(selectedId!==r.id){selectedId=r.id;document.querySelectorAll(".room-block").forEach(b=>b.classList.toggle("selected",b===el));renderRoomList();renderEditor()}
   drag={r,el,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y,rect:$("planBoard").getBoundingClientRect()};el.setPointerCapture(e.pointerId);el.addEventListener("pointermove",dragMove);el.addEventListener("pointerup",endDrag,{once:true})}
-function dragMove(e){if(!drag)return;const s=site(),{r,el}=drag;r.x=clamp(snap(drag.x+(e.clientX-drag.sx)/drag.rect.width*s.w),0,s.w-r.w);r.y=clamp(snap(drag.y+(e.clientY-drag.sy)/drag.rect.height*s.d),0,s.d-r.d);el.style.left=`${r.x/s.w*100}%`;el.style.top=`${r.y/s.d*100}%`}
+function dragMove(e){if(!drag)return;const s=site(),{r,el}=drag;r.x=clamp(snap(drag.x+(e.clientX-drag.sx)/drag.rect.width*s.w),0,s.w-r.w);r.y=clamp(snap(drag.y+(e.clientY-drag.sy)/drag.rect.height*s.d),0,s.d-r.d);{const sn=edgeSnap(r,r.x,r.y,rooms.filter(o=>o!==r&&(Number(o.level)||0)===(Number(r.level)||0)),s.w,s.d);r.x=clamp(sn.x,0,s.w-r.w);r.y=clamp(sn.y,0,s.d-r.d)}el.style.left=`${r.x/s.w*100}%`;el.style.top=`${r.y/s.d*100}%`}
 function endDrag(e){e.currentTarget.removeEventListener("pointermove",dragMove);drag=null;renderAll()}
+
+/* ---------- edge snap: room edges stick to other rooms' edges and the site boundary ---------- */
+function edgeSnap(r,x,y,others,W,D,tol){tol=tol||.25;const best=(edges,targets)=>{let m=null;edges.forEach(([off])=>targets.forEach(t=>{const d=t-off;if(Math.abs(d)<=tol&&(!m||Math.abs(d)<Math.abs(m.d)))m={d,t}}));return m};
+  const tx=[0,W],ty=[0,D];others.forEach(o=>{tx.push(o.x,o.x+o.w);ty.push(o.y,o.y+o.d)});
+  const mx=best([[x],[x+r.w]],tx),my=best([[y],[y+r.d]],ty);
+  return{x:mx?Math.round((x+mx.d)*1000)/1000:x,y:my?Math.round((y+my.d)*1000)/1000:y,gx:mx&&mx.t,gy:my&&my.t}}
 function moveWithKeyboard(e){const d={ArrowUp:[0,-.1],ArrowDown:[0,.1],ArrowLeft:[-.1,0],ArrowRight:[.1,0]}[e.key];if(!d)return;e.preventDefault();const r=rooms.find(i=>i.id===e.currentTarget.dataset.id),s=site();r.x=clamp(round2(r.x+d[0]),0,s.w-r.w);r.y=clamp(round2(r.y+d[1]),0,s.d-r.d);selectedId=r.id;renderAll();document.querySelector(`.room-block[data-id="${r.id}"]`)?.focus()}
 function updateSelected(preserve){const r=rooms.find(i=>i.id===selectedId);if(!r)return;const s=site();r.name=$("selectedName").value.trim()||roomTypes[$("selectedType").value].thai;r.type=$("selectedType").value;r.w=round2(clamp(Number($("selectedWidth").value)||1,1,s.w));r.d=round2(clamp(Number($("selectedDepth").value)||1,1,s.d));renderAll(true,preserve)}
 function saveState(){try{localStorage.setItem(KEY,JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:northAngle(),showSun:$("showSun").checked,showGrid:$("showGrid").checked,wallThickness:$("wallThickness").value,wallAlignment:$("wallAlignment").value,rooms}))}catch(e){}}
@@ -877,7 +883,7 @@ svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id
   else{const nx=d.ex[0]**2+d.ex[1]**2,ny=d.ey[0]**2+d.ey[1]**2;u=nx>1e-9?(dx*d.ex[0]+dy*d.ex[1])/nx:0;v=ny>1e-9?(dx*d.ey[0]+dy*d.ey[1])/ny:0}
   const[mx,my]=d.k===1?[v,-u]:d.k===2?[-u,-v]:d.k===3?[-v,u]:[u,v];
   if(!d.moved&&Math.hypot(mx,my)<.15)return;d.moved=true;
-  const s=site(),r=d.r;r.x=clamp(snap(d.x+mx),0,s.w-r.w);r.y=clamp(snap(d.y+my),0,s.d-r.d);
+  const s=site(),r=d.r;r.x=clamp(snap(d.x+mx),0,s.w-r.w);r.y=clamp(snap(d.y+my),0,s.d-r.d);if(!d.roof){const sn=edgeSnap(r,r.x,r.y,rooms.filter(o=>o!==r&&lvl(o)===lvl(r)),s.w,s.d);r.x=clamp(sn.x,0,s.w-r.w);r.y=clamp(sn.y,0,s.d-r.d)}else{const sn=edgeSnap(r,r.x,r.y,rooms.filter(o=>lvl(o)===roofLevel(r)),s.w,s.d);r.x=sn.x;r.y=sn.y}
   if(d.roof){if(S.selRoof!==r.id){S.selRoof=r.id;selectedId=null}}else if(selectedId!==r.id){selectedId=r.id;S.selRoof=null}
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
 const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
