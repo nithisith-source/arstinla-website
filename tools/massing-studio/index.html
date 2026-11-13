@@ -320,6 +320,7 @@ body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout
 #opLayer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;overflow:visible}
 #roomLayer .room-block.iso-ghost{opacity:.28;pointer-events:none;border-style:dashed;z-index:0}
 .iso-floor-badge{position:absolute;right:25px;top:6px;font:600 9px var(--font-en);letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
+#isoBoard [data-id]{cursor:grab;touch-action:none}#isoBoard [data-id]:active{cursor:grabbing}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
 .iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
@@ -815,7 +816,25 @@ $("selectedLevel").addEventListener("change",e=>{const room=rooms.find(i=>i.id==
 function clearSel(){if(!selectedId&&!S.selRoof&&(typeof selectedColumnId==="undefined"||!selectedColumnId))return;selectedId=null;S.selRoof=null;if(typeof selectedColumnId!=="undefined")selectedColumnId=null;saveS();renderAll(false)}
 $("planBoard").addEventListener("click",e=>{if(!e.target.closest(".room-block,.column-block,.roof-outline,.roof-chip,[data-roof],[data-col],button,input,select"))clearSel()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.target.closest("input,select,textarea"))clearSel()});
-svg.addEventListener("click",e=>{const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
+/* ---------- drag rooms directly in the 3D / isometric view ---------- */
+let isoDrag=null,isoRaf=0;
+function isoUnits(e){const m=svg.getScreenCTM();if(!m)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(m.inverse());return[q.x,q.y]}
+svg.addEventListener("pointerdown",e=>{if(e.button!==0)return;const el=e.target.closest("[data-id]");if(!el||e.target.closest("[data-roof]"))return;
+  const r=rooms.find(i=>i.id===el.dataset.id);if(!r)return;const p0=isoUnits(e);if(!p0)return;
+  const z=base(lvl(r)),o=P(0,0,z),a=P(1,0,z),b=P(0,1,z),ex=[a[0]-o[0],a[1]-o[1]],ey=[b[0]-o[0],b[1]-o[1]];
+  isoDrag={r,p0,x:r.x,y:r.y,ex,ey,k:viewK(),moved:false,id:e.pointerId};svg.setPointerCapture(e.pointerId);e.preventDefault()});
+svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;const p=isoUnits(e);if(!p)return;const dx=p[0]-d.p0[0],dy=p[1]-d.p0[1];
+  const det=d.ex[0]*d.ey[1]-d.ex[1]*d.ey[0];let u,v;
+  if(Math.abs(det)>1e-6){u=(dx*d.ey[1]-dy*d.ey[0])/det;v=(d.ex[0]*dy-d.ex[1]*dx)/det}
+  else{const nx=d.ex[0]**2+d.ex[1]**2,ny=d.ey[0]**2+d.ey[1]**2;u=nx>1e-9?(dx*d.ex[0]+dy*d.ex[1])/nx:0;v=ny>1e-9?(dx*d.ey[0]+dy*d.ey[1])/ny:0}
+  const[mx,my]=d.k===1?[v,-u]:d.k===2?[-u,-v]:d.k===3?[-v,u]:[u,v];
+  if(!d.moved&&Math.hypot(mx,my)<.15)return;d.moved=true;
+  const s=site(),r=d.r;r.x=clamp(snap(d.x+mx),0,s.w-r.w);r.y=clamp(snap(d.y+my),0,s.d-r.d);
+  if(selectedId!==r.id){selectedId=r.id;S.selRoof=null}
+  if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
+const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);selectedId=d.r.id;renderAll()}};
+svg.addEventListener("pointerup",isoEnd);svg.addEventListener("pointercancel",isoEnd);
+svg.addEventListener("click",e=>{if(svg.dataset.dragged)return;const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
   const el=e.target.closest("[data-id]");if(!el){clearSel();return}if(el&&typeof selectRoom==="function"){selectRoom(el.dataset.id);$("selectedEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}});
 
 /* ---------- PNG export (isometric) ---------- */
