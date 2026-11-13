@@ -148,7 +148,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 <main class="workspace">
   <div class="stage-bar">
     <div class="stage-title"><strong>Client Preview · Massing</strong><span>Plan: ลากห้องหรือป้ายหลังคาเพื่อย้าย · ลูกศรขยับทีละ 0.10 ม.</span></div>
-    <div class="stage-actions"><button class="primary" id="downloadBtn" type="button">Download PNG</button><button id="villageBtn" type="button" title="วางบ้านหลังนี้ลงแปลงที่ดินของคุณใน ARSTINLA Village">🏡 ส่งไปที่ดิน Village</button></div>
+    <div class="stage-actions"><button class="primary" id="downloadBtn" type="button">Download PNG</button><button id="dxfBtn" type="button" title="ส่งออกโมเดล 3D เป็น DXF (3DFACE) หน่วยเมตร">Export 3D DXF</button><button id="villageBtn" type="button" title="วางบ้านหลังนี้ลงแปลงที่ดินของคุณใน ARSTINLA Village">🏡 ส่งไปที่ดิน Village</button></div>
   </div>
   <section class="client-sheet">
     <div class="sheet-head">
@@ -261,6 +261,7 @@ populateTypes($("newRoomType"));populateTypes($("selectedType"));loadState();ren
 </script>
 
 <script src="../shared/download-gate.js?v=3"></script>
+<script src="../shared/dxf.js?v=1"></script>
 <script>
 (function(){
 "use strict";
@@ -481,7 +482,7 @@ function stairBoxes(r,z,fh,sel,put,W,D,k,VV){const st=r.stair;if(!st||!(st.n>=2)
     const k2=Math.hypot(R,f.t);add("wall",[P3(s0,f.u0,f.z0),P3(Lf,f.u0,zE-c),P3(Lf,f.u1,zE-c),P3(s0,f.u1,f.z0)],dirN(Lf/2,f.z0,R/k2,0,-f.t/k2));
     add("wall",[P3(Lf,f.u0,zE-c),P3(Lf,f.u0,zE),P3(Lf,f.u1,zE),P3(Lf,f.u1,zE-c)],dirN(Lf,zE,1,0,0));
     const vis=faces.filter(q=>faceVis(q.n,q.fc,VV)).sort((a,b)=>a.depth-b.depth),all=faces.flatMap(q=>q.vp),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),zs=all.map(p=>p[2]);
-    put({roof:true,id:r.id,sel,x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0:Math.min(...zs),z1:Math.max(...zs),faces:vis,color:sel?"#c9a48a":"#d8ccb4",all})})}
+    put({roof:true,id:r.id,sel,allF:faces.map(q=>q.vp),x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0:Math.min(...zs),z1:Math.max(...zs),faces:vis,color:sel?"#c9a48a":"#d8ccb4",all})})}
 function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
     if(!(a.x0<C.x1-1e-6&&C.x0<a.x1-1e-6&&a.y0<C.y1-1e-6&&C.y0<a.y1-1e-6&&a.z0<C.z1-1e-6&&C.z0<a.z1-1e-6)){nx.push(a);return}
     const X0=Math.max(a.x0,C.x0),X1=Math.min(a.x1,C.x1),Y0=Math.max(a.y0,C.y0),Y1=Math.min(a.y1,C.y1);
@@ -617,7 +618,7 @@ function scene(){
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
       return{kind:f.kind,under:f.under,vp,n,fc,depth:faceDepth(fc,VV)}}).filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
-    put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
+    put({roof:true,rid:R.id,allF:F.map(f=>f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})),x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
   // overlapping wall/slab boxes (shared walls, rooms that overlap) → carve so no two solids interpenetrate; selected room keeps its walls
@@ -955,7 +956,16 @@ async function isoPng(){
   typeof toast==="function"&&toast("ดาวน์โหลดภาพ Isometric แล้ว");
 }
 
-window.ARSTINLA_ISO={state:S,draw,setView,addFloor,addRoof,selectRoof,canvas:isoCanvas,save:saveS,png:isoPng};
+/* ---------- 3D DXF export: every solid as 3DFACEs, plan coordinates (north up), metres ---------- */
+function exportDxf3d(){const cam=S.cam,rot=S.rot,up=S.upTo;S.cam="iso";S.rot=0;S.upTo=-1;CAM=null;let sc;try{sc=scene()}finally{S.cam=cam;S.rot=rot;S.upTo=up}
+  const X=new ArstinlaDXF(),D=site().d,V=p=>[p[0],D-p[1],p[2]];
+  sc.objs.forEach(o=>{const lvlName=(()=>{const r=o.id&&rooms.find(q=>q.id===o.id);return r?`F${lvl(r)+1}-`:""})();
+    if(o.roof){const L=o.rid?X.layer("ROOF",1):X.layer(lvlName+"STAIR",4);(o.allF||o.faces.map(f=>f.vp)).forEach(f=>{const q=f.map(V);if(q.length<=4)X.face(L,q);else for(let i=1;i<q.length-1;i++)X.face(L,[q[0],q[i],q[i+1]])});return}
+    const L=o.glass?X.layer("GLASS",5):o.pane?X.layer("FRAME",8):o.c&&o.c[1]===SLABC[1]?X.layer(lvlName+"SLAB",9):X.layer(lvlName+"WALL",7);
+    const{x0,y0,x1,y1,z0,z1}=o,c=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]].map(V);
+    [[0,1,2,3],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]].forEach(f=>X.face(L,f.map(i=>c[i])))});
+  X.download(($("projectName").value||"Massing")+" 3D");typeof toast==="function"&&toast("ดาวน์โหลด DXF 3D แล้ว — 3DFACE หน่วยเมตร")}
+window.ARSTINLA_ISO={state:S,draw,setView,addFloor,addRoof,selectRoof,canvas:isoCanvas,save:saveS,png:isoPng,dxf:exportDxf3d};
 /* ---------- start ---------- */
 setView(S.view);
 async function houseImage(){
@@ -1020,6 +1030,10 @@ $("villageBtn").addEventListener("click",async()=>{
     if(confirm(`วางบ้านบนแปลง ${d.plot} แล้ว\nไปดูในผังหมู่บ้านเลยไหม?`))location.href="/village/?plot="+encodeURIComponent(d.plot);
   }catch(e){toast("ส่งไม่สำเร็จ ลองใหม่อีกครั้ง")}
   finally{btn.disabled=false;btn.textContent=old}});
+
+$("dxfBtn").addEventListener("click",async()=>{const gate=window.ARSTINLA_DOWNLOAD_GATE;
+  if(gate&&typeof gate.request==="function"){const ok=await gate.request({tool:"ARSTINLA Massing Studio",file:`${$("projectName").value||"Massing"} DXF`,buttonLabel:"ดาวน์โหลดไฟล์ DXF 3D",shareText:`ดูมวลอาคาร ${$("projectName").value||""} จาก ARSTINLA\n${location.href}`});if(!ok)return}
+  window.ARSTINLA_ISO.dxf()});
 $("downloadBtn").addEventListener("click",async()=>{
   const gate=window.ARSTINLA_DOWNLOAD_GATE;
   if(gate&&typeof gate.request==="function"){const ok=await gate.request({tool:"ARSTINLA Massing Studio",file:`${$("projectName").value||"Massing"} PNG`,buttonLabel:"ดาวน์โหลด Isometric PNG",shareText:`ดูมวลอาคาร ${$("projectName").value||""} จาก ARSTINLA\n${location.href}`});if(!ok)return}

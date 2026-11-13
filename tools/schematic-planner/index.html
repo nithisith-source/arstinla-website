@@ -238,7 +238,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
   <section class="workspace">
     <div class="stage-bar">
       <div class="stage-title"><strong>Client Preview · Schematic Design</strong><span>คลิกห้องหรือเสาเพื่อใช้ลูกศรขยับทีละ 0.10 ม. · ลากเพื่อย้ายระยะไกล</span></div>
-      <div class="stage-actions"><button id="toMassing" type="button" title="ส่งผังนี้ไปขึ้นรูปมวลอาคาร 3D ใน Massing Studio">Build mass →</button><button id="presentBtn" type="button">Present client view</button><button id="printBtn" type="button">Print / PDF</button><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
+      <div class="stage-actions"><button id="toMassing" type="button" title="ส่งผังนี้ไปขึ้นรูปมวลอาคาร 3D ใน Massing Studio">Build mass →</button><button id="presentBtn" type="button">Present client view</button><button id="printBtn" type="button">Print / PDF</button><button id="dxfBtn" type="button" title="ส่งออกแปลนเป็นไฟล์ CAD (.dxf) หน่วยเมตร แยกเลเยอร์ตามชั้น">Export DXF</button><button class="primary" id="downloadBtn" type="button">Download PNG</button></div>
     </div>
 
     <article class="client-sheet" id="clientSheet">
@@ -315,6 +315,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
 <div class="toast" id="toast" role="status"></div>
 
 <script src="/tools/shared/download-gate.js?v=3"></script>
+<script src="/tools/shared/dxf.js?v=1"></script>
 <script>
 const $=id=>document.getElementById(id);
 const directions=["N","NE","E","SE","S","SW","W","NW"];
@@ -798,6 +799,21 @@ $("levelBar").addEventListener("click",e=>{const b=e.target.closest("button");if
   else if(a==="del"){if(!confirm(`ลบชั้น ${curLevel+1} และห้องทั้งหมดในชั้นนี้?`))return;syncLevel();levelRooms.splice(curLevel,1);goLevel(Math.max(0,curLevel-1));toast("ลบชั้นแล้ว")}
   else if(a==="void"){const w=2,d=2;addVoid(snap((size.w-w)/2),snap((size.d-d)/2),w,d);renderAll();toast("เจาะช่องพื้นแล้ว ลากไปวาง และปรับขนาดได้ในตัวแก้ไข")}
   else if(a==="stairvoid"){const below=levelRooms[curLevel-1].filter(r=>r.stair);let n=0;below.forEach(st=>{if(rooms.some(v=>v.void&&Math.abs(v.x-st.x)<.01&&Math.abs(v.y-st.y)<.01))return;addVoid(st.x,st.y,st.w,st.d,"ช่องบันได");n++});renderAll();toast(n?`เจาะช่องพื้นตามบันได ${n} จุดแล้ว`:"มีช่องตามบันไดอยู่แล้ว")}});
+
+/* ---------- DXF export (CAD): every floor on its own layers, metres, north up ---------- */
+function exportDxf(){const X=new ArstinlaDXF(),size=site(),al=$("wallAlignment").value,Y=y=>size.d-y,list=allRooms(),N=levelRooms.length;
+  X.layer("SITE",8);X.rect("SITE",0,Y(0),size.w,Y(size.d));
+  for(let L=0;L<N;L++){const f=`F${L+1}`,LW=X.layer(f+"-WALL",7),LO=X.layer(f+"-ROOM",3),LT=X.layer(f+"-TEXT",2),LS=X.layer(f+"-STAIR",4),LV=X.layer(f+"-VOID",1);
+    list.filter(r=>r.level===L).forEach(r=>{const x0=r.x,y0=r.y,x1=r.x+r.w,y1=r.y+r.d;
+      if(r.void){X.rect(LV,x0,Y(y0),x1,Y(y1));X.line(LV,x0,Y(y0),x1,Y(y1));X.line(LV,x1,Y(y0),x0,Y(y1));X.text(LT,(x0+x1)/2,Y((y0+y1)/2),.18,r.name||"VOID",true);return}
+      const t=roomWall(r);X.rect(LO,x0,Y(y0),x1,Y(y1));
+      if(t>0){const o=al==="inside"?0:al==="center"?t/2:t,i=t-o;X.rect(LW,x0-o,Y(y0-o),x1+o,Y(y1+o));if(r.w-2*i>0&&r.d-2*i>0)X.rect(LW,x0+i,Y(y0+i),x1-i,Y(y1-i))}
+      if(r.stair){const g=stairGeom(r);g.lines.forEach(l=>X.line(LS,x0+l[0],Y(y0+l[1]),x0+l[2],Y(y0+l[3])));X.poly(LS,g.arrow.map(p=>[x0+p[0],Y(y0+p[1]),0]),false)}
+      X.text(LT,(x0+x1)/2,Y((y0+y1)/2)+.12,.25,r.name,true);X.text(LT,(x0+x1)/2,Y((y0+y1)/2)-.22,.15,`${format2(r.w)} x ${format2(r.d)} m  ${format2(r.w*r.d)} sq.m.`,true)})}
+  if(columns.length){X.layer("COLUMN",6);columns.forEach(c=>X.rect("COLUMN",c.x-c.w/2,Y(c.y-c.d/2),c.x+c.w/2,Y(c.y+c.d/2)))}
+  X.text("SITE",0,Y(0)+.4,.3,`${$("projectName").value||"Schematic Plan"} - ARSTINLA Schematic Planner (m)`);
+  X.download($("projectName").value||"Schematic Plan");toast("ดาวน์โหลดไฟล์ DXF แล้ว — หน่วยเมตร แยกเลเยอร์ F1/F2/…")}
+$("dxfBtn").addEventListener("click",async()=>{const allowed=await ARSTINLA_DOWNLOAD_GATE.request({tool:"ARSTINLA Schematic Planner",file:`${$("projectName").value||"Schematic Plan"} DXF`,buttonLabel:"ดาวน์โหลดไฟล์ DXF",shareText:`ดูแนวคิดผัง ${$("projectName").value||"Schematic Plan"} จาก ARSTINLA\n${location.href}`});if(allowed)exportDxf()});
 </script>
 </body>
 </html>
