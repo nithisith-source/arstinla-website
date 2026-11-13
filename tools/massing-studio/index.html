@@ -377,6 +377,7 @@ $("showGrid").closest(".control-section").insertAdjacentHTML("beforebegin",`<sec
     <div class="field-row">${numField("isoRoofX","X จากซ้าย","ม.",'step="0.1"')}${numField("isoRoofY","Y จากบน","ม.",'step="0.1"')}</div>
     <div class="field-row">${numField("isoRoofW","กว้าง","ม.",'min="1" step="0.1"')}${numField("isoRoofD","ยาว","ม.",'min="1" step="0.1"')}</div>
     <div class="field-row"><div id="isoPitchWrap">${numField("isoPitch","ความชัน","°",'min="1" max="60" step="1"')}</div>${numField("isoEave","ชายคายื่น (จากอะเส)","ม.",'min="0" max="3" step="0.1"')}</div>
+    <div class="field-row">${numField("isoRise","ระดับเหนืออะเส","ม.",'min="0" max="3" step="0.05"')}<div class="field"></div></div>
     <div class="field-row">${numField("isoPlate","อะเส ห่างแนวผนัง","ม.",'min="-1" max="2" step="0.05"')}<div class="field"><label>ขนาดที่ขอบอะเส</label><div class="iso-plate-out" id="isoPlateOut" style="padding:10px 0;font-size:13px"></div></div></div>
     <div class="field" id="isoDirField"><label for="isoRoofDir" id="isoRoofDirLabel">แนวสัน</label><select id="isoRoofDir"></select></div>
     <div class="field"><label for="isoRoofColor">สีหลังคา</label><select id="isoRoofColor">${ROOF_COLORS.map(([n,c])=>`<option value="${c}">${n}</option>`).join("")}</select></div>
@@ -486,6 +487,7 @@ const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],cross=(a,b)=>[a[1]*b[2]-a[2]*b[
 const norm=a=>{const l=Math.hypot(...a)||1;return a.map(v=>v/l)};
 
 /* roof faces in plan coords; kind: slope (roof skin) | wall (gable end / high side) */
+function riseOf(R){const v=Number(R&&R.rise);return Number.isFinite(v)?clamp(v,0,3):0}
 function plateOf(R){const v=Number(R&&R.plate);return Number.isFinite(v)?clamp(v,-1,2):0}
 function roofFaces(r,X0,Y0,X1,Y1,z){
   const tn=Math.tan(clamp(r.pitch,1,60)*Math.PI/180),F=[];
@@ -564,8 +566,11 @@ function scene(){
       [[x0,y0,x1,y0+pt],[x0,y1-pt,x1,y1],[x0,y0+pt,x0+pt,y1-pt],[x1-pt,y0+pt,x1,y1-pt]].forEach(([a,b,c,d])=>put({rid:R.id,x0:a,y0:b,x1:c,y1:d,z0:zp,z1:zp+ph,c:rc}));return}
     // eave (ชายคา): roof planes run past the walls and drop by eave×slope; gable/end walls stay on the wall line; fascia board along the edges
     const tn=Math.tan(clamp(R.pitch,1,60)*Math.PI/180),ov=ev-ep,drop=R.type==="butterfly"?0:ov*tn;
-    const Fo=roofFaces(R,px0,py0,px1,py1,zt-drop).F,Fi=roofFaces(R,R.x-ep,R.y-ep,R.x+R.w+ep,R.y+R.d+ep,zt).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
-    const F=Fo.filter(f=>f.kind==="slope").concat(Fi.filter(f=>f.kind==="wall"));
+    const rz=riseOf(R),zr=zt+rz,qx0=R.x-ep,qy0=R.y-ep,qx1=R.x+R.w+ep,qy1=R.y+R.d+ep;
+    const Fo=roofFaces(R,px0,py0,px1,py1,zr-drop).F,Fi=roofFaces(R,qx0,qy0,qx1,qy1,zr).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
+    const und=R.type!=="butterfly",F=Fo.filter(f=>f.kind==="slope").concat(Fi.filter(f=>f.kind==="wall").map(f=>({...f,under:und})));
+    // level above the wall plate (ระดับเหนืออะเส): band wall from the plate up to where the roof starts
+    if(rz>.005)[[qx0,qy0,qx1,qy0],[qx1,qy0,qx1,qy1],[qx1,qy1,qx0,qy1],[qx0,qy1,qx0,qy0]].forEach(([a,b,c,d])=>F.push({kind:"wall",under:true,p:[[a,b,zt],[c,d,zt],[c,d,zr],[a,b,zr]]}));
     if(ov>.01){const FB=.18,onB=q=>Math.abs(q[0]-px0)<1e-6||Math.abs(q[0]-px1)<1e-6||Math.abs(q[1]-py0)<1e-6||Math.abs(q[1]-py1)<1e-6,same=(a,b)=>(Math.abs(a[0]-b[0])<1e-6&&(Math.abs(a[0]-px0)<1e-6||Math.abs(a[0]-px1)<1e-6))||(Math.abs(a[1]-b[1])<1e-6&&(Math.abs(a[1]-py0)<1e-6||Math.abs(a[1]-py1)<1e-6));
       Fo.filter(f=>f.kind==="slope").forEach(f=>f.p.forEach((a,i)=>{const b=f.p[(i+1)%f.p.length];if(onB(a)&&onB(b)&&same(a,b))F.push({kind:"wall",p:[a,b,[b[0],b[1],b[2]-FB],[a[0],a[1],a[2]-FB]]})}))}
     const allP=F.flatMap(f=>f.p);
@@ -574,7 +579,7 @@ function scene(){
       const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
-      return{kind:f.kind,vp,n,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)}}).filter(f=>dot(f.n,VV)>1e-3).sort((a,b)=>a.depth-b.depth);
+      return{kind:f.kind,under:f.under,vp,n,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)}}).filter(f=>dot(f.n,VV)>1e-3).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
     put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
@@ -702,7 +707,7 @@ function renderPanel(){
     $("isoRoofType").value=R.type;
     $("isoRoofLevel").innerHTML=S.floors.map((f,i)=>`<option value="${i}">หลังคา${fl(i)}</option>`).join("");$("isoRoofLevel").value=String(roofLevel(R));
     $("isoRoofX").value=format2(R.x);$("isoRoofY").value=format2(R.y);$("isoRoofW").value=format2(R.w);$("isoRoofD").value=format2(R.d);
-    $("isoPitch").value=R.pitch;$("isoEave").value=format2(R.eave);$("isoPlate").value=format2(plateOf(R));plateOut(R);$("isoRoofColor").value=R.color;
+    $("isoPitch").value=R.pitch;$("isoEave").value=format2(R.eave);$("isoPlate").value=format2(plateOf(R));$("isoRise").value=format2(riseOf(R));plateOut(R);$("isoRoofColor").value=R.color;
   }
   if(R){const pitched=R.type!=="flat";$("isoPitchWrap").hidden=!pitched;$("isoDirField").hidden=!pitched||R.type==="hip";
     $("isoRoofDirLabel").textContent=R.type==="shed"?"ทิศที่หลังคาลาดลง":R.type==="butterfly"?"แนวรางน้ำกลาง":"แนวสันหลังคา";
@@ -804,6 +809,7 @@ $("isoRoofW").addEventListener("input",withRoof((r,v)=>{const n=num(v,1,s0().w+6
 $("isoRoofD").addEventListener("input",withRoof((r,v)=>{const n=num(v,1,s0().d+6);if(n===null)return false;r.d=n}));
 $("isoPitch").addEventListener("input",withRoof((r,v)=>{const n=num(v,1,60);if(n===null)return false;r.pitch=n}));
 $("isoEave").addEventListener("input",withRoof((r,v)=>{const n=num(v,0,3);if(n===null)return false;r.eave=n;plateOut(r)}));
+$("isoRise").addEventListener("input",withRoof((r,v)=>{const n=num(v,0,3);if(n===null)return false;r.rise=n}));
 $("isoPlate").addEventListener("input",withRoof((r,v)=>{const n=num(v,-1,2);if(n===null)return false;r.plate=n;plateOut(r)}));
 function plateOut(R){const t=wallThickness(),al=$("wallAlignment").value,e=al==="inside"?0:al==="center"?t/2:t,ep=e+plateOf(R),ev=ep+clamp(Number(R.eave)||0,0,3);
   $("isoPlateOut").innerHTML=`อะเส <b>${format2(R.w+2*ep)} × ${format2(R.d+2*ep)}</b> ม.<br><span style="opacity:.7">ปลายชายคา ${format2(R.w+2*ev)} × ${format2(R.d+2*ev)} ม.</span>`}
