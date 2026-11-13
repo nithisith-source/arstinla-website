@@ -473,12 +473,17 @@ function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
     const X0=Math.max(a.x0,C.x0),X1=Math.min(a.x1,C.x1),Y0=Math.max(a.y0,C.y0),Y1=Math.min(a.y1,C.y1);
     if(a.x0<X0)nx.push({...a,x1:X0});if(X1<a.x1)nx.push({...a,x0:X1});
     if(a.y0<Y0)nx.push({...a,x0:X0,x1:X1,y1:Y0});if(Y1<a.y1)nx.push({...a,x0:X0,x1:X1,y0:Y1});
-    if(a.z0<C.z0)nx.push({x0:X0,x1:X1,y0:Y0,y1:Y1,z0:a.z0,z1:Math.max(a.z0,C.z0)});if(C.z1<a.z1)nx.push({x0:X0,x1:X1,y0:Y0,y1:Y1,z0:Math.min(a.z1,C.z1),z1:a.z1})});out=nx});return out}
+    if(a.z0<C.z0)nx.push({...a,x0:X0,x1:X1,y0:Y0,y1:Y1,z0:a.z0,z1:Math.max(a.z0,C.z0),zs:Math.min(a.zs??a.z1,Math.max(a.z0,C.z0))});if(C.z1<a.z1)nx.push({...a,x0:X0,x1:X1,y0:Y0,y1:Y1,z0:Math.min(a.z1,C.z1),z1:a.z1})});out=nx});return out}
 function order(o){ // painter's order for boxes, viewer at +X +Y +Z
   // screen overlap of two iso boxes = overlap of their ranges in (x-y), (x-z), (y-z)
   const ovl=(a0,a1,b0,b1)=>a0<b1-EPS&&b0<a1-EPS;
   const scr=(a,b)=>ovl(a.x0-a.y1,a.x1-a.y0,b.x0-b.y1,b.x1-b.y0)&&ovl(a.x0-a.z1,a.x1-a.z0,b.x0-b.z1,b.x1-b.z0)&&ovl(a.y0-a.z1,a.y1-a.z0,b.y0-b.z1,b.y1-b.z0);
-  const n=o.length,ahead=(a,b)=>scr(a,b)&&(a.x1<=b.x0+EPS||a.y1<=b.y0+EPS||a.z1<=b.z0+EPS);
+  const sep=(a,b)=>a.x1<=b.x0+EPS||a.y1<=b.y0+EPS||a.z1<=b.z0+EPS;
+  // boxes that interpenetrate (shared walls of neighbouring rooms overlap by the wall thickness):
+  // order them along the axis of least penetration, by centre — keeps the relation one-way
+  const pen=(a,b)=>{const px=Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0),py=Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0),pz=Math.min(a.z1,b.z1)-Math.max(a.z0,b.z0);
+    if(px<=pz&&px<=py)return a.x0+a.x1<b.x0+b.x1-EPS;if(py<=pz)return a.y0+a.y1<b.y0+b.y1-EPS;return a.z0+a.z1<b.z0+b.z1-EPS};
+  const n=o.length,ahead=(a,b)=>scr(a,b)&&(sep(a,b)||(!sep(b,a)&&pen(a,b)));
   const indeg=new Array(n).fill(0),out=o.map(()=>[]);
   for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(i!==j&&ahead(o[i],o[j])&&!ahead(o[j],o[i])){out[i].push(j);indeg[j]++}
   const key=b=>b.x0+b.x1+b.y0+b.y1+b.z0*.01+(b.sel?1e6:0),done=new Array(n).fill(false),res=[];
@@ -587,6 +592,11 @@ function scene(){
     put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
+  // overlapping wall/slab boxes (shared walls, rooms that overlap) → carve so no two solids interpenetrate; selected room keeps its walls
+  {const isS=o=>o.id&&!o.roof&&!o.pane&&!o.glass,sol=objs.filter(isS).sort((a,b)=>(b.sel?1:0)-(a.sel?1:0)),rest=objs.filter(o=>!isS(o)),acc=[];
+   sol.forEach(o=>{const hit=acc.filter(c=>o.x0<c.x1-1e-6&&c.x0<o.x1-1e-6&&o.y0<c.y1-1e-6&&c.y0<o.y1-1e-6&&o.z0<c.z1-1e-6&&c.z0<o.z1-1e-6);
+     (hit.length?cutBox(o,hit):[o]).forEach(q=>{if(q.x1-q.x0>1e-4&&q.y1-q.y0>1e-4&&q.z1-q.z0>1e-4)acc.push(q)})});
+   objs.length=0;objs.push(...acc,...rest)}
   const m=viewMode(),ord=m==="iso"?order(objs):objs.slice().sort(m==="top"?(a,b)=>a.z1-b.z1||a.z0-b.z0:m==="bottom"?(a,b)=>b.z0-a.z0||b.z1-a.z1:(a,b)=>a.y1-b.y1||a.z0-b.z0);
   return{W,D,Wr,Dr,k,t,top,objs:ord,ground,labels,zmax,mode:m};
 }
