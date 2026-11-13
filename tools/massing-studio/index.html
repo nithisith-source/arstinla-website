@@ -331,6 +331,7 @@ body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout
 .iso-nudge button{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border:0;border-radius:50%;background:#c47a55;color:#fff;font:700 17px/34px system-ui;cursor:pointer;pointer-events:auto;box-shadow:0 3px 10px #0004;padding:0;touch-action:manipulation}
 .iso-nudge button:hover{background:#171816}.iso-nudge button span{display:inline-block}
 .iso-nudge .dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#c47a55;box-shadow:0 0 0 3px #fff}
+.eye-wrap{display:inline-flex;align-items:center;gap:4px;font-size:12px;margin-left:6px}.eye-wrap[hidden]{display:none}.eye-wrap input{height:30px;border:1px solid #c9c4b8;background:#fff;padding:0 4px}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
 .iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
@@ -361,7 +362,7 @@ planWrap.insertAdjacentHTML("beforeend",`<span class="iso-floor-badge" id="isoFl
 const wrap=document.createElement("div");wrap.className="iso-wrap";wrap.id="isoWrap";wrap.hidden=true;
 wrap.innerHTML=`<div class="iso-tools">
   <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
-  <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
+  <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="persp" title="Perspective 2 จุด">2-Point</button><label class="eye-wrap" id="eyeWrap" hidden>สายตา <input id="isoEye" type="number" min="0.3" max="60" step="0.1" style="width:58px"> ม.</label><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
   <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
   <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button></div>
 </div>
@@ -420,9 +421,16 @@ const PROJ={iso:(x,y,z=0)=>[(x-y)*C30*SC,(x+y)*S30*SC-z*SC],top:(x,y)=>[x*SC,y*S
 let P=PROJ.iso;
 // orthographic views: which plan rotation puts the viewer on rotated +Y (elevations), view vector, painter key
 const ORTHO={front:{k:0,az:180},right:{k:1,az:90},back:{k:2,az:0},left:{k:3,az:270}};
-function viewMode(){return ["top","bottom","front","back","left","right"].includes(S.cam)?S.cam:"iso"}
-function viewK(){const m=viewMode();return ORTHO[m]?ORTHO[m].k:m==="iso"?S.rot:0}
-function viewVec(){const m=viewMode();return m==="top"?[0,0,1]:m==="bottom"?[0,0,-1]:ORTHO[m]?[0,1,0]:[1,1,1]}
+function viewMode(){return ["top","bottom","front","back","left","right","persp"].includes(S.cam)?S.cam:"iso"}
+// 2-point perspective: eye on a horizontal sight line toward the house corner, verticals stay vertical
+let CAM=null;
+function makePersp(Wr,Dr){const h=clamp(Number(S.eye)||1.6,.3,60),diag=Math.hypot(Wr,Dr),dist=diag*1.35+6,r2=Math.SQRT1_2,cx=Wr/2+dist*r2,cy=Dr/2+dist*r2,F=SC*dist*.95;
+  CAM=[cx,cy,h];const f=[-r2,-r2,0],rt=[r2,-r2,0];
+  return(x,y,z=0)=>{const dx=x-cx,dy=y-cy,dz=z-h,dep=Math.max(.2,dx*f[0]+dy*f[1]);return[(dx*rt[0]+dy*rt[1])/dep*F,-dz/dep*F]}}
+const faceVis=(n,fc,VV)=>CAM?dot(n,sub(CAM,fc))>1e-6:dot(n,VV)>1e-3;
+const faceDepth=(fc,VV)=>CAM?-Math.hypot(fc[0]-CAM[0],fc[1]-CAM[1],fc[2]-CAM[2]):VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV);
+function viewK(){const m=viewMode();return ORTHO[m]?ORTHO[m].k:m==="iso"||m==="persp"?S.rot:0}
+function viewVec(){const m=viewMode();return m==="top"?[0,0,1]:m==="bottom"?[0,0,-1]:ORTHO[m]?[0,1,0]:m==="persp"?[1,1,0]:[1,1,1]}
 const pts=a=>a.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
 function hull(p){p=p.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
   for(const q of p){while(lo.length>1&&cr(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}
@@ -463,7 +471,7 @@ function stairBoxes(r,z,fh,sel,put,W,D,k,VV){const st=r.stair;if(!st||!(st.n>=2)
     const P3=(sv,u,zz)=>{const x=f.ax==="y"?u:f.o+f.sg*sv,y=f.ax==="y"?f.o+f.sg*sv:u;return[x,y,zz]};
     const faces=[],add=(kind,pts,nl)=>{const vp=pts.map(V),fc=vp.reduce((a,p)=>[a[0]+p[0]/vp.length,a[1]+p[1]/vp.length,a[2]+p[2]/vp.length],[0,0,0]);
       // outward normal: map a local normal through the same transforms
-      const a=V(nl[0]),b=V(nl[1]),nn=norm(sub(b,a));faces.push({kind,vp,n:nn,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)})};
+      const a=V(nl[0]),b=V(nl[1]),nn=norm(sub(b,a));faces.push({kind,vp,n:nn,depth:faceDepth(fc,VV),fc})};
     const prof=u=>{const pts=[P3(0,u,f.z0)];for(let i=0;i<f.m;i++){pts.push(P3(i*f.t,u,f.z0+(i+1)*R),P3((i+1)*f.t,u,f.z0+(i+1)*R))}pts.push(P3(Lf,u,zE-c),P3(s0,u,f.z0));return pts};
     const um=(f.u0+f.u1)/2,dirN=(sv,zz,ds,du,dz)=>[P3(sv,um,zz),P3(sv+ds,um+du,zz+dz)];
     for(let i=0;i<f.m;i++){const zt=f.z0+(i+1)*R;
@@ -472,7 +480,7 @@ function stairBoxes(r,z,fh,sel,put,W,D,k,VV){const st=r.stair;if(!st||!(st.n>=2)
     add("wall",prof(f.u0),dirN(Lf/2,f.z0,0,-1,0));add("wall",prof(f.u1),dirN(Lf/2,f.z0,0,1,0));
     const k2=Math.hypot(R,f.t);add("wall",[P3(s0,f.u0,f.z0),P3(Lf,f.u0,zE-c),P3(Lf,f.u1,zE-c),P3(s0,f.u1,f.z0)],dirN(Lf/2,f.z0,R/k2,0,-f.t/k2));
     add("wall",[P3(Lf,f.u0,zE-c),P3(Lf,f.u0,zE),P3(Lf,f.u1,zE),P3(Lf,f.u1,zE-c)],dirN(Lf,zE,1,0,0));
-    const vis=faces.filter(q=>dot(q.n,VV)>1e-3).sort((a,b)=>a.depth-b.depth),all=faces.flatMap(q=>q.vp),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),zs=all.map(p=>p[2]);
+    const vis=faces.filter(q=>faceVis(q.n,q.fc,VV)).sort((a,b)=>a.depth-b.depth),all=faces.flatMap(q=>q.vp),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),zs=all.map(p=>p[2]);
     put({roof:true,id:r.id,sel,x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0:Math.min(...zs),z1:Math.max(...zs),faces:vis,color:sel?"#c9a48a":"#d8ccb4",all})})}
 function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
     if(!(a.x0<C.x1-1e-6&&C.x0<a.x1-1e-6&&a.y0<C.y1-1e-6&&C.y0<a.y1-1e-6&&a.z0<C.z1-1e-6&&C.z0<a.z1-1e-6)){nx.push(a);return}
@@ -480,6 +488,20 @@ function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
     if(a.x0<X0)nx.push({...a,x1:X0});if(X1<a.x1)nx.push({...a,x0:X1});
     if(a.y0<Y0)nx.push({...a,x0:X0,x1:X1,y1:Y0});if(Y1<a.y1)nx.push({...a,x0:X0,x1:X1,y0:Y1});
     if(a.z0<C.z0)nx.push({...a,x0:X0,x1:X1,y0:Y0,y1:Y1,z0:a.z0,z1:Math.max(a.z0,C.z0),zs:Math.min(a.zs??a.z1,Math.max(a.z0,C.z0))});if(C.z1<a.z1)nx.push({...a,x0:X0,x1:X1,y0:Y0,y1:Y1,z0:Math.min(a.z1,C.z1),z1:a.z1})});out=nx});return out}
+function orderP(o){ // painter's order for a point camera (CAM, view coords)
+  const C=CAM,bb=o.map(b=>{const xs=[],ys=[];[b.x0,b.x1].forEach(x=>[b.y0,b.y1].forEach(y=>[b.z0,b.z1].forEach(z=>{const q=P(x,y,z);xs.push(q[0]);ys.push(q[1])})));return[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]});
+  const ov=(i,j)=>bb[i][0]<bb[j][2]-.5&&bb[j][0]<bb[i][2]-.5&&bb[i][1]<bb[j][3]-.5&&bb[j][1]<bb[i][3]-.5;
+  const xyo=(a,b)=>a.x0<b.x1-EPS&&b.x0<a.x1-EPS&&a.y0<b.y1-EPS&&b.y0<a.y1-EPS;
+  const behind=(a,b)=>{ // a roof sits on (and its eaves hang in front of) whatever is under it
+    if(b.roof&&!a.roof&&a.z1<=b.z0+EPS&&xyo(a,b))return true;if(a.roof&&!b.roof&&b.z1<=a.z0+EPS&&xyo(a,b))return false;
+    for(const[l,h,c]of[["x0","x1",0],["y0","y1",1],["z0","z1",2]]){if(a[h]<=b[l]+EPS&&C[c]>=(a[h]+b[l])/2)return true;if(b[h]<=a[l]+EPS&&C[c]<=(b[h]+a[l])/2)return true}return false};
+  const n=o.length,indeg=new Array(n).fill(0),out=o.map(()=>[]);
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){if(!ov(i,j))continue;const ab=behind(o[i],o[j]),ba=behind(o[j],o[i]);if(ab&&!ba){out[i].push(j);indeg[j]++}else if(ba&&!ab){out[j].push(i);indeg[i]++}}
+  const key=b=>-Math.hypot((b.x0+b.x1)/2-C[0],(b.y0+b.y1)/2-C[1],(b.z0+b.z1)/2-C[2])+(b.sel?1e6:0),done=new Array(n).fill(false),res=[];
+  while(res.length<n){let best=-1;for(let i=0;i<n;i++)if(!done[i]&&indeg[i]===0&&(best<0||key(o[i])<key(o[best])))best=i;
+    if(best<0){for(let i=0;i<n;i++)if(!done[i]&&(best<0||key(o[i])<key(o[best])))best=i}
+    done[best]=true;res.push(o[best]);out[best].forEach(j=>indeg[j]--)}
+  return res}
 function order(o){ // painter's order for boxes, viewer at +X +Y +Z
   // screen overlap of two iso boxes = overlap of their ranges in (x-y), (x-z), (y-z)
   const ovl=(a0,a1,b0,b1)=>a0<b1-EPS&&b0<a1-EPS;
@@ -594,7 +616,7 @@ function scene(){
       const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
-      return{kind:f.kind,under:f.under,vp,n,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)}}).filter(f=>dot(f.n,VV)>1e-3).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
+      return{kind:f.kind,under:f.under,vp,n,fc,depth:faceDepth(fc,VV)}}).filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
     put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
@@ -603,15 +625,15 @@ function scene(){
    sol.forEach(o=>{const hit=acc.filter(c=>o.x0<c.x1-1e-6&&c.x0<o.x1-1e-6&&o.y0<c.y1-1e-6&&c.y0<o.y1-1e-6&&o.z0<c.z1-1e-6&&c.z0<o.z1-1e-6);
      (hit.length?cutBox(o,hit):[o]).forEach(q=>{if(q.x1-q.x0>1e-4&&q.y1-q.y0>1e-4&&q.z1-q.z0>1e-4)acc.push(q)})});
    objs.length=0;objs.push(...acc,...rest)}
-  const m=viewMode(),ord=m==="iso"?order(objs):objs.slice().sort(m==="top"?(a,b)=>a.z1-b.z1||a.z0-b.z0:m==="bottom"?(a,b)=>b.z0-a.z0||b.z1-a.z1:(a,b)=>a.y1-b.y1||a.z0-b.z0);
+  const m=viewMode(),ord=m==="persp"?orderP(objs):m==="iso"?order(objs):objs.slice().sort(m==="top"?(a,b)=>a.z1-b.z1||a.z0-b.z0:m==="bottom"?(a,b)=>b.z0-a.z0||b.z1-a.z1:(a,b)=>a.y1-b.y1||a.z0-b.z0);
   return{W,D,Wr,Dr,k,t,top,objs:ord,ground,labels,zmax,mode:m};
 }
 
 /* ---------- draw ---------- */
 const LIGHT=norm([-.35,.25,1]);
 function draw(){
-  {const m=viewMode();P=m==="iso"?PROJ.iso:m==="top"?PROJ.top:m==="bottom"?PROJ.bottom:PROJ.elev}
-  const sc=scene(),{Wr,Dr,k}=sc,parts=[],mode=sc.mode,ortho=mode!=="iso";
+  {const m=viewMode();CAM=null;if(m==="persp"){const s0=site(),kk=viewK();P=makePersp(kk%2?s0.d:s0.w,kk%2?s0.w:s0.d)}else P=m==="iso"?PROJ.iso:m==="top"?PROJ.top:m==="bottom"?PROJ.bottom:PROJ.elev}
+  const sc=scene(),{Wr,Dr,k}=sc,parts=[],mode=sc.mode,persp=mode==="persp",ortho=mode!=="iso"&&!persp;
   const ext=ORTHO[mode]?[[-5.2,-2],[Wr+2,-2],[Wr+2,Dr+2],[-5.2,Dr+2]]:[[-2,-2],[Wr+3.5,-2],[Wr+3.5,Dr+2],[-2,Dr+2]],pp=[];ext.forEach(([x,y])=>{pp.push(P(x,y,ORTHO[mode]?-.9:0));pp.push(P(x,y,sc.zmax+(ORTHO[mode]?1.1:.6)))});
   const minX=Math.min(...pp.map(p=>p[0])),maxX=Math.max(...pp.map(p=>p[0])),minY=Math.min(...pp.map(p=>p[1])),maxY=Math.max(...pp.map(p=>p[1]));
   const vb={x:minX,y:minY,w:maxX-minX,h:maxY-minY};svg.setAttribute("viewBox",`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
@@ -623,7 +645,7 @@ function draw(){
   sc.ground.forEach(f=>parts.push(`<polygon class="rm" data-id="${f.id}" points="${pts([P(f.x0,f.y0),P(f.x1,f.y0),P(f.x1,f.y1),P(f.x0,f.y1)])}" fill="${f.color}"${f.sel?' stroke="#c47a55" stroke-width="2.5" vector-effect="non-scaling-stroke"':""}/>`));
   // shadows on the ground
   let sun=null;
-  if($("showSun").checked){sun=sunNow();if(sun.elevation>2&&(mode==="iso"||mode==="top")){const a=toPlanAzimuth(sun.azimuth)*Math.PI/180,[vx,vy]=TV(Math.sin(a),-Math.cos(a),k),L=1/Math.tan(sun.elevation*Math.PI/180),dx=-vx*L,dy=-vy*L,pr=([x,y,z])=>[x+dx*z,y+dy*z];
+  if($("showSun").checked){sun=sunNow();if(sun.elevation>2&&(mode==="iso"||mode==="top"||persp)){const a=toPlanAzimuth(sun.azimuth)*Math.PI/180,[vx,vy]=TV(Math.sin(a),-Math.cos(a),k),L=1/Math.tan(sun.elevation*Math.PI/180),dx=-vx*L,dy=-vy*L,pr=([x,y,z])=>[x+dx*z,y+dy*z];
     const sh=sc.objs.filter(o=>!o.glass).map(o=>{const v=o.roof?o.all:(()=>{const zs=o.zs||o.z1,c=[[o.x0,o.y0],[o.x1,o.y0],[o.x1,o.y1],[o.x0,o.y1]];return c.map(([x,y])=>[x,y,o.z0]).concat(c.map(([x,y])=>[x,y,zs]))})();return hull(v.map(pr)).map(([x,y])=>P(x,y,0))});
     parts.push(`<clipPath id="isoClip"><polygon points="${pts([P(-2,-2),P(Wr+2,-2),P(Wr+2,Dr+2),P(-2,Dr+2)])}"/></clipPath><g clip-path="url(#isoClip)" opacity=".17">${sh.map(p=>`<polygon points="${pts(p)}" fill="#171816"/>`).join("")}</g>`)}}
   // objects
@@ -635,6 +657,14 @@ function draw(){
     if(mode==="top"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`);return}
     if(mode==="bottom"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0)])}" fill="${fx}" ${ve}/></g>`);return}
     if(ortho){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/></g>`);return}
+    if(persp){const C=CAM,F=[];
+      if(C[0]<x0)F.push(`<polygon points="${pts([P(x0,y0,z0),P(x0,y1,z0),P(x0,y1,z1),P(x0,y0,z1)])}" fill="${fx}" ${ve}/>`);
+      if(C[1]<y0)F.push(`<polygon points="${pts([P(x0,y0,z0),P(x1,y0,z0),P(x1,y0,z1),P(x0,y0,z1)])}" fill="${fy}" ${ve}/>`);
+      if(C[2]<z0)F.push(`<polygon points="${pts([P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0)])}" fill="${fx}" ${ve}/>`);
+      if(C[0]>x1)F.push(`<polygon points="${pts([P(x1,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x1,y0,z1)])}" fill="${fx}" ${ve}/>`);
+      if(C[1]>y1)F.push(`<polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/>`);
+      if(C[2]>z1)F.push(`<polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/>`);
+      parts.push(`<g${tag} ${stroke}>${F.join("")}</g>`);return}
     parts.push(`<g${tag} ${stroke}>`+
       `<polygon points="${pts([P(x0,y1,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${fy}" ${ve}/>`+
       `<polygon points="${pts([P(x1,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x1,y0,z1)])}" fill="${fx}" ${ve}/>`+
@@ -665,9 +695,10 @@ function draw(){
   // toolbar + note
   const viewAz=((ORTHO[mode]?ORTHO[mode].az:VIEW_AZ[k])-northAngle()+360)%360;
   const VN={top:"Top",bottom:"Bottom",front:"Front",back:"Back",left:"Left",right:"Right"};
-  $("isoRotLabel").textContent=mode==="top"||mode==="bottom"?`${VN[mode]} view`:ortho?`${VN[mode]} · from ${compassName(viewAz)}`:`Iso · from ${compassName(viewAz)}`;
+  $("isoRotLabel").textContent=mode==="top"||mode==="bottom"?`${VN[mode]} view`:ortho?`${VN[mode]} · from ${compassName(viewAz)}`:persp?`2-Point Perspective · from ${compassName(viewAz)}`:`Iso · from ${compassName(viewAz)}`;
   for(let i=0;i<4;i++){const b=wrap.querySelector(`[data-cam="iso${i}"]`);if(b)b.textContent=compassName((VIEW_AZ[i]-northAngle()+360)%360)}
   document.querySelectorAll("[data-cam]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.cam===(mode==="iso"?"iso"+k:mode))));
+  $("eyeWrap").hidden=!persp;if(document.activeElement!==$("isoEye"))$("isoEye").value=(Number(S.eye)||1.6).toFixed(1);
   $("isoHour").value=S.hour;$("isoHourOut").textContent=hhmm(S.hour);
   $("isoCut").setAttribute("aria-pressed",String(!!S.cut));$("isoRoofBtn").setAttribute("aria-pressed",String(!!S.roofOn));
   $("isoUpTo").innerHTML=`<option value="-1">แสดงทุกชั้น</option>`+S.floors.slice(0,-1).map((f,i)=>`<option value="${i}">แสดงถึง${fl(i)}</option>`).join("");
@@ -810,9 +841,10 @@ window.downloadPng=async function(...a){
   return isoPng()};
 
 /* ---------- controls ---------- */
-wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.cam;if(v.startsWith("iso")){S.cam="iso";S.rot=+v.slice(3)}else S.cam=v;saveS();draw()}));
-$("isoRotL").addEventListener("click",()=>{if(viewMode()!=="iso")S.cam="iso";S.rot=(S.rot+3)%4;saveS();draw()});
-$("isoRotR").addEventListener("click",()=>{if(viewMode()!=="iso")S.cam="iso";S.rot=(S.rot+1)%4;saveS();draw()});
+wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.cam;if(v.startsWith("iso")){S.cam=viewMode()==="persp"?"persp":"iso";S.rot=+v.slice(3)}else S.cam=v;saveS();draw()}));
+$("isoEye").addEventListener("input",e=>{const n=Number(e.target.value);if(Number.isFinite(n)&&n>=.3&&n<=60){S.eye=n;saveS();draw()}});
+$("isoRotL").addEventListener("click",()=>{if(!["iso","persp"].includes(viewMode()))S.cam="iso";S.rot=(S.rot+3)%4;saveS();draw()});
+$("isoRotR").addEventListener("click",()=>{if(!["iso","persp"].includes(viewMode()))S.cam="iso";S.rot=(S.rot+1)%4;saveS();draw()});
 $("isoHour").addEventListener("input",e=>{S.hour=Number(e.target.value);saveS();draw()});
 $("isoCut").addEventListener("click",()=>{S.cut=!S.cut;saveS();draw()});
 $("isoRoofBtn").addEventListener("click",()=>{S.roofOn=!S.roofOn;saveS();draw()});
