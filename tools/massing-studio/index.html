@@ -560,14 +560,20 @@ function scene(){
     if(R.type==="flat"){const rc=[shade(color,1.35),shade(color,1.12),shade(color,1)],pt=.15,ph=.5,zp=zt+SLAB;
       put({rid:R.id,x0,y0,x1,y1,z0:zt,z1:zp,c:rc});
       [[x0,y0,x1,y0+pt],[x0,y1-pt,x1,y1],[x0,y0+pt,x0+pt,y1-pt],[x1-pt,y0+pt,x1,y1-pt]].forEach(([a,b,c,d])=>put({rid:R.id,x0:a,y0:b,x1:c,y1:d,z0:zp,z1:zp+ph,c:rc}));return}
-    const{F,H}=roofFaces(R,px0,py0,px1,py1,zt),allP=F.flatMap(f=>f.p);
+    // eave (ชายคา): roof planes run past the walls and drop by eave×slope; gable/end walls stay on the wall line; fascia board along the edges
+    const tn=Math.tan(clamp(R.pitch,1,60)*Math.PI/180),ov=ev-e,drop=R.type==="butterfly"?0:ov*tn;
+    const Fo=roofFaces(R,px0,py0,px1,py1,zt-drop).F,Fi=roofFaces(R,R.x-e,R.y-e,R.x+R.w+e,R.y+R.d+e,zt).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
+    const F=Fo.filter(f=>f.kind==="slope").concat(Fi.filter(f=>f.kind==="wall"));
+    if(ov>.01){const FB=.18,onB=q=>Math.abs(q[0]-px0)<1e-6||Math.abs(q[0]-px1)<1e-6||Math.abs(q[1]-py0)<1e-6||Math.abs(q[1]-py1)<1e-6,same=(a,b)=>(Math.abs(a[0]-b[0])<1e-6&&(Math.abs(a[0]-px0)<1e-6||Math.abs(a[0]-px1)<1e-6))||(Math.abs(a[1]-b[1])<1e-6&&(Math.abs(a[1]-py0)<1e-6||Math.abs(a[1]-py1)<1e-6));
+      Fo.filter(f=>f.kind==="slope").forEach(f=>f.p.forEach((a,i)=>{const b=f.p[(i+1)%f.p.length];if(onB(a)&&onB(b)&&same(a,b))F.push({kind:"wall",p:[a,b,[b[0],b[1],b[2]-FB],[a[0],a[1],a[2]-FB]]})}))}
+    const allP=F.flatMap(f=>f.p);
     const cen=allP.reduce((s,p)=>[s[0]+p[0],s[1]+p[1],s[2]+p[2]],[0,0,0]).map(v=>v/allP.length),vc=T(cen[0],cen[1],W,D,k),c3=[vc[0],vc[1],cen[2]];
     const faces=F.map(f=>{const vp=f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]});
       const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
       return{kind:f.kind,vp,n,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)}}).filter(f=>dot(f.n,VV)>1e-3).sort((a,b)=>a.depth-b.depth);
-    put({roof:true,rid:R.id,x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
+    put({roof:true,rid:R.id,x0,y0,x1,y1,z0:Math.min(zt,...allP.map(q=>q[2])),z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
   const m=viewMode(),ord=m==="iso"?order(objs):objs.slice().sort(m==="top"?(a,b)=>a.z1-b.z1||a.z0-b.z0:m==="bottom"?(a,b)=>b.z0-a.z0||b.z1-a.z1:(a,b)=>a.y1-b.y1||a.z0-b.z0);
