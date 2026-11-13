@@ -26,6 +26,13 @@
 .fl-carpet{--floor-color:#9ba5ae;--floor-img:radial-gradient(rgba(40,50,60,.25) .8px,transparent 1.1px);--floor-size:4px 4px}
 .fl-grass{--floor-color:#a8b98c;--floor-img:repeating-linear-gradient(75deg,rgba(70,100,50,.25) 0 1px,transparent 1px 5px)}
 .room-op{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line,#d4cfc4);height:44px;font-size:12px;white-space:nowrap}.room-op input{width:110px;accent-color:#c36b48}.room-op b{font-weight:600;min-width:34px;text-align:right}
+
+.room-block.no-wall::before{border:1.5px dashed rgba(25,26,24,.6)!important;inset:0!important}
+.plan-board.walls-off .room-block:not(.own-wall)::before{border:1.5px dashed rgba(25,26,24,.6);inset:0}
+.stair-svg{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+.room-block.is-stair .room-content{justify-content:flex-start}.room-block.is-stair .room-content strong{background:rgba(247,244,237,.85);align-self:flex-start;padding:0 4px}
+.stair-tool .stair-out{margin:10px 0 0;padding:10px 12px;border:1px solid #3a3a35;font-size:12px;line-height:1.7;color:#ddd}.stair-tool .stair-out b{color:#fff}.stair-tool .stair-out .warn{color:#e8a07f}
+.stair-tool .seg{display:flex;gap:4px}.stair-tool .seg button{flex:1;height:34px;border:1px solid #4a4b45;background:transparent;color:#ccc;font:inherit;font-size:12px;cursor:pointer}.stair-tool .seg button.on{background:#c36b48;border-color:#c36b48;color:#fff}
 .trace-hint{margin:6px 0 10px;font-size:11px;line-height:1.6;color:#999}
 .trace-file{display:block;cursor:pointer}.trace-file input{position:absolute;opacity:0;width:1px;height:1px}
 .trace-file span{display:flex;align-items:center;justify-content:center;height:40px;border:1px dashed #6b6c64;font-size:12px;color:#ddd}.trace-file:hover span{border-color:#c36b48;color:#fff}
@@ -122,10 +129,31 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
       <div class="room-list" id="roomList"></div>
     </section>
 
+    <section class="control-section stair-tool">
+      <h2>Stair / สร้างบันได</h2>
+      <div class="field"><label>รูปแบบบันได</label><div class="seg" id="stKind"><button type="button" data-v="straight" class="on">ช่วงเดียว</button><button type="button" data-v="u">หักกลับ (U)</button><button type="button" data-v="l">หักฉาก (L)</button></div></div>
+      <div class="field"><label>ทิศขึ้นบันได (บนผัง)</label><div class="seg" id="stDir"><button type="button" data-v="N" class="on">↑ บน</button><button type="button" data-v="E">→ ขวา</button><button type="button" data-v="S">↓ ล่าง</button><button type="button" data-v="W">← ซ้าย</button></div></div>
+      <div class="field-row">
+        <div class="field"><label for="stH">ความสูงชั้น</label><div class="unit-input"><input id="stH" type="number" min="1" max="6" step="0.05" value="3.00"><span>ม.</span></div></div>
+        <div class="field"><label for="stW">กว้างบันได</label><div class="unit-input"><input id="stW" type="number" min="0.6" max="3" step="0.05" value="1.00"><span>ม.</span></div></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="stR">ลูกตั้งไม่เกิน</label><div class="unit-input"><input id="stR" type="number" min="0.12" max="0.25" step="0.005" value="0.175"><span>ม.</span></div></div>
+        <div class="field"><label for="stT">ลูกนอน</label><div class="unit-input"><input id="stT" type="number" min="0.18" max="0.40" step="0.01" value="0.28"><span>ม.</span></div></div>
+      </div>
+      <div class="stair-out" id="stOut"></div>
+      <button class="add-room" id="addStair" type="button">วางบันไดลงผัง +</button>
+    </section>
+
     <section class="control-section selected-editor" id="selectedEditor" hidden>
       <h2>Edit selected room</h2>
       <div class="field"><label for="selectedName">ชื่อห้อง</label><input id="selectedName"></div>
       <div class="field"><label for="selectedType">ประเภท</label><select id="selectedType"></select></div>
+      <div class="field-row">
+        <div class="field"><label for="selectedWall">ความหนาผนัง</label><select id="selectedWall"><option value="">ตามค่ารวม</option><option value="0">0 · ไม่มีผนัง</option><option value="0.05">0.05 ม.</option><option value="0.1">0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.2">0.20 ม.</option><option value="0.25">0.25 ม.</option><option value="0.3">0.30 ม.</option></select></div>
+        <div class="field"><label for="selectedSlab">ความหนาพื้น</label><div class="unit-input"><input id="selectedSlab" type="number" min="0" max="1" step="0.01" placeholder="0.15"><span>ม.</span></div></div>
+      </div>
+      <button class="reset-btn" id="stairRotate" type="button" hidden>หมุนทิศขึ้นบันได ↻</button>
       <div class="field"><label for="selectedFloor">วัสดุพื้น</label><select id="selectedFloor"><option value="">สีตามประเภทห้อง</option><option value="wood">ไม้ / ลามิเนต</option><option value="tile60">กระเบื้อง 60×60</option><option value="tile30">กระเบื้อง 30×30 (ห้องน้ำ)</option><option value="marble">หินอ่อน / แกรนิต 80×80</option><option value="terrazzo">หินขัด</option><option value="concrete">ปูนขัดมัน</option><option value="carpet">พรม</option><option value="deck">ไม้ระแนง / เดค</option><option value="grass">สนามหญ้า</option></select></div>
       <div class="field-row">
         <div class="field"><label for="selectedWidth">กว้าง</label><div class="unit-input"><input id="selectedWidth" type="number" min="1" step="0.01"><span>ม.</span></div></div>
@@ -204,7 +232,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
       </header>
 
       <div class="layer-controls" aria-label="ตั้งค่าเส้นผนังและเปิดหรือปิดทิศทางแดดลม">
-        <label class="wall-setting" for="wallThickness">ความหนาเส้น<select id="wallThickness"><option value="0.05">0.05 ม.</option><option value="0.10" selected>0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.20">0.20 ม.</option></select></label>
+        <label class="wall-setting" for="wallThickness">ความหนาเส้น<select id="wallThickness"><option value="0">0 (ไม่มีผนัง)</option><option value="0.05">0.05 ม.</option><option value="0.10" selected>0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.20">0.20 ม.</option></select></label>
         <label class="wall-setting" for="wallAlignment">ตำแหน่งเส้น<select id="wallAlignment"><option value="inside">ชิดใน</option><option value="center" selected>กึ่งกลาง</option><option value="outside">ชิดนอก</option></select></label>
         <label class="room-op" for="roomFill" title="ความเข้มสีของทุกห้อง ลดลงเพื่อเห็นรูปแปลนด้านล่าง">สีห้อง <input id="roomFill" type="range" min="0" max="100" step="5" value="100"><b id="roomFillVal">100%</b></label><button class="layer-toggle" id="toggleSunLayer" data-layer="sun" type="button" aria-pressed="true"><span class="layer-name"><i class="layer-swatch" aria-hidden="true"></i>ทิศทางแดด</span><span class="layer-state">เปิด</span></button>
         <button class="layer-toggle" id="toggleWindLayer" data-layer="wind" type="button" aria-pressed="true"><span class="layer-name"><i class="layer-swatch" aria-hidden="true"></i>ทิศทางลม</span><span class="layer-state">เปิด</span></button>
@@ -410,10 +438,11 @@ function renderEnvironment(){
   $("sunData").innerHTML=`<span class="data-chip">${arcSide.english} · ${arcSide.thai}</span>`+suns.map(sun=>`<span class="data-chip">${sun.hour}:00 · ${compassName(sun.azimuth)} ${Math.round(sun.azimuth)}° · ALT ${Math.round(sun.elevation)}°</span>`).join("");
   $("windTitle").textContent=wind.title;$("windSummary").textContent=`${wind.thai}: ${wind.note}`;$("windData").innerHTML=`<span class="data-chip">FROM ${wind.from}</span><span class="data-chip">TOWARD ${compassName((wind.azimuth+180)%360)}</span>`;
 }
-function wallThickness(){return Number($("wallThickness").value)||.1}
+function wallThickness(){const v=Number($("wallThickness").value);return Number.isFinite(v)&&v>=0?v:.1}
+function roomWall(room){return room&&room.wall!=null&&room.wall!==""?Number(room.wall):wallThickness()}
 function wallAlignmentLabel(value=$("wallAlignment").value){return {inside:"ชิดใน / Inside",center:"กึ่งกลาง / Center",outside:"ชิดนอก / Outside"}[value]||"กึ่งกลาง / Center"}
 function renderWallStyle(){
-  const board=$("planBoard"),size=site(),thickness=wallThickness(),alignment=$("wallAlignment").value;const px=board.clientWidth/size.w*thickness;if(!px)return;
+  const board=$("planBoard"),size=site(),thickness=wallThickness(),alignment=$("wallAlignment").value;const px=board.clientWidth/size.w*thickness;board.classList.toggle("walls-off",!thickness);board.style.setProperty("--wall-t",thickness);board.style.setProperty("--wall-k",alignment==="inside"?0:alignment==="center"?.5:1);
   const offset=alignment==="inside"?0:alignment==="center"?-px/2:-px;const inner=alignment==="inside"?px:alignment==="center"?px/2:0;
   board.style.setProperty("--wall-width",`${px}px`);board.style.setProperty("--wall-offset",`${offset}px`);board.style.setProperty("--wall-inner",`${inner}px`);$("wallLegend").textContent=`Room outline · ${format2(thickness)} m · ${wallAlignmentLabel(alignment)}`;
 }
@@ -425,7 +454,8 @@ function clampColumn(column){
 function renderRooms(){
   const size=site();const board=$("planBoard");board.style.aspectRatio=`${size.w} / ${size.d}`;board.style.setProperty("--major-x",`${100/size.w}%`);board.style.setProperty("--major-y",`${100/size.d}%`);board.style.setProperty("--minor-x",`${10/size.w}%`);board.style.setProperty("--minor-y",`${10/size.d}%`);board.style.setProperty("--print-width",`${size.w*10}mm`);board.style.setProperty("--print-height",`${size.d*10}mm`);$("environmentLayer").setAttribute("viewBox",`0 0 ${size.w*100} ${size.d*100}`);board.classList.toggle("grid-off",!$("showGrid").checked);board.style.setProperty("--m",`${(board.clientWidth||800)/size.w}px`);
   rooms.forEach(room=>{room.w=clamp(room.w,1,size.w);room.d=clamp(room.d,1,size.d);room.x=clamp(room.x,0,size.w-room.w);room.y=clamp(room.y,0,size.d-room.d)});
-  $("roomLayer").innerHTML=rooms.map(room=>{const type=roomTypes[room.type];const zone=zoneFor(room);return `<div class="room-block ${room.id===selectedId?"selected":""}${room.floor?" fl-"+room.floor:""}" data-id="${room.id}" tabindex="0" style="--room-color:${type.color};left:${room.x/size.w*100}%;top:${room.y/size.d*100}%;width:${room.w/size.w*100}%;height:${room.d/size.d*100}%"><div class="room-content"><strong>${escapeHtml(room.name)}</strong><span class="zone">${zone}</span><small>${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m.</small></div></div>`}).join("");
+  $("roomLayer").innerHTML=rooms.map(room=>{const type=roomTypes[room.type];const zone=zoneFor(room);const own=room.wall!=null&&room.wall!=="",wt=roomWall(room),wallCss=own?`--wall-width:calc(var(--m) * ${wt});--wall-offset:calc(var(--m) * ${wt} * var(--wall-k) * -1);--wall-inner:calc(var(--m) * ${wt} * (1 - var(--wall-k)));`:"";
+    return `<div class="room-block ${room.id===selectedId?"selected":""}${room.floor?" fl-"+room.floor:""}${!wt?" no-wall":own?" own-wall":""}${room.stair?" is-stair":""}" data-id="${room.id}" tabindex="0" style="--room-color:${type.color};${wallCss}left:${room.x/size.w*100}%;top:${room.y/size.d*100}%;width:${room.w/size.w*100}%;height:${room.d/size.d*100}%">${room.stair?stairSvg(room):""}<div class="room-content"><strong>${escapeHtml(room.name)}</strong><span class="zone">${zone}</span><small>${room.stair?`${format2(room.w)} × ${format2(room.d)} m · ${room.stair.n} ขั้น`:`${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m.`}${room.slab!=null&&room.slab!==""?` · พื้นหนา ${format2(room.slab)} ม.`:""}</small></div></div>`}).join("");
   document.querySelectorAll(".room-block").forEach(block=>{block.addEventListener("pointerdown",startDrag);block.addEventListener("click",()=>selectRoom(block.dataset.id));block.addEventListener("keydown",moveWithKeyboard)});
   renderWallStyle();renderColumns();renderDimensions();renderCompass();renderNudge();
 }
@@ -457,7 +487,7 @@ function renderRoomList(){
 }
 function renderEditor(){
   const room=rooms.find(item=>item.id===selectedId);$("selectedEditor").hidden=!room;if(!room)return;
-  $("selectedName").value=room.name;$("selectedType").value=room.type;$("selectedFloor").value=room.floor||"";$("selectedWidth").value=format2(room.w);$("selectedDepth").value=format2(room.d);
+  $("selectedName").value=room.name;$("selectedType").value=room.type;$("selectedFloor").value=room.floor||"";$("selectedWall").value=room.wall!=null&&room.wall!==""?String(Number(room.wall)):"";$("selectedSlab").value=room.slab!=null&&room.slab!==""?format2(room.slab):"";$("stairRotate").hidden=!room.stair;$("selectedWidth").value=format2(room.w);$("selectedDepth").value=format2(room.d);
   const size=site();$("selectedWidth").max=size.w;$("selectedDepth").max=size.d;
 }
 function renderColumnList(){
@@ -530,7 +560,7 @@ function drawWindCanvas(ctx,curve,bx,by,bw,bh,diagram,width,opacity){
 async function downloadPng(){
   await document.fonts.ready;const angle=northAngle();const northLabel=angle===0?"NORTH IS UP":`NORTH ${formatAngle(angle)}° CLOCKWISE FROM TOP`;const canvas=document.createElement("canvas");canvas.width=1800;canvas.height=1250;const ctx=canvas.getContext("2d");ctx.fillStyle="#f7f4ed";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#171816";ctx.font="600 18px Instrument Sans";ctx.fillText("ARSTINLA · SCHEMATIC DESIGN",80,65);ctx.font="300 54px Instrument Sans";ctx.fillText($("sheetProjectName").textContent,80,125);ctx.fillStyle="#6f7069";ctx.font="16px Instrument Sans";ctx.fillText(`${$("sheetRegion").textContent} · ${$("sheetSize").textContent} · ${northLabel}`,80,160);ctx.font="600 13px Instrument Sans";ctx.fillText(`ROOM OUTLINE ${format2(wallThickness())} m · ${wallAlignmentLabel().toUpperCase()} · COLUMN CENTER @ 0.10 m GRID`,80,185);
   const bx=80,by=210,maxBw=1120,maxBh=840,size=site(),ratio=size.w/size.d;let bw=maxBw,bh=bw/ratio;if(bh>maxBh){bh=maxBh;bw=bh*ratio}ctx.fillStyle="#eee9df";ctx.fillRect(bx,by,bw,bh);for(let tenth=0;tenth<=size.w*10;tenth++){const major=tenth%10===0;ctx.strokeStyle=major?"#8d887e":"#d4cfc4";ctx.lineWidth=major?1.4:.4;ctx.beginPath();ctx.moveTo(bx+tenth/(size.w*10)*bw,by);ctx.lineTo(bx+tenth/(size.w*10)*bw,by+bh);ctx.stroke()}for(let tenth=0;tenth<=size.d*10;tenth++){const major=tenth%10===0;ctx.strokeStyle=major?"#8d887e":"#d4cfc4";ctx.lineWidth=major?1.4:.4;ctx.beginPath();ctx.moveTo(bx,by+tenth/(size.d*10)*bh);ctx.lineTo(bx+bw,by+tenth/(size.d*10)*bh);ctx.stroke()}ctx.save();ctx.fillStyle="#6d6b64";ctx.strokeStyle="#777268";ctx.lineWidth=1;ctx.font="600 12px Instrument Sans";ctx.textAlign="center";ctx.textBaseline="bottom";for(let metre=0;metre<=Math.floor(size.w);metre++){const x=bx+metre/size.w*bw;ctx.fillText(String(metre),x,by-9);ctx.beginPath();ctx.moveTo(x,by-6);ctx.lineTo(x,by-2);ctx.stroke()}ctx.textAlign="right";ctx.textBaseline="middle";for(let metre=0;metre<=Math.floor(size.d);metre++){const y=by+metre/size.d*bh;ctx.fillText(String(metre),bx-9,y);ctx.beginPath();ctx.moveTo(bx-6,y);ctx.lineTo(bx-2,y);ctx.stroke()}ctx.restore();
-  const wallPx=bw/size.w*wallThickness(),alignment=$("wallAlignment").value,wallInner=alignment==="inside"?wallPx:alignment==="center"?wallPx/2:0;ctx.save();ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.clip();rooms.forEach(room=>{const x=bx+room.x/size.w*bw,y=by+room.y/size.d*bh,w=room.w/size.w*bw,h=room.d/size.d*bh;ctx.fillStyle=({wood:"#d2ab7d",deck:"#a9794e",tile60:"#ece8e0",tile30:"#dfe5e6",marble:"#f1eee8",concrete:"#bcbab3",terrazzo:"#e2dccd",carpet:"#9ba5ae",grass:"#a8b98c"})[room.floor]||roomTypes[room.type].color;ctx.fillRect(x,y,w,h);ctx.strokeStyle="#171816";ctx.lineWidth=wallPx;const sx=alignment==="inside"?x+wallPx/2:alignment==="center"?x:x-wallPx/2,sy=alignment==="inside"?y+wallPx/2:alignment==="center"?y:y-wallPx/2,sw=alignment==="inside"?w-wallPx:alignment==="center"?w:w+wallPx,sh=alignment==="inside"?h-wallPx:alignment==="center"?h:h+wallPx;ctx.strokeRect(sx,sy,Math.max(0,sw),Math.max(0,sh));ctx.fillStyle="#171816";ctx.font="500 20px Noto Sans Thai";ctx.fillText(room.name,x+12+wallInner,y+30+wallInner);ctx.font="14px Instrument Sans";ctx.fillText(`${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m. · ${zoneFor(room)}`,x+12+wallInner,y+h-14-wallInner)});ctx.restore();
+  const wallPx=bw/size.w*wallThickness(),alignment=$("wallAlignment").value,wallInner=alignment==="inside"?wallPx:alignment==="center"?wallPx/2:0;ctx.save();ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.clip();rooms.forEach(room=>{const wallPx=bw/size.w*roomWall(room),wallInner=alignment==="inside"?wallPx:alignment==="center"?wallPx/2:0;const x=bx+room.x/size.w*bw,y=by+room.y/size.d*bh,w=room.w/size.w*bw,h=room.d/size.d*bh;ctx.fillStyle=({wood:"#d2ab7d",deck:"#a9794e",tile60:"#ece8e0",tile30:"#dfe5e6",marble:"#f1eee8",concrete:"#bcbab3",terrazzo:"#e2dccd",carpet:"#9ba5ae",grass:"#a8b98c"})[room.floor]||roomTypes[room.type].color;ctx.fillRect(x,y,w,h);if(room.stair){const g=stairGeom(room),kx=w/room.w,ky=h/room.d;ctx.save();ctx.strokeStyle="#2a2a26";ctx.lineWidth=1.5;g.lines.forEach(l=>{ctx.beginPath();ctx.moveTo(x+l[0]*kx,y+l[1]*ky);ctx.lineTo(x+l[2]*kx,y+l[3]*ky);ctx.stroke()});ctx.strokeStyle="#c36b48";ctx.lineWidth=3;ctx.beginPath();g.arrow.forEach((p,i)=>ctx[i?"lineTo":"moveTo"](x+p[0]*kx,y+p[1]*ky));ctx.stroke();ctx.restore()}ctx.strokeStyle="#171816";ctx.lineWidth=wallPx||2;ctx.setLineDash(wallPx?[]:[8,6]);const sx=alignment==="inside"?x+wallPx/2:alignment==="center"?x:x-wallPx/2,sy=alignment==="inside"?y+wallPx/2:alignment==="center"?y:y-wallPx/2,sw=alignment==="inside"?w-wallPx:alignment==="center"?w:w+wallPx,sh=alignment==="inside"?h-wallPx:alignment==="center"?h:h+wallPx;ctx.strokeRect(sx,sy,Math.max(0,sw),Math.max(0,sh));ctx.setLineDash([]);ctx.fillStyle="#171816";ctx.font="500 20px Noto Sans Thai";ctx.fillText(room.name,x+12+wallInner,y+30+wallInner);ctx.font="14px Instrument Sans";ctx.fillText(`${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m. · ${zoneFor(room)}`,x+12+wallInner,y+h-14-wallInner)});ctx.restore();
   const diagram=diagramSize();if($("showSun").checked){const pathPoints=sunPathPositions().map(sun=>mapPlanPoint(sunPathPoint(sun),bx,by,bw,bh,diagram));drawSmoothCanvasPath(ctx,pathPoints,"#df8b4e",8,[22,16],.42);sunPositions().forEach((sun,index)=>{const planAzimuth=toPlanAzimuth(sun.azimuth),start=mapPlanPoint(edgePoint(planAzimuth,35),bx,by,bw,bh,diagram),end=mapPlanPoint(edgePoint((planAzimuth+180)%360,85),bx,by,bw,bh,diagram),marker=mapPlanPoint(sunPathPoint(sun),bx,by,bw,bh,diagram);ctx.save();ctx.globalAlpha=.58;drawArrow(ctx,start.x,start.y,end.x,end.y,"#df8b4e",index===1?4:3);ctx.restore();ctx.save();ctx.fillStyle="#f7f4ed";ctx.strokeStyle="#df8b4e";ctx.lineWidth=3;ctx.beginPath();ctx.arc(marker.x,marker.y,9,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle="#9b542f";ctx.font="600 14px Instrument Sans";ctx.fillText(`${sun.hour}:00`,marker.x+12,marker.y-10);ctx.restore()})}
   if($("showWind").checked){const wind=windFor(selectedDate()),planAzimuth=toPlanAzimuth(wind.azimuth),start=edgePoint(planAzimuth,20),end=edgePoint((planAzimuth+180)%360,20);[-1,0,1].forEach(offset=>drawWindCanvas(ctx,windCurve(start,end,offset),bx,by,bw,bh,diagram,offset===0?9:7,offset===0 ? .42 : .32))}
   if($("showColumns").checked){ctx.save();ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.clip();columns.forEach(column=>{const w=column.w/size.w*bw,h=column.d/size.d*bh,x=bx+column.x/size.w*bw-w/2,y=by+column.y/size.d*bh-h/2;ctx.fillStyle="#343834";ctx.fillRect(x,y,w,h);ctx.strokeStyle="#f7f4ed";ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,Math.max(0,w-1),Math.max(0,h-1));ctx.strokeStyle="#f7f4ed99";ctx.beginPath();ctx.moveTo(x+w*.15,y+h/2);ctx.lineTo(x+w*.85,y+h/2);ctx.moveTo(x+w/2,y+h*.15);ctx.lineTo(x+w/2,y+h*.85);ctx.stroke()});ctx.restore()}
@@ -689,6 +719,38 @@ $("budgetFloorsSel").addEventListener("change",()=>updateBudgetLink(rooms.reduce
   const b=$("planBoard"),setM=()=>b.style.setProperty("--m",`${(b.clientWidth||800)/site().w}px`);if(window.ResizeObserver)new ResizeObserver(setM).observe(b);else addEventListener("resize",setM)})();
 
 $("toMassing").addEventListener("click",()=>{if(!rooms.length){toast("วางห้องก่อนส่งไป Massing Studio");return}saveState();location.href="/tools/massing-studio/?from=planner"});
+
+/* ---------- per-room wall / slab ---------- */
+$("selectedWall").addEventListener("change",e=>{const r=rooms.find(i=>i.id===selectedId);if(!r)return;if(e.target.value==="")delete r.wall;else r.wall=Number(e.target.value);renderAll(true,true);toast(r.wall===0?"ห้องนี้ไม่มีผนัง (พื้นที่เปิดโล่ง)":"ปรับความหนาผนังห้องนี้แล้ว")});
+$("selectedSlab").addEventListener("change",e=>{const r=rooms.find(i=>i.id===selectedId);if(!r)return;const v=e.target.value.trim();if(v==="")delete r.slab;else{const n=Number(v);if(!Number.isFinite(n)||n<0)return;r.slab=round2(Math.min(1,n))}renderAll(true,true)});
+/* ---------- stairs ---------- */
+const STAIR={kind:"straight",dir:"N"};
+function stairCalc(kind,H,W,R,T){const n=Math.max(2,Math.ceil(H/R-1e-9)),riser=H/n,n1=kind==="straight"?n:Math.ceil(n/2),n2=n-n1;let cw,cd;
+  if(kind==="straight"){cw=W;cd=(n-1)*T}else if(kind==="u"){cw=2*W;cd=W+Math.max(n1-1,n2-1)*T}else{cw=W+(n2-1)*T;cd=W+(n1-1)*T}
+  const warn=[];if(riser>.2+1e-9)warn.push("ลูกตั้งสูงเกิน 20 ซม. (กฎหมายบ้านพักอาศัย)");if(T<.22)warn.push("ลูกนอนน้อยกว่า 22 ซม.");if(W<.8)warn.push("บันไดแคบกว่า 80 ซม.");
+  const flightH=kind==="straight"?H:n1*riser;if(flightH>3+1e-9)warn.push("ช่วงบันไดสูงเกิน 3 ม. ควรมีชานพัก (ใช้แบบหักกลับหรือหักฉาก)");
+  if(2*riser+T<.6||2*riser+T>.66)warn.push(`2 ลูกตั้ง + ลูกนอน = ${format2((2*riser+T)*100)} ซม. (เดินสบายราว 60–64 ซม.)`);
+  return{n,riser,n1,n2,cw:round2(cw),cd:round2(cd),tread:T,width:W,warn}}
+function stairInputs(){return{H:Number($("stH").value)||3,W:Number($("stW").value)||1,R:Number($("stR").value)||.175,T:Number($("stT").value)||.25}}
+function renderStairOut(){const i=stairInputs(),c=stairCalc(STAIR.kind,i.H,i.W,i.R,i.T),wd=STAIR.dir==="N"||STAIR.dir==="S"?[c.cw,c.cd]:[c.cd,c.cw];
+  $("stOut").innerHTML=`<b>${c.n} ขั้น</b> · ลูกตั้ง <b>${format2(c.riser*100)} ซม.</b> · ลูกนอน ${format2(c.tread*100)} ซม.<br>ขนาดบันไดบนผัง <b>${format2(wd[0])} × ${format2(wd[1])} ม.</b>${STAIR.kind!=="straight"?`<br>ช่วงแรก ${c.n1} ขั้น · ชานพัก · ช่วงที่สอง ${c.n2} ขั้น`:""}${c.warn.length?`<br><span class="warn">⚠ ${c.warn.join("<br>⚠ ")}</span>`:"<br>✓ ผ่านเกณฑ์บ้านพักอาศัย"}`}
+["stKind","stDir"].forEach(id=>$(id).addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;$(id).querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));STAIR[id==="stKind"?"kind":"dir"]=b.dataset.v;renderStairOut()}));
+["stH","stW","stR","stT"].forEach(id=>$(id).addEventListener("input",renderStairOut));renderStairOut();
+$("addStair").addEventListener("click",()=>{const size=site(),i=stairInputs(),c=stairCalc(STAIR.kind,i.H,i.W,i.R,i.T),ns=STAIR.dir==="N"||STAIR.dir==="S";
+  const w=round2(clamp(ns?c.cw:c.cd,1,size.w)),d=round2(clamp(ns?c.cd:c.cw,1,size.d)),id=`stair-${Date.now()}`;
+  rooms.push({id,name:"บันได",type:"stair",wall:0,x:snap(Math.max(0,(size.w-w)/2)),y:snap(Math.max(0,(size.d-d)/2)),w,d,stair:{kind:STAIR.kind,dir:STAIR.dir,n:c.n,riser:round2(c.riser*1000)/1000,tread:c.tread,width:c.width,h:i.H}});
+  selectedId=id;selectedColumnId=null;renderAll();toast(`วางบันได ${c.n} ขั้นแล้ว ลากไปตำแหน่งที่ต้องการได้เลย`)});
+$("stairRotate").addEventListener("click",()=>{const r=rooms.find(i=>i.id===selectedId);if(!r||!r.stair)return;const order=["N","E","S","W"];r.stair.dir=order[(order.indexOf(r.stair.dir)+1)%4];const w=r.w;r.w=r.d;r.d=w;renderAll(true,true)});
+// stair drawing in canonical frame (climb toward "north" = up), then rotated to the room's direction
+function stairGeom(room){const st=room.stair,ns=st.dir==="N"||st.dir==="S",cw=ns?room.w:room.d,cd=ns?room.d:room.w,n=st.n,kind=st.kind;
+  const L=[],A=[];let land=null;
+  if(kind==="straight"){const t=cd/Math.max(1,n-1);for(let i=1;i<n-1;i++)L.push([0,cd-i*t,cw,cd-i*t]);A.push([cw/2,cd-.15],[cw/2,.25])}
+  else if(kind==="u"){const W=cw/2,n1=Math.ceil(n/2),n2=n-n1,t=(cd-W)/Math.max(1,Math.max(n1-1,n2-1));for(let i=1;i<n1;i++)L.push([0,cd-i*t,W,cd-i*t]);for(let i=0;i<n2-1;i++)L.push([W,W+i*t,cw,W+i*t]);L.push([0,W,W,W]);L.push([W,W,W,cd]);land=[0,0,cw,W];A.push([W/2,cd-.15],[W/2,W/2],[W*1.5,W/2],[W*1.5,cd-.25])}
+  else{const W=Math.min(st.width||1,cw,cd),n1=Math.ceil(n/2),n2=n-n1,t1=(cd-W)/Math.max(1,n1-1),t2=(cw-W)/Math.max(1,n2-1);for(let i=1;i<n1;i++)L.push([0,cd-i*t1,W,cd-i*t1]);for(let i=0;i<n2-1;i++)L.push([W+i*t2,0,W+i*t2,W]);L.push([0,W,W,W]);L.push([W,0,W,W]);land=[0,0,W,W];A.push([W/2,cd-.15],[W/2,W/2],[cw-.25,W/2])}
+  const T=([x,y])=>st.dir==="N"?[x,y]:st.dir==="S"?[cw-x,cd-y]:st.dir==="E"?[cd-y,x]:[y,cw-x];
+  return{lines:L.map(([a,b,c,d])=>[...T([a,b]),...T([c,d])]),arrow:A.map(T),land:land&&[T([land[0],land[1]]),T([land[2],land[3]])]}}
+function stairSvg(room){const g=stairGeom(room),f=v=>v.toFixed(3);
+  return`<svg class="stair-svg" viewBox="0 0 ${room.w} ${room.d}" preserveAspectRatio="none">${g.land?`<rect x="${f(Math.min(g.land[0][0],g.land[1][0]))}" y="${f(Math.min(g.land[0][1],g.land[1][1]))}" width="${f(Math.abs(g.land[1][0]-g.land[0][0]))}" height="${f(Math.abs(g.land[1][1]-g.land[0][1]))}" fill="rgba(255,255,255,.25)"/>`:""}${g.lines.map(l=>`<line x1="${f(l[0])}" y1="${f(l[1])}" x2="${f(l[2])}" y2="${f(l[3])}" stroke="#2a2a26" stroke-width="1" vector-effect="non-scaling-stroke"/>`).join("")}<polyline points="${g.arrow.map(p=>p.map(f).join(",")).join(" ")}" fill="none" stroke="#c36b48" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="${f(g.arrow[0][0])}" cy="${f(g.arrow[0][1])}" r=".07" fill="#c36b48"/></svg>`}
 </script>
 </body>
 </html>

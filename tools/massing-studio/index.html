@@ -133,7 +133,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
   <section class="control-section">
     <h2>Walls &amp; layers</h2>
     <div class="field-row">
-      <div class="field"><label for="wallThickness">ความหนาผนัง</label><select id="wallThickness"><option value="0.10">0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.20" selected>0.20 ม.</option></select></div>
+      <div class="field"><label for="wallThickness">ความหนาผนัง</label><select id="wallThickness"><option value="0">0 (ไม่มีผนัง)</option><option value="0.10">0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.20" selected>0.20 ม.</option></select></div>
       <div class="field"><label for="wallAlignment">ตำแหน่งผนัง</label><select id="wallAlignment"><option value="inside">ชิดใน</option><option value="center" selected>กึ่งกลาง</option><option value="outside">ชิดนอก</option></select></div>
     </div>
     <div class="toggle-list" style="margin-top:14px">
@@ -194,7 +194,7 @@ function round2(v){return Math.round((v+Number.EPSILON)*100)/100}
 function format2(v){return round2(Number(v)||0).toFixed(2)}
 function escapeHtml(v){return String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function site(){return{w:clamp(Number($("siteWidth").value)||16,8,30),d:clamp(Number($("siteDepth").value)||12,8,30)}}
-function wallThickness(){return Number($("wallThickness").value)||.2}
+function wallThickness(){const v=Number($("wallThickness").value);return Number.isFinite(v)&&v>=0?v:.2}
 function northAngle(){const v=Number($("northAngle").value);return((Number.isFinite(v)?v:0)%360+360)%360}
 function toPlanAzimuth(a){return(a+northAngle())%360}
 function compassName(a){return directions[Math.round(a/45)%8]}
@@ -429,6 +429,19 @@ function opGeom(r,o,t,e){const hz=o.side==="N"||o.side==="S",len=hz?r.w:r.d,mn=M
   const line=o.side==="N"?r.y:o.side==="S"?r.y+r.d:o.side==="W"?r.x:r.x+r.w,mid=(o.side==="N"||o.side==="W"?line-e:line+e-t)+t/2,a=(hz?r.x:r.y)+off;
   return hz?{x0:a,x1:a+w,y0:line-B,y1:line+B,px0:a,px1:a+w,py0:mid-.025,py1:mid+.025,h,sill}
            :{y0:a,y1:a+w,x0:line-B,x1:line+B,py0:a,py1:a+w,px0:mid-.025,px1:mid+.025,h,sill}}
+
+// per-room wall / slab (set in Schematic Planner or the room editor)
+function wallOf(r,t){return r&&r.wall!=null&&r.wall!==""&&Number.isFinite(Number(r.wall))?Math.max(0,Number(r.wall)):t}
+function slabOf(r,L){const v=r&&r.slab!=null&&r.slab!==""?Number(r.slab):NaN;return Number.isFinite(v)?Math.max(0,v):(L>0?SLAB:0)}
+// stairs: solid step blocks inside the stair room
+const STEPC=["#efe7d8","#d6cbb6","#c2b69f"];
+function stairBoxes(r,z,fh,sel,put,W,D,k){const st=r.stair;if(!st||!(st.n>=2))return;const ns=st.dir==="N"||st.dir==="S",cw=ns?r.w:r.d,cd=ns?r.d:r.w,n=st.n,R=fh/n,B=[];
+  if(st.kind==="u"){const w=cw/2,n1=Math.ceil(n/2),n2=n-n1,t=(cd-w)/Math.max(1,Math.max(n1-1,n2-1));for(let i=0;i<n1-1;i++)B.push([0,cd-(i+1)*t,w,cd-i*t,(i+1)*R]);B.push([0,0,cw,w,n1*R]);for(let i=0;i<n2-1;i++)B.push([w,w+i*t,cw,w+(i+1)*t,(n1+i+1)*R])}
+  else if(st.kind==="l"){const w=Math.min(st.width||1,cw,cd),n1=Math.ceil(n/2),n2=n-n1,t1=(cd-w)/Math.max(1,n1-1),t2=(cw-w)/Math.max(1,n2-1);for(let i=0;i<n1-1;i++)B.push([0,cd-(i+1)*t1,w,cd-i*t1,(i+1)*R]);B.push([0,0,w,w,n1*R]);for(let i=0;i<n2-1;i++)B.push([w+i*t2,0,w+(i+1)*t2,w,(n1+i+1)*R])}
+  else{const t=cd/Math.max(1,n-1);for(let i=0;i<n-1;i++)B.push([0,cd-(i+1)*t,cw,cd-i*t,(i+1)*R])}
+  const T=(x,y)=>st.dir==="N"?[x,y]:st.dir==="S"?[cw-x,cd-y]:st.dir==="E"?[cd-y,x]:[y,cw-x];
+  B.forEach(([a,b2,c,d,top])=>{const p=T(a,b2),q=T(c,d),x0=r.x+Math.min(p[0],q[0]),y0=r.y+Math.min(p[1],q[1]),x1=r.x+Math.max(p[0],q[0]),y1=r.y+Math.max(p[1],q[1]);
+    const[A,Bq,C,E]=TR(x0,y0,x1,y1,W,D,k);put({id:r.id,x0:A,y0:Bq,x1:C,y1:E,z0:z,z1:z+top,zs:z+top,c:sel?WSEL:STEPC,sel})})}
 function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
     if(!(a.x0<C.x1-1e-6&&C.x0<a.x1-1e-6&&a.y0<C.y1-1e-6&&C.y0<a.y1-1e-6&&a.z0<C.z1-1e-6&&C.z0<a.z1-1e-6)){nx.push(a);return}
     const X0=Math.max(a.x0,C.x0),X1=Math.min(a.x1,C.x1),Y0=Math.max(a.y0,C.y0),Y1=Math.min(a.y1,C.y1);
@@ -483,14 +496,14 @@ let last=null;
 const WALL=["#fbf9f4","#ddd8cc","#c6c1b5"],WSEL=["#c47a55","#e8cdbb","#d9b49c"],COL=["#4a4e49","#343834","#2a2d2a"],SLABC=["#e2ded4","#c9c4b8","#b3aea2"];
 function scene(){
   const size=site(),W=size.w,D=size.d,k=viewK(),Wr=k%2?D:W,Dr=k%2?W:D,VV=viewVec();
-  const t=wallThickness(),al=$("wallAlignment").value,e=al==="inside"?0:al==="center"?t/2:t;
+  const tAll=wallThickness(),al=$("wallAlignment").value,eOf=t=>al==="inside"?0:al==="center"?t/2:t,t=tAll,e=eOf(tAll);
   const top=S.upTo<0?nF()-1:Math.min(S.upTo,nF()-1);
   const objs=[],ground=[],labels=[];let zmax=0;
   const put=o=>{if(o.x1-o.x0>1e-4&&o.y1-o.y0>1e-4&&o.z1-o.z0>1e-4){objs.push(o);zmax=Math.max(zmax,o.z1)}};
   const shown=S.roofOn?S.roofs.filter(r=>{const L=roofLevel(r);return L<top||(L===top&&top===nF()-1)}):[];
   const covers=(rf,x,y,w,d)=>rf.x<=x+EPS&&rf.y<=y+EPS&&rf.x+rf.w>=x+w-EPS&&rf.y+rf.d>=y+d-EPS;
   const FRW=["#4a4d49","#3a3d39","#2f322f"],FRD=["#5e4432","#4c3627","#3f2c20"],cutters=[],GLASS=["#d3e6ec","#a8c8d4","#8db3c2"],DOOR=["#9a7656","#7d5d42","#6a4e37"];
-  rooms.forEach(r=>{const L=lvl(r);if(L>top||!Array.isArray(r.op))return;const zb=base(L)+(L>0?SLAB:0),sel=r.id===selectedId;
+  rooms.forEach(r=>{const L=lvl(r);if(L>top||!Array.isArray(r.op))return;const zb=base(L)+slabOf(r,L),sel=r.id===selectedId,t=wallOf(r,tAll),e=eOf(t);if(t<=0)return;
     r.op.forEach(o=>{const g=opGeom(r,o,t,e);if(!g)return;const za=zb+g.sill,zt=za+g.h;
       cutters.push({x0:g.x0,y0:g.y0,x1:g.x1,y1:g.y1,z0:za,z1:zt});
       const hz=o.side==="N"||o.side==="S",mid=hz?(g.py0+g.py1)/2:(g.px0+g.px1)/2,u0=hz?g.px0:g.py0,u1=hz?g.px1:g.py1,F=.05,win=o.kind!=="door",FR=win?FRW:FRD;
@@ -500,15 +513,16 @@ function scene(){
       bx(u0,u0+F,za,zt,.05,{c:FR});bx(u1-F,u1,za,zt,.05,{c:FR});bx(u0+F,u1-F,zt-F,zt,.05,{c:FR});if(win)bx(u0+F,u1-F,za,za+F,.05,{c:FR})})});
   rooms.forEach(r=>{
     const L=lvl(r);if(L>top)return;
-    const b=base(L),sl=L>0?SLAB:0,h=roomH(r),sel=r.id===selectedId,col=roomTypes[r.type].color;
+    const b=base(L),sl=slabOf(r,L),h=roomH(r),sel=r.id===selectedId,col=roomTypes[r.type].color,t=wallOf(r,tAll),e=al==="inside"?0:al==="center"?t/2:t;
     const[X0,Y0,X1,Y1]=TR(r.x,r.y,r.x+r.w,r.y+r.d,W,D,k);
     const onFlat=L>0&&shown.some(rf=>rf.type==="flat"&&roofLevel(rf)===L-1&&covers(rf,r.x,r.y,r.w,r.d));
-    if(L===0)ground.push({id:r.id,sel,x0:X0,y0:Y0,x1:X1,y1:Y1,color:col});
+    if(L===0){ground.push({id:r.id,sel,x0:X0,y0:Y0,x1:X1,y1:Y1,color:col});if(sl>0)put({id:r.id,x0:X0-e,y0:Y0-e,x1:X1+e,y1:Y1+e,z0:b,z1:b+sl,c:[col,SLABC[1],SLABC[2]],sel})}
     else if(onFlat){const ii=t-e;put({id:r.id,x0:X0-e+ii,y0:Y0-e+ii,x1:X1+e-ii,y1:Y1+e-ii,z0:b+sl,z1:b+sl+.02,c:[col,col,col],sel})}
     else put({id:r.id,x0:X0-e,y0:Y0-e,x1:X1+e,y1:Y1+e,z0:b,z1:b+sl,c:[col,SLABC[1],SLABC[2]],sel});
     const cx=r.x+r.w/2,cy=r.y+r.d/2,roofed=shown.some(rf=>roofLevel(rf)===L&&cx>rf.x&&cx<rf.x+rf.w&&cy>rf.y&&cy<rf.y+rf.d);
     if(S.labels&&L===top&&!roofed)labels.push({x:(X0+X1)/2,y:(Y0+Y1)/2,z:b+sl,name:r.name,sub:`${fl(L)} · h ${format2(h)} m`});
-    if(h-sl<=0)return;
+    if(r.stair)stairBoxes(r,b+sl,(S.floors[L]||{h:3}).h,sel,put,W,D,k);
+    if(h-sl<=0||t<=0)return;
     const z0=b+sl,z1=b+h,zc=S.cut?Math.min(z1,z0+1):z1,c=sel?WSEL:WALL,a0=X0-e,b0=Y0-e,a1=X1+e,b1=Y1+e;
     const px0=r.x-e,py0=r.y-e,px1=r.x+r.w+e,py1=r.y+r.d+e;
     [[px0,py0,px1,py0+t],[px0,py1-t,px1,py1],[px0,py0+t,px0+t,py1-t],[px1-t,py0+t,px1,py1-t]].forEach(([x0,y0,x1,y1])=>
