@@ -321,6 +321,10 @@ body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout
 #roomLayer .room-block.iso-ghost{opacity:.28;pointer-events:none;border-style:dashed;z-index:0}
 .iso-floor-badge{position:absolute;right:25px;top:6px;font:600 9px var(--font-en);letter-spacing:.16em;text-transform:uppercase;color:var(--sand)}
 #isoBoard [data-id],#isoBoard [data-roof]{cursor:grab;touch-action:none}#isoBoard [data-id]:active,#isoBoard [data-roof]:active{cursor:grabbing}
+.iso-nudge{position:absolute;left:0;top:0;width:0;height:0;z-index:6;pointer-events:none}.iso-nudge[hidden]{display:none}
+.iso-nudge button{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border:0;border-radius:50%;background:#c47a55;color:#fff;font:700 17px/34px system-ui;cursor:pointer;pointer-events:auto;box-shadow:0 3px 10px #0004;padding:0;touch-action:manipulation}
+.iso-nudge button:hover{background:#171816}.iso-nudge button span{display:inline-block}
+.iso-nudge .dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#c47a55;box-shadow:0 0 0 3px #fff}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
 .iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
@@ -641,6 +645,7 @@ function draw(){
   if(mode!=="bottom")parts.push(`<g id="isoLabels" pointer-events="none">${lab2.map(L=>`<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-size="16" font-weight="500" fill="#171816" stroke="#f7f4ed" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${escapeHtml(L.name)}<tspan x="${L.x.toFixed(1)}" dy="17" font-size="12" font-weight="400" fill="#5d5e57">${L.sub}</tspan></text>`).join("")}</g>`);
   svg.innerHTML=parts.join("");
   last={vb,labels:lab2};
+  try{renderIsoNudge(sc)}catch(err){}
   // toolbar + note
   const viewAz=((ORTHO[mode]?ORTHO[mode].az:VIEW_AZ[k])-northAngle()+360)%360;
   const VN={top:"Top",bottom:"Bottom",front:"Front",back:"Back",left:"Left",right:"Right"};
@@ -833,6 +838,22 @@ $("selectedLevel").addEventListener("change",e=>{const room=rooms.find(i=>i.id==
 function clearSel(){if(!selectedId&&!S.selRoof&&(typeof selectedColumnId==="undefined"||!selectedColumnId))return;selectedId=null;S.selRoof=null;if(typeof selectedColumnId!=="undefined")selectedColumnId=null;saveS();renderAll(false)}
 $("planBoard").addEventListener("click",e=>{if(!e.target.closest(".room-block,.column-block,.roof-outline,.roof-chip,[data-roof],[data-col],button,input,select"))clearSel()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.target.closest("input,select,textarea"))clearSel()});
+
+/* ---------- orange move arrows on the selected room / roof in the 3D view ---------- */
+const nudgeEl=document.createElement("div");nudgeEl.className="iso-nudge";nudgeEl.hidden=true;wrap.appendChild(nudgeEl);
+function renderIsoNudge(sc){const R=S.selRoof?S.roofs.find(r=>r.id===S.selRoof):null,room=!R&&selectedId?rooms.find(r=>r.id===selectedId):null,it=R||room;
+  const m=svg.getScreenCTM();if(!it||!m||wrap.hidden){nudgeEl.hidden=true;return}
+  const s=site(),W=s.w,D=s.d,k=sc.k,z=R?roofBase(roofLevel(R)):base(lvl(room))+roomH(room),cx=it.x+it.w/2,cy=it.y+it.d/2;
+  const wr=wrap.getBoundingClientRect(),scr=(x,y)=>{const v=T(x,y,W,D,k),q=P(v[0],v[1],z),pt=svg.createSVGPoint();pt.x=q[0];pt.y=q[1];const o=pt.matrixTransform(m);return[o.x-wr.left,o.y-wr.top]};
+  const c=scr(cx,cy),dirs=[["E",1,0],["W",-1,0],["S",0,1],["N",0,-1]];
+  nudgeEl.hidden=false;nudgeEl.innerHTML=`<i class="dot" style="left:${c[0]}px;top:${c[1]}px"></i>`+dirs.map(([n,dx,dy])=>{const q=scr(cx+dx,cy+dy);let vx=q[0]-c[0],vy=q[1]-c[1];const L=Math.hypot(vx,vy);if(L<1)return"";vx/=L;vy/=L;const ang=Math.atan2(vy,vx)*180/Math.PI;
+    return`<button type="button" data-nd="${dx},${dy}" title="เลื่อน 0.10 ม." style="left:${c[0]+vx*46}px;top:${c[1]+vy*46}px"><span style="transform:rotate(${ang}deg)">➜</span></button>`}).join("")}
+nudgeEl.addEventListener("pointerdown",e=>e.stopPropagation());
+nudgeEl.addEventListener("click",e=>{const b=e.target.closest("[data-nd]");if(!b)return;e.stopPropagation();const[dx,dy]=b.dataset.nd.split(",").map(Number),s=site();
+  const R=S.selRoof?S.roofs.find(r=>r.id===S.selRoof):null,room=!R&&selectedId?rooms.find(r=>r.id===selectedId):null,it=R||room;if(!it)return;
+  it.x=round2(clamp(it.x+dx*.1,R?-it.w:0,R?s.w:s.w-it.w));it.y=round2(clamp(it.y+dy*.1,R?-it.d:0,R?s.d:s.d-it.d));
+  if(R){saveS();renderAll(false);selectRoof(R.id)}else renderAll()});
+window.addEventListener("resize",()=>{if(!wrap.hidden)draw()});
 /* ---------- drag rooms directly in the 3D / isometric view ---------- */
 let isoDrag=null,isoRaf=0;
 function isoUnits(e){const m=svg.getScreenCTM();if(!m)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(m.inverse());return[q.x,q.y]}
@@ -849,7 +870,7 @@ svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id
   const s=site(),r=d.r;r.x=clamp(snap(d.x+mx),0,s.w-r.w);r.y=clamp(snap(d.y+my),0,s.d-r.d);
   if(d.roof){if(S.selRoof!==r.id){S.selRoof=r.id;selectedId=null}}else if(selectedId!==r.id){selectedId=r.id;S.selRoof=null}
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
-const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
+const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
 svg.addEventListener("pointerup",isoEnd);svg.addEventListener("pointercancel",isoEnd);
 svg.addEventListener("click",e=>{if(svg.dataset.dragged)return;const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
   const el=e.target.closest("[data-id]");if(!el){clearSel();return}if(el&&typeof selectRoom==="function"){selectRoom(el.dataset.id);$("selectedEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}});
