@@ -481,7 +481,7 @@ function order(o){ // painter's order for boxes, viewer at +X +Y +Z
   const n=o.length,ahead=(a,b)=>scr(a,b)&&(a.x1<=b.x0+EPS||a.y1<=b.y0+EPS||a.z1<=b.z0+EPS);
   const indeg=new Array(n).fill(0),out=o.map(()=>[]);
   for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(i!==j&&ahead(o[i],o[j])&&!ahead(o[j],o[i])){out[i].push(j);indeg[j]++}
-  const key=b=>b.x0+b.x1+b.y0+b.y1+b.z0*.01,done=new Array(n).fill(false),res=[];
+  const key=b=>b.x0+b.x1+b.y0+b.y1+b.z0*.01+(b.sel?1e6:0),done=new Array(n).fill(false),res=[];
   while(res.length<n){let best=-1;for(let i=0;i<n;i++)if(!done[i]&&indeg[i]===0&&(best<0||key(o[i])<key(o[best])))best=i;
     if(best<0){for(let i=0;i<n;i++)if(!done[i]&&(best<0||key(o[i])<key(o[best])))best=i}
     done[best]=true;res.push(o[best]);out[best].forEach(j=>indeg[j]--)}
