@@ -33,6 +33,21 @@
 .room-block.is-stair .room-content{justify-content:flex-start}.room-block.is-stair .room-content strong{background:rgba(247,244,237,.85);align-self:flex-start;padding:0 4px}
 .stair-tool .stair-out{margin:10px 0 0;padding:10px 12px;border:1px solid #3a3a35;font-size:12px;line-height:1.7;color:#ddd}.stair-tool .stair-out b{color:#fff}.stair-tool .stair-out .warn{color:#e8a07f}
 .stair-tool .seg{display:flex;gap:4px}.stair-tool .seg button{flex:1;height:34px;border:1px solid #4a4b45;background:transparent;color:#ccc;font:inherit;font-size:12px;cursor:pointer}.stair-tool .seg button.on{background:#c36b48;border-color:#c36b48;color:#fff}
+
+.level-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.level-bar .lv{height:34px;padding:0 14px;border:1px solid #171816;background:#fff;color:#171816;font:600 13px var(--font-th,inherit);cursor:pointer}
+.level-bar .lv.on{background:#171816;color:#fff}
+.level-bar .lv-act{height:34px;padding:0 12px;border:1px dashed #8d887e;background:transparent;color:#4a4b45;font:500 12px var(--font-th,inherit);cursor:pointer}
+.level-bar .lv-act.void{border-style:solid;border-color:#c36b48;color:#c36b48}
+.level-bar .lv-note{font-size:11px;color:#8d887e;margin-left:4px}
+.under-layer{position:absolute;inset:0;z-index:1;pointer-events:none}
+.under-room{position:absolute;border:1.5px dashed rgba(60,60,55,.55);box-sizing:border-box}
+.under-room span{position:absolute;left:4px;bottom:3px;font-size:10px;color:rgba(60,60,55,.6);white-space:nowrap}
+.under-room.stair{border-color:rgba(195,107,72,.7)}
+.room-block.is-void{--room-fill:0}
+.room-block.is-void::after{background:repeating-linear-gradient(45deg,transparent 0 7px,rgba(25,26,24,.28) 7px 8px)!important;opacity:1!important}
+.room-block.is-void::before{border:2px dashed #c36b48!important;inset:0!important}
+.room-block.is-void .room-content strong{color:#c36b48}
 .trace-hint{margin:6px 0 10px;font-size:11px;line-height:1.6;color:#999}
 .trace-file{display:block;cursor:pointer}.trace-file input{position:absolute;opacity:0;width:1px;height:1px}
 .trace-file span{display:flex;align-items:center;justify-content:center;height:40px;border:1px dashed #6b6c64;font-size:12px;color:#ddd}.trace-file:hover span{border-color:#c36b48;color:#fff}
@@ -241,6 +256,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
 
       <div class="plan-layout">
         <div>
+          <div class="level-bar" id="levelBar"></div>
           <div class="plan-view">
             <div class="zoom-controls" role="group" aria-label="ซูมพื้นที่ทำงาน">
               <button type="button" id="zoomOut" aria-label="ซูมออก" title="ซูมออก (Ctrl + ลูกกลิ้ง)">−</button>
@@ -255,6 +271,7 @@ body.full-mode.panel-hidden .workspace{padding-left:48px}
             <div class="plan-board" id="planBoard" tabindex="0" aria-label="Schematic plan board">
               <img class="trace-img" id="traceImg" alt="" hidden>
               <div class="trace-pick" id="tracePick" hidden><svg id="traceMarks" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+              <div class="under-layer" id="underLayer" aria-hidden="true"></div>
               <div class="room-layer" id="roomLayer"></div>
               <svg class="environment-layer" id="environmentLayer" viewBox="0 0 1000 750" preserveAspectRatio="none" aria-hidden="true">
                 <defs>
@@ -330,7 +347,10 @@ const sampleRooms=[
   {id:"bath-1",name:"Bathroom",type:"bathroom",x:12,y:8,w:3,d:3},
   {id:"service-1",name:"Service",type:"service",x:7,y:9,w:5,d:2}
 ];
-let rooms=[];
+let rooms=[],levelRooms=null,curLevel=0;
+function syncLevel(){if(!levelRooms||!levelRooms.length){levelRooms=[rooms];curLevel=0}curLevel=Math.min(curLevel,levelRooms.length-1);levelRooms[curLevel]=rooms}
+function allRooms(){syncLevel();return levelRooms.flatMap((a,i)=>a.map(r=>({...r,level:i})))}
+function splitLevels(list,n){const N=Math.max(1,Number(n)||1,...list.map(r=>(Number(r.level)||0)+1));levelRooms=Array.from({length:Math.min(N,9)},()=>[]);list.forEach(r=>{const L=Math.min(levelRooms.length-1,Math.max(0,Number(r.level)||0));const c={...r};delete c.level;levelRooms[L].push(c)});curLevel=0;rooms=levelRooms[0]}
 let selectedId=null;
 let columns=[];
 let selectedColumnId=null;
@@ -439,7 +459,7 @@ function renderEnvironment(){
   $("windTitle").textContent=wind.title;$("windSummary").textContent=`${wind.thai}: ${wind.note}`;$("windData").innerHTML=`<span class="data-chip">FROM ${wind.from}</span><span class="data-chip">TOWARD ${compassName((wind.azimuth+180)%360)}</span>`;
 }
 function wallThickness(){const v=Number($("wallThickness").value);return Number.isFinite(v)&&v>=0?v:.1}
-function roomWall(room){return room&&room.wall!=null&&room.wall!==""?Number(room.wall):wallThickness()}
+function roomWall(room){if(room&&room.void)return 0;return room&&room.wall!=null&&room.wall!==""?Number(room.wall):wallThickness()}
 function wallAlignmentLabel(value=$("wallAlignment").value){return {inside:"ชิดใน / Inside",center:"กึ่งกลาง / Center",outside:"ชิดนอก / Outside"}[value]||"กึ่งกลาง / Center"}
 function renderWallStyle(){
   const board=$("planBoard"),size=site(),thickness=wallThickness(),alignment=$("wallAlignment").value;const px=board.clientWidth/size.w*thickness;board.classList.toggle("walls-off",!thickness);board.style.setProperty("--wall-t",thickness);board.style.setProperty("--wall-k",alignment==="inside"?0:alignment==="center"?.5:1);
@@ -455,7 +475,7 @@ function renderRooms(){
   const size=site();const board=$("planBoard");board.style.aspectRatio=`${size.w} / ${size.d}`;board.style.setProperty("--major-x",`${100/size.w}%`);board.style.setProperty("--major-y",`${100/size.d}%`);board.style.setProperty("--minor-x",`${10/size.w}%`);board.style.setProperty("--minor-y",`${10/size.d}%`);board.style.setProperty("--print-width",`${size.w*10}mm`);board.style.setProperty("--print-height",`${size.d*10}mm`);$("environmentLayer").setAttribute("viewBox",`0 0 ${size.w*100} ${size.d*100}`);board.classList.toggle("grid-off",!$("showGrid").checked);board.style.setProperty("--m",`${(board.clientWidth||800)/size.w}px`);
   rooms.forEach(room=>{room.w=clamp(room.w,1,size.w);room.d=clamp(room.d,1,size.d);room.x=clamp(room.x,0,size.w-room.w);room.y=clamp(room.y,0,size.d-room.d)});
   $("roomLayer").innerHTML=rooms.map(room=>{const type=roomTypes[room.type];const zone=zoneFor(room);const own=room.wall!=null&&room.wall!=="",wt=roomWall(room),wallCss=own?`--wall-width:calc(var(--m) * ${wt});--wall-offset:calc(var(--m) * ${wt} * var(--wall-k) * -1);--wall-inner:calc(var(--m) * ${wt} * (1 - var(--wall-k)));`:"";
-    return `<div class="room-block ${room.id===selectedId?"selected":""}${room.floor?" fl-"+room.floor:""}${!wt?" no-wall":own?" own-wall":""}${room.stair?" is-stair":""}" data-id="${room.id}" tabindex="0" style="--room-color:${type.color};${wallCss}left:${room.x/size.w*100}%;top:${room.y/size.d*100}%;width:${room.w/size.w*100}%;height:${room.d/size.d*100}%">${room.stair?stairSvg(room):""}<div class="room-content"><strong>${escapeHtml(room.name)}</strong><span class="zone">${zone}</span><small>${room.stair?`${format2(room.w)} × ${format2(room.d)} m · ${room.stair.n} ขั้น`:`${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m.`}${room.slab!=null&&room.slab!==""?` · พื้นหนา ${format2(room.slab)} ม.`:""}</small></div></div>`}).join("");
+    return `<div class="room-block ${room.id===selectedId?"selected":""}${room.floor?" fl-"+room.floor:""}${!wt?" no-wall":own?" own-wall":""}${room.stair?" is-stair":""}${room.void?" is-void":""}" data-id="${room.id}" tabindex="0" style="--room-color:${type.color};${wallCss}left:${room.x/size.w*100}%;top:${room.y/size.d*100}%;width:${room.w/size.w*100}%;height:${room.d/size.d*100}%">${room.stair?stairSvg(room):""}<div class="room-content"><strong>${escapeHtml(room.name)}</strong><span class="zone">${zone}</span><small>${room.stair?`${format2(room.w)} × ${format2(room.d)} m · ${room.stair.n} ขั้น`:`${format2(room.w)} × ${format2(room.d)} m · ${format2(room.w*room.d)} sq.m.`}${room.slab!=null&&room.slab!==""?` · พื้นหนา ${format2(room.slab)} ม.`:""}</small></div></div>`}).join("");
   document.querySelectorAll(".room-block").forEach(block=>{block.addEventListener("pointerdown",startDrag);block.addEventListener("click",()=>selectRoom(block.dataset.id));block.addEventListener("keydown",moveWithKeyboard)});
   renderWallStyle();renderColumns();renderDimensions();renderCompass();renderNudge();
 }
@@ -508,7 +528,7 @@ function renderAnalysis(){
   $("reportList").innerHTML=rooms.map(room=>{const review=roomReview(room);return `<article class="report-item ${review.preferred?"":"review"}"><header><strong>${escapeHtml(room.name)}</strong><b>${review.status}</b></header><p>${format2(room.w)} × ${format2(room.d)} ม. · ${format2(room.w*room.d)} ตร.ม. · ${review.message}</p></article>`}).join("");
 }
 function renderHeader(){const size=site();const angle=formatAngle(northAngle());$("sheetProjectName").textContent=$("projectName").value.trim()||"Untitled Project";$("sheetRegion").textContent=regions[$("region").value].label;$("sheetSize").textContent=`${size.w} × ${size.d} m`;$("sheetNorth").textContent=Number(angle)===0?"North is up":`North ${angle}° clockwise from top`}
-function renderAll(save=true,preserveEditor=false){renderHeader();renderRooms();renderRoomList();renderColumnList();if(!preserveEditor){renderEditor();renderColumnEditor()}renderEnvironment();renderAnalysis();if(save)saveState()}
+function renderAll(save=true,preserveEditor=false){syncLevel();renderLevels();renderHeader();renderRooms();renderRoomList();renderColumnList();if(!preserveEditor){renderEditor();renderColumnEditor()}renderEnvironment();renderAnalysis();if(save)saveState()}
 function escapeHtml(value){return String(value).replace(/[&<>"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]))}
 function selectRoom(id){selectedId=id;selectedColumnId=null;renderAll()}
 function selectColumn(id){selectedColumnId=id;selectedId=null;renderAll()}
@@ -542,12 +562,12 @@ function moveWithKeyboard(event){if(!["ArrowUp","ArrowDown","ArrowLeft","ArrowRi
 function moveColumnWithKeyboard(event){if(!["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(event.key))return;event.preventDefault();const column=columns.find(item=>item.id===event.currentTarget.dataset.columnId);const delta={ArrowUp:[0,-.1],ArrowDown:[0,.1],ArrowLeft:[-.1,0],ArrowRight:[.1,0]}[event.key];moveColumn(column,delta[0],delta[1]);selectedColumnId=column.id;selectedId=null;renderAll()}
 function updateSelected(preserveEditor=false){const room=rooms.find(item=>item.id===selectedId);if(!room)return;const size=site();room.name=$("selectedName").value.trim()||roomTypes[$("selectedType").value].thai;room.type=$("selectedType").value;room.w=round2(clamp(Number($("selectedWidth").value)||1,1,size.w));room.d=round2(clamp(Number($("selectedDepth").value)||1,1,size.d));room.x=clamp(room.x,0,size.w-room.w);room.y=clamp(room.y,0,size.d-room.d);renderAll(true,preserveEditor)}
 function updateSelectedColumn(preserveEditor=false){const column=columns.find(item=>item.id===selectedColumnId);if(!column)return;column.w=Number($("selectedColumnWidth").value)||.2;column.d=Number($("selectedColumnDepth").value)||.2;column.x=Number($("selectedColumnX").value);column.y=Number($("selectedColumnY").value);clampColumn(column);renderAll(true,preserveEditor)}
-function saveState(){try{localStorage.setItem("arstinla-schematic",JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:formatAngle(northAngle()),showSun:$("showSun").checked,showWind:$("showWind").checked,showColumns:$("showColumns").checked,showGrid:$("showGrid").checked,wallThickness:$("wallThickness").value,wallAlignment:$("wallAlignment").value,rooms,columns}))}catch{}}
+function saveState(){try{localStorage.setItem("arstinla-schematic",JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:formatAngle(northAngle()),showSun:$("showSun").checked,showWind:$("showWind").checked,showColumns:$("showColumns").checked,showGrid:$("showGrid").checked,wallThickness:$("wallThickness").value,wallAlignment:$("wallAlignment").value,rooms:allRooms(),levels:levelRooms.length,columns}))}catch{}}
 function loadState(){
-  try{const saved=JSON.parse(localStorage.getItem("arstinla-schematic"));if(saved?.rooms?.length){$("projectName").value=saved.projectName||"Concept House 01";$("region").value=saved.region||"central";$("studyDate").value=saved.studyDate||defaultDate();$("siteWidth").value=saved.siteWidth||16;$("siteDepth").value=saved.siteDepth||12;$("northAngle").value=saved.northAngle??0;$("showSun").checked=saved.showSun!==false;$("showWind").checked=saved.showWind!==false;$("showColumns").checked=saved.showColumns!==false;$("showGrid").checked=saved.showGrid!==false;$("wallThickness").value=["0.05","0.10","0.15","0.20"].includes(String(saved.wallThickness))?String(saved.wallThickness):"0.10";$("wallAlignment").value=["inside","center","outside"].includes(saved.wallAlignment)?saved.wallAlignment:"center";rooms=saved.rooms;columns=Array.isArray(saved.columns)?saved.columns:[];return}}catch{}
-  rooms=cloneSample();columns=[];$("studyDate").value=defaultDate();$("northAngle").value=0;$("showColumns").checked=true;$("wallThickness").value="0.10";$("wallAlignment").value="center";
+  try{const saved=JSON.parse(localStorage.getItem("arstinla-schematic"));if(saved?.rooms?.length){$("projectName").value=saved.projectName||"Concept House 01";$("region").value=saved.region||"central";$("studyDate").value=saved.studyDate||defaultDate();$("siteWidth").value=saved.siteWidth||16;$("siteDepth").value=saved.siteDepth||12;$("northAngle").value=saved.northAngle??0;$("showSun").checked=saved.showSun!==false;$("showWind").checked=saved.showWind!==false;$("showColumns").checked=saved.showColumns!==false;$("showGrid").checked=saved.showGrid!==false;$("wallThickness").value=[...$("wallThickness").options].some(o=>o.value===String(saved.wallThickness))?String(saved.wallThickness):"0.10";$("wallAlignment").value=["inside","center","outside"].includes(saved.wallAlignment)?saved.wallAlignment:"center";splitLevels(saved.rooms,saved.levels);columns=Array.isArray(saved.columns)?saved.columns:[];return}}catch{}
+  levelRooms=null;curLevel=0;rooms=cloneSample();columns=[];$("studyDate").value=defaultDate();$("northAngle").value=0;$("showColumns").checked=true;$("wallThickness").value="0.10";$("wallAlignment").value="center";
 }
-function resetPlan(){localStorage.removeItem("arstinla-schematic");rooms=cloneSample();columns=[];selectedId=null;selectedColumnId=null;$("projectName").value="Concept House 01";$("region").value="central";$("studyDate").value=defaultDate();$("siteWidth").value=16;$("siteDepth").value=12;$("northAngle").value=0;$("showSun").checked=true;$("showWind").checked=true;$("showColumns").checked=true;$("showGrid").checked=true;$("wallThickness").value="0.10";$("wallAlignment").value="center";renderAll();toast("กลับสู่ผังตัวอย่างแล้ว")}
+function resetPlan(){localStorage.removeItem("arstinla-schematic");levelRooms=null;curLevel=0;rooms=cloneSample();columns=[];selectedId=null;selectedColumnId=null;$("projectName").value="Concept House 01";$("region").value="central";$("studyDate").value=defaultDate();$("siteWidth").value=16;$("siteDepth").value=12;$("northAngle").value=0;$("showSun").checked=true;$("showWind").checked=true;$("showColumns").checked=true;$("showGrid").checked=true;$("wallThickness").value="0.10";$("wallAlignment").value="center";renderAll();toast("กลับสู่ผังตัวอย่างแล้ว")}
 function drawArrow(ctx,x1,y1,x2,y2,color,width=3){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();const angle=Math.atan2(y2-y1,x2-x1);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-12*Math.cos(angle-.45),y2-12*Math.sin(angle-.45));ctx.lineTo(x2-12*Math.cos(angle+.45),y2-12*Math.sin(angle+.45));ctx.closePath();ctx.fill()}
 function mapPlanPoint(point,bx,by,bw,bh,diagram){return {x:bx+point.x/diagram.w*bw,y:by+point.y/diagram.h*bh}}
 function drawSmoothCanvasPath(ctx,points,color,width,dash=[],opacity=1){
@@ -751,6 +771,25 @@ function stairGeom(room){const st=room.stair,ns=st.dir==="N"||st.dir==="S",cw=ns
   return{lines:L.map(([a,b,c,d])=>[...T([a,b]),...T([c,d])]),arrow:A.map(T),land:land&&[T([land[0],land[1]]),T([land[2],land[3]])]}}
 function stairSvg(room){const g=stairGeom(room),f=v=>v.toFixed(3);
   return`<svg class="stair-svg" viewBox="0 0 ${room.w} ${room.d}" preserveAspectRatio="none">${g.land?`<rect x="${f(Math.min(g.land[0][0],g.land[1][0]))}" y="${f(Math.min(g.land[0][1],g.land[1][1]))}" width="${f(Math.abs(g.land[1][0]-g.land[0][0]))}" height="${f(Math.abs(g.land[1][1]-g.land[0][1]))}" fill="rgba(255,255,255,.25)"/>`:""}${g.lines.map(l=>`<line x1="${f(l[0])}" y1="${f(l[1])}" x2="${f(l[2])}" y2="${f(l[3])}" stroke="#2a2a26" stroke-width="1" vector-effect="non-scaling-stroke"/>`).join("")}<polyline points="${g.arrow.map(p=>p.map(f).join(",")).join(" ")}" fill="none" stroke="#c36b48" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="${f(g.arrow[0][0])}" cy="${f(g.arrow[0][1])}" r=".07" fill="#c36b48"/></svg>`}
+
+/* ---------- levels (floors) + floor voids ---------- */
+function renderLevels(){const bar=$("levelBar");if(!bar)return;const N=levelRooms.length,below=curLevel>0?levelRooms[curLevel-1]:[],stairs=below.filter(r=>r.stair);
+  bar.innerHTML=levelRooms.map((_,i)=>`<button type="button" class="lv ${i===curLevel?"on":""}" data-lv="${i}">ชั้น ${i+1}</button>`).join("")+
+    `<button type="button" class="lv-act" data-act="add">+ เพิ่มชั้น</button>`+
+    (curLevel>0?`<button type="button" class="lv-act void" data-act="void">▨ เจาะช่องพื้น</button>`:"")+
+    (curLevel>0&&stairs.length?`<button type="button" class="lv-act void" data-act="stairvoid">▨ เจาะช่องตามบันไดชั้น ${curLevel}</button>`:"")+
+    (N>1?`<button type="button" class="lv-act" data-act="del">ลบชั้นนี้</button>`:"")+
+    (curLevel>0?`<span class="lv-note">เส้นประ = แปลนชั้น ${curLevel} ด้านล่าง</span>`:"");
+  const size=site();$("underLayer").innerHTML=below.filter(r=>!r.void).map(r=>`<div class="under-room${r.stair?" stair":""}" style="left:${r.x/size.w*100}%;top:${r.y/size.d*100}%;width:${r.w/size.w*100}%;height:${r.d/size.d*100}%">${r.stair?stairSvg(r):""}<span>${escapeHtml(r.name)}</span></div>`).join("")}
+function goLevel(i){syncLevel();curLevel=clamp(i,0,levelRooms.length-1);rooms=levelRooms[curLevel];selectedId=null;selectedColumnId=null;renderAll()}
+function addVoid(x,y,w,d,name){const id=`void-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;rooms.push({id,name:name||"ช่องเปิดพื้น",type:"stair",void:true,x,y,w,d});selectedId=id;return id}
+$("levelBar").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.lv!=null){goLevel(Number(b.dataset.lv));return}
+  const a=b.dataset.act,size=site();
+  if(a==="add"){syncLevel();levelRooms.push([]);goLevel(levelRooms.length-1);toast(`เพิ่มชั้น ${levelRooms.length} แล้ว — เส้นประคือแปลนชั้นล่าง วางห้องทับได้เลย`)}
+  else if(a==="del"){if(!confirm(`ลบชั้น ${curLevel+1} และห้องทั้งหมดในชั้นนี้?`))return;syncLevel();levelRooms.splice(curLevel,1);goLevel(Math.max(0,curLevel-1));toast("ลบชั้นแล้ว")}
+  else if(a==="void"){const w=2,d=2;addVoid(snap((size.w-w)/2),snap((size.d-d)/2),w,d);renderAll();toast("เจาะช่องพื้นแล้ว ลากไปวาง และปรับขนาดได้ในตัวแก้ไข")}
+  else if(a==="stairvoid"){const below=levelRooms[curLevel-1].filter(r=>r.stair);let n=0;below.forEach(st=>{if(rooms.some(v=>v.void&&Math.abs(v.x-st.x)<.01&&Math.abs(v.y-st.y)<.01))return;addVoid(st.x,st.y,st.w,st.d,"ช่องบันได");n++});renderAll();toast(n?`เจาะช่องพื้นตามบันได ${n} จุดแล้ว`:"มีช่องตามบันไดอยู่แล้ว")}});
 </script>
 </body>
 </html>

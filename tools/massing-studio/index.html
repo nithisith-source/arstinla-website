@@ -433,15 +433,34 @@ function opGeom(r,o,t,e){const hz=o.side==="N"||o.side==="S",len=hz?r.w:r.d,mn=M
 // per-room wall / slab (set in Schematic Planner or the room editor)
 function wallOf(r,t){return r&&r.wall!=null&&r.wall!==""&&Number.isFinite(Number(r.wall))?Math.max(0,Number(r.wall)):t}
 function slabOf(r,L){const v=r&&r.slab!=null&&r.slab!==""?Number(r.slab):NaN;return Number.isFinite(v)?Math.max(0,v):(L>0?SLAB:0)}
-// stairs: solid step blocks inside the stair room
-const STEPC=["#efe7d8","#d6cbb6","#c2b69f"];
-function stairBoxes(r,z,fh,sel,put,W,D,k){const st=r.stair;if(!st||!(st.n>=2))return;const ns=st.dir==="N"||st.dir==="S",cw=ns?r.w:r.d,cd=ns?r.d:r.w,n=st.n,R=fh/n,B=[];
-  if(st.kind==="u"){const w=cw/2,n1=Math.ceil(n/2),n2=n-n1,t=(cd-w)/Math.max(1,Math.max(n1-1,n2-1));for(let i=0;i<n1-1;i++)B.push([0,cd-(i+1)*t,w,cd-i*t,(i+1)*R]);B.push([0,0,cw,w,n1*R]);for(let i=0;i<n2-1;i++)B.push([w,w+i*t,cw,w+(i+1)*t,(n1+i+1)*R])}
-  else if(st.kind==="l"){const w=Math.min(st.width||1,cw,cd),n1=Math.ceil(n/2),n2=n-n1,t1=(cd-w)/Math.max(1,n1-1),t2=(cw-w)/Math.max(1,n2-1);for(let i=0;i<n1-1;i++)B.push([0,cd-(i+1)*t1,w,cd-i*t1,(i+1)*R]);B.push([0,0,w,w,n1*R]);for(let i=0;i<n2-1;i++)B.push([w+i*t2,0,w+(i+1)*t2,w,(n1+i+1)*R])}
-  else{const t=cd/Math.max(1,n-1);for(let i=0;i<n-1;i++)B.push([0,cd-(i+1)*t,cw,cd-i*t,(i+1)*R])}
-  const T=(x,y)=>st.dir==="N"?[x,y]:st.dir==="S"?[cw-x,cd-y]:st.dir==="E"?[cd-y,x]:[y,cw-x];
-  B.forEach(([a,b2,c,d,top])=>{const p=T(a,b2),q=T(c,d),x0=r.x+Math.min(p[0],q[0]),y0=r.y+Math.min(p[1],q[1]),x1=r.x+Math.max(p[0],q[0]),y1=r.y+Math.max(p[1],q[1]);
-    const[A,Bq,C,E]=TR(x0,y0,x1,y1,W,D,k);put({id:r.id,x0:A,y0:Bq,x1:C,y1:E,z0:z,z1:z+top,zs:z+top,c:sel?WSEL:STEPC,sel})})}
+// stairs: waist-slab (ท้องเรียบ) concrete flights — stepped top, smooth sloping soffit
+const STEPC=["#efe7d8","#d6cbb6","#c2b69f"],WAIST=.15;
+function stairBoxes(r,z,fh,sel,put,W,D,k,VV){const st=r.stair;if(!st||!(st.n>=2))return;const ns=st.dir==="N"||st.dir==="S",cw=ns?r.w:r.d,cd=ns?r.d:r.w,n=st.n,R=fh/n,F=[],LND=[];
+  // flight: footprint u0..u1 across, climbs along axis from s=0 at (ax,start) with direction sg; m treads of t, starts at height z0
+  if(st.kind==="u"){const w=cw/2,n1=Math.ceil(n/2),n2=n-n1,t=(cd-w)/Math.max(1,Math.max(n1-1,n2-1));
+    F.push({ax:"y",o:cd,sg:-1,u0:0,u1:w,m:n1-1,t,z0:0});LND.push([0,0,cw,w,n1*R]);F.push({ax:"y",o:w,sg:1,u0:w,u1:cw,m:n2-1,t,z0:n1*R})}
+  else if(st.kind==="l"){const w=Math.min(st.width||1,cw,cd),n1=Math.ceil(n/2),n2=n-n1,t1=(cd-w)/Math.max(1,n1-1),t2=(cw-w)/Math.max(1,n2-1);
+    F.push({ax:"y",o:cd,sg:-1,u0:0,u1:w,m:n1-1,t:t1,z0:0});LND.push([0,0,w,w,n1*R]);F.push({ax:"x",o:w,sg:1,u0:0,u1:w,m:n2-1,t:t2,z0:n1*R})}
+  else F.push({ax:"y",o:cd,sg:-1,u0:0,u1:cw,m:n-1,t:cd/Math.max(1,n-1),z0:0});
+  const C=(x,y)=>st.dir==="N"?[x,y]:st.dir==="S"?[cw-x,cd-y]:st.dir==="E"?[cd-y,x]:[y,cw-x];
+  const V=([x,y,zz])=>{const c=C(x,y),q=T(r.x+c[0],r.y+c[1],W,D,k);return[q[0],q[1],z+zz]};
+  LND.forEach(([a,b2,c,d,top])=>{const p=C(a,b2),q=C(c,d),[A,B,Cc,E]=TR(r.x+Math.min(p[0],q[0]),r.y+Math.min(p[1],q[1]),r.x+Math.max(p[0],q[0]),r.y+Math.max(p[1],q[1]),W,D,k);
+    put({id:r.id,x0:A,y0:B,x1:Cc,y1:E,z0:z+Math.max(0,top-WAIST*1.3),z1:z+top,c:sel?WSEL:STEPC,sel})});
+  F.forEach(f=>{if(f.m<1)return;const Lf=f.m*f.t,slope=R/f.t,c=WAIST*Math.sqrt(1+slope*slope),s0=Math.min(Lf,c/slope),zE=f.z0+f.m*R;
+    const P3=(sv,u,zz)=>{const x=f.ax==="y"?u:f.o+f.sg*sv,y=f.ax==="y"?f.o+f.sg*sv:u;return[x,y,zz]};
+    const faces=[],add=(kind,pts,nl)=>{const vp=pts.map(V),fc=vp.reduce((a,p)=>[a[0]+p[0]/vp.length,a[1]+p[1]/vp.length,a[2]+p[2]/vp.length],[0,0,0]);
+      // outward normal: map a local normal through the same transforms
+      const a=V(nl[0]),b=V(nl[1]),nn=norm(sub(b,a));faces.push({kind,vp,n:nn,depth:VV[0]===1&&VV[1]===1?fc[0]+fc[1]+fc[2]*.5:dot(fc,VV)})};
+    const prof=u=>{const pts=[P3(0,u,f.z0)];for(let i=0;i<f.m;i++){pts.push(P3(i*f.t,u,f.z0+(i+1)*R),P3((i+1)*f.t,u,f.z0+(i+1)*R))}pts.push(P3(Lf,u,zE-c),P3(s0,u,f.z0));return pts};
+    const um=(f.u0+f.u1)/2,dirN=(sv,zz,ds,du,dz)=>[P3(sv,um,zz),P3(sv+ds,um+du,zz+dz)];
+    for(let i=0;i<f.m;i++){const zt=f.z0+(i+1)*R;
+      add("slope",[P3(i*f.t,f.u0,zt),P3((i+1)*f.t,f.u0,zt),P3((i+1)*f.t,f.u1,zt),P3(i*f.t,f.u1,zt)],dirN(i*f.t,zt,0,0,1));
+      add("wall",[P3(i*f.t,f.u0,zt-R),P3(i*f.t,f.u1,zt-R),P3(i*f.t,f.u1,zt),P3(i*f.t,f.u0,zt)],dirN(i*f.t,zt,-1,0,0))}
+    add("wall",prof(f.u0),dirN(Lf/2,f.z0,0,-1,0));add("wall",prof(f.u1),dirN(Lf/2,f.z0,0,1,0));
+    const k2=Math.hypot(R,f.t);add("wall",[P3(s0,f.u0,f.z0),P3(Lf,f.u0,zE-c),P3(Lf,f.u1,zE-c),P3(s0,f.u1,f.z0)],dirN(Lf/2,f.z0,R/k2,0,-f.t/k2));
+    add("wall",[P3(Lf,f.u0,zE-c),P3(Lf,f.u0,zE),P3(Lf,f.u1,zE),P3(Lf,f.u1,zE-c)],dirN(Lf,zE,1,0,0));
+    const vis=faces.filter(q=>dot(q.n,VV)>1e-3).sort((a,b)=>a.depth-b.depth),all=faces.flatMap(q=>q.vp),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),zs=all.map(p=>p[2]);
+    put({roof:true,id:r.id,sel,x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0:Math.min(...zs),z1:Math.max(...zs),faces:vis,color:sel?"#c9a48a":"#d8ccb4",all})})}
 function cutBox(A,cs){let out=[A];cs.forEach(C=>{const nx=[];out.forEach(a=>{
     if(!(a.x0<C.x1-1e-6&&C.x0<a.x1-1e-6&&a.y0<C.y1-1e-6&&C.y0<a.y1-1e-6&&a.z0<C.z1-1e-6&&C.z0<a.z1-1e-6)){nx.push(a);return}
     const X0=Math.max(a.x0,C.x0),X1=Math.min(a.x1,C.x1),Y0=Math.max(a.y0,C.y0),Y1=Math.min(a.y1,C.y1);
@@ -503,7 +522,9 @@ function scene(){
   const shown=S.roofOn?S.roofs.filter(r=>{const L=roofLevel(r);return L<top||(L===top&&top===nF()-1)}):[];
   const covers=(rf,x,y,w,d)=>rf.x<=x+EPS&&rf.y<=y+EPS&&rf.x+rf.w>=x+w-EPS&&rf.y+rf.d>=y+d-EPS;
   const FRW=["#4a4d49","#3a3d39","#2f322f"],FRD=["#5e4432","#4c3627","#3f2c20"],cutters=[],GLASS=["#d3e6ec","#a8c8d4","#8db3c2"],DOOR=["#9a7656","#7d5d42","#6a4e37"];
-  rooms.forEach(r=>{const L=lvl(r);if(L>top||!Array.isArray(r.op))return;const zb=base(L)+slabOf(r,L),sel=r.id===selectedId,t=wallOf(r,tAll),e=eOf(t);if(t<=0)return;
+  const voids=rooms.filter(v=>v.void);
+  const slabPut=(r,L,sel,px0,py0,px1,py1,z0,z1,c)=>{const hs=voids.filter(v=>lvl(v)===L).map(v=>({x0:v.x,y0:v.y,x1:v.x+v.w,y1:v.y+v.d,z0:z0-1,z1:z1+1}));cutBox({x0:px0,y0:py0,x1:px1,y1:py1,z0,z1},hs).forEach(q=>{const[A,B,C,E]=TR(q.x0,q.y0,q.x1,q.y1,W,D,k);put({id:r.id,x0:A,y0:B,x1:C,y1:E,z0:q.z0,z1:q.z1,c,sel})})};
+  rooms.forEach(r=>{const L=lvl(r);if(r.void||L>top||!Array.isArray(r.op))return;const zb=base(L)+slabOf(r,L),sel=r.id===selectedId,t=wallOf(r,tAll),e=eOf(t);if(t<=0)return;
     r.op.forEach(o=>{const g=opGeom(r,o,t,e);if(!g)return;const za=zb+g.sill,zt=za+g.h;
       cutters.push({x0:g.x0,y0:g.y0,x1:g.x1,y1:g.y1,z0:za,z1:zt});
       const hz=o.side==="N"||o.side==="S",mid=hz?(g.py0+g.py1)/2:(g.px0+g.px1)/2,u0=hz?g.px0:g.py0,u1=hz?g.px1:g.py1,F=.05,win=o.kind!=="door",FR=win?FRW:FRD;
@@ -512,16 +533,16 @@ function scene(){
       bx(u0+F,u1-F,win?za+F:za,zt-F,.025,win?{c:GLASS,glass:true}:{c:DOOR});
       bx(u0,u0+F,za,zt,.05,{c:FR});bx(u1-F,u1,za,zt,.05,{c:FR});bx(u0+F,u1-F,zt-F,zt,.05,{c:FR});if(win)bx(u0+F,u1-F,za,za+F,.05,{c:FR})})});
   rooms.forEach(r=>{
-    const L=lvl(r);if(L>top)return;
+    const L=lvl(r);if(L>top||r.void)return;
     const b=base(L),sl=slabOf(r,L),h=roomH(r),sel=r.id===selectedId,col=roomTypes[r.type].color,t=wallOf(r,tAll),e=al==="inside"?0:al==="center"?t/2:t;
     const[X0,Y0,X1,Y1]=TR(r.x,r.y,r.x+r.w,r.y+r.d,W,D,k);
     const onFlat=L>0&&shown.some(rf=>rf.type==="flat"&&roofLevel(rf)===L-1&&covers(rf,r.x,r.y,r.w,r.d));
-    if(L===0){ground.push({id:r.id,sel,x0:X0,y0:Y0,x1:X1,y1:Y1,color:col});if(sl>0)put({id:r.id,x0:X0-e,y0:Y0-e,x1:X1+e,y1:Y1+e,z0:b,z1:b+sl,c:[col,SLABC[1],SLABC[2]],sel})}
+    if(L===0){ground.push({id:r.id,sel,x0:X0,y0:Y0,x1:X1,y1:Y1,color:col});if(sl>0)slabPut(r,L,sel,r.x-e,r.y-e,r.x+r.w+e,r.y+r.d+e,b,b+sl,[col,SLABC[1],SLABC[2]])}
     else if(onFlat){const ii=t-e;put({id:r.id,x0:X0-e+ii,y0:Y0-e+ii,x1:X1+e-ii,y1:Y1+e-ii,z0:b+sl,z1:b+sl+.02,c:[col,col,col],sel})}
-    else put({id:r.id,x0:X0-e,y0:Y0-e,x1:X1+e,y1:Y1+e,z0:b,z1:b+sl,c:[col,SLABC[1],SLABC[2]],sel});
+    else slabPut(r,L,sel,r.x-e,r.y-e,r.x+r.w+e,r.y+r.d+e,b,b+sl,[col,SLABC[1],SLABC[2]]);
     const cx=r.x+r.w/2,cy=r.y+r.d/2,roofed=shown.some(rf=>roofLevel(rf)===L&&cx>rf.x&&cx<rf.x+rf.w&&cy>rf.y&&cy<rf.y+rf.d);
     if(S.labels&&L===top&&!roofed)labels.push({x:(X0+X1)/2,y:(Y0+Y1)/2,z:b+sl,name:r.name,sub:`${fl(L)} · h ${format2(h)} m`});
-    if(r.stair)stairBoxes(r,b+sl,(S.floors[L]||{h:3}).h,sel,put,W,D,k);
+    if(r.stair)stairBoxes(r,b+sl,(S.floors[L]||{h:3}).h,sel,put,W,D,k,VV);
     if(h-sl<=0||t<=0)return;
     const z0=b+sl,z1=b+h,zc=S.cut?Math.min(z1,z0+1):z1,c=sel?WSEL:WALL,a0=X0-e,b0=Y0-e,a1=X1+e,b1=Y1+e;
     const px0=r.x-e,py0=r.y-e,px1=r.x+r.w+e,py1=r.y+r.d+e;
@@ -871,6 +892,7 @@ $("importPlanner").addEventListener("click",()=>{
   applySaved({...s,rooms:s.rooms.map(r=>({...r,level:Number(r.level)||0}))});selectedId=null;
   if(iso&&Array.isArray(iso.floors)&&iso.floors.length){A.state.floors=iso.floors.map(f=>({h:f.h}));A.state.roofs=Array.isArray(iso.roofs)?JSON.parse(JSON.stringify(iso.roofs)):[]}
   else{A.state.floors=[{h:3}];A.state.roofs=[]}
+  {const need=Math.min(9,Math.max(1,Number(s.levels)||1,...s.rooms.map(r=>(Number(r.level)||0)+1)));while(A.state.floors.length<need)A.state.floors.push({h:A.state.floors[A.state.floors.length-1].h||3});A.state.floors.length=Math.max(need,1)}
   A.state.active=0;A.state.selRoof=null;A.state.upTo=-1;
   if(!A.state.roofs.length){renderAll(false);A.addRoof();A.state.selRoof=null}
   A.save();renderAll();toast(`นำเข้า ${rooms.length} ห้องจาก Schematic Planner แล้ว`)});
