@@ -332,7 +332,7 @@ body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout
 .iso-nudge button{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border:0;border-radius:50%;background:#c47a55;color:#fff;font:700 17px/34px system-ui;cursor:pointer;pointer-events:auto;box-shadow:0 3px 10px #0004;padding:0;touch-action:manipulation}
 .iso-nudge button:hover{background:#171816}.iso-nudge button span{display:inline-block}
 .iso-nudge .dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#c47a55;box-shadow:0 0 0 3px #fff}
-.eye-wrap{display:inline-flex;align-items:center;gap:4px;font-size:12px;margin-left:6px}.eye-wrap[hidden]{display:none}.eye-wrap input{height:30px;border:1px solid #c9c4b8;background:#fff;padding:0 4px}
+.eye-wrap{display:inline-flex;align-items:center;gap:4px;font-size:12px;margin-left:6px}.eye-wrap[hidden]{display:none}.eye-wrap input{height:30px;border:1px solid #c9c4b8;background:#fff!important;color:#171816!important;-webkit-text-fill-color:#171816;font:600 14px system-ui,sans-serif!important;text-align:center;padding:0 4px;opacity:1}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
 .iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
@@ -363,7 +363,7 @@ planWrap.insertAdjacentHTML("beforeend",`<span class="iso-floor-badge" id="isoFl
 const wrap=document.createElement("div");wrap.className="iso-wrap";wrap.id="isoWrap";wrap.hidden=true;
 wrap.innerHTML=`<div class="iso-tools">
   <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
-  <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="persp" title="Perspective 2 จุด">2-Point</button><label class="eye-wrap" id="eyeWrap" hidden>สายตา <input id="isoEye" type="number" min="0.3" max="60" step="0.1" style="width:58px"> ม.</label><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
+  <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="persp" title="Perspective 2 จุด (กดอีกครั้งเพื่อกลับ Iso)">2-Point</button><label class="eye-wrap" id="eyeWrap" hidden>สายตา <input id="isoEye" type="number" min="0.3" max="60" step="0.1" style="width:58px"> ม.</label><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
   <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
   <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button></div>
 </div>
@@ -842,7 +842,7 @@ window.downloadPng=async function(...a){
   return isoPng()};
 
 /* ---------- controls ---------- */
-wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.cam;if(v.startsWith("iso")){S.cam=viewMode()==="persp"?"persp":"iso";S.rot=+v.slice(3)}else S.cam=v;saveS();draw()}));
+wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.cam;if(v.startsWith("iso")){S.cam="iso";S.rot=+v.slice(3)}else if(v==="persp"&&viewMode()==="persp")S.cam="iso";else S.cam=v;saveS();draw()}));
 $("isoEye").addEventListener("input",e=>{const n=Number(e.target.value);if(Number.isFinite(n)&&n>=.3&&n<=60){S.eye=n;saveS();draw()}});
 $("isoRotL").addEventListener("click",()=>{if(!["iso","persp"].includes(viewMode()))S.cam="iso";S.rot=(S.rot+3)%4;saveS();draw()});
 $("isoRotR").addEventListener("click",()=>{if(!["iso","persp"].includes(viewMode()))S.cam="iso";S.rot=(S.rot+1)%4;saveS();draw()});
