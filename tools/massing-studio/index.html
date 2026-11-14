@@ -962,11 +962,15 @@ function snapAt(u){const m=svg.getScreenCTM();if(!m)return null;const tol=13/Mat
   if(DRAW.pts.length>=3){const f=DRAW.pts[0];if(dist(f)<=tol*1.3)return{p:[f[0],f[1]],kind:"close"}}
   if(best)return best;
   E.forEach(([a,b])=>{const dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy;if(L2<1e-9)return;const t=clamp(((pl[0]-a[0])*dx+(pl[1]-a[1])*dy)/L2,0,1),q=[a[0]+dx*t,a[1]+dy*t],d=dist(q);if(d<=tol&&(!best||d<best.d))best={d,p:[Math.round(q[0]*1000)/1000,Math.round(q[1]*1000)/1000],kind:"edge",e:[a,b]}});
-  if(best){// on an edge: also lock to the axis of the previous point when close
-    return best}
-  let p=[Math.round(pl[0]*20)/20,Math.round(pl[1]*20)/20],kind="free";const lp=DRAW.pts[DRAW.pts.length-1];
-  if(lp){const dx=pl[0]-lp[0],dy=pl[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07){p=[p[0],lp[1]];kind="axis"}else if(Math.abs(dx)<Math.abs(dy)*.07){p=[lp[0],p[1]];kind="axis"}}
-  return{p,kind}}
+  // axis inference: line up with reference points (previous / first point, or a grip's neighbours)
+  const refs=DRAW.refs||[DRAW.pts[DRAW.pts.length-1],DRAW.pts[0]].filter(Boolean);let xl=null,yl=null;
+  refs.forEach(r=>{const dx=dist([r[0],pl[1]]),dy=dist([pl[0],r[1]]);if(dx<=tol&&(!xl||dx<xl.d))xl={d:dx,v:r[0],r};if(dy<=tol&&(!yl||dy<yl.d))yl={d:dy,v:r[1],r}});
+  if(xl||yl){let p=[xl?xl.v:pl[0],yl?yl.v:pl[1]];
+    if(best&&best.e){const[a,b]=best.e;if(xl&&!yl&&Math.abs(a[0]-b[0])>1e-6&&Math.abs(a[1]-b[1])<1e-6)p=[xl.v,a[1]];else if(yl&&!xl&&Math.abs(a[1]-b[1])>1e-6&&Math.abs(a[0]-b[0])<1e-6)p=[a[0],yl.v]}
+    if(!xl&&!(best&&best.e))p[0]=Math.round(p[0]*20)/20;if(!yl&&!(best&&best.e))p[1]=Math.round(p[1]*20)/20;
+    return{p,kind:"axis",refs:[xl&&xl.r,yl&&yl.r].filter(Boolean)}}
+  if(best)return best;
+  return{p:[Math.round(pl[0]*20)/20,Math.round(pl[1]*20)/20],kind:"free"}}
 function drawHint(){modeBar.hidden=!DRAW.on;
   if(DRAW.roof!==modeBar._roof){modeBar._roof=DRAW.roof;modeBar.innerHTML=DRAW.roof?'<button type="button" class="on" data-rp="rect">▭ กำหนดพื้นที่หลังคา</button><button type="button" data-rp="all">คลุมทั้งชั้น</button><button type="button" data-rp="cancel">ยกเลิก</button>':[["line","／ เส้นตรง"],["arc","⌒ เส้นโค้ง"],["rect","▭ สี่เหลี่ยม"],["circle","◯ วงกลม"]].map(([m,t])=>`<button type="button" data-dm="${m}">${t}</button>`).join("")}
   if(DRAW.roof&&DRAW.on){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}placeOverlays();hintEl.hidden=false;hintEl.innerHTML=!DRAW.anchor?`⌂ หลังคา${fl(S.active)}: คลิก<b>มุมแรก</b>ของพื้นที่ที่จะคลุม (snap มุมผนังด้านบน)`:`คลิก<b>มุมตรงข้าม</b> · หรือพิมพ์ กว้าง,ยาว แล้ว Enter${DRAW.typed?` <b>${DRAW.typed}</b>`:""} · Esc ยกเลิก`;return}modeBar.querySelectorAll("[data-dm]").forEach(b=>b.classList.toggle("on",b.dataset.dm===DRAW.mode));placeOverlays();if(!DRAW.on){hintEl.hidden=true;return}hintEl.hidden=false;
@@ -990,26 +994,26 @@ function renderDrawLayer(){placeOverlays();const old=svg.querySelector("#drawLay
         `<text x="${((lp[0]+c[0])/2).toFixed(1)}" y="${((lp[1]+c[1])/2-8).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" fill="#c47a55" stroke="#fff" stroke-width="4" paint-order="stroke">${format2(len)} ม.</text>`}
     pp.forEach((q,i)=>h+=`<circle cx="${q[0]}" cy="${q[1]}" r="${i===0&&DRAW.pts.length>=3?6:3.5}" fill="${i===0?"#fff":"#c47a55"}" stroke="#c47a55" stroke-width="2" ${ve}/>`);
     if(DRAW.cur&&DRAW.snap){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),k=DRAW.snap.kind;
-      h+=k==="end"||k==="close"?`<circle cx="${c[0]}" cy="${c[1]}" r="8" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="edge"?`<rect x="${c[0]-6}" y="${c[1]-6}" width="12" height="12" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="axis"?`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#3d7bd6"/>`:`<circle cx="${c[0]}" cy="${c[1]}" r="3" fill="#171816"/>`}}
+      h+=k==="end"||k==="close"?`<circle cx="${c[0]}" cy="${c[1]}" r="8" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="edge"?`<rect x="${c[0]-6}" y="${c[1]-6}" width="12" height="12" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="axis"?`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#3d7bd6"/>`+(DRAW.snap.refs||[]).map(r=>{const q=d2scr(r[0],r[1],z);return`<line x1="${q[0]}" y1="${q[1]}" x2="${c[0]}" y2="${c[1]}" stroke="#3d7bd6" stroke-width="1.2" stroke-dasharray="4 4" ${ve}/>`}).join(""):`<circle cx="${c[0]}" cy="${c[1]}" r="3" fill="#171816"/>`}}
   g.innerHTML=h;svg.appendChild(g);renderGrips();renderShapePanel()}
 function shapeGrips(sh){if(sh.kind==="circle")return[{i:"r",p:[sh.c[0]+sh.r,sh.c[1]]}];if(sh.pts.length>24)return[];return sh.pts.map((p,i)=>({i,p}))}
 function renderGrips(){const old=svg.querySelector("#gripLayer");if(old)old.remove();const sh=!DRAW.on&&S.selShape&&S.shapes.find(x=>x.id===S.selShape);if(!sh)return;
   const z=base(clamp(sh.level|0,0,nF()-1))+(Number(sh.z)||0)+Math.max(0,Number(sh.h)||0),g=document.createElementNS(NS,"g");g.id="gripLayer";
-  g.innerHTML=shapeGrips(sh).map(o=>{const q=d2scr(o.p[0],o.p[1],z);return`<rect data-grip="${o.i}" x="${(q[0]-7).toFixed(1)}" y="${(q[1]-7).toFixed(1)}" width="14" height="14" fill="#fff" stroke="#c47a55" stroke-width="2.5" vector-effect="non-scaling-stroke" style="cursor:move"/>`}).join("");svg.appendChild(g)}
+  g.innerHTML=shapeGrips(sh).map(o=>{const q=d2scr(o.p[0],o.p[1],z);return`<rect data-grip="${o.i}" x="${(q[0]-7).toFixed(1)}" y="${(q[1]-7).toFixed(1)}" width="14" height="14" fill="#fff" stroke="#c47a55" stroke-width="2.5" vector-effect="non-scaling-stroke" style="cursor:move"/>`}).join("")+(GRIP&&GRIP.snap&&GRIP.snap.kind==="axis"?(GRIP.snap.refs||[]).map(r=>{const q=d2scr(r[0],r[1],z),c=d2scr(GRIP.snap.p[0],GRIP.snap.p[1],z);return`<line x1="${q[0]}" y1="${q[1]}" x2="${c[0]}" y2="${c[1]}" stroke="#3d7bd6" stroke-width="1.4" stroke-dasharray="5 4" vector-effect="non-scaling-stroke" pointer-events="none"/>`}).join(""):"");svg.appendChild(g)}
 let GRIP=null;
 svg.addEventListener("pointerdown",e=>{const gr=e.target.closest("[data-grip]");if(!gr||e.button!==0)return;const sh=S.shapes.find(x=>x.id===S.selShape);if(!sh)return;
   e.stopImmediatePropagation();e.preventDefault();GRIP={sh,i:gr.dataset.grip,id:e.pointerId,act:S.active};S.active=clamp(sh.level|0,0,nF()-1);svg.setPointerCapture(e.pointerId)},true);
-svg.addEventListener("pointermove",e=>{if(!GRIP||e.pointerId!==GRIP.id)return;const u=isoUnits(e);if(!u)return;DRAW.skip=GRIP.sh.id;const sn=snapAt(u);DRAW.skip=null;if(!sn)return;const sh=GRIP.sh,p=sn.p;
+svg.addEventListener("pointermove",e=>{if(!GRIP||e.pointerId!==GRIP.id)return;const u=isoUnits(e);if(!u)return;const gi=+GRIP.i,gp=GRIP.sh.pts;DRAW.refs=GRIP.sh.kind||isNaN(gi)?[]:[gp[(gi-1+gp.length)%gp.length],gp[(gi+1)%gp.length]];DRAW.skip=GRIP.sh.id;const sn=snapAt(u);DRAW.skip=null;DRAW.refs=null;if(!sn)return;GRIP.snap=sn;const sh=GRIP.sh,p=sn.p;
   if(sh.kind==="circle"){sh.r=Math.max(.05,Math.hypot(p[0]-sh.c[0],p[1]-sh.c[1]));sh.pts=circPts(sh.c,sh.r).map(q=>[Math.round(q[0]*1000)/1000,Math.round(q[1]*1000)/1000])}
   else if(sh.kind==="rect"&&sh.pts.length===4){const o=sh.pts[(+GRIP.i+2)%4];sh.pts=rectPts(o,p);const j=(+GRIP.i+2)%4;sh.pts=[0,1,2,3].map(k=>rectPts(o,p)[(k-j+4)%4])}
-  else sh.pts[+GRIP.i]=p.slice();
+  else sh.pts[+GRIP.i]=[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000];
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})},true);
 const gripEnd=e=>{if(!GRIP||e.pointerId!==GRIP.id)return;GRIP=null;svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);shapePanel.dataset.key="";saveS();draw()};
 svg.addEventListener("pointerup",gripEnd,true);svg.addEventListener("pointercancel",gripEnd,true);
 function wallOffset(){const t=wallThickness(),al=$("wallAlignment").value;return al==="inside"?0:al==="center"?t/2:t}
 function setDraw(on,roof){DRAW.roof=!!(on&&roof);if(DRAW.roof)DRAW.mode="rect";else if(on&&DRAW.mode==="rect"&&DRAW._wasRoof)DRAW.mode="line";DRAW._wasRoof=DRAW.roof;DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";DRAW.anchor=null;DRAW.arcEnd=null;$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
   if(on&&!["iso","top"].includes(viewMode())){S.cam="iso"}if(on){S.selShape=null;selectedId=null;S.selRoof=null}drawHint();draw()}
-function finishDraw(close){const pts=DRAW.pts.map(p=>[round2(p[0]*1000)/1000,round2(p[1]*1000)/1000]);
+function finishDraw(close){const pts=DRAW.pts.map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000]);
   if(pts.length>=(close?3:2)){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts,closed:!!close,h:0,z:0});S.selShape=id;saveS();typeof toast==="function"&&toast(close?"ปิดรูปแล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน":"เก็บเส้นแล้ว")}
   DRAW.pts=[];DRAW.cur=null;DRAW.typed="";if(close)setDraw(false);else{drawHint();draw()}}
 function renderShapePanel(){const sh=S.selShape&&S.shapes.find(x=>x.id===S.selShape);if(!sh||DRAW.on){shapePanel.hidden=true;return}shapePanel.hidden=false;{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();shapePanel.style.top=(a.top-b.top+10)+"px";shapePanel.style.left=(a.left-b.left+10)+"px"}
