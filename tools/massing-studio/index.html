@@ -629,7 +629,7 @@ function scene(){
       const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
-      return{kind:f.kind,under:f.under,vp,n,fc,depth:faceDepth(fc,VV)}}).filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
+      return{kind:f.kind,under:f.under,vp,n,fc,depth:faceDepth(fc,VV)}}).map(f=>CAM&&f.kind==="slope"&&!faceVis(f.n,f.fc,VV)?{...f,kind:"soffit",n:f.n.map(v=>-v),under:true}:f).filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
     put({roof:true,rid:R.id,allF:F.map(f=>f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})),x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
@@ -678,7 +678,7 @@ function draw(){
   const stroke=`stroke="#171816" stroke-width=".7" stroke-linejoin="round"`,ve=`vector-effect="non-scaling-stroke"`;
   sc.objs.forEach(o=>{
     let tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:o.sid?` class="sh" data-shape="${o.sid}"`:"";
-    if(o.roof){parts.push(`<g${tag} ${stroke}>${o.faces.map(f=>{const col=f.kind==="slope"?shade(o.color,.78+.42*Math.max(0,dot(f.n,LIGHT))):shade("#ece8df",.86+.14*Math.max(0,dot(f.n,LIGHT)));return`<polygon points="${pts(f.vp.map(p=>P(...p)))}" fill="${col}" ${ve}/>`}).join("")}</g>`);return}
+    if(o.roof){parts.push(`<g${tag} ${stroke}>${o.faces.map(f=>{const col=f.kind==="slope"?shade(o.color,.78+.42*Math.max(0,dot(f.n,LIGHT))):f.kind==="soffit"?shade("#d8d2c4",.9):shade("#ece8df",.86+.14*Math.max(0,dot(f.n,LIGHT)));return`<polygon points="${pts(f.vp.map(p=>P(...p)))}" fill="${col}" ${ve}/>`}).join("")}</g>`);return}
     const{x0,y0,x1,y1,z0,z1}=o,[top,fy,fx]=o.c;if(o.glass)tag+=' fill-opacity=".55"';
     if(mode==="top"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`);return}
     if(mode==="bottom"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z0),P(x1,y0,z0),P(x1,y1,z0),P(x0,y1,z0)])}" fill="${fx}" ${ve}/></g>`);return}
