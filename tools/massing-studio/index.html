@@ -247,7 +247,7 @@ function edgeSnap(r,x,y,others,W,D,tol){tol=tol||.25;const best=(edges,targets)=
   return{x:mx?Math.round((x+mx.d)*1000)/1000:x,y:my?Math.round((y+my.d)*1000)/1000:y,gx:mx&&mx.t,gy:my&&my.t}}
 function moveWithKeyboard(e){const d={ArrowUp:[0,-.1],ArrowDown:[0,.1],ArrowLeft:[-.1,0],ArrowRight:[.1,0]}[e.key];if(!d)return;e.preventDefault();const r=rooms.find(i=>i.id===e.currentTarget.dataset.id),s=site();r.x=clamp(round2(r.x+d[0]),0,s.w-r.w);r.y=clamp(round2(r.y+d[1]),0,s.d-r.d);selectedId=r.id;renderAll();document.querySelector(`.room-block[data-id="${r.id}"]`)?.focus()}
 function updateSelected(preserve){const r=rooms.find(i=>i.id===selectedId);if(!r)return;const s=site();r.name=$("selectedName").value.trim()||roomTypes[$("selectedType").value].thai;r.type=$("selectedType").value;r.w=round2(clamp(Number($("selectedWidth").value)||1,1,s.w));r.d=round2(clamp(Number($("selectedDepth").value)||1,1,s.d));renderAll(true,preserve)}
-function saveState(){try{localStorage.setItem(KEY,JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:northAngle(),showSun:$("showSun").checked,showGrid:$("showGrid").checked,wallThickness:$("wallThickness").value,wallAlignment:$("wallAlignment").value,rooms}))}catch(e){}}
+function saveState(){window.__undoTick&&window.__undoTick();try{localStorage.setItem(KEY,JSON.stringify({projectName:$("projectName").value,region:$("region").value,studyDate:$("studyDate").value,siteWidth:$("siteWidth").value,siteDepth:$("siteDepth").value,northAngle:northAngle(),showSun:$("showSun").checked,showGrid:$("showGrid").checked,wallThickness:$("wallThickness").value,wallAlignment:$("wallAlignment").value,rooms}))}catch(e){}}
 function applySaved(s){$("projectName").value=s.projectName||"Concept House 02";$("region").value=regions[s.region]?s.region:"central";$("studyDate").value=s.studyDate||defaultDate();$("siteWidth").value=s.siteWidth||16;$("siteDepth").value=s.siteDepth||12;$("northAngle").value=s.northAngle??0;
   if("showSun"in s)$("showSun").checked=s.showSun!==false;if("showGrid"in s)$("showGrid").checked=s.showGrid!==false;
   if(s.wallThickness&&[...$("wallThickness").options].some(o=>o.value===String(s.wallThickness)))$("wallThickness").value=String(s.wallThickness);
@@ -276,7 +276,7 @@ const S=Object.assign({view:"iso",rot:0,cut:false,hour:15,labels:true,active:0,u
 if(!Array.isArray(S.floors)||!S.floors.length)S.floors=[{h:round2(Number(S.height)||3)}];
 S.floors.forEach(f=>{f.h=clamp(Number(f.h)||3,2,12)});
 delete S.height;
-const saveS=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const saveS=()=>{window.__undoTick&&window.__undoTick();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const ZM={z:1,dx:0,dy:0,base:null};const NS="http://www.w3.org/2000/svg",C30=Math.cos(Math.PI/6),S30=.5,SC=40,SLAB=.15,EPS=1e-6;
 const VIEW_AZ=[135,45,315,225];
 const nF=()=>S.floors.length;
@@ -374,7 +374,7 @@ wrap.innerHTML=`<div class="iso-tools">
   <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
   <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="persp" title="Perspective 2 จุด (กดอีกครั้งเพื่อกลับ Iso)">2-Point</button><label class="eye-wrap" id="eyeWrap" hidden>สายตา <input id="isoEye" type="number" min="0.3" max="60" step="0.1" style="width:58px"> ม.</label><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
   <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
-  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button><button class="th" type="button" id="isoDraw" aria-pressed="false" title="วาดเส้นบนพื้น snap ขอบผนัง · คลิกจุดแรกเพื่อปิดรูปแล้วใส่ความหนา">✏ วาดเส้น</button></div>
+  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button><button class="th" type="button" id="isoUndo" title="ย้อนกลับ (Ctrl+Z)" disabled>↶</button><button class="th" type="button" id="isoRedo" title="ทำซ้ำ (Ctrl+Y / Ctrl+Shift+Z)" disabled>↷</button><button class="th" type="button" id="isoDraw" aria-pressed="false" title="วาดเส้นบนพื้น snap ขอบผนัง · คลิกจุดแรกเพื่อปิดรูปแล้วใส่ความหนา">✏ วาดเส้น</button></div>
 </div>
 <svg class="iso-board" id="isoBoard" xmlns="${NS}" role="img" aria-label="Isometric schematic"></svg>
 <p class="iso-note" id="isoNote"></p>`;
@@ -1057,6 +1057,25 @@ window.addEventListener("keydown",e=>{const inField=/INPUT|SELECT|TEXTAREA/.test
   if(e.key==="Enter"){const lp=DRAW.pts[DRAW.pts.length-1],len=Number(DRAW.typed);
     if(lp&&DRAW.typed&&len>0&&DRAW.cur){let dx=DRAW.cur[0]-lp[0],dy=DRAW.cur[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07)dy=0;else if(Math.abs(dx)<Math.abs(dy)*.07)dx=0;const L=Math.hypot(dx,dy);if(L>1e-6){DRAW.pts.push([lp[0]+dx/L*len,lp[1]+dy/L*len]);DRAW.typed="";drawHint();renderDrawLayer()}}
     else finishDraw(false);e.preventDefault()}});
+
+/* ---------- undo / redo (Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z): snapshots of rooms + floors/roofs/shapes ---------- */
+const UNDO={stack:[],redo:[],last:null,t:0,busy:false};
+function undoSnap(){return JSON.stringify({rooms,floors:S.floors,roofs:S.roofs,shapes:S.shapes||[],wt:$("wallThickness").value,wa:$("wallAlignment").value})}
+function undoButtons(){$("isoUndo").disabled=!UNDO.stack.length;$("isoRedo").disabled=!UNDO.redo.length}
+window.__undoTick=()=>{if(UNDO.busy)return;const cur=undoSnap();if(UNDO.last===null){UNDO.last=cur;return}if(cur===UNDO.last)return;
+  const now=Date.now();if(!(now-UNDO.t<450&&UNDO.stack.length)){UNDO.stack.push(UNDO.last);if(UNDO.stack.length>80)UNDO.stack.shift()}UNDO.t=now;UNDO.last=cur;UNDO.redo=[];undoButtons()};
+function undoApply(snap){const v=JSON.parse(snap);UNDO.busy=true;try{rooms.splice(0,rooms.length,...v.rooms);S.floors=v.floors;S.roofs=v.roofs;S.shapes=v.shapes;
+  if(v.wt!=null)$("wallThickness").value=v.wt;if(v.wa!=null)$("wallAlignment").value=v.wa;S.active=clamp(S.active,0,S.floors.length-1);
+  if(selectedId&&!rooms.some(r=>r.id===selectedId))selectedId=null;if(S.selRoof&&!S.roofs.some(r=>r.id===S.selRoof))S.selRoof=null;if(S.selShape&&!S.shapes.some(x=>x.id===S.selShape))S.selShape=null;
+  UNDO.last=snap;saveS();renderAll();draw()}finally{UNDO.busy=false}undoButtons()}
+function doUndo(){if(!UNDO.stack.length){typeof toast==="function"&&toast("ไม่มีขั้นตอนให้ย้อนกลับแล้ว");return}UNDO.redo.push(undoSnap());undoApply(UNDO.stack.pop());typeof toast==="function"&&toast("ย้อนกลับแล้ว")}
+function doRedo(){if(!UNDO.redo.length)return;UNDO.stack.push(undoSnap());undoApply(UNDO.redo.pop());typeof toast==="function"&&toast("ทำซ้ำแล้ว")}
+$("isoUndo").addEventListener("click",doUndo);$("isoRedo").addEventListener("click",doRedo);
+window.addEventListener("keydown",e=>{if(!(e.ctrlKey||e.metaKey))return;const k=e.key.toLowerCase();if(k!=="z"&&k!=="y")return;
+  if(/INPUT|SELECT|TEXTAREA/.test((document.activeElement||{}).tagName||""))return; // let fields undo their own text
+  e.preventDefault();if(DRAW.on&&k==="z"&&!e.shiftKey){if(DRAW.anchor||DRAW.arcEnd){DRAW.anchor=null;DRAW.arcEnd=null}else DRAW.pts.pop();drawHint();renderDrawLayer();return}
+  if(k==="y"||e.shiftKey)doRedo();else doUndo()});
+setTimeout(()=>{UNDO.last=undoSnap();undoButtons()},0);
 /* ---------- orange move arrows on the selected room / roof in the 3D view ---------- */
 const nudgeEl=document.createElement("div");nudgeEl.className="iso-nudge";nudgeEl.hidden=true;wrap.appendChild(nudgeEl);
 function shapeBox(sh){const xs=sh.pts.map(p=>p[0]),ys=sh.pts.map(p=>p[1]),x=Math.min(...xs),y=Math.min(...ys);return{x,y,w:Math.max(...xs)-x,d:Math.max(...ys)-y}}
