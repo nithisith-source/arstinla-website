@@ -409,7 +409,7 @@ legend{padding:0;margin-bottom:6px}
       var h=d.house||{},lv=Math.max.apply(null,(h.rooms||[{level:0}]).map(function(r){return r.level}))+1;
       $("hbody").innerHTML=(d.image?'<img alt="ภาพ Isometric บ้านบนแปลง '+esc(id)+'" src="'+d.image+'">':'')+
         '<div class="hb"><p class="hk">แปลง '+esc(id)+' · '+d.size.w+'×'+d.size.d+' ม.</p><h3>'+esc(h.name||"บ้านในหมู่บ้าน")+'</h3><p>ของ '+esc(d.owner||"")+' · '+lv+' ชั้น · '+(h.rooms||[]).length+' ห้อง · ออกแบบด้วย ARSTINLA Massing Studio</p>'+
-        '<div class="hact"><a class="dark" href="/tools/massing-studio/">'+(d.mine?"แก้บ้านใน Massing Studio":"ออกแบบบ้านของคุณเอง")+' →</a><button type="button" id="hclose">ปิด</button></div></div>';
+        '<div class="hact"><a class="dark" href="/tools/massing-studio/">'+(d.mine?"แก้บ้านใน Massing Studio":"ออกแบบบ้านของคุณเอง")+' →</a>'+(d.mine?'<a class="dark" href="/tools/interior/">🛋 จัดเฟอร์นิเจอร์ในบ้าน →</a>':'')+'<button type="button" id="hclose">ปิด</button></div></div>';
     }).catch(function(){$("hbody").innerHTML='<div class="hb"><p>โหลดบ้านไม่สำเร็จ</p></div>'});
   }
   function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
