@@ -920,7 +920,7 @@ svg.addEventListener("wheel",e=>{e.preventDefault();const u=isoUnits(e);zoomAt(M
 let PAN=null,spaceDown=false;
 window.addEventListener("keydown",e=>{if(e.code==="Space"&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test((document.activeElement||{}).tagName||"")){spaceDown=true;e.preventDefault()}});
 window.addEventListener("keyup",e=>{if(e.code==="Space")spaceDown=false});
-svg.addEventListener("pointerdown",e=>{const empty=!e.target.closest("[data-id],[data-roof],[data-shape]");
+svg.addEventListener("pointerdown",e=>{const empty=!e.target.closest("[data-id],[data-roof],[data-shape],[data-grip]");
   if(!(e.button===1||(e.button===0&&(spaceDown||(empty&&!DRAW.on)))))return;
   const m=svg.getScreenCTM();if(!m)return;PAN={x:e.clientX,y:e.clientY,dx:ZM.dx,dy:ZM.dy,k:1/Math.hypot(m.a,m.b),id:e.pointerId,moved:false};
   if(e.button!==0||spaceDown){e.stopImmediatePropagation();e.preventDefault()}},true);
@@ -941,7 +941,7 @@ function arcPts(A,B,C,n){const ax=A[0],ay=A[1],bx=B[0],by=B[1],cx=C[0],cy=C[1],d
   for(let i=1;i<=n;i++){const t=a0+sweep*i/n;out.push([ux+r*Math.cos(t),uy+r*Math.sin(t)])}out[out.length-1]=[bx,by];return out}
 function rectPts(a,b){return[[a[0],a[1]],[b[0],a[1]],[b[0],b[1]],[a[0],b[1]]]}
 function circPts(c,r,n){n=n||48;const o=[];for(let i=0;i<n;i++){const t=i/n*2*Math.PI;o.push([c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)])}return o}
-function addClosed(pts,label){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts:pts.map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000]),closed:true,h:0,z:0});S.selShape=id;saveS();typeof toast==="function"&&toast(`${label}แล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน`);setDraw(false)}
+function addClosed(pts,label,meta){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts:pts.map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000]),closed:true,h:0,z:0,...(meta||{})});S.selShape=id;saveS();typeof toast==="function"&&toast(`${label}แล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน`);setDraw(false)}
 const hintEl=document.createElement("div");hintEl.className="draw-hint";hintEl.hidden=true;wrap.appendChild(hintEl);
 const shapePanel=document.createElement("div");shapePanel.className="shape-panel";shapePanel.hidden=true;wrap.appendChild(shapePanel);
 function drawZ(){return base(S.active)}
@@ -952,7 +952,7 @@ function snapTargets(){const L=S.active,al=$("wallAlignment").value,t0=wallThick
   const rect=(x0,y0,x1,y1)=>{const c=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]];c.forEach((p,i)=>{P0.push(p);E.push([p,c[(i+1)%4]])})};
   rect(0,0,s.w,s.d);
   rooms.filter(r=>!r.void&&lvl(r)===L).forEach(r=>{const t=wallOf(r,t0),o=al==="inside"?0:al==="center"?t/2:t,i=t-o;rect(r.x-o,r.y-o,r.x+r.w+o,r.y+r.d+o);if(t>0&&r.w>2*i&&r.d>2*i)rect(r.x+i,r.y+i,r.x+r.w-i,r.y+r.d-i)});
-  S.shapes.filter(sh=>(sh.level|0)===L).forEach(sh=>sh.pts.forEach((p,i)=>{P0.push(p);const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)E.push([p,q])}));
+  S.shapes.filter(sh=>(sh.level|0)===L&&sh.id!==DRAW.skip).forEach(sh=>sh.pts.forEach((p,i)=>{P0.push(p);const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)E.push([p,q])}));
   DRAW.pts.forEach((p,i)=>{P0.push(p);if(i)E.push([DRAW.pts[i-1],p])});
   return{P0,E}}
 function snapAt(u){const m=svg.getScreenCTM();if(!m)return null;const tol=13/Math.hypot(m.a,m.b),pl=scr2plan(u);if(!pl)return null;
@@ -988,7 +988,21 @@ function renderDrawLayer(){placeOverlays();const old=svg.querySelector("#drawLay
     pp.forEach((q,i)=>h+=`<circle cx="${q[0]}" cy="${q[1]}" r="${i===0&&DRAW.pts.length>=3?6:3.5}" fill="${i===0?"#fff":"#c47a55"}" stroke="#c47a55" stroke-width="2" ${ve}/>`);
     if(DRAW.cur&&DRAW.snap){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),k=DRAW.snap.kind;
       h+=k==="end"||k==="close"?`<circle cx="${c[0]}" cy="${c[1]}" r="8" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="edge"?`<rect x="${c[0]-6}" y="${c[1]-6}" width="12" height="12" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="axis"?`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#3d7bd6"/>`:`<circle cx="${c[0]}" cy="${c[1]}" r="3" fill="#171816"/>`}}
-  g.innerHTML=h;svg.appendChild(g);renderShapePanel()}
+  g.innerHTML=h;svg.appendChild(g);renderGrips();renderShapePanel()}
+function shapeGrips(sh){if(sh.kind==="circle")return[{i:"r",p:[sh.c[0]+sh.r,sh.c[1]]}];if(sh.pts.length>24)return[];return sh.pts.map((p,i)=>({i,p}))}
+function renderGrips(){const old=svg.querySelector("#gripLayer");if(old)old.remove();const sh=!DRAW.on&&S.selShape&&S.shapes.find(x=>x.id===S.selShape);if(!sh)return;
+  const z=base(clamp(sh.level|0,0,nF()-1))+(Number(sh.z)||0)+Math.max(0,Number(sh.h)||0),g=document.createElementNS(NS,"g");g.id="gripLayer";
+  g.innerHTML=shapeGrips(sh).map(o=>{const q=d2scr(o.p[0],o.p[1],z);return`<rect data-grip="${o.i}" x="${(q[0]-7).toFixed(1)}" y="${(q[1]-7).toFixed(1)}" width="14" height="14" fill="#fff" stroke="#c47a55" stroke-width="2.5" vector-effect="non-scaling-stroke" style="cursor:move"/>`}).join("");svg.appendChild(g)}
+let GRIP=null;
+svg.addEventListener("pointerdown",e=>{const gr=e.target.closest("[data-grip]");if(!gr||e.button!==0)return;const sh=S.shapes.find(x=>x.id===S.selShape);if(!sh)return;
+  e.stopImmediatePropagation();e.preventDefault();GRIP={sh,i:gr.dataset.grip,id:e.pointerId,act:S.active};S.active=clamp(sh.level|0,0,nF()-1);svg.setPointerCapture(e.pointerId)},true);
+svg.addEventListener("pointermove",e=>{if(!GRIP||e.pointerId!==GRIP.id)return;const u=isoUnits(e);if(!u)return;DRAW.skip=GRIP.sh.id;const sn=snapAt(u);DRAW.skip=null;if(!sn)return;const sh=GRIP.sh,p=sn.p;
+  if(sh.kind==="circle"){sh.r=Math.max(.05,Math.hypot(p[0]-sh.c[0],p[1]-sh.c[1]));sh.pts=circPts(sh.c,sh.r).map(q=>[Math.round(q[0]*1000)/1000,Math.round(q[1]*1000)/1000])}
+  else if(sh.kind==="rect"&&sh.pts.length===4){const o=sh.pts[(+GRIP.i+2)%4];sh.pts=rectPts(o,p);const j=(+GRIP.i+2)%4;sh.pts=[0,1,2,3].map(k=>rectPts(o,p)[(k-j+4)%4])}
+  else sh.pts[+GRIP.i]=p.slice();
+  if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})},true);
+const gripEnd=e=>{if(!GRIP||e.pointerId!==GRIP.id)return;GRIP=null;svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);shapePanel.dataset.key="";saveS();draw()};
+svg.addEventListener("pointerup",gripEnd,true);svg.addEventListener("pointercancel",gripEnd,true);
 function setDraw(on){DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";DRAW.anchor=null;DRAW.arcEnd=null;$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
   if(on&&!["iso","top"].includes(viewMode())){S.cam="iso"}if(on){S.selShape=null;selectedId=null;S.selRoof=null}drawHint();draw()}
 function finishDraw(close){const pts=DRAW.pts.map(p=>[round2(p[0]*1000)/1000,round2(p[1]*1000)/1000]);
@@ -996,9 +1010,14 @@ function finishDraw(close){const pts=DRAW.pts.map(p=>[round2(p[0]*1000)/1000,rou
   DRAW.pts=[];DRAW.cur=null;DRAW.typed="";if(close)setDraw(false);else{drawHint();draw()}}
 function renderShapePanel(){const sh=S.selShape&&S.shapes.find(x=>x.id===S.selShape);if(!sh||DRAW.on){shapePanel.hidden=true;return}shapePanel.hidden=false;{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();shapePanel.style.top=(a.top-b.top+10)+"px";shapePanel.style.left=(a.left-b.left+10)+"px"}
   let ar=0;sh.pts.forEach((p,i)=>{const q=sh.pts[(i+1)%sh.pts.length];ar+=p[0]*q[1]-q[0]*p[1]});ar=Math.abs(ar)/2;let per=0;sh.pts.forEach((p,i)=>{const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)per+=Math.hypot(q[0]-p[0],q[1]-p[1])});
-  const key=sh.id+"|"+sh.h+"|"+sh.z+"|"+sh.pts.length;if(shapePanel.dataset.key===key)return;shapePanel.dataset.key=key;
-  shapePanel.innerHTML=sh.closed?`<b>รูปปิด ${sh.pts.length} จุด</b><span>พื้นที่ ${format2(ar)} ตร.ม.</span><label>ความหนา/สูง <input id="shH" type="number" min="0" max="30" step="0.05" value="${format2(sh.h||0)}"> ม.</label><label>ยกจากพื้น <input id="shZ" type="number" min="-5" max="30" step="0.05" value="${format2(sh.z||0)}"> ม.</label><button type="button" class="del" id="shDel">ลบ</button>`
+  const key=sh.id+"|"+sh.h+"|"+sh.z+"|"+sh.pts.length+"|"+JSON.stringify(shapeBox(sh));if(document.activeElement&&shapePanel.contains(document.activeElement))return;if(shapePanel.dataset.key===key)return;shapePanel.dataset.key=key;
+  const bx=shapeBox(sh),sizeIn=sh.kind==="circle"?`<label>รัศมี <input id="shR" type="number" min="0.05" max="50" step="0.05" value="${format2(sh.r)}"> ม.</label>`:sh.closed?`<label>กว้าง <input id="shW" type="number" min="0.05" max="200" step="0.05" value="${format2(bx.w)}"></label><label>ยาว <input id="shD" type="number" min="0.05" max="200" step="0.05" value="${format2(bx.d)}"> ม.</label>`:"";
+  shapePanel.innerHTML=sh.closed?`<b>${sh.kind==="circle"?"วงกลม":sh.kind==="rect"?"สี่เหลี่ยม":"รูปปิด "+sh.pts.length+" จุด"}</b><span>พื้นที่ ${format2(ar)} ตร.ม.</span>${sizeIn}<label>ความหนา/สูง <input id="shH" type="number" min="0" max="30" step="0.05" value="${format2(sh.h||0)}"> ม.</label><label>ยกจากพื้น <input id="shZ" type="number" min="-5" max="30" step="0.05" value="${format2(sh.z||0)}"> ม.</label><button type="button" class="del" id="shDel">ลบ</button>`
     :`<b>เส้น ${sh.pts.length} จุด</b><span>ยาวรวม ${format2(per)} ม.</span><button type="button" class="del" id="shDel">ลบ</button>`;
+  const resz=(id,fn)=>{const el=shapePanel.querySelector("#"+id);if(el)el.addEventListener("change",()=>{const n=Number(el.value);if(!Number.isFinite(n)||n<=0)return;fn(n);shapePanel.dataset.key="";saveS();draw()})};
+  resz("shR",n=>{sh.r=n;sh.pts=circPts(sh.c,n).map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000])});
+  resz("shW",n=>{const b=shapeBox(sh);if(b.w<1e-6)return;const f=n/b.w;sh.pts=sh.pts.map(p=>[Math.round((b.x+(p[0]-b.x)*f)*1000)/1000,p[1]])});
+  resz("shD",n=>{const b=shapeBox(sh);if(b.d<1e-6)return;const f=n/b.d;sh.pts=sh.pts.map(p=>[p[0],Math.round((b.y+(p[1]-b.y)*f)*1000)/1000])});
   const upd=(id,f)=>{const el=shapePanel.querySelector("#"+id);if(el)el.addEventListener("input",()=>{const n=Number(el.value);if(!Number.isFinite(n))return;sh[f]=n;saveS();draw()})};upd("shH","h");upd("shZ","z");
   shapePanel.querySelector("#shDel").addEventListener("click",()=>{S.shapes=S.shapes.filter(x=>x!==sh);S.selShape=null;saveS();draw()})}
 $("isoDraw").addEventListener("click",()=>setDraw(!DRAW.on));
@@ -1010,8 +1029,8 @@ window.addEventListener("keydown",e=>{const inField=/INPUT|SELECT|TEXTAREA/.test
   if(e.key==="Escape"){if(DRAW.anchor||DRAW.arcEnd){DRAW.anchor=null;DRAW.arcEnd=null;DRAW.typed="";drawHint();renderDrawLayer();e.preventDefault();return}if(DRAW.pts.length)finishDraw(false);setDraw(false);e.preventDefault();return}
   if(/^[0-9.,x*]$/.test(e.key)&&(DRAW.pts.length||DRAW.anchor)){DRAW.typed+=e.key;drawHint();e.preventDefault();return}
   if(e.key==="Enter"&&DRAW.anchor&&DRAW.typed){const a=DRAW.anchor,c=DRAW.cur||[a[0]+1,a[1]+1];
-    if(DRAW.mode==="rect"){const v=DRAW.typed.split(/[,x*]/).map(Number);if(v.length===2&&v[0]>0&&v[1]>0){const sx=c[0]>=a[0]?1:-1,sy=c[1]>=a[1]?1:-1;addClosed(rectPts(a,[a[0]+sx*v[0],a[1]+sy*v[1]]),"วาดสี่เหลี่ยม")}}
-    else if(DRAW.mode==="circle"){const r=Number(DRAW.typed);if(r>0)addClosed(circPts(a,r),"วาดวงกลม")}
+    if(DRAW.mode==="rect"){const v=DRAW.typed.split(/[,x*]/).map(Number);if(v.length===2&&v[0]>0&&v[1]>0){const sx=c[0]>=a[0]?1:-1,sy=c[1]>=a[1]?1:-1;addClosed(rectPts(a,[a[0]+sx*v[0],a[1]+sy*v[1]]),"วาดสี่เหลี่ยม",{kind:"rect"})}}
+    else if(DRAW.mode==="circle"){const r=Number(DRAW.typed);if(r>0)addClosed(circPts(a,r),"วาดวงกลม",{kind:"circle",c:a.slice(),r})}
     DRAW.typed="";drawHint();e.preventDefault();return}
   if(e.key==="Backspace"){if(DRAW.typed){DRAW.typed=DRAW.typed.slice(0,-1)}else DRAW.pts.pop();drawHint();renderDrawLayer();e.preventDefault();return}
   if(e.key==="Enter"){const lp=DRAW.pts[DRAW.pts.length-1],len=Number(DRAW.typed);
@@ -1019,15 +1038,16 @@ window.addEventListener("keydown",e=>{const inField=/INPUT|SELECT|TEXTAREA/.test
     else finishDraw(false);e.preventDefault()}});
 /* ---------- orange move arrows on the selected room / roof in the 3D view ---------- */
 const nudgeEl=document.createElement("div");nudgeEl.className="iso-nudge";nudgeEl.hidden=true;wrap.appendChild(nudgeEl);
-function renderIsoNudge(sc){const R=S.selRoof?S.roofs.find(r=>r.id===S.selRoof):null,room=!R&&selectedId?rooms.find(r=>r.id===selectedId):null,it=R||room;
+function shapeBox(sh){const xs=sh.pts.map(p=>p[0]),ys=sh.pts.map(p=>p[1]),x=Math.min(...xs),y=Math.min(...ys);return{x,y,w:Math.max(...xs)-x,d:Math.max(...ys)-y}}
+function renderIsoNudge(sc){const SH=S.selShape?S.shapes.find(x=>x.id===S.selShape):null,R=!SH&&S.selRoof?S.roofs.find(r=>r.id===S.selRoof):null,room=!SH&&!R&&selectedId?rooms.find(r=>r.id===selectedId):null,it=SH?shapeBox(SH):R||room;
   const m=svg.getScreenCTM();if(!it||!m||wrap.hidden){nudgeEl.hidden=true;return}
-  const s=site(),W=s.w,D=s.d,k=sc.k,z=R?roofBase(roofLevel(R)):base(lvl(room))+roomH(room),cx=it.x+it.w/2,cy=it.y+it.d/2;
+  const s=site(),W=s.w,D=s.d,k=sc.k,z=SH?base(clamp(SH.level|0,0,nF()-1))+(Number(SH.z)||0)+Math.max(0,Number(SH.h)||0):R?roofBase(roofLevel(R)):base(lvl(room))+roomH(room),cx=it.x+it.w/2,cy=it.y+it.d/2;
   const wr=wrap.getBoundingClientRect(),scr=(x,y)=>{const v=T(x,y,W,D,k),q=P(v[0],v[1],z),pt=svg.createSVGPoint();pt.x=q[0];pt.y=q[1];const o=pt.matrixTransform(m);return[o.x-wr.left,o.y-wr.top]};
   const c=scr(cx,cy),dirs=[["E",1,0],["W",-1,0],["S",0,1],["N",0,-1]];
   nudgeEl.hidden=false;nudgeEl.innerHTML=`<i class="dot" style="left:${c[0]}px;top:${c[1]}px"></i>`+dirs.map(([n,dx,dy])=>{const q=scr(cx+dx,cy+dy);let vx=q[0]-c[0],vy=q[1]-c[1];const L=Math.hypot(vx,vy);if(L<1)return"";vx/=L;vy/=L;const ang=Math.atan2(vy,vx)*180/Math.PI;
     return`<button type="button" data-nd="${dx},${dy}" title="เลื่อน 0.10 ม." style="left:${c[0]+vx*46}px;top:${c[1]+vy*46}px"><span style="transform:rotate(${ang}deg)">➜</span></button>`}).join("")}
-nudgeEl.addEventListener("pointerdown",e=>e.stopPropagation());
-nudgeEl.addEventListener("click",e=>{const b=e.target.closest("[data-nd]");if(!b)return;e.stopPropagation();const[dx,dy]=b.dataset.nd.split(",").map(Number),s=site();
+nudgeEl.addEventListener("pointerdown",e=>{const b=e.target.closest("[data-nd]");e.stopPropagation();if(!b||e.button!==0)return;e.preventDefault();const[dx,dy]=b.dataset.nd.split(",").map(Number),s=site();
+  const SH=S.selShape?S.shapes.find(x=>x.id===S.selShape):null;if(SH){SH.pts=SH.pts.map(q=>[Math.round((q[0]+dx*.1)*1000)/1000,Math.round((q[1]+dy*.1)*1000)/1000]);if(SH.c)SH.c=[SH.c[0]+dx*.1,SH.c[1]+dy*.1];saveS();draw();return}
   const R=S.selRoof?S.roofs.find(r=>r.id===S.selRoof):null,room=!R&&selectedId?rooms.find(r=>r.id===selectedId):null,it=R||room;if(!it)return;
   it.x=round2(clamp(it.x+dx*.1,R?-it.w:0,R?s.w:s.w-it.w));it.y=round2(clamp(it.y+dy*.1,R?-it.d:0,R?s.d:s.d-it.d));
   if(R){saveS();renderAll(false);selectRoof(R.id)}else renderAll()});
@@ -1035,7 +1055,10 @@ window.addEventListener("resize",()=>{if(!wrap.hidden)draw()});
 /* ---------- drag rooms directly in the 3D / isometric view ---------- */
 let isoDrag=null,isoRaf=0;
 function isoUnits(e){const m=svg.getScreenCTM();if(!m)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(m.inverse());return[q.x,q.y]}
-svg.addEventListener("pointerdown",e=>{if(e.button!==0||DRAW.on)return;const rf=e.target.closest("[data-roof]"),el=rf||e.target.closest("[data-id]");if(!el)return;
+svg.addEventListener("pointerdown",e=>{if(e.button!==0||DRAW.on)return;
+  const sp=e.target.closest("[data-shape]");if(sp){const sh=S.shapes.find(x=>x.id===sp.dataset.shape);const p0=isoUnits(e);if(!sh||!p0)return;const z=base(clamp(sh.level|0,0,nF()-1)),o=P(0,0,z),a=P(1,0,z),b=P(0,1,z);
+    isoDrag={shape:sh,r:sh,p0,pts:sh.pts.map(q=>q.slice()),c:sh.c?sh.c.slice():null,ex:[a[0]-o[0],a[1]-o[1]],ey:[b[0]-o[0],b[1]-o[1]],k:viewK(),moved:false,id:e.pointerId};svg.setPointerCapture(e.pointerId);e.preventDefault();return}
+  const rf=e.target.closest("[data-roof]"),el=rf||e.target.closest("[data-id]");if(!el)return;
   const r=rf?S.roofs.find(i=>i.id===rf.dataset.roof):rooms.find(i=>i.id===el.dataset.id);if(!r)return;const p0=isoUnits(e);if(!p0)return;
   const z=rf?roofBase(roofLevel(r)):base(lvl(r)),o=P(0,0,z),a=P(1,0,z),b=P(0,1,z),ex=[a[0]-o[0],a[1]-o[1]],ey=[b[0]-o[0],b[1]-o[1]];
   isoDrag={roof:!!rf,r,p0,x:r.x,y:r.y,ex,ey,k:viewK(),moved:false,id:e.pointerId};svg.setPointerCapture(e.pointerId);e.preventDefault()});
@@ -1045,14 +1068,16 @@ svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id
   else{const nx=d.ex[0]**2+d.ex[1]**2,ny=d.ey[0]**2+d.ey[1]**2;u=nx>1e-9?(dx*d.ex[0]+dy*d.ex[1])/nx:0;v=ny>1e-9?(dx*d.ey[0]+dy*d.ey[1])/ny:0}
   const[mx,my]=d.k===1?[v,-u]:d.k===2?[-u,-v]:d.k===3?[-v,u]:[u,v];
   if(!d.moved&&Math.hypot(mx,my)<.15)return;d.moved=true;
+  if(d.shape){const sh=d.shape,dxm=Math.round(mx*20)/20,dym=Math.round(my*20)/20;sh.pts=d.pts.map(q=>[Math.round((q[0]+dxm)*1000)/1000,Math.round((q[1]+dym)*1000)/1000]);if(d.c)sh.c=[d.c[0]+dxm,d.c[1]+dym];S.selShape=sh.id;selectedId=null;S.selRoof=null;
+    if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()});return}
   const s=site(),r=d.r;r.x=clamp(snap(d.x+mx),0,s.w-r.w);r.y=clamp(snap(d.y+my),0,s.d-r.d);if(!d.roof){const sn=edgeSnap(r,r.x,r.y,rooms.filter(o=>o!==r&&lvl(o)===lvl(r)),s.w,s.d);r.x=clamp(sn.x,0,s.w-r.w);r.y=clamp(sn.y,0,s.d-r.d)}else{const sn=edgeSnap(r,r.x,r.y,rooms.filter(o=>lvl(o)===roofLevel(r)),s.w,s.d);r.x=sn.x;r.y=sn.y}
   if(d.roof){if(S.selRoof!==r.id){S.selRoof=r.id;selectedId=null}}else if(selectedId!==r.id){selectedId=r.id;S.selRoof=null}
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
-const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
+const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(d.shape){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);S.selShape=d.shape.id;S.active=clamp(d.shape.level|0,0,nF()-1);selectedId=null;S.selRoof=null;saveS();renderAll(false);draw();return}if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
 svg.addEventListener("pointerup",isoEnd);svg.addEventListener("pointercancel",isoEnd);
 svg.addEventListener("click",e=>{if(DRAW.on&&svg.dataset.dragged)return;if(DRAW.on){const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;
-    if(DRAW.mode==="rect"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else if(Math.abs(sn.p[0]-DRAW.anchor[0])>.01&&Math.abs(sn.p[1]-DRAW.anchor[1])>.01)addClosed(rectPts(DRAW.anchor,sn.p),"วาดสี่เหลี่ยม");return}
-    if(DRAW.mode==="circle"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else{const r=Math.hypot(sn.p[0]-DRAW.anchor[0],sn.p[1]-DRAW.anchor[1]);if(r>.02)addClosed(circPts(DRAW.anchor,r),"วาดวงกลม")}return}
+    if(DRAW.mode==="rect"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else if(Math.abs(sn.p[0]-DRAW.anchor[0])>.01&&Math.abs(sn.p[1]-DRAW.anchor[1])>.01)addClosed(rectPts(DRAW.anchor,sn.p),"วาดสี่เหลี่ยม",{kind:"rect"});return}
+    if(DRAW.mode==="circle"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else{const r=Math.hypot(sn.p[0]-DRAW.anchor[0],sn.p[1]-DRAW.anchor[1]);if(r>.02)addClosed(circPts(DRAW.anchor,r),"วาดวงกลม",{kind:"circle",c:DRAW.anchor.slice(),r})}return}
     if(DRAW.mode==="arc"){if(!DRAW.pts.length){DRAW.pts.push(sn.p)}else if(!DRAW.arcEnd){DRAW.arcEnd={p:sn.p,close:sn.kind==="close"}}else{const A=DRAW.pts[DRAW.pts.length-1],seg=arcPts(A,DRAW.arcEnd.p,sn.p),cl=DRAW.arcEnd.close;DRAW.arcEnd=null;
         if(cl){seg.pop();DRAW.pts.push(...seg);finishDraw(true);return}DRAW.pts.push(...seg)}drawHint();renderDrawLayer();return}
     if(sn.kind==="close"){finishDraw(true);return}
