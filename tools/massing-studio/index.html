@@ -412,7 +412,10 @@ $("showGrid").closest(".control-section").insertAdjacentHTML("beforebegin",`<sec
 $("selectedEditor").querySelector(".field-row").insertAdjacentHTML("afterend",`<div class="field-row">
   <div class="field"><label for="selectedLevel">ชั้น</label><select id="selectedLevel"></select></div>
   <div class="field"><label for="selectedHeight">ความสูงผนัง</label><div class="unit-input"><input id="selectedHeight" type="number" min="0" max="12" step="0.05"><span>ม.</span></div></div>
-</div><p class="field-hint" style="margin-top:6px">ความสูงเว้นว่าง = ใช้ความสูงชั้น · 0 = ไม่มีผนัง เช่น ลานโล่ง ที่จอดรถ</p>
+</div><div class="field-row">
+  <div class="field"><label for="selectedSlab">ความหนาพื้น (รวมคาน)</label><div class="unit-input"><input id="selectedSlab" type="number" min="0" max="1.5" step="0.05"><span>ม.</span></div></div>
+  <div class="field"><label for="selectedWallT">ความหนาผนัง</label><select id="selectedWallT"><option value="">ตามค่ารวม</option><option value="0">0 · ไม่มีผนัง</option><option value="0.1">0.10 ม.</option><option value="0.15">0.15 ม.</option><option value="0.2">0.20 ม.</option><option value="0.25">0.25 ม.</option><option value="0.3">0.30 ม.</option></select></div>
+</div><p class="field-hint" style="margin-top:6px">ความสูงเว้นว่าง = ใช้ความสูงชั้น · 0 = ไม่มีผนัง เช่น ลานโล่ง ที่จอดรถ<br>ความหนาพื้นนับรวมความลึกคาน อยู่ภายในความสูงชั้น (พื้นถึงพื้น) — ผนังเริ่มเหนือพื้น · เว้นว่าง = 0.15 ม. (ชั้น 1 = 0)</p>
 <div class="op-box"><div class="op-head"><span>ช่องเปิด ประตู · หน้าต่าง · ช่องโล่ง</span><span><button type="button" id="opAddDoor">+ ประตู</button><button type="button" id="opAddWin">+ หน้าต่าง</button><button type="button" id="opAddOpen">+ ช่องโล่ง</button></span></div>
 <div id="opList"></div><p class="field-hint">ด้าน = ตามแปลน (บน/ล่าง/ซ้าย/ขวา) · ห่างจากซ้าย = จากผิวผนังด้านซ้ายถึงขอบวงกบ เมื่อยืนมองผนังนั้นจากด้านนอกห้อง (แบบรูปด้าน) · ดูผลในมุมมอง Isometric และรูปด้าน</p></div>`);
 document.head.insertAdjacentHTML("beforeend",`<style>
@@ -843,7 +846,9 @@ window.renderAll=function(...a){
 const _renderEditor=window.renderEditor;
 window.renderEditor=function(...a){const out=_renderEditor.apply(this,a);const room=rooms.find(i=>i.id===selectedId);
   if(room){$("selectedLevel").innerHTML=S.floors.map((f,i)=>`<option value="${i}">${fl(i)}</option>`).join("");$("selectedLevel").value=String(lvl(room));
-    $("selectedHeight").value=hasOwnH(room)?format2(room.h):"";$("selectedHeight").placeholder=format2(S.floors[lvl(room)].h)}renderOps(room);return out};
+    $("selectedHeight").value=hasOwnH(room)?format2(room.h):"";$("selectedHeight").placeholder=format2(S.floors[lvl(room)].h);
+    if(document.activeElement!==$("selectedSlab")){$("selectedSlab").value=room.slab!=null&&room.slab!==""?format2(room.slab):"";$("selectedSlab").placeholder=lvl(room)>0?"0.15":"0"}
+    $("selectedWallT").value=room.wall!=null&&room.wall!==""?String(Number(room.wall)):""}renderOps(room);return out};
 const SIDES={N:"บน",S:"ล่าง",W:"ซ้าย",E:"ขวา"};
 function renderOps(room){const el=$("opList");if(!el)return;const ops=room&&Array.isArray(room.op)?room.op:[];
   el.innerHTML=ops.map((o,i)=>{const inf=opInfo(room,o);return`<div class="op-item" data-i="${i}"><div class="op-top"><span>${o.kind==="door"?"ประตู":o.kind==="open"?"ช่องโล่ง":"หน้าต่าง"} ${i+1}</span><button type="button" class="op-del" data-del="${i}" aria-label="ลบช่องเปิด">ลบ</button></div><div class="op-grid">
@@ -900,6 +905,8 @@ const opEdit=(e,final)=>{const it=e.target.closest(".op-item"),k=e.target.datase
   renderAll(true,!final)};
 $("opList").addEventListener("input",e=>opEdit(e,false));$("opList").addEventListener("change",e=>opEdit(e,true));
 $("opList").addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(!b)return;const room=rooms.find(i=>i.id===selectedId);if(!room||!room.op)return;room.op.splice(+b.dataset.del,1);renderAll();typeof toast==="function"&&toast("ลบช่องเปิดแล้ว")});
+$("selectedSlab").addEventListener("input",e=>{const room=rooms.find(i=>i.id===selectedId);if(!room)return;const v=e.target.value.trim();if(v==="")delete room.slab;else{const n=Number(v);if(!Number.isFinite(n)||n<0)return;room.slab=round2(Math.min(1.5,n))}renderAll(true,true)});
+$("selectedWallT").addEventListener("change",e=>{const room=rooms.find(i=>i.id===selectedId);if(!room)return;if(e.target.value==="")delete room.wall;else room.wall=Number(e.target.value);renderAll(true,true)});
 const hIn=$("selectedHeight");
 function setRoomH(final){const room=rooms.find(i=>i.id===selectedId);if(!room)return;const v=hIn.value.trim();if(v==="")delete room.h;else{const n=Number(v);if(!Number.isFinite(n))return;room.h=round2(clamp(n,0,12))}renderAll(true,!final)}
 hIn.addEventListener("input",()=>setRoomH(false));hIn.addEventListener("blur",()=>setRoomH(true));
