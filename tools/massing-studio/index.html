@@ -277,7 +277,7 @@ if(!Array.isArray(S.floors)||!S.floors.length)S.floors=[{h:round2(Number(S.heigh
 S.floors.forEach(f=>{f.h=clamp(Number(f.h)||3,2,12)});
 delete S.height;
 const saveS=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
-const NS="http://www.w3.org/2000/svg",C30=Math.cos(Math.PI/6),S30=.5,SC=40,SLAB=.15,EPS=1e-6;
+const ZM={z:1,dx:0,dy:0,base:null};const NS="http://www.w3.org/2000/svg",C30=Math.cos(Math.PI/6),S30=.5,SC=40,SLAB=.15,EPS=1e-6;
 const VIEW_AZ=[135,45,315,225];
 const nF=()=>S.floors.length;
 const lvl=r=>clamp(Math.floor(Number(r.level)||0),0,nF()-1);
@@ -339,6 +339,9 @@ body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout
 .shape-panel input{width:64px;height:30px;border:1px solid #c9c4b8;color:#171816!important;-webkit-text-fill-color:#171816;background:#fff!important;font:600 13px system-ui!important;text-align:center}
 .shape-panel button{height:30px;padding:0 10px;border:1px solid #171816;background:#fff;color:#171816;cursor:pointer;font:inherit}.shape-panel button.del{border-color:#b4442c;color:#b4442c}
 #isoBoard.drawing,#isoBoard.drawing *{cursor:crosshair!important}
+.zoom-ctl{position:absolute;z-index:7;display:flex;flex-direction:column;gap:4px}.zoom-ctl button{width:34px;height:34px;border:1px solid #171816;background:#fff;color:#171816;font:700 17px/1 system-ui;cursor:pointer;padding:0}.zoom-ctl button:hover{background:#171816;color:#fff}
+.draw-modes{position:absolute;z-index:7;display:flex;gap:4px;transform:translateX(-50%)}.draw-modes[hidden]{display:none}.draw-modes button{height:32px;padding:0 12px;border:1px solid #171816;background:#fff;color:#171816;font:600 12.5px system-ui,sans-serif;cursor:pointer}.draw-modes button.on{background:#c47a55;border-color:#c47a55;color:#fff}
+#isoBoard.panning,#isoBoard.panning *{cursor:grabbing!important}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
 .iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
@@ -653,7 +656,7 @@ function draw(){
   const sc=scene(),{Wr,Dr,k}=sc,parts=[],mode=sc.mode,persp=mode==="persp",ortho=mode!=="iso"&&!persp;
   const ext=ORTHO[mode]?[[-5.2,-2],[Wr+2,-2],[Wr+2,Dr+2],[-5.2,Dr+2]]:[[-2,-2],[Wr+3.5,-2],[Wr+3.5,Dr+2],[-2,Dr+2]],pp=[];ext.forEach(([x,y])=>{pp.push(P(x,y,ORTHO[mode]?-.9:0));pp.push(P(x,y,sc.zmax+(ORTHO[mode]?1.1:.6)))});
   const minX=Math.min(...pp.map(p=>p[0])),maxX=Math.max(...pp.map(p=>p[0])),minY=Math.min(...pp.map(p=>p[1])),maxY=Math.max(...pp.map(p=>p[1]));
-  const vb={x:minX,y:minY,w:maxX-minX,h:maxY-minY};svg.setAttribute("viewBox",`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+  const vb0={x:minX,y:minY,w:maxX-minX,h:maxY-minY};ZM.base=vb0;const zf=ZM.z||1,cx0=vb0.x+vb0.w/2+ZM.dx,cy0=vb0.y+vb0.h/2+ZM.dy,vb={x:cx0-vb0.w/zf/2,y:cy0-vb0.h/zf/2,w:vb0.w/zf,h:vb0.h/zf};svg.setAttribute("viewBox",`${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
   parts.push(`<rect x="${vb.x}" y="${vb.y}" width="${vb.w}" height="${vb.h}" fill="#f7f4ed"/>`);
   parts.push(`<polygon points="${pts([P(0,0),P(Wr,0),P(Wr,Dr),P(0,Dr)])}" fill="#eee9df" stroke="#8d887e" stroke-width="1" vector-effect="non-scaling-stroke"/>`);
   if($("showGrid").checked){let g="";for(let i=1;i<Wr;i++){const a=P(i,0),b=P(i,Dr);g+=`M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}`}
@@ -859,7 +862,7 @@ window.downloadPng=async function(...a){
   return isoPng()};
 
 /* ---------- controls ---------- */
-wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.cam;if(v.startsWith("iso")){S.cam="iso";S.rot=+v.slice(3)}else if(v==="persp"&&viewMode()==="persp")S.cam="iso";else S.cam=v;saveS();draw()}));
+wrap.querySelectorAll("[data-cam]").forEach(b=>b.addEventListener("click",()=>{ZM.z=1;ZM.dx=ZM.dy=0;const v=b.dataset.cam;if(v.startsWith("iso")){S.cam="iso";S.rot=+v.slice(3)}else if(v==="persp"&&viewMode()==="persp")S.cam="iso";else S.cam=v;saveS();draw()}));
 $("isoEye").addEventListener("input",e=>{const n=Number(e.target.value);if(Number.isFinite(n)&&n>=.3&&n<=60){S.eye=n;saveS();draw()}});
 $("isoRotL").addEventListener("click",()=>{if(!["iso","persp"].includes(viewMode()))S.cam="iso";S.rot=(S.rot+3)%4;saveS();draw()});
 $("isoRotR").addEventListener("click",()=>{if(!["iso","persp"].includes(viewMode()))S.cam="iso";S.rot=(S.rot+1)%4;saveS();draw()});
@@ -906,8 +909,39 @@ $("planBoard").addEventListener("click",e=>{if(!e.target.closest(".room-block,.c
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.target.closest("input,select,textarea"))clearSel()});
 
 
+
+/* ---------- zoom (wheel / buttons) + pan (drag empty space, middle button, or Space+drag) ---------- */
+const zoomCtl=document.createElement("div");zoomCtl.className="zoom-ctl";zoomCtl.innerHTML='<button type="button" data-z="in" title="ซูมเข้า">+</button><button type="button" data-z="out" title="ซูมออก">−</button><button type="button" data-z="fit" title="พอดีจอ">⤢</button>';wrap.appendChild(zoomCtl);
+function placeOverlays(){const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();zoomCtl.style.left=(a.right-b.left-46)+"px";zoomCtl.style.top=(a.bottom-b.top-122)+"px";modeBar.style.left=(a.left-b.left+a.width/2)+"px";modeBar.style.top=(a.top-b.top+48)+"px"}
+function zoomAt(f,u){const B=ZM.base;if(!B)return;const nz=clamp((ZM.z||1)*f,.4,12);f=nz/(ZM.z||1);if(Math.abs(f-1)<1e-6)return;
+  if(!u)u=[B.x+B.w/2+ZM.dx,B.y+B.h/2+ZM.dy];const cx=B.x+B.w/2+ZM.dx,cy=B.y+B.h/2+ZM.dy,ncx=u[0]+(cx-u[0])/f,ncy=u[1]+(cy-u[1])/f;ZM.z=nz;ZM.dx=ncx-B.x-B.w/2;ZM.dy=ncy-B.y-B.h/2;draw()}
+zoomCtl.addEventListener("click",e=>{const b=e.target.closest("[data-z]");if(!b)return;const z=b.dataset.z;if(z==="fit"){ZM.z=1;ZM.dx=ZM.dy=0;draw()}else zoomAt(z==="in"?1.35:1/1.35)});
+svg.addEventListener("wheel",e=>{e.preventDefault();const u=isoUnits(e);zoomAt(Math.exp(-e.deltaY*.0015),u)},{passive:false});
+let PAN=null,spaceDown=false;
+window.addEventListener("keydown",e=>{if(e.code==="Space"&&!/INPUT|SELECT|TEXTAREA|BUTTON/.test((document.activeElement||{}).tagName||"")){spaceDown=true;e.preventDefault()}});
+window.addEventListener("keyup",e=>{if(e.code==="Space")spaceDown=false});
+svg.addEventListener("pointerdown",e=>{const empty=!e.target.closest("[data-id],[data-roof],[data-shape]");
+  if(!(e.button===1||(e.button===0&&(spaceDown||(empty&&!DRAW.on)))))return;
+  const m=svg.getScreenCTM();if(!m)return;PAN={x:e.clientX,y:e.clientY,dx:ZM.dx,dy:ZM.dy,k:1/Math.hypot(m.a,m.b),id:e.pointerId,moved:false};
+  if(e.button!==0||spaceDown){e.stopImmediatePropagation();e.preventDefault()}},true);
+svg.addEventListener("pointermove",e=>{if(!PAN||e.pointerId!==PAN.id)return;const ddx=e.clientX-PAN.x,ddy=e.clientY-PAN.y;if(!PAN.moved&&Math.hypot(ddx,ddy)<4)return;
+  if(!PAN.moved){PAN.moved=true;svg.classList.add("panning");try{svg.setPointerCapture(e.pointerId)}catch(_){}}
+  ZM.dx=PAN.dx-ddx*PAN.k;ZM.dy=PAN.dy-ddy*PAN.k;if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
+const panEnd=e=>{if(!PAN||e.pointerId!==PAN.id)return;if(PAN.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0)}PAN=null;svg.classList.remove("panning")};
+svg.addEventListener("pointerup",panEnd);svg.addEventListener("pointercancel",panEnd);
+svg.addEventListener("auxclick",e=>{if(e.button===1)e.preventDefault()});
 /* ---------- drawing tool: lines on the floor, snap to wall edges/corners, close → face → thickness ---------- */
-const DRAW={on:false,pts:[],cur:null,snap:null,typed:""};
+const DRAW={on:false,pts:[],cur:null,snap:null,typed:"",mode:"line",anchor:null,arcEnd:null};
+const modeBar=document.createElement("div");modeBar.className="draw-modes";modeBar.hidden=true;modeBar.innerHTML=[["line","／ เส้นตรง"],["arc","⌒ เส้นโค้ง"],["rect","▭ สี่เหลี่ยม"],["circle","◯ วงกลม"]].map(([m,t])=>`<button type="button" data-dm="${m}">${t}</button>`).join("");wrap.appendChild(modeBar);
+modeBar.addEventListener("click",e=>{const b=e.target.closest("[data-dm]");if(!b)return;const m=b.dataset.dm;if(m!=="arc"&&m!=="line"&&DRAW.pts.length)finishDraw(false);DRAW.mode=m;DRAW.anchor=null;DRAW.arcEnd=null;DRAW.typed="";drawHint();renderDrawLayer()});
+function arcPts(A,B,C,n){const ax=A[0],ay=A[1],bx=B[0],by=B[1],cx=C[0],cy=C[1],d=2*(ax*(by-cy)+bx*(cy-ay)+cx*(ay-by));if(Math.abs(d)<1e-9)return[B];
+  const ux=((ax*ax+ay*ay)*(by-cy)+(bx*bx+by*by)*(cy-ay)+(cx*cx+cy*cy)*(ay-by))/d,uy=((ax*ax+ay*ay)*(cx-bx)+(bx*bx+by*by)*(ax-cx)+(cx*cx+cy*cy)*(bx-ax))/d,r=Math.hypot(ax-ux,ay-uy);
+  const ang=p=>Math.atan2(p[1]-uy,p[0]-ux),a0=ang(A),a1=ang(B),ac=ang(C),norm=v=>((v%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+  let sweep=norm(a1-a0);if(norm(ac-a0)>sweep)sweep-=2*Math.PI;n=n||Math.max(8,Math.ceil(Math.abs(sweep)/(Math.PI/24)));const out=[];
+  for(let i=1;i<=n;i++){const t=a0+sweep*i/n;out.push([ux+r*Math.cos(t),uy+r*Math.sin(t)])}out[out.length-1]=[bx,by];return out}
+function rectPts(a,b){return[[a[0],a[1]],[b[0],a[1]],[b[0],b[1]],[a[0],b[1]]]}
+function circPts(c,r,n){n=n||48;const o=[];for(let i=0;i<n;i++){const t=i/n*2*Math.PI;o.push([c[0]+r*Math.cos(t),c[1]+r*Math.sin(t)])}return o}
+function addClosed(pts,label){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts:pts.map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000]),closed:true,h:0,z:0});S.selShape=id;saveS();typeof toast==="function"&&toast(`${label}แล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน`);setDraw(false)}
 const hintEl=document.createElement("div");hintEl.className="draw-hint";hintEl.hidden=true;wrap.appendChild(hintEl);
 const shapePanel=document.createElement("div");shapePanel.className="shape-panel";shapePanel.hidden=true;wrap.appendChild(shapePanel);
 function drawZ(){return base(S.active)}
@@ -932,22 +966,30 @@ function snapAt(u){const m=svg.getScreenCTM();if(!m)return null;const tol=13/Mat
   let p=[Math.round(pl[0]*20)/20,Math.round(pl[1]*20)/20],kind="free";const lp=DRAW.pts[DRAW.pts.length-1];
   if(lp){const dx=pl[0]-lp[0],dy=pl[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07){p=[p[0],lp[1]];kind="axis"}else if(Math.abs(dx)<Math.abs(dy)*.07){p=[lp[0],p[1]];kind="axis"}}
   return{p,kind}}
-function drawHint(){if(!DRAW.on){hintEl.hidden=true;return}hintEl.hidden=false;{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}const n=DRAW.pts.length;
+function drawHint(){modeBar.hidden=!DRAW.on;modeBar.querySelectorAll("[data-dm]").forEach(b=>b.classList.toggle("on",b.dataset.dm===DRAW.mode));placeOverlays();if(!DRAW.on){hintEl.hidden=true;return}hintEl.hidden=false;
+  if(DRAW.mode==="rect"){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}hintEl.innerHTML=!DRAW.anchor?"▭ คลิกมุมแรกของสี่เหลี่ยม":`คลิกมุมตรงข้าม · หรือพิมพ์ กว้าง,ยาว แล้ว Enter${DRAW.typed?` <b>${DRAW.typed}</b>`:""} · Esc ยกเลิก`;return}
+  if(DRAW.mode==="circle"){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}hintEl.innerHTML=!DRAW.anchor?"◯ คลิกจุดศูนย์กลางวงกลม":`คลิกกำหนดรัศมี · หรือพิมพ์รัศมีแล้ว Enter${DRAW.typed?` <b>${DRAW.typed} ม.</b>`:""} · Esc ยกเลิก`;return}
+  if(DRAW.mode==="arc"){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}hintEl.innerHTML=!DRAW.pts.length?"⌒ คลิกจุดเริ่มเส้นโค้ง":!DRAW.arcEnd?"คลิกจุดปลายเส้นโค้ง (คลิกจุดแรกเพื่อปิดรูป)":"ขยับเมาส์กำหนดความโค้ง แล้วคลิก · สลับไป เส้นตรง เพื่อต่อเส้นตรงได้";return}{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}const n=DRAW.pts.length;
   hintEl.innerHTML=n===0?"✏ คลิกจุดเริ่ม (จุดส้ม = snap มุมผนัง · สี่เหลี่ยม = บนขอบผนัง) · Esc ออก":
     `${n>=3?"คลิก<b>จุดแรก</b>เพื่อปิดรูป · ":""}พิมพ์ระยะแล้ว Enter${DRAW.typed?` <b>${DRAW.typed} ม.</b>`:""} · Backspace ลบจุด · ดับเบิลคลิกจบเส้น · Esc ยกเลิก`}
-function renderDrawLayer(){const old=svg.querySelector("#drawLayer");if(old)old.remove();const g=document.createElementNS(NS,"g");g.id="drawLayer";g.setAttribute("pointer-events","none");
+function renderDrawLayer(){placeOverlays();const old=svg.querySelector("#drawLayer");if(old)old.remove();const g=document.createElementNS(NS,"g");g.id="drawLayer";g.setAttribute("pointer-events","none");
   const ve='vector-effect="non-scaling-stroke"',P2=p=>d2scr(p[0],p[1],base(clamp(p[2]??S.active,0,nF()-1))),pt=a=>a.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");let h="";
   S.shapes.filter(sh=>!sh.closed&&(sh.level|0)<=((S.upTo??-1)<0?99:S.upTo)).forEach(sh=>{const z=base(clamp(sh.level|0,0,nF()-1));h+=`<polyline points="${pt(sh.pts.map(p=>d2scr(p[0],p[1],z)))}" fill="none" stroke="${sh.id===S.selShape?"#c47a55":"#171816"}" stroke-width="2" ${ve}/>`});
   if(DRAW.on){const z=drawZ(),pp=DRAW.pts.map(p=>d2scr(p[0],p[1],z));
     if(pp.length)h+=`<polyline points="${pt(pp)}" fill="none" stroke="#c47a55" stroke-width="2.2" ${ve}/>`;
-    if(DRAW.cur&&pp.length){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),lp=pp[pp.length-1],lpl=DRAW.pts[DRAW.pts.length-1],len=Math.hypot(DRAW.cur[0]-lpl[0],DRAW.cur[1]-lpl[1]);
+    const pv=a=>`<polygon points="${pt(a.map(q=>d2scr(q[0],q[1],z)))}" fill="rgba(196,122,85,.18)" stroke="#c47a55" stroke-width="2" stroke-dasharray="6 4" ${ve}/>`,lbl=(q,t)=>{const c=d2scr(q[0],q[1],z);return`<text x="${c[0].toFixed(1)}" y="${(c[1]-10).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" fill="#c47a55" stroke="#fff" stroke-width="4" paint-order="stroke">${t}</text>`};
+    if(DRAW.mode==="rect"&&DRAW.anchor&&DRAW.cur){const a=DRAW.anchor,b=DRAW.cur;h+=pv(rectPts(a,b))+lbl([(a[0]+b[0])/2,(a[1]+b[1])/2],`${format2(Math.abs(b[0]-a[0]))} × ${format2(Math.abs(b[1]-a[1]))} ม.`)}
+    if(DRAW.mode==="circle"&&DRAW.anchor&&DRAW.cur){const a=DRAW.anchor,r=Math.hypot(DRAW.cur[0]-a[0],DRAW.cur[1]-a[1]);if(r>.01)h+=pv(circPts(a,r));const c0=d2scr(a[0],a[1],z),c1=d2scr(DRAW.cur[0],DRAW.cur[1],z);h+=`<line x1="${c0[0]}" y1="${c0[1]}" x2="${c1[0]}" y2="${c1[1]}" stroke="#c47a55" stroke-width="1.4" ${ve}/>`+lbl(DRAW.cur,`R ${format2(r)} ม.`)}
+    if(DRAW.anchor){const c=d2scr(DRAW.anchor[0],DRAW.anchor[1],z);h+=`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#c47a55"/>`}
+    if(DRAW.mode==="arc"&&DRAW.arcEnd&&DRAW.cur&&DRAW.pts.length){const A=DRAW.pts[DRAW.pts.length-1],seg=[A,...arcPts(A,DRAW.arcEnd.p,DRAW.cur)];h+=`<polyline points="${pt(seg.map(q=>d2scr(q[0],q[1],z)))}" fill="none" stroke="#c47a55" stroke-width="2" stroke-dasharray="6 4" ${ve}/>`;const e2=d2scr(DRAW.arcEnd.p[0],DRAW.arcEnd.p[1],z);h+=`<circle cx="${e2[0]}" cy="${e2[1]}" r="4" fill="#c47a55"/>`}
+    if(DRAW.cur&&pp.length&&(DRAW.mode==="line"||(DRAW.mode==="arc"&&!DRAW.arcEnd))){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),lp=pp[pp.length-1],lpl=DRAW.pts[DRAW.pts.length-1],len=Math.hypot(DRAW.cur[0]-lpl[0],DRAW.cur[1]-lpl[1]);
       h+=`<line x1="${lp[0]}" y1="${lp[1]}" x2="${c[0]}" y2="${c[1]}" stroke="#c47a55" stroke-width="1.6" stroke-dasharray="6 4" ${ve}/>`+
         `<text x="${((lp[0]+c[0])/2).toFixed(1)}" y="${((lp[1]+c[1])/2-8).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" fill="#c47a55" stroke="#fff" stroke-width="4" paint-order="stroke">${format2(len)} ม.</text>`}
     pp.forEach((q,i)=>h+=`<circle cx="${q[0]}" cy="${q[1]}" r="${i===0&&DRAW.pts.length>=3?6:3.5}" fill="${i===0?"#fff":"#c47a55"}" stroke="#c47a55" stroke-width="2" ${ve}/>`);
     if(DRAW.cur&&DRAW.snap){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),k=DRAW.snap.kind;
       h+=k==="end"||k==="close"?`<circle cx="${c[0]}" cy="${c[1]}" r="8" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="edge"?`<rect x="${c[0]-6}" y="${c[1]-6}" width="12" height="12" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="axis"?`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#3d7bd6"/>`:`<circle cx="${c[0]}" cy="${c[1]}" r="3" fill="#171816"/>`}}
   g.innerHTML=h;svg.appendChild(g);renderShapePanel()}
-function setDraw(on){DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
+function setDraw(on){DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";DRAW.anchor=null;DRAW.arcEnd=null;$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
   if(on&&!["iso","top"].includes(viewMode())){S.cam="iso"}if(on){S.selShape=null;selectedId=null;S.selRoof=null}drawHint();draw()}
 function finishDraw(close){const pts=DRAW.pts.map(p=>[round2(p[0]*1000)/1000,round2(p[1]*1000)/1000]);
   if(pts.length>=(close?3:2)){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts,closed:!!close,h:0,z:0});S.selShape=id;saveS();typeof toast==="function"&&toast(close?"ปิดรูปแล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน":"เก็บเส้นแล้ว")}
@@ -965,8 +1007,12 @@ svg.addEventListener("dblclick",e=>{if(!DRAW.on)return;e.preventDefault();DRAW.p
 window.addEventListener("keydown",e=>{const inField=/INPUT|SELECT|TEXTAREA/.test((document.activeElement||{}).tagName||"");
   if(!DRAW.on){if(!inField&&S.selShape&&(e.key==="Delete"||e.key==="Backspace")){S.shapes=S.shapes.filter(x=>x.id!==S.selShape);S.selShape=null;saveS();draw();e.preventDefault()}return}
   if(inField)return;
-  if(e.key==="Escape"){if(DRAW.pts.length)finishDraw(false);setDraw(false);e.preventDefault();return}
-  if(/^[0-9.]$/.test(e.key)&&DRAW.pts.length){DRAW.typed+=e.key;drawHint();e.preventDefault();return}
+  if(e.key==="Escape"){if(DRAW.anchor||DRAW.arcEnd){DRAW.anchor=null;DRAW.arcEnd=null;DRAW.typed="";drawHint();renderDrawLayer();e.preventDefault();return}if(DRAW.pts.length)finishDraw(false);setDraw(false);e.preventDefault();return}
+  if(/^[0-9.,x*]$/.test(e.key)&&(DRAW.pts.length||DRAW.anchor)){DRAW.typed+=e.key;drawHint();e.preventDefault();return}
+  if(e.key==="Enter"&&DRAW.anchor&&DRAW.typed){const a=DRAW.anchor,c=DRAW.cur||[a[0]+1,a[1]+1];
+    if(DRAW.mode==="rect"){const v=DRAW.typed.split(/[,x*]/).map(Number);if(v.length===2&&v[0]>0&&v[1]>0){const sx=c[0]>=a[0]?1:-1,sy=c[1]>=a[1]?1:-1;addClosed(rectPts(a,[a[0]+sx*v[0],a[1]+sy*v[1]]),"วาดสี่เหลี่ยม")}}
+    else if(DRAW.mode==="circle"){const r=Number(DRAW.typed);if(r>0)addClosed(circPts(a,r),"วาดวงกลม")}
+    DRAW.typed="";drawHint();e.preventDefault();return}
   if(e.key==="Backspace"){if(DRAW.typed){DRAW.typed=DRAW.typed.slice(0,-1)}else DRAW.pts.pop();drawHint();renderDrawLayer();e.preventDefault();return}
   if(e.key==="Enter"){const lp=DRAW.pts[DRAW.pts.length-1],len=Number(DRAW.typed);
     if(lp&&DRAW.typed&&len>0&&DRAW.cur){let dx=DRAW.cur[0]-lp[0],dy=DRAW.cur[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07)dy=0;else if(Math.abs(dx)<Math.abs(dy)*.07)dx=0;const L=Math.hypot(dx,dy);if(L>1e-6){DRAW.pts.push([lp[0]+dx/L*len,lp[1]+dy/L*len]);DRAW.typed="";drawHint();renderDrawLayer()}}
@@ -1004,7 +1050,12 @@ svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
 const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
 svg.addEventListener("pointerup",isoEnd);svg.addEventListener("pointercancel",isoEnd);
-svg.addEventListener("click",e=>{if(DRAW.on){const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;if(sn.kind==="close"){finishDraw(true);return}
+svg.addEventListener("click",e=>{if(DRAW.on&&svg.dataset.dragged)return;if(DRAW.on){const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;
+    if(DRAW.mode==="rect"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else if(Math.abs(sn.p[0]-DRAW.anchor[0])>.01&&Math.abs(sn.p[1]-DRAW.anchor[1])>.01)addClosed(rectPts(DRAW.anchor,sn.p),"วาดสี่เหลี่ยม");return}
+    if(DRAW.mode==="circle"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else{const r=Math.hypot(sn.p[0]-DRAW.anchor[0],sn.p[1]-DRAW.anchor[1]);if(r>.02)addClosed(circPts(DRAW.anchor,r),"วาดวงกลม")}return}
+    if(DRAW.mode==="arc"){if(!DRAW.pts.length){DRAW.pts.push(sn.p)}else if(!DRAW.arcEnd){DRAW.arcEnd={p:sn.p,close:sn.kind==="close"}}else{const A=DRAW.pts[DRAW.pts.length-1],seg=arcPts(A,DRAW.arcEnd.p,sn.p),cl=DRAW.arcEnd.close;DRAW.arcEnd=null;
+        if(cl){seg.pop();DRAW.pts.push(...seg);finishDraw(true);return}DRAW.pts.push(...seg)}drawHint();renderDrawLayer();return}
+    if(sn.kind==="close"){finishDraw(true);return}
     const lp=DRAW.pts[DRAW.pts.length-1];if(lp&&Math.hypot(lp[0]-sn.p[0],lp[1]-sn.p[1])<1e-3)return;DRAW.pts.push(sn.p);DRAW.typed="";drawHint();renderDrawLayer();return}
   if(svg.dataset.dragged)return;const sp=e.target.closest("[data-shape]");if(sp){S.selShape=sp.dataset.shape;selectedId=null;S.selRoof=null;saveS();renderAll(false);draw();return}
   if(S.selShape){S.selShape=null;saveS();draw()}
