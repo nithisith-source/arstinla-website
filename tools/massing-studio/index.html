@@ -618,7 +618,8 @@ function scene(){
     const tn=Math.tan(clamp(R.pitch,1,60)*Math.PI/180),ov=ev-ep,drop=R.type==="butterfly"?0:ov*tn;
     const rz=riseOf(R),zr=zt+rz,qx0=R.x-ep,qy0=R.y-ep,qx1=R.x+R.w+ep,qy1=R.y+R.d+ep;
     const Fo=roofFaces(R,px0,py0,px1,py1,zr-drop).F,Fi=roofFaces(R,qx0,qy0,qx1,qy1,zr).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
-    const und=true,F=Fo.filter(f=>f.kind==="slope").concat(Fi.filter(f=>f.kind==="wall").map(f=>({...f,under:und})));
+    const bfy=R.type==="butterfly",und=true,F=Fo.filter(f=>f.kind==="slope").map((f,i)=>bfy?{...f,bt:i}:f).concat(Fi.filter(f=>f.kind==="wall").map(f=>({...f,under:bfy?f.p.length===5:und})));
+    if(bfy){let j=0;F.forEach(f=>{if(f.kind==="wall"&&f.p.length===4&&!f.under)f.bw=j++})}
     // level above the wall plate (ระดับเหนืออะเส): band wall from the plate up to where the roof starts
     if(rz>.005)[[qx0,qy0,qx1,qy0],[qx1,qy0,qx1,qy1],[qx1,qy1,qx0,qy1],[qx0,qy1,qx0,qy0]].forEach(([a,b,c,d])=>F.push({kind:"wall",under:true,p:[[a,b,zt],[c,d,zt],[c,d,zr],[a,b,zr]]}));
     if(ov>.01){const FB=.18,onB=q=>Math.abs(q[0]-px0)<1e-6||Math.abs(q[0]-px1)<1e-6||Math.abs(q[1]-py0)<1e-6||Math.abs(q[1]-py1)<1e-6,same=(a,b)=>(Math.abs(a[0]-b[0])<1e-6&&(Math.abs(a[0]-px0)<1e-6||Math.abs(a[0]-px1)<1e-6))||(Math.abs(a[1]-b[1])<1e-6&&(Math.abs(a[1]-py0)<1e-6||Math.abs(a[1]-py1)<1e-6));
@@ -629,7 +630,10 @@ function scene(){
       const fc=vp.reduce((s,p)=>[s[0]+p[0]/vp.length,s[1]+p[1]/vp.length,s[2]+p[2]/vp.length],[0,0,0]);
       let n=norm(cross(sub(vp[1],vp[0]),sub(vp[2],vp[0])));
       if(f.kind==="slope"){if(n[2]<0)n=n.map(v=>-v)}else if(dot(n,sub(fc,c3))<0)n=n.map(v=>-v);
-      return{kind:f.kind,under:f.under,vp,n,fc,depth:faceDepth(fc,VV)}}).map(f=>CAM&&f.kind==="slope"&&!faceVis(f.n,f.fc,VV)?{...f,kind:"soffit",n:f.n.map(v=>-v),under:true}:f).filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
+      return{kind:f.kind,under:f.under,bt:f.bt,bw:f.bw,vp,n,fc,depth:faceDepth(fc,VV)}}).map(f=>CAM&&f.kind==="slope"&&!faceVis(f.n,f.fc,VV)?{...f,kind:"soffit",n:f.n.map(v=>-v),under:f.bt==null}:f).filter(f=>faceVis(f.n,f.fc,VV));
+    // butterfly: side wall sits over the far slope but under the overhang of its own slope
+    const vw=new Set(faces.filter(f=>f.bw!=null).map(f=>f.bw)),rank=f=>f.under?-1:f.bw!=null?1:f.bt!=null&&vw.has(f.bt)?2:f.bt!=null?0:3;
+    faces.sort((a,b)=>bfy?rank(a)-rank(b)||a.depth-b.depth:(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
     put({roof:true,rid:R.id,allF:F.map(f=>f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})),x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
