@@ -871,7 +871,7 @@ $("isoCut").addEventListener("click",()=>{S.cut=!S.cut;saveS();draw()});
 $("isoRoofBtn").addEventListener("click",()=>{S.roofOn=!S.roofOn;saveS();draw()});
 $("isoUpTo").addEventListener("change",e=>{S.upTo=Number(e.target.value);saveS();draw()});
 $("isoAddFloor").addEventListener("click",addFloor);
-$("isoAddRoof").addEventListener("click",addRoof);
+$("isoAddRoof").addEventListener("click",()=>typeof startRoofPick==="function"?startRoofPick():addRoof());
 const withRoof=fn=>e=>{const r=selRoof();if(!r)return;if(fn(r,e.target.value)!==false){saveS();refresh()}};
 $("isoRoofType").addEventListener("change",withRoof((r,v)=>{r.type=v;r.pitch=ROOF[v].pitch||r.pitch;r.eave=ROOF[v].eave;r.dir=0}));
 $("isoRoofLevel").addEventListener("change",withRoof((r,v)=>{r.level=Number(v);S.active=r.level}));
@@ -933,7 +933,7 @@ svg.addEventListener("auxclick",e=>{if(e.button===1)e.preventDefault()});
 /* ---------- drawing tool: lines on the floor, snap to wall edges/corners, close → face → thickness ---------- */
 const DRAW={on:false,pts:[],cur:null,snap:null,typed:"",mode:"line",anchor:null,arcEnd:null};
 const modeBar=document.createElement("div");modeBar.className="draw-modes";modeBar.hidden=true;modeBar.innerHTML=[["line","／ เส้นตรง"],["arc","⌒ เส้นโค้ง"],["rect","▭ สี่เหลี่ยม"],["circle","◯ วงกลม"]].map(([m,t])=>`<button type="button" data-dm="${m}">${t}</button>`).join("");wrap.appendChild(modeBar);
-modeBar.addEventListener("click",e=>{const b=e.target.closest("[data-dm]");if(!b)return;const m=b.dataset.dm;if(m!=="arc"&&m!=="line"&&DRAW.pts.length)finishDraw(false);DRAW.mode=m;DRAW.anchor=null;DRAW.arcEnd=null;DRAW.typed="";drawHint();renderDrawLayer()});
+modeBar.addEventListener("click",e=>{const rp=e.target.closest("[data-rp]");if(rp){const v=rp.dataset.rp;if(v==="all"){setDraw(false);addRoof()}else if(v==="cancel")setDraw(false);return}const b=e.target.closest("[data-dm]");if(!b)return;const m=b.dataset.dm;if(m!=="arc"&&m!=="line"&&DRAW.pts.length)finishDraw(false);DRAW.mode=m;DRAW.anchor=null;DRAW.arcEnd=null;DRAW.typed="";drawHint();renderDrawLayer()});
 function arcPts(A,B,C,n){const ax=A[0],ay=A[1],bx=B[0],by=B[1],cx=C[0],cy=C[1],d=2*(ax*(by-cy)+bx*(cy-ay)+cx*(ay-by));if(Math.abs(d)<1e-9)return[B];
   const ux=((ax*ax+ay*ay)*(by-cy)+(bx*bx+by*by)*(cy-ay)+(cx*cx+cy*cy)*(ay-by))/d,uy=((ax*ax+ay*ay)*(cx-bx)+(bx*bx+by*by)*(ax-cx)+(cx*cx+cy*cy)*(bx-ax))/d,r=Math.hypot(ax-ux,ay-uy);
   const ang=p=>Math.atan2(p[1]-uy,p[0]-ux),a0=ang(A),a1=ang(B),ac=ang(C),norm=v=>((v%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
@@ -944,14 +944,15 @@ function circPts(c,r,n){n=n||48;const o=[];for(let i=0;i<n;i++){const t=i/n*2*Ma
 function addClosed(pts,label,meta){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts:pts.map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000]),closed:true,h:0,z:0,...(meta||{})});S.selShape=id;saveS();typeof toast==="function"&&toast(`${label}แล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน`);setDraw(false)}
 const hintEl=document.createElement("div");hintEl.className="draw-hint";hintEl.hidden=true;wrap.appendChild(hintEl);
 const shapePanel=document.createElement("div");shapePanel.className="shape-panel";shapePanel.hidden=true;wrap.appendChild(shapePanel);
-function drawZ(){return base(S.active)}
+function drawZ(){return DRAW.roof?roofBase(S.active):base(S.active)}
 function d2scr(x,y,z){const s=site(),v=T(x,y,s.w,s.d,viewK());return P(v[0],v[1],z==null?drawZ():z)}
 function scr2plan(u){const o=d2scr(0,0),a=d2scr(1,0),b=d2scr(0,1),ex=[a[0]-o[0],a[1]-o[1]],ey=[b[0]-o[0],b[1]-o[1]],det=ex[0]*ey[1]-ex[1]*ey[0];if(Math.abs(det)<1e-9)return null;
   const dx=u[0]-o[0],dy=u[1]-o[1];return[(dx*ey[1]-dy*ey[0])/det,(ex[0]*dy-ex[1]*dx)/det]}
 function snapTargets(){const L=S.active,al=$("wallAlignment").value,t0=wallThickness(),P0=[],E=[],s=site();
   const rect=(x0,y0,x1,y1)=>{const c=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]];c.forEach((p,i)=>{P0.push(p);E.push([p,c[(i+1)%4]])})};
   rect(0,0,s.w,s.d);
-  rooms.filter(r=>!r.void&&lvl(r)===L).forEach(r=>{const t=wallOf(r,t0),o=al==="inside"?0:al==="center"?t/2:t,i=t-o;rect(r.x-o,r.y-o,r.x+r.w+o,r.y+r.d+o);if(t>0&&r.w>2*i&&r.d>2*i)rect(r.x+i,r.y+i,r.x+r.w-i,r.y+r.d-i)});
+  rooms.filter(r=>!r.void&&lvl(r)===L).forEach(r=>{const t=wallOf(r,t0),o=al==="inside"?0:al==="center"?t/2:t,i=t-o;rect(r.x-o,r.y-o,r.x+r.w+o,r.y+r.d+o);if(!DRAW.roof&&t>0&&r.w>2*i&&r.d>2*i)rect(r.x+i,r.y+i,r.x+r.w-i,r.y+r.d-i)});
+  if(DRAW.roof){const bb=bboxOf(onLevel(L).filter(r=>!r.void));if(bb){const e=wallOffset();rect(bb.x-e,bb.y-e,bb.x+bb.w+e,bb.y+bb.d+e)}}
   S.shapes.filter(sh=>(sh.level|0)===L&&sh.id!==DRAW.skip).forEach(sh=>sh.pts.forEach((p,i)=>{P0.push(p);const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)E.push([p,q])}));
   DRAW.pts.forEach((p,i)=>{P0.push(p);if(i)E.push([DRAW.pts[i-1],p])});
   return{P0,E}}
@@ -966,7 +967,9 @@ function snapAt(u){const m=svg.getScreenCTM();if(!m)return null;const tol=13/Mat
   let p=[Math.round(pl[0]*20)/20,Math.round(pl[1]*20)/20],kind="free";const lp=DRAW.pts[DRAW.pts.length-1];
   if(lp){const dx=pl[0]-lp[0],dy=pl[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07){p=[p[0],lp[1]];kind="axis"}else if(Math.abs(dx)<Math.abs(dy)*.07){p=[lp[0],p[1]];kind="axis"}}
   return{p,kind}}
-function drawHint(){modeBar.hidden=!DRAW.on;modeBar.querySelectorAll("[data-dm]").forEach(b=>b.classList.toggle("on",b.dataset.dm===DRAW.mode));placeOverlays();if(!DRAW.on){hintEl.hidden=true;return}hintEl.hidden=false;
+function drawHint(){modeBar.hidden=!DRAW.on;
+  if(DRAW.roof!==modeBar._roof){modeBar._roof=DRAW.roof;modeBar.innerHTML=DRAW.roof?'<button type="button" class="on" data-rp="rect">▭ กำหนดพื้นที่หลังคา</button><button type="button" data-rp="all">คลุมทั้งชั้น</button><button type="button" data-rp="cancel">ยกเลิก</button>':[["line","／ เส้นตรง"],["arc","⌒ เส้นโค้ง"],["rect","▭ สี่เหลี่ยม"],["circle","◯ วงกลม"]].map(([m,t])=>`<button type="button" data-dm="${m}">${t}</button>`).join("")}
+  if(DRAW.roof&&DRAW.on){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}placeOverlays();hintEl.hidden=false;hintEl.innerHTML=!DRAW.anchor?`⌂ หลังคา${fl(S.active)}: คลิก<b>มุมแรก</b>ของพื้นที่ที่จะคลุม (snap มุมผนังด้านบน)`:`คลิก<b>มุมตรงข้าม</b> · หรือพิมพ์ กว้าง,ยาว แล้ว Enter${DRAW.typed?` <b>${DRAW.typed}</b>`:""} · Esc ยกเลิก`;return}modeBar.querySelectorAll("[data-dm]").forEach(b=>b.classList.toggle("on",b.dataset.dm===DRAW.mode));placeOverlays();if(!DRAW.on){hintEl.hidden=true;return}hintEl.hidden=false;
   if(DRAW.mode==="rect"){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}hintEl.innerHTML=!DRAW.anchor?"▭ คลิกมุมแรกของสี่เหลี่ยม":`คลิกมุมตรงข้าม · หรือพิมพ์ กว้าง,ยาว แล้ว Enter${DRAW.typed?` <b>${DRAW.typed}</b>`:""} · Esc ยกเลิก`;return}
   if(DRAW.mode==="circle"){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}hintEl.innerHTML=!DRAW.anchor?"◯ คลิกจุดศูนย์กลางวงกลม":`คลิกกำหนดรัศมี · หรือพิมพ์รัศมีแล้ว Enter${DRAW.typed?` <b>${DRAW.typed} ม.</b>`:""} · Esc ยกเลิก`;return}
   if(DRAW.mode==="arc"){{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}hintEl.innerHTML=!DRAW.pts.length?"⌒ คลิกจุดเริ่มเส้นโค้ง":!DRAW.arcEnd?"คลิกจุดปลายเส้นโค้ง (คลิกจุดแรกเพื่อปิดรูป)":"ขยับเมาส์กำหนดความโค้ง แล้วคลิก · สลับไป เส้นตรง เพื่อต่อเส้นตรงได้";return}{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}const n=DRAW.pts.length;
@@ -1003,7 +1006,8 @@ svg.addEventListener("pointermove",e=>{if(!GRIP||e.pointerId!==GRIP.id)return;co
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})},true);
 const gripEnd=e=>{if(!GRIP||e.pointerId!==GRIP.id)return;GRIP=null;svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);shapePanel.dataset.key="";saveS();draw()};
 svg.addEventListener("pointerup",gripEnd,true);svg.addEventListener("pointercancel",gripEnd,true);
-function setDraw(on){DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";DRAW.anchor=null;DRAW.arcEnd=null;$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
+function wallOffset(){const t=wallThickness(),al=$("wallAlignment").value;return al==="inside"?0:al==="center"?t/2:t}
+function setDraw(on,roof){DRAW.roof=!!(on&&roof);if(DRAW.roof)DRAW.mode="rect";else if(on&&DRAW.mode==="rect"&&DRAW._wasRoof)DRAW.mode="line";DRAW._wasRoof=DRAW.roof;DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";DRAW.anchor=null;DRAW.arcEnd=null;$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
   if(on&&!["iso","top"].includes(viewMode())){S.cam="iso"}if(on){S.selShape=null;selectedId=null;S.selRoof=null}drawHint();draw()}
 function finishDraw(close){const pts=DRAW.pts.map(p=>[round2(p[0]*1000)/1000,round2(p[1]*1000)/1000]);
   if(pts.length>=(close?3:2)){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts,closed:!!close,h:0,z:0});S.selShape=id;saveS();typeof toast==="function"&&toast(close?"ปิดรูปแล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน":"เก็บเส้นแล้ว")}
@@ -1020,16 +1024,22 @@ function renderShapePanel(){const sh=S.selShape&&S.shapes.find(x=>x.id===S.selSh
   resz("shD",n=>{const b=shapeBox(sh);if(b.d<1e-6)return;const f=n/b.d;sh.pts=sh.pts.map(p=>[p[0],Math.round((b.y+(p[1]-b.y)*f)*1000)/1000])});
   const upd=(id,f)=>{const el=shapePanel.querySelector("#"+id);if(el)el.addEventListener("input",()=>{const n=Number(el.value);if(!Number.isFinite(n))return;sh[f]=n;saveS();draw()})};upd("shH","h");upd("shZ","z");
   shapePanel.querySelector("#shDel").addEventListener("click",()=>{S.shapes=S.shapes.filter(x=>x!==sh);S.selShape=null;saveS();draw()})}
-$("isoDraw").addEventListener("click",()=>setDraw(!DRAW.on));
+$("isoDraw").addEventListener("click",()=>setDraw(!(DRAW.on&&!DRAW.roof)));
+function startRoofPick(){if(!onLevel(S.active).length){addRoof();return}S.roofOn=true;setDraw(true,true);typeof toast==="function"&&toast(`กำหนดพื้นที่หลังคา${fl(S.active)}: คลิก 2 มุม (snap มุมผนังด้านบน)`)}
+function makeRoofFromRect(a,b){const e=wallOffset(),x0=Math.min(a[0],b[0])+e,y0=Math.min(a[1],b[1])+e,x1=Math.max(a[0],b[0])-e,y1=Math.max(a[1],b[1])-e;
+  if(x1-x0<.3||y1-y0<.3){typeof toast==="function"&&toast("พื้นที่เล็กเกินไป");return}
+  const r=makeRoof(S.active,"gable",{x:x0,y:y0,w:x1-x0,d:y1-y0});S.roofs.push(r);setDraw(false);S.selRoof=r.id;S.roofOn=true;saveS();renderAll(false);selectRoof(r.id);
+  typeof toast==="function"&&toast(`สร้างหลังคาคลุม ${format2(r.w)} × ${format2(r.d)} ม. แล้ว — เลือกทรง/องศา/ชายคาได้ที่แผงหลังคา`)}
 svg.addEventListener("pointermove",e=>{if(!DRAW.on)return;const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;DRAW.cur=sn.p;DRAW.snap=sn;renderDrawLayer()});
 svg.addEventListener("dblclick",e=>{if(!DRAW.on)return;e.preventDefault();DRAW.pts.pop();finishDraw(false)});
 window.addEventListener("keydown",e=>{const inField=/INPUT|SELECT|TEXTAREA/.test((document.activeElement||{}).tagName||"");
   if(!DRAW.on){if(!inField&&S.selShape&&(e.key==="Delete"||e.key==="Backspace")){S.shapes=S.shapes.filter(x=>x.id!==S.selShape);S.selShape=null;saveS();draw();e.preventDefault()}return}
   if(inField)return;
+  if(e.key==="Escape"&&DRAW.roof&&!DRAW.anchor){setDraw(false);e.preventDefault();return}
   if(e.key==="Escape"){if(DRAW.anchor||DRAW.arcEnd){DRAW.anchor=null;DRAW.arcEnd=null;DRAW.typed="";drawHint();renderDrawLayer();e.preventDefault();return}if(DRAW.pts.length)finishDraw(false);setDraw(false);e.preventDefault();return}
   if(/^[0-9.,x*]$/.test(e.key)&&(DRAW.pts.length||DRAW.anchor)){DRAW.typed+=e.key;drawHint();e.preventDefault();return}
   if(e.key==="Enter"&&DRAW.anchor&&DRAW.typed){const a=DRAW.anchor,c=DRAW.cur||[a[0]+1,a[1]+1];
-    if(DRAW.mode==="rect"){const v=DRAW.typed.split(/[,x*]/).map(Number);if(v.length===2&&v[0]>0&&v[1]>0){const sx=c[0]>=a[0]?1:-1,sy=c[1]>=a[1]?1:-1;addClosed(rectPts(a,[a[0]+sx*v[0],a[1]+sy*v[1]]),"วาดสี่เหลี่ยม",{kind:"rect"})}}
+    if(DRAW.mode==="rect"){const v=DRAW.typed.split(/[,x*]/).map(Number);if(v.length===2&&v[0]>0&&v[1]>0){const sx=c[0]>=a[0]?1:-1,sy=c[1]>=a[1]?1:-1;if(DRAW.roof){makeRoofFromRect(a,[a[0]+sx*v[0],a[1]+sy*v[1]]);DRAW.typed="";return}addClosed(rectPts(a,[a[0]+sx*v[0],a[1]+sy*v[1]]),"วาดสี่เหลี่ยม",{kind:"rect"})}}
     else if(DRAW.mode==="circle"){const r=Number(DRAW.typed);if(r>0)addClosed(circPts(a,r),"วาดวงกลม",{kind:"circle",c:a.slice(),r})}
     DRAW.typed="";drawHint();e.preventDefault();return}
   if(e.key==="Backspace"){if(DRAW.typed){DRAW.typed=DRAW.typed.slice(0,-1)}else DRAW.pts.pop();drawHint();renderDrawLayer();e.preventDefault();return}
@@ -1076,7 +1086,7 @@ svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id
 const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(d.shape){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);S.selShape=d.shape.id;S.active=clamp(d.shape.level|0,0,nF()-1);selectedId=null;S.selRoof=null;saveS();renderAll(false);draw();return}if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
 svg.addEventListener("pointerup",isoEnd);svg.addEventListener("pointercancel",isoEnd);
 svg.addEventListener("click",e=>{if(DRAW.on&&svg.dataset.dragged)return;if(DRAW.on){const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;
-    if(DRAW.mode==="rect"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else if(Math.abs(sn.p[0]-DRAW.anchor[0])>.01&&Math.abs(sn.p[1]-DRAW.anchor[1])>.01)addClosed(rectPts(DRAW.anchor,sn.p),"วาดสี่เหลี่ยม",{kind:"rect"});return}
+    if(DRAW.mode==="rect"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else if(Math.abs(sn.p[0]-DRAW.anchor[0])>.01&&Math.abs(sn.p[1]-DRAW.anchor[1])>.01){if(DRAW.roof)makeRoofFromRect(DRAW.anchor,sn.p);else addClosed(rectPts(DRAW.anchor,sn.p),"วาดสี่เหลี่ยม",{kind:"rect"})}return}
     if(DRAW.mode==="circle"){if(!DRAW.anchor){DRAW.anchor=sn.p;drawHint();renderDrawLayer()}else{const r=Math.hypot(sn.p[0]-DRAW.anchor[0],sn.p[1]-DRAW.anchor[1]);if(r>.02)addClosed(circPts(DRAW.anchor,r),"วาดวงกลม",{kind:"circle",c:DRAW.anchor.slice(),r})}return}
     if(DRAW.mode==="arc"){if(!DRAW.pts.length){DRAW.pts.push(sn.p)}else if(!DRAW.arcEnd){DRAW.arcEnd={p:sn.p,close:sn.kind==="close"}}else{const A=DRAW.pts[DRAW.pts.length-1],seg=arcPts(A,DRAW.arcEnd.p,sn.p),cl=DRAW.arcEnd.close;DRAW.arcEnd=null;
         if(cl){seg.pop();DRAW.pts.push(...seg);finishDraw(true);return}DRAW.pts.push(...seg)}drawHint();renderDrawLayer();return}
