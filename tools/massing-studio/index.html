@@ -293,6 +293,7 @@ if(!Array.isArray(S.roofs)){ // first run or migration from v2 (one roof per flo
   S.roofs=[];S.floors.forEach((f,i)=>{const old=f.roof,type=old?old.type:(i===0?"gable":null);if(type&&ROOF[type]&&onLevel(i).length){const r=makeRoof(i,type);if(old)Object.assign(r,{pitch:old.pitch??r.pitch,eave:old.eave??r.eave,dir:old.dir||0,color:old.color||r.color});S.roofs.push(r)}});
 }
 S.floors.forEach(f=>delete f.roof);
+if(!Array.isArray(S.shapes))S.shapes=[];
 S.roofs.forEach(r=>{if(!ROOF[r.type])r.type="gable"});
 S.active=clamp(S.active|0,0,nF()-1);
 const seen=new Set(rooms.map(r=>r.id));
@@ -333,6 +334,11 @@ body.iso-mode .plan-layout>div:first-child>.plan-wrap,body.iso-mode .plan-layout
 .iso-nudge button:hover{background:#171816}.iso-nudge button span{display:inline-block}
 .iso-nudge .dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#c47a55;box-shadow:0 0 0 3px #fff}
 .eye-wrap{display:inline-flex;align-items:center;gap:4px;font-size:12px;margin-left:6px}.eye-wrap[hidden]{display:none}.eye-wrap input{height:30px;border:1px solid #c9c4b8;background:#fff!important;color:#171816!important;-webkit-text-fill-color:#171816;font:600 14px system-ui,sans-serif!important;text-align:center;padding:0 4px;opacity:1}
+.draw-hint{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:7;background:#171816;color:#f7f4ed;font-size:12.5px;padding:7px 14px;border-radius:4px;white-space:nowrap;pointer-events:none}.draw-hint[hidden]{display:none}.draw-hint b{color:#f0b38f}
+.shape-panel{position:absolute;left:12px;top:12px;z-index:7;background:#fff;border:1px solid #171816;padding:10px 12px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;box-shadow:0 6px 18px #0002}.shape-panel[hidden]{display:none}
+.shape-panel input{width:64px;height:30px;border:1px solid #c9c4b8;color:#171816!important;-webkit-text-fill-color:#171816;background:#fff!important;font:600 13px system-ui!important;text-align:center}
+.shape-panel button{height:30px;padding:0 10px;border:1px solid #171816;background:#fff;color:#171816;cursor:pointer;font:inherit}.shape-panel button.del{border-color:#b4442c;color:#b4442c}
+#isoBoard.drawing,#isoBoard.drawing *{cursor:crosshair!important}
 .iso-roof-layer{position:absolute;inset:0;pointer-events:none;z-index:4}
 .iso-roof-outline{position:absolute;border:2px dashed #c47a55;box-sizing:border-box}
 .iso-roof-outline .eave{position:absolute;border:1px dotted #c47a5599}
@@ -365,7 +371,7 @@ wrap.innerHTML=`<div class="iso-tools">
   <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
   <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="persp" title="Perspective 2 จุด (กดอีกครั้งเพื่อกลับ Iso)">2-Point</button><label class="eye-wrap" id="eyeWrap" hidden>สายตา <input id="isoEye" type="number" min="0.3" max="60" step="0.1" style="width:58px"> ม.</label><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
   <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
-  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button></div>
+  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button><button class="th" type="button" id="isoDraw" aria-pressed="false" title="วาดเส้นบนพื้น snap ขอบผนัง · คลิกจุดแรกเพื่อปิดรูปแล้วใส่ความหนา">✏ วาดเส้น</button></div>
 </div>
 <svg class="iso-board" id="isoBoard" xmlns="${NS}" role="img" aria-label="Isometric schematic"></svg>
 <p class="iso-note" id="isoNote"></p>`;
@@ -621,6 +627,16 @@ function scene(){
     put({roof:true,rid:R.id,allF:F.map(f=>f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})),x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
+  // drawn shapes (เครื่องมือวาดเส้น): closed outlines → flat face or extruded solid
+  (S.shapes||[]).forEach(sh=>{if(!sh.closed||sh.pts.length<3)return;const L=clamp(sh.level|0,0,nF()-1);if(L>top)return;
+    const z0=base(L)+(Number(sh.z)||0),h=Math.max(0,Number(sh.h)||0),z1=z0+(h>0?h:.006),sel=sh.id===S.selShape,pv=sh.pts.map(([x,y])=>T(x,y,W,D,k));
+    let ar=0;pv.forEach((p,i)=>{const q=pv[(i+1)%pv.length];ar+=p[0]*q[1]-q[0]*p[1]});const ccw=ar>0;
+    const F=[{kind:"slope",p:pv.map(p=>[p[0],p[1],z1]),n:[0,0,1]}];
+    if(h>0){F.push({kind:"wall",p:pv.map(p=>[p[0],p[1],z0]).reverse(),n:[0,0,-1]});
+      pv.forEach((p,i)=>{const q=pv[(i+1)%pv.length],dx=q[0]-p[0],dy=q[1]-p[1],L2=Math.hypot(dx,dy)||1,n=ccw?[dy/L2,-dx/L2,0]:[-dy/L2,dx/L2,0];F.push({kind:"wall",p:[[p[0],p[1],z0],[q[0],q[1],z0],[q[0],q[1],z1],[p[0],p[1],z1]],n})})}
+    const faces=F.map(f=>{const fc=f.p.reduce((a,q)=>[a[0]+q[0]/f.p.length,a[1]+q[1]/f.p.length,a[2]+q[2]/f.p.length],[0,0,0]);return{kind:f.kind,vp:f.p,n:f.n,fc,depth:faceDepth(fc,VV)}});
+    const vis=faces.filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(a.kind==="slope"?1:0)-(b.kind==="slope"?1:0)||a.depth-b.depth),all=faces.flatMap(f=>f.vp),xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+    put({roof:true,sid:sh.id,sel,allF:faces.map(f=>f.vp),x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0,z1,faces:vis,color:sel?"#c47a55":(sh.color||"#cfc6b6"),all})});
   // overlapping wall/slab boxes (shared walls, rooms that overlap) → carve so no two solids interpenetrate; selected room keeps its walls
   {const isS=o=>o.id&&!o.roof&&!o.pane&&!o.glass,sol=objs.filter(isS).sort((a,b)=>(b.sel?1:0)-(a.sel?1:0)),rest=objs.filter(o=>!isS(o)),acc=[];
    sol.forEach(o=>{const hit=acc.filter(c=>o.x0<c.x1-1e-6&&c.x0<o.x1-1e-6&&o.y0<c.y1-1e-6&&c.y0<o.y1-1e-6&&o.z0<c.z1-1e-6&&c.z0<o.z1-1e-6);
@@ -652,7 +668,7 @@ function draw(){
   // objects
   const stroke=`stroke="#171816" stroke-width=".7" stroke-linejoin="round"`,ve=`vector-effect="non-scaling-stroke"`;
   sc.objs.forEach(o=>{
-    let tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:"";
+    let tag=o.id?` class="rm" data-id="${o.id}"`:o.rid?` class="rf" data-roof="${o.rid}"`:o.sid?` class="sh" data-shape="${o.sid}"`:"";
     if(o.roof){parts.push(`<g${tag} ${stroke}>${o.faces.map(f=>{const col=f.kind==="slope"?shade(o.color,.78+.42*Math.max(0,dot(f.n,LIGHT))):shade("#ece8df",.86+.14*Math.max(0,dot(f.n,LIGHT)));return`<polygon points="${pts(f.vp.map(p=>P(...p)))}" fill="${col}" ${ve}/>`}).join("")}</g>`);return}
     const{x0,y0,x1,y1,z0,z1}=o,[top,fy,fx]=o.c;if(o.glass)tag+=' fill-opacity=".55"';
     if(mode==="top"){parts.push(`<g${tag} ${stroke}><polygon points="${pts([P(x0,y0,z1),P(x1,y0,z1),P(x1,y1,z1),P(x0,y1,z1)])}" fill="${top}" ${ve}/></g>`);return}
@@ -692,6 +708,7 @@ function draw(){
   if(mode!=="bottom")parts.push(`<g id="isoLabels" pointer-events="none">${lab2.map(L=>`<text x="${L.x.toFixed(1)}" y="${L.y.toFixed(1)}" text-anchor="middle" font-size="16" font-weight="500" fill="#171816" stroke="#f7f4ed" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${escapeHtml(L.name)}<tspan x="${L.x.toFixed(1)}" dy="17" font-size="12" font-weight="400" fill="#5d5e57">${L.sub}</tspan></text>`).join("")}</g>`);
   svg.innerHTML=parts.join("");
   last={vb,labels:lab2};
+  try{renderDrawLayer()}catch(err){}
   try{renderIsoNudge(sc)}catch(err){}
   // toolbar + note
   const viewAz=((ORTHO[mode]?ORTHO[mode].az:VIEW_AZ[k])-northAngle()+360)%360;
@@ -888,6 +905,72 @@ function clearSel(){if(!selectedId&&!S.selRoof&&(typeof selectedColumnId==="unde
 $("planBoard").addEventListener("click",e=>{if(!e.target.closest(".room-block,.column-block,.roof-outline,.roof-chip,[data-roof],[data-col],button,input,select"))clearSel()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.target.closest("input,select,textarea"))clearSel()});
 
+
+/* ---------- drawing tool: lines on the floor, snap to wall edges/corners, close → face → thickness ---------- */
+const DRAW={on:false,pts:[],cur:null,snap:null,typed:""};
+const hintEl=document.createElement("div");hintEl.className="draw-hint";hintEl.hidden=true;wrap.appendChild(hintEl);
+const shapePanel=document.createElement("div");shapePanel.className="shape-panel";shapePanel.hidden=true;wrap.appendChild(shapePanel);
+function drawZ(){return base(S.active)}
+function d2scr(x,y,z){const s=site(),v=T(x,y,s.w,s.d,viewK());return P(v[0],v[1],z==null?drawZ():z)}
+function scr2plan(u){const o=d2scr(0,0),a=d2scr(1,0),b=d2scr(0,1),ex=[a[0]-o[0],a[1]-o[1]],ey=[b[0]-o[0],b[1]-o[1]],det=ex[0]*ey[1]-ex[1]*ey[0];if(Math.abs(det)<1e-9)return null;
+  const dx=u[0]-o[0],dy=u[1]-o[1];return[(dx*ey[1]-dy*ey[0])/det,(ex[0]*dy-ex[1]*dx)/det]}
+function snapTargets(){const L=S.active,al=$("wallAlignment").value,t0=wallThickness(),P0=[],E=[],s=site();
+  const rect=(x0,y0,x1,y1)=>{const c=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]];c.forEach((p,i)=>{P0.push(p);E.push([p,c[(i+1)%4]])})};
+  rect(0,0,s.w,s.d);
+  rooms.filter(r=>!r.void&&lvl(r)===L).forEach(r=>{const t=wallOf(r,t0),o=al==="inside"?0:al==="center"?t/2:t,i=t-o;rect(r.x-o,r.y-o,r.x+r.w+o,r.y+r.d+o);if(t>0&&r.w>2*i&&r.d>2*i)rect(r.x+i,r.y+i,r.x+r.w-i,r.y+r.d-i)});
+  S.shapes.filter(sh=>(sh.level|0)===L).forEach(sh=>sh.pts.forEach((p,i)=>{P0.push(p);const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)E.push([p,q])}));
+  DRAW.pts.forEach((p,i)=>{P0.push(p);if(i)E.push([DRAW.pts[i-1],p])});
+  return{P0,E}}
+function snapAt(u){const m=svg.getScreenCTM();if(!m)return null;const tol=13/Math.hypot(m.a,m.b),pl=scr2plan(u);if(!pl)return null;
+  const{P0,E}=snapTargets(),dist=p=>{const q=d2scr(p[0],p[1]);return Math.hypot(q[0]-u[0],q[1]-u[1])};
+  let best=null;P0.forEach(p=>{const d=dist(p);if(d<=tol&&(!best||d<best.d))best={d,p:[p[0],p[1]],kind:"end"}});
+  if(DRAW.pts.length>=3){const f=DRAW.pts[0];if(dist(f)<=tol*1.3)return{p:[f[0],f[1]],kind:"close"}}
+  if(best)return best;
+  E.forEach(([a,b])=>{const dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy;if(L2<1e-9)return;const t=clamp(((pl[0]-a[0])*dx+(pl[1]-a[1])*dy)/L2,0,1),q=[a[0]+dx*t,a[1]+dy*t],d=dist(q);if(d<=tol&&(!best||d<best.d))best={d,p:[Math.round(q[0]*1000)/1000,Math.round(q[1]*1000)/1000],kind:"edge",e:[a,b]}});
+  if(best){// on an edge: also lock to the axis of the previous point when close
+    return best}
+  let p=[Math.round(pl[0]*20)/20,Math.round(pl[1]*20)/20],kind="free";const lp=DRAW.pts[DRAW.pts.length-1];
+  if(lp){const dx=pl[0]-lp[0],dy=pl[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07){p=[p[0],lp[1]];kind="axis"}else if(Math.abs(dx)<Math.abs(dy)*.07){p=[lp[0],p[1]];kind="axis"}}
+  return{p,kind}}
+function drawHint(){if(!DRAW.on){hintEl.hidden=true;return}hintEl.hidden=false;{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();hintEl.style.top=(a.top-b.top+10)+"px"}const n=DRAW.pts.length;
+  hintEl.innerHTML=n===0?"✏ คลิกจุดเริ่ม (จุดส้ม = snap มุมผนัง · สี่เหลี่ยม = บนขอบผนัง) · Esc ออก":
+    `${n>=3?"คลิก<b>จุดแรก</b>เพื่อปิดรูป · ":""}พิมพ์ระยะแล้ว Enter${DRAW.typed?` <b>${DRAW.typed} ม.</b>`:""} · Backspace ลบจุด · ดับเบิลคลิกจบเส้น · Esc ยกเลิก`}
+function renderDrawLayer(){const old=svg.querySelector("#drawLayer");if(old)old.remove();const g=document.createElementNS(NS,"g");g.id="drawLayer";g.setAttribute("pointer-events","none");
+  const ve='vector-effect="non-scaling-stroke"',P2=p=>d2scr(p[0],p[1],base(clamp(p[2]??S.active,0,nF()-1))),pt=a=>a.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");let h="";
+  S.shapes.filter(sh=>!sh.closed&&(sh.level|0)<=((S.upTo??-1)<0?99:S.upTo)).forEach(sh=>{const z=base(clamp(sh.level|0,0,nF()-1));h+=`<polyline points="${pt(sh.pts.map(p=>d2scr(p[0],p[1],z)))}" fill="none" stroke="${sh.id===S.selShape?"#c47a55":"#171816"}" stroke-width="2" ${ve}/>`});
+  if(DRAW.on){const z=drawZ(),pp=DRAW.pts.map(p=>d2scr(p[0],p[1],z));
+    if(pp.length)h+=`<polyline points="${pt(pp)}" fill="none" stroke="#c47a55" stroke-width="2.2" ${ve}/>`;
+    if(DRAW.cur&&pp.length){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),lp=pp[pp.length-1],lpl=DRAW.pts[DRAW.pts.length-1],len=Math.hypot(DRAW.cur[0]-lpl[0],DRAW.cur[1]-lpl[1]);
+      h+=`<line x1="${lp[0]}" y1="${lp[1]}" x2="${c[0]}" y2="${c[1]}" stroke="#c47a55" stroke-width="1.6" stroke-dasharray="6 4" ${ve}/>`+
+        `<text x="${((lp[0]+c[0])/2).toFixed(1)}" y="${((lp[1]+c[1])/2-8).toFixed(1)}" text-anchor="middle" font-size="15" font-weight="700" fill="#c47a55" stroke="#fff" stroke-width="4" paint-order="stroke">${format2(len)} ม.</text>`}
+    pp.forEach((q,i)=>h+=`<circle cx="${q[0]}" cy="${q[1]}" r="${i===0&&DRAW.pts.length>=3?6:3.5}" fill="${i===0?"#fff":"#c47a55"}" stroke="#c47a55" stroke-width="2" ${ve}/>`);
+    if(DRAW.cur&&DRAW.snap){const c=d2scr(DRAW.cur[0],DRAW.cur[1],z),k=DRAW.snap.kind;
+      h+=k==="end"||k==="close"?`<circle cx="${c[0]}" cy="${c[1]}" r="8" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="edge"?`<rect x="${c[0]-6}" y="${c[1]-6}" width="12" height="12" fill="none" stroke="#c47a55" stroke-width="2.5" ${ve}/>`:k==="axis"?`<circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#3d7bd6"/>`:`<circle cx="${c[0]}" cy="${c[1]}" r="3" fill="#171816"/>`}}
+  g.innerHTML=h;svg.appendChild(g);renderShapePanel()}
+function setDraw(on){DRAW.on=on;DRAW.pts=[];DRAW.cur=null;DRAW.typed="";$("isoDraw").setAttribute("aria-pressed",String(on));svg.classList.toggle("drawing",on);
+  if(on&&!["iso","top"].includes(viewMode())){S.cam="iso"}if(on){S.selShape=null;selectedId=null;S.selRoof=null}drawHint();draw()}
+function finishDraw(close){const pts=DRAW.pts.map(p=>[round2(p[0]*1000)/1000,round2(p[1]*1000)/1000]);
+  if(pts.length>=(close?3:2)){const id="sh-"+Date.now();S.shapes.push({id,level:S.active,pts,closed:!!close,h:0,z:0});S.selShape=id;saveS();typeof toast==="function"&&toast(close?"ปิดรูปแล้ว — ใส่ความหนา/ความสูงได้ที่กล่องมุมซ้ายบน":"เก็บเส้นแล้ว")}
+  DRAW.pts=[];DRAW.cur=null;DRAW.typed="";if(close)setDraw(false);else{drawHint();draw()}}
+function renderShapePanel(){const sh=S.selShape&&S.shapes.find(x=>x.id===S.selShape);if(!sh||DRAW.on){shapePanel.hidden=true;return}shapePanel.hidden=false;{const a=svg.getBoundingClientRect(),b=wrap.getBoundingClientRect();shapePanel.style.top=(a.top-b.top+10)+"px";shapePanel.style.left=(a.left-b.left+10)+"px"}
+  let ar=0;sh.pts.forEach((p,i)=>{const q=sh.pts[(i+1)%sh.pts.length];ar+=p[0]*q[1]-q[0]*p[1]});ar=Math.abs(ar)/2;let per=0;sh.pts.forEach((p,i)=>{const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)per+=Math.hypot(q[0]-p[0],q[1]-p[1])});
+  const key=sh.id+"|"+sh.h+"|"+sh.z+"|"+sh.pts.length;if(shapePanel.dataset.key===key)return;shapePanel.dataset.key=key;
+  shapePanel.innerHTML=sh.closed?`<b>รูปปิด ${sh.pts.length} จุด</b><span>พื้นที่ ${format2(ar)} ตร.ม.</span><label>ความหนา/สูง <input id="shH" type="number" min="0" max="30" step="0.05" value="${format2(sh.h||0)}"> ม.</label><label>ยกจากพื้น <input id="shZ" type="number" min="-5" max="30" step="0.05" value="${format2(sh.z||0)}"> ม.</label><button type="button" class="del" id="shDel">ลบ</button>`
+    :`<b>เส้น ${sh.pts.length} จุด</b><span>ยาวรวม ${format2(per)} ม.</span><button type="button" class="del" id="shDel">ลบ</button>`;
+  const upd=(id,f)=>{const el=shapePanel.querySelector("#"+id);if(el)el.addEventListener("input",()=>{const n=Number(el.value);if(!Number.isFinite(n))return;sh[f]=n;saveS();draw()})};upd("shH","h");upd("shZ","z");
+  shapePanel.querySelector("#shDel").addEventListener("click",()=>{S.shapes=S.shapes.filter(x=>x!==sh);S.selShape=null;saveS();draw()})}
+$("isoDraw").addEventListener("click",()=>setDraw(!DRAW.on));
+svg.addEventListener("pointermove",e=>{if(!DRAW.on)return;const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;DRAW.cur=sn.p;DRAW.snap=sn;renderDrawLayer()});
+svg.addEventListener("dblclick",e=>{if(!DRAW.on)return;e.preventDefault();DRAW.pts.pop();finishDraw(false)});
+window.addEventListener("keydown",e=>{const inField=/INPUT|SELECT|TEXTAREA/.test((document.activeElement||{}).tagName||"");
+  if(!DRAW.on){if(!inField&&S.selShape&&(e.key==="Delete"||e.key==="Backspace")){S.shapes=S.shapes.filter(x=>x.id!==S.selShape);S.selShape=null;saveS();draw();e.preventDefault()}return}
+  if(inField)return;
+  if(e.key==="Escape"){if(DRAW.pts.length)finishDraw(false);setDraw(false);e.preventDefault();return}
+  if(/^[0-9.]$/.test(e.key)&&DRAW.pts.length){DRAW.typed+=e.key;drawHint();e.preventDefault();return}
+  if(e.key==="Backspace"){if(DRAW.typed){DRAW.typed=DRAW.typed.slice(0,-1)}else DRAW.pts.pop();drawHint();renderDrawLayer();e.preventDefault();return}
+  if(e.key==="Enter"){const lp=DRAW.pts[DRAW.pts.length-1],len=Number(DRAW.typed);
+    if(lp&&DRAW.typed&&len>0&&DRAW.cur){let dx=DRAW.cur[0]-lp[0],dy=DRAW.cur[1]-lp[1];if(Math.abs(dy)<Math.abs(dx)*.07)dy=0;else if(Math.abs(dx)<Math.abs(dy)*.07)dx=0;const L=Math.hypot(dx,dy);if(L>1e-6){DRAW.pts.push([lp[0]+dx/L*len,lp[1]+dy/L*len]);DRAW.typed="";drawHint();renderDrawLayer()}}
+    else finishDraw(false);e.preventDefault()}});
 /* ---------- orange move arrows on the selected room / roof in the 3D view ---------- */
 const nudgeEl=document.createElement("div");nudgeEl.className="iso-nudge";nudgeEl.hidden=true;wrap.appendChild(nudgeEl);
 function renderIsoNudge(sc){const R=S.selRoof?S.roofs.find(r=>r.id===S.selRoof):null,room=!R&&selectedId?rooms.find(r=>r.id===selectedId):null,it=R||room;
@@ -906,7 +989,7 @@ window.addEventListener("resize",()=>{if(!wrap.hidden)draw()});
 /* ---------- drag rooms directly in the 3D / isometric view ---------- */
 let isoDrag=null,isoRaf=0;
 function isoUnits(e){const m=svg.getScreenCTM();if(!m)return null;const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(m.inverse());return[q.x,q.y]}
-svg.addEventListener("pointerdown",e=>{if(e.button!==0)return;const rf=e.target.closest("[data-roof]"),el=rf||e.target.closest("[data-id]");if(!el)return;
+svg.addEventListener("pointerdown",e=>{if(e.button!==0||DRAW.on)return;const rf=e.target.closest("[data-roof]"),el=rf||e.target.closest("[data-id]");if(!el)return;
   const r=rf?S.roofs.find(i=>i.id===rf.dataset.roof):rooms.find(i=>i.id===el.dataset.id);if(!r)return;const p0=isoUnits(e);if(!p0)return;
   const z=rf?roofBase(roofLevel(r)):base(lvl(r)),o=P(0,0,z),a=P(1,0,z),b=P(0,1,z),ex=[a[0]-o[0],a[1]-o[1]],ey=[b[0]-o[0],b[1]-o[1]];
   isoDrag={roof:!!rf,r,p0,x:r.x,y:r.y,ex,ey,k:viewK(),moved:false,id:e.pointerId};svg.setPointerCapture(e.pointerId);e.preventDefault()});
@@ -921,7 +1004,11 @@ svg.addEventListener("pointermove",e=>{const d=isoDrag;if(!d||e.pointerId!==d.id
   if(!isoRaf)isoRaf=requestAnimationFrame(()=>{isoRaf=0;draw()})});
 const isoEnd=e=>{const d=isoDrag;if(!d||e.pointerId!==d.id)return;isoDrag=null;if(!d.moved&&e.type==="pointerup"){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof)selectRoof(d.r.id);else if(typeof selectRoom==="function")selectRoom(d.r.id);return}if(d.moved){svg.dataset.dragged="1";setTimeout(()=>delete svg.dataset.dragged,0);if(d.roof){saveS();renderAll(false);selectRoof(d.r.id)}else{selectedId=d.r.id;renderAll()}}};
 svg.addEventListener("pointerup",isoEnd);svg.addEventListener("pointercancel",isoEnd);
-svg.addEventListener("click",e=>{if(svg.dataset.dragged)return;const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
+svg.addEventListener("click",e=>{if(DRAW.on){const u=isoUnits(e);if(!u)return;const sn=snapAt(u);if(!sn)return;if(sn.kind==="close"){finishDraw(true);return}
+    const lp=DRAW.pts[DRAW.pts.length-1];if(lp&&Math.hypot(lp[0]-sn.p[0],lp[1]-sn.p[1])<1e-3)return;DRAW.pts.push(sn.p);DRAW.typed="";drawHint();renderDrawLayer();return}
+  if(svg.dataset.dragged)return;const sp=e.target.closest("[data-shape]");if(sp){S.selShape=sp.dataset.shape;selectedId=null;S.selRoof=null;saveS();renderAll(false);draw();return}
+  if(S.selShape){S.selShape=null;saveS();draw()}
+  const rf=e.target.closest("[data-roof]");if(rf){selectRoof(rf.dataset.roof);return}
   const el=e.target.closest("[data-id]");if(!el){clearSel();return}if(el&&typeof selectRoom==="function"){selectRoom(el.dataset.id);$("selectedEditor").scrollIntoView({block:"nearest",behavior:"smooth"})}});
 
 /* ---------- PNG export (isometric) ---------- */
@@ -960,10 +1047,11 @@ async function isoPng(){
 function exportDxf3d(){const cam=S.cam,rot=S.rot,up=S.upTo;S.cam="iso";S.rot=0;S.upTo=-1;CAM=null;let sc;try{sc=scene()}finally{S.cam=cam;S.rot=rot;S.upTo=up}
   const X=new ArstinlaDXF(),D=site().d,V=p=>[p[0],D-p[1],p[2]];
   sc.objs.forEach(o=>{const lvlName=(()=>{const r=o.id&&rooms.find(q=>q.id===o.id);return r?`F${lvl(r)+1}-`:""})();
-    if(o.roof){const L=o.rid?X.layer("ROOF",1):X.layer(lvlName+"STAIR",4);(o.allF||o.faces.map(f=>f.vp)).forEach(f=>{const q=f.map(V);if(q.length<=4)X.face(L,q);else for(let i=1;i<q.length-1;i++)X.face(L,[q[0],q[i],q[i+1]])});return}
+    if(o.roof){const L=o.rid?X.layer("ROOF",1):o.sid?X.layer("SHAPE",30):X.layer(lvlName+"STAIR",4);(o.allF||o.faces.map(f=>f.vp)).forEach(f=>{const q=f.map(V);if(q.length<=4)X.face(L,q);else for(let i=1;i<q.length-1;i++)X.face(L,[q[0],q[i],q[i+1]])});return}
     const L=o.glass?X.layer("GLASS",5):o.pane?X.layer("FRAME",8):o.c&&o.c[1]===SLABC[1]?X.layer(lvlName+"SLAB",9):X.layer(lvlName+"WALL",7);
     const{x0,y0,x1,y1,z0,z1}=o,c=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]].map(V);
     [[0,1,2,3],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]].forEach(f=>X.face(L,f.map(i=>c[i])))});
+  (S.shapes||[]).filter(sh=>!sh.closed).forEach(sh=>{const z=base(clamp(sh.level|0,0,nF()-1));X.layer("LINE",30);for(let i=1;i<sh.pts.length;i++){const a=sh.pts[i-1],b=sh.pts[i];X.line("LINE",a[0],D-a[1],b[0],D-b[1],z,z)}});
   X.download(($("projectName").value||"Massing")+" 3D");typeof toast==="function"&&toast("ดาวน์โหลด DXF 3D แล้ว — 3DFACE หน่วยเมตร")}
 window.ARSTINLA_ISO={state:S,draw,setView,addFloor,addRoof,selectRoof,canvas:isoCanvas,save:saveS,png:isoPng,dxf:exportDxf3d};
 /* ---------- start ---------- */
