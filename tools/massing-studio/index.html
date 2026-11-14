@@ -636,6 +636,9 @@ function scene(){
   // drawn shapes (เครื่องมือวาดเส้น): closed outlines → flat face or extruded solid
   (S.shapes||[]).forEach(sh=>{if(!sh.closed||sh.pts.length<3)return;const L=clamp(sh.level|0,0,nF()-1);if(L>top)return;
     const z0=base(L)+(Number(sh.z)||0),h=Math.max(0,Number(sh.h)||0),z1=z0+(h>0?h:.006),sel=sh.id===S.selShape,pv=sh.pts.map(([x,y])=>T(x,y,W,D,k));
+    // axis-aligned rectangles become real boxes: they join the wall/slab carving and get the same crisp edges as floor slabs
+    if(h>0&&sh.pts.length===4&&sh.pts.every((p,i)=>{const q=sh.pts[(i+1)%4];return Math.abs(p[0]-q[0])<1e-6||Math.abs(p[1]-q[1])<1e-6})){const xs=sh.pts.map(p=>p[0]),ys=sh.pts.map(p=>p[1]),[A,B,C,E]=TR(Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys),W,D,k);
+      put({sid:sh.id,sel,x0:A,y0:B,x1:C,y1:E,z0,z1,c:sel?WSEL:[sh.color||"#efe8d6",SLABC[1],SLABC[2]]});return}
     let ar=0;pv.forEach((p,i)=>{const q=pv[(i+1)%pv.length];ar+=p[0]*q[1]-q[0]*p[1]});const ccw=ar>0;
     const F=[{kind:"slope",p:pv.map(p=>[p[0],p[1],z1]),n:[0,0,1]}];
     if(h>0){F.push({kind:"wall",p:pv.map(p=>[p[0],p[1],z0]).reverse(),n:[0,0,-1]});
@@ -644,7 +647,7 @@ function scene(){
     const vis=faces.filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(a.kind==="slope"?1:0)-(b.kind==="slope"?1:0)||a.depth-b.depth),all=faces.flatMap(f=>f.vp),xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
     put({roof:true,sid:sh.id,sel,allF:faces.map(f=>f.vp),x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0,z1,faces:vis,color:sel?"#c47a55":(sh.color||"#cfc6b6"),all})});
   // overlapping wall/slab boxes (shared walls, rooms that overlap) → carve so no two solids interpenetrate; selected room keeps its walls
-  {const isS=o=>o.id&&!o.roof&&!o.pane&&!o.glass,sol=objs.filter(isS).sort((a,b)=>(b.sel?1:0)-(a.sel?1:0)),rest=objs.filter(o=>!isS(o)),acc=[];
+  {const isS=o=>(o.id||o.sid)&&!o.roof&&!o.pane&&!o.glass,sol=objs.filter(isS).sort((a,b)=>(b.sel?1:0)-(a.sel?1:0)),rest=objs.filter(o=>!isS(o)),acc=[];
    sol.forEach(o=>{const hit=acc.filter(c=>o.x0<c.x1-1e-6&&c.x0<o.x1-1e-6&&o.y0<c.y1-1e-6&&c.y0<o.y1-1e-6&&o.z0<c.z1-1e-6&&c.z0<o.z1-1e-6);
      (hit.length?cutBox(o,hit):[o]).forEach(q=>{if(q.x1-q.x0>1e-4&&q.y1-q.y0>1e-4&&q.z1-q.z0>1e-4)acc.push(q)})});
    objs.length=0;objs.push(...acc,...rest)}
@@ -1027,13 +1030,15 @@ function renderShapePanel(){const sh=S.selShape&&S.shapes.find(x=>x.id===S.selSh
   let ar=0;sh.pts.forEach((p,i)=>{const q=sh.pts[(i+1)%sh.pts.length];ar+=p[0]*q[1]-q[0]*p[1]});ar=Math.abs(ar)/2;let per=0;sh.pts.forEach((p,i)=>{const q=sh.pts[i+1]||(sh.closed?sh.pts[0]:null);if(q)per+=Math.hypot(q[0]-p[0],q[1]-p[1])});
   const key=sh.id+"|"+sh.h+"|"+sh.z+"|"+sh.pts.length+"|"+JSON.stringify(shapeBox(sh));if(document.activeElement&&shapePanel.contains(document.activeElement))return;if(shapePanel.dataset.key===key)return;shapePanel.dataset.key=key;
   const bx=shapeBox(sh),sizeIn=sh.kind==="circle"?`<label>รัศมี <input id="shR" type="number" min="0.05" max="50" step="0.05" value="${format2(sh.r)}"> ม.</label>`:sh.closed?`<label>กว้าง <input id="shW" type="number" min="0.05" max="200" step="0.05" value="${format2(bx.w)}"></label><label>ยาว <input id="shD" type="number" min="0.05" max="200" step="0.05" value="${format2(bx.d)}"> ม.</label>`:"";
-  shapePanel.innerHTML=sh.closed?`<b>${sh.kind==="circle"?"วงกลม":sh.kind==="rect"?"สี่เหลี่ยม":"รูปปิด "+sh.pts.length+" จุด"}</b><span>พื้นที่ ${format2(ar)} ตร.ม.</span>${sizeIn}<label>ความหนา/สูง <input id="shH" type="number" min="0" max="30" step="0.05" value="${format2(sh.h||0)}"> ม.</label><label>ยกจากพื้น <input id="shZ" type="number" min="-5" max="30" step="0.05" value="${format2(sh.z||0)}"> ม.</label><button type="button" class="del" id="shDel">ลบ</button>`
+  shapePanel.innerHTML=sh.closed?`<b>${sh.kind==="circle"?"วงกลม":sh.kind==="rect"?"สี่เหลี่ยม":"รูปปิด "+sh.pts.length+" จุด"}</b><span>พื้นที่ ${format2(ar)} ตร.ม.</span>${sizeIn}<label>ความหนา/สูง <input id="shH" type="number" min="0" max="30" step="0.05" value="${format2(sh.h||0)}"> ม.</label><label>ยกจากพื้น <input id="shZ" type="number" min="-5" max="30" step="0.05" value="${format2(sh.z||0)}"> ม.</label><button type="button" id="shMatch" title="ตั้งความหนาให้ผิวบนเท่าระดับพื้นห้องที่อยู่ติดกัน">= ระดับพื้นห้อง</button><button type="button" class="del" id="shDel">ลบ</button>`
     :`<b>เส้น ${sh.pts.length} จุด</b><span>ยาวรวม ${format2(per)} ม.</span><button type="button" class="del" id="shDel">ลบ</button>`;
   const resz=(id,fn)=>{const el=shapePanel.querySelector("#"+id);if(el)el.addEventListener("change",()=>{const n=Number(el.value);if(!Number.isFinite(n)||n<=0)return;fn(n);shapePanel.dataset.key="";saveS();draw()})};
   resz("shR",n=>{sh.r=n;sh.pts=circPts(sh.c,n).map(p=>[Math.round(p[0]*1000)/1000,Math.round(p[1]*1000)/1000])});
   resz("shW",n=>{const b=shapeBox(sh);if(b.w<1e-6)return;const f=n/b.w;sh.pts=sh.pts.map(p=>[Math.round((b.x+(p[0]-b.x)*f)*1000)/1000,p[1]])});
   resz("shD",n=>{const b=shapeBox(sh);if(b.d<1e-6)return;const f=n/b.d;sh.pts=sh.pts.map(p=>[p[0],Math.round((b.y+(p[1]-b.y)*f)*1000)/1000])});
   const upd=(id,f)=>{const el=shapePanel.querySelector("#"+id);if(el)el.addEventListener("input",()=>{const n=Number(el.value);if(!Number.isFinite(n))return;sh[f]=n;saveS();draw()})};upd("shH","h");upd("shZ","z");
+  {const mb=shapePanel.querySelector("#shMatch");if(mb)mb.addEventListener("click",()=>{const L=clamp(sh.level|0,0,nF()-1),bx=shapeBox(sh),near=rooms.filter(r=>lvl(r)===L&&!r.void&&r.x<bx.x+bx.w+.6&&bx.x<r.x+r.w+.6&&r.y<bx.y+bx.d+.6&&bx.y<r.y+r.d+.6);
+    const tops=near.map(r=>slabOf(r,L)).filter(v=>v>0);if(!tops.length){typeof toast==="function"&&toast("ไม่มีห้องติดกันที่มีความหนาพื้น");return}sh.z=0;sh.h=Math.max(...tops);shapePanel.dataset.key="";saveS();draw();typeof toast==="function"&&toast(`ตั้งความหนา ${format2(sh.h)} ม. เท่าพื้นห้องข้างเคียงแล้ว`)})}
   shapePanel.querySelector("#shDel").addEventListener("click",()=>{S.shapes=S.shapes.filter(x=>x!==sh);S.selShape=null;saveS();draw()})}
 $("isoDraw").addEventListener("click",()=>setDraw(!(DRAW.on&&!DRAW.roof)));
 function startRoofPick(){if(!onLevel(S.active).length){addRoof();return}S.roofOn=true;setDraw(true,true);typeof toast==="function"&&toast(`กำหนดพื้นที่หลังคา${fl(S.active)}: คลิก 2 มุม (snap มุมผนังด้านบน)`)}
