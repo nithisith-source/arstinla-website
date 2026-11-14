@@ -618,7 +618,7 @@ function scene(){
     const tn=Math.tan(clamp(R.pitch,1,60)*Math.PI/180),ov=ev-ep,drop=R.type==="butterfly"?0:ov*tn;
     const rz=riseOf(R),zr=zt+rz,qx0=R.x-ep,qy0=R.y-ep,qx1=R.x+R.w+ep,qy1=R.y+R.d+ep;
     const Fo=roofFaces(R,px0,py0,px1,py1,zr-drop).F,Fi=roofFaces(R,qx0,qy0,qx1,qy1,zr).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
-    const und=R.type!=="butterfly",F=Fo.filter(f=>f.kind==="slope").concat(Fi.filter(f=>f.kind==="wall").map(f=>({...f,under:und})));
+    const und=true,F=Fo.filter(f=>f.kind==="slope").concat(Fi.filter(f=>f.kind==="wall").map(f=>({...f,under:und})));
     // level above the wall plate (ระดับเหนืออะเส): band wall from the plate up to where the roof starts
     if(rz>.005)[[qx0,qy0,qx1,qy0],[qx1,qy0,qx1,qy1],[qx1,qy1,qx0,qy1],[qx0,qy1,qx0,qy0]].forEach(([a,b,c,d])=>F.push({kind:"wall",under:true,p:[[a,b,zt],[c,d,zt],[c,d,zr],[a,b,zr]]}));
     if(ov>.01){const FB=.18,onB=q=>Math.abs(q[0]-px0)<1e-6||Math.abs(q[0]-px1)<1e-6||Math.abs(q[1]-py0)<1e-6||Math.abs(q[1]-py1)<1e-6,same=(a,b)=>(Math.abs(a[0]-b[0])<1e-6&&(Math.abs(a[0]-px0)<1e-6||Math.abs(a[0]-px1)<1e-6))||(Math.abs(a[1]-b[1])<1e-6&&(Math.abs(a[1]-py0)<1e-6||Math.abs(a[1]-py1)<1e-6));
