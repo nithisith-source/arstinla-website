@@ -318,7 +318,7 @@ document.head.insertAdjacentHTML("beforeend",`<style id="isoStyle">
 .iso-tools select{font:400 11px var(--font-th);letter-spacing:0;text-transform:none}
 .iso-tools select[hidden]{display:none}
 .iso-tools button.ico{font-size:15px;padding:0;letter-spacing:0}
-.iso-tools button.th{font:500 11px var(--font-th);letter-spacing:0;text-transform:none}
+.iso-tools button.th{font:500 11px var(--font-th);letter-spacing:0;text-transform:none}.iso-tools select.th{height:34px;border:1px solid #c9c4b8;background:#fff;color:#171816;font:500 12px var(--font-th);padding:0 6px}
 .iso-tools button:hover{background:var(--sand);border-color:var(--sand);color:#fff}
 .iso-tools button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
 .iso-cams{flex-wrap:wrap}.iso-cams button{padding:0 9px}.iso-cams .sep{width:1px;height:22px;background:#aaa69b;margin:0 2px}
@@ -378,7 +378,7 @@ wrap.innerHTML=`<div class="iso-tools">
   <div class="grp"><button class="ico" type="button" id="isoRotL" aria-label="หมุนมุมมองทวนเข็มนาฬิกา">⟲</button><span id="isoRotLabel"></span><button class="ico" type="button" id="isoRotR" aria-label="หมุนมุมมองตามเข็มนาฬิกา">⟳</button></div>
   <div class="grp iso-cams" role="group" aria-label="มุมมอง"><span>Iso</span><button type="button" data-cam="iso0"></button><button type="button" data-cam="iso1"></button><button type="button" data-cam="iso2"></button><button type="button" data-cam="iso3"></button><span class="sep"></span><button type="button" data-cam="persp" title="Perspective 2 จุด (กดอีกครั้งเพื่อกลับ Iso)">2-Point</button><label class="eye-wrap" id="eyeWrap" hidden>สายตา <input id="isoEye" type="number" min="0.3" max="60" step="0.1" style="width:58px"> ม.</label><span class="sep"></span><button type="button" data-cam="top">Top</button><button type="button" data-cam="bottom">Bottom</button><button type="button" data-cam="front">Front</button><button type="button" data-cam="back">Back</button><button type="button" data-cam="left">Left</button><button type="button" data-cam="right">Right</button></div>
   <div class="grp"><label for="isoHour">Sun / เงา</label><input type="range" id="isoHour" min="6" max="18" step="0.5"><output id="isoHourOut"></output></div>
-  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button><button class="th" type="button" id="isoUndo" title="ย้อนกลับ (Ctrl+Z)" disabled>↶</button><button class="th" type="button" id="isoRedo" title="ทำซ้ำ (Ctrl+Y / Ctrl+Shift+Z)" disabled>↷</button><button class="th" type="button" id="isoDraw" aria-pressed="false" title="วาดเส้นบนพื้น snap ขอบผนัง · คลิกจุดแรกเพื่อปิดรูปแล้วใส่ความหนา">✏ วาดเส้น</button></div>
+  <div class="grp"><select id="isoUpTo" aria-label="ชั้นที่แสดง"></select><button class="th" type="button" id="isoRoofBtn" aria-pressed="true">หลังคา</button><button class="th" type="button" id="isoCut" aria-pressed="false">ผนังหน้าเตี้ย</button><button class="th" type="button" id="isoCols" aria-pressed="false" title="วางเสาอัตโนมัติที่มุมห้องและจุดตัดผนัง">▪ เสา</button><select id="isoColSize" class="th" title="ขนาดเสา" hidden><option value="0.15">15×15</option><option value="0.2" selected>20×20</option><option value="0.25">25×25</option><option value="0.3">30×30</option><option value="0.4">40×40</option></select><button class="th" type="button" id="isoUndo" title="ย้อนกลับ (Ctrl+Z)" disabled>↶</button><button class="th" type="button" id="isoRedo" title="ทำซ้ำ (Ctrl+Y / Ctrl+Shift+Z)" disabled>↷</button><button class="th" type="button" id="isoDraw" aria-pressed="false" title="วาดเส้นบนพื้น snap ขอบผนัง · คลิกจุดแรกเพื่อปิดรูปแล้วใส่ความหนา">✏ วาดเส้น</button></div>
 </div>
 <svg class="iso-board" id="isoBoard" xmlns="${NS}" role="img" aria-label="Isometric schematic"></svg>
 <p class="iso-note" id="isoNote"></p>`;
@@ -618,6 +618,7 @@ function scene(){
         const front=qb>=b1-t-1e-6||qa>=a1-t-1e-6,zt=front?Math.min(q.z1,zc):q.z1;
         if(zt>q.z0+1e-4)put({id:r.id,x0:qa,y0:qb,x1:qc,y1:qd,z0:q.z0,z1:zt,zs:q.z1,c,sel})}));
   });
+  if(S.autoCol&&S.autoCol.on)autoColumns().forEach(c=>{if(c.L>top)return;const h=c.s/2,[x0,y0,x1,y1]=TR(c.x-h,c.y-h,c.x+h,c.y+h,W,D,k);put({col:true,x0,y0,x1,y1,z0:base(c.L)+(c.L>0?0:0),z1:c.z1,c:COL})});
   if($("showColumns").checked){const ztop=base(top)+S.floors[top].h;columns.forEach(c=>{const[x0,y0,x1,y1]=TR(c.x-c.w/2,c.y-c.d/2,c.x+c.w/2,c.y+c.d/2,W,D,k);put({col:true,x0,y0,x1,y1,z0:0,z1:ztop,c:COL})})}
   // roofs: each one covers its own outline (plus eave), sitting on top of its floor
   shown.forEach(R=>{
@@ -664,7 +665,7 @@ function scene(){
     const vis=faces.filter(f=>faceVis(f.n,f.fc,VV)).sort((a,b)=>(a.kind==="slope"?1:0)-(b.kind==="slope"?1:0)||a.depth-b.depth),all=faces.flatMap(f=>f.vp),xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
     put({roof:true,sid:sh.id,sel,allF:faces.map(f=>f.vp),x0:Math.min(...xs),y0:Math.min(...ys),x1:Math.max(...xs),y1:Math.max(...ys),z0,z1,faces:vis,color:sel?"#c47a55":(sh.color||"#cfc6b6"),all})});
   // overlapping wall/slab boxes (shared walls, rooms that overlap) → carve so no two solids interpenetrate; selected room keeps its walls
-  {const isS=o=>(o.id||o.sid)&&!o.roof&&!o.pane&&!o.glass,sol=objs.filter(isS).sort((a,b)=>(b.sel?1:0)-(a.sel?1:0)),rest=objs.filter(o=>!isS(o)),acc=[];
+  {const isS=o=>(o.id||o.sid||o.col)&&!o.roof&&!o.pane&&!o.glass,sol=objs.filter(isS).sort((a,b)=>(b.sel?2:b.col?1:0)-(a.sel?2:a.col?1:0)),rest=objs.filter(o=>!isS(o)),acc=[];
    sol.forEach(o=>{const hit=acc.filter(c=>o.x0<c.x1-1e-6&&c.x0<o.x1-1e-6&&o.y0<c.y1-1e-6&&c.y0<o.y1-1e-6&&o.z0<c.z1-1e-6&&c.z0<o.z1-1e-6);
      (hit.length?cutBox(o,hit):[o]).forEach(q=>{if(q.x1-q.x0>1e-4&&q.y1-q.y0>1e-4&&q.z1-q.z0>1e-4)acc.push(q)})});
    objs.length=0;objs.push(...acc,...rest)}
@@ -1111,6 +1112,10 @@ window.addEventListener("keydown",e=>{if(!(e.ctrlKey||e.metaKey))return;const k=
   e.preventDefault();if(DRAW.on&&k==="z"&&!e.shiftKey){if(DRAW.anchor||DRAW.arcEnd){DRAW.anchor=null;DRAW.arcEnd=null}else DRAW.pts.pop();drawHint();renderDrawLayer();return}
   if(k==="y"||e.shiftKey)doRedo();else doUndo()});
 setTimeout(()=>{UNDO.last=undoSnap();undoButtons()},0);
+
+function colUI(){const on=!!(S.autoCol&&S.autoCol.on);$("isoCols").setAttribute("aria-pressed",String(on));$("isoColSize").hidden=!on;if(on)$("isoColSize").value=String(S.autoCol.size||.2)}
+$("isoCols").addEventListener("click",()=>{S.autoCol=Object.assign({size:.2},S.autoCol||{},{on:!(S.autoCol&&S.autoCol.on)});colUI();saveS();draw();if(S.autoCol.on&&typeof toast==="function")toast(`วางเสา ${autoColumns().length} ต้น ที่มุมห้องและจุดตัดผนัง`)});
+$("isoColSize").addEventListener("change",e=>{S.autoCol=Object.assign({on:true},S.autoCol||{},{size:Number(e.target.value)});saveS();draw()});colUI();
 /* ---------- orange move arrows on the selected room / roof in the 3D view ---------- */
 const nudgeEl=document.createElement("div");nudgeEl.className="iso-nudge";nudgeEl.hidden=true;wrap.appendChild(nudgeEl);
 function shapeBox(sh){const xs=sh.pts.map(p=>p[0]),ys=sh.pts.map(p=>p[1]),x=Math.min(...xs),y=Math.min(...ys);return{x,y,w:Math.max(...xs)-x,d:Math.max(...ys)-y}}
@@ -1199,11 +1204,20 @@ function exportDxf3d(){const cam=S.cam,rot=S.rot,up=S.upTo;S.cam="iso";S.rot=0;S
   const X=new ArstinlaDXF(),D=site().d,V=p=>[p[0],D-p[1],p[2]];
   sc.objs.forEach(o=>{const lvlName=(()=>{const r=o.id&&rooms.find(q=>q.id===o.id);return r?`F${lvl(r)+1}-`:""})();
     if(o.roof){const L=o.rid?X.layer("ROOF",1):o.sid?X.layer("SHAPE",30):X.layer(lvlName+"STAIR",4);(o.allF||o.faces.map(f=>f.vp)).forEach(f=>{const q=f.map(V);if(q.length<=4)X.face(L,q);else for(let i=1;i<q.length-1;i++)X.face(L,[q[0],q[i],q[i+1]])});return}
-    const L=o.glass?X.layer("GLASS",5):o.pane?X.layer("FRAME",8):o.c&&o.c[1]===SLABC[1]?X.layer(lvlName+"SLAB",9):X.layer(lvlName+"WALL",7);
+    const L=o.glass?X.layer("GLASS",5):o.pane?X.layer("FRAME",8):o.col?X.layer("COLUMN",6):o.c&&o.c[1]===SLABC[1]?X.layer(lvlName+"SLAB",9):X.layer(lvlName+"WALL",7);
     const{x0,y0,x1,y1,z0,z1}=o,c=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]].map(V);
     [[0,1,2,3],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]].forEach(f=>X.face(L,f.map(i=>c[i])))});
   (S.shapes||[]).filter(sh=>!sh.closed).forEach(sh=>{const z=base(clamp(sh.level|0,0,nF()-1));X.layer("LINE",30);for(let i=1;i<sh.pts.length;i++){const a=sh.pts[i-1],b=sh.pts[i];X.line("LINE",a[0],D-a[1],b[0],D-b[1],z,z)}});
   X.download(($("projectName").value||"Massing")+" 3D");typeof toast==="function"&&toast("ดาวน์โหลด DXF 3D แล้ว — 3DFACE หน่วยเมตร")}
+
+/* ---------- automatic columns at room corners and wall intersections (on the wall centre-lines) ---------- */
+function autoColumns(){const out=[],size=clamp(Number(S.autoCol&&S.autoCol.size)||.2,.1,.6),al=$("wallAlignment").value,t0=wallThickness();
+  for(let L=0;L<nF();L++){const rs=onLevel(L).filter(r=>!r.void),R=rs.map(r=>{const t=wallOf(r,t0),e=al==="inside"?0:al==="center"?t/2:t,o=e-t/2;return{x0:r.x-o,y0:r.y-o,x1:r.x+r.w+o,y1:r.y+r.d+o,top:base(L)+roomH(r),s:Math.max(size,t+.04)}});
+    const pts=[];R.forEach(a=>{[[a.x0,a.y0],[a.x1,a.y0],[a.x1,a.y1],[a.x0,a.y1]].forEach(p=>pts.push(p));
+      R.forEach(b=>{if(a===b)return;[a.y0,a.y1].forEach(y=>[b.x0,b.x1].forEach(x=>{if(x>a.x0+.05&&x<a.x1-.05&&y>b.y0-.05&&y<b.y1+.05)pts.push([x,y])}))})});
+    const merged=[];pts.forEach(p=>{if(!merged.some(q=>Math.abs(q[0]-p[0])<.15&&Math.abs(q[1]-p[1])<.15))merged.push(p)});
+    merged.forEach(([x,y])=>{const near=R.filter(a=>x>=a.x0-.15&&x<=a.x1+.15&&y>=a.y0-.15&&y<=a.y1+.15);if(!near.length)return;out.push({L,x,y,s:Math.max(...near.map(a=>a.s)),z1:Math.max(...near.map(a=>a.top))})})}
+  return out}
 
 /* ---------- send the model to "บ้านของฉัน · Interior" (furniture layout) ---------- */
 function interiorPayload(){const cam=S.cam,rot=S.rot,up=S.upTo,cut=S.cut,sr=S.selRoof,sh=S.selShape,sel=selectedId;S.cam="iso";S.rot=0;S.upTo=-1;S.cut=false;S.selRoof=null;S.selShape=null;selectedId=null;CAM=null;let sc;
