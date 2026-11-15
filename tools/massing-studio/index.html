@@ -513,6 +513,8 @@ function orderP(o){ // painter's order for a point camera (CAM, view coords)
   const xyo=(a,b)=>a.x0<b.x1-EPS&&b.x0<a.x1-EPS&&a.y0<b.y1-EPS&&b.y0<a.y1-EPS;
   const behind=(a,b)=>{ // a roof sits on (and its eaves hang in front of) whatever is under it
     if(b.roof&&!a.roof&&a.z1<=b.z0+EPS&&xyo(a,b))return true;if(a.roof&&!b.roof&&b.z1<=a.z0+EPS&&xyo(a,b))return false;
+    if(a.pr&&b.pr){const A=a.pr,B=b.pr; // two roofs: decide by their wall-plate footprints, not the overhang boxes
+      if(A.x1<=B.x0+EPS)return C[0]>=(A.x1+B.x0)/2;if(B.x1<=A.x0+EPS)return C[0]<=(B.x1+A.x0)/2;if(A.y1<=B.y0+EPS)return C[1]>=(A.y1+B.y0)/2;if(B.y1<=A.y0+EPS)return C[1]<=(B.y1+A.y0)/2}
     for(const[l,h,c]of[["x0","x1",0],["y0","y1",1],["z0","z1",2]]){if(a[h]<=b[l]+EPS&&C[c]>=(a[h]+b[l])/2)return true;if(b[h]<=a[l]+EPS&&C[c]<=(b[h]+a[l])/2)return true}return false};
   const n=o.length,indeg=new Array(n).fill(0),out=o.map(()=>[]);
   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){if(!ov(i,j))continue;const ab=behind(o[i],o[j]),ba=behind(o[j],o[i]);if(ab&&!ba){out[i].push(j);indeg[j]++}else if(ba&&!ab){out[j].push(i);indeg[i]++}}
@@ -530,7 +532,8 @@ function order(o){ // painter's order for boxes, viewer at +X +Y +Z
   // order them along the axis of least penetration, by centre — keeps the relation one-way
   const pen=(a,b)=>{const px=Math.min(a.x1,b.x1)-Math.max(a.x0,b.x0),py=Math.min(a.y1,b.y1)-Math.max(a.y0,b.y0),pz=Math.min(a.z1,b.z1)-Math.max(a.z0,b.z0);
     if(px<=pz&&px<=py)return a.x0+a.x1<b.x0+b.x1-EPS;if(py<=pz)return a.y0+a.y1<b.y0+b.y1-EPS;return a.z0+a.z1<b.z0+b.z1-EPS};
-  const n=o.length,ahead=(a,b)=>scr(a,b)&&(sep(a,b)||(!sep(b,a)&&pen(a,b)));
+  const prs=(a,b)=>{const A=a.pr,B=b.pr;return A.x1<=B.x0+EPS||A.y1<=B.y0+EPS};
+  const n=o.length,ahead=(a,b)=>scr(a,b)&&(a.pr&&b.pr?prs(a,b)&&!prs(b,a)||(!prs(a,b)&&!prs(b,a)&&(sep(a,b)||(!sep(b,a)&&pen(a,b)))):(sep(a,b)||(!sep(b,a)&&pen(a,b))));
   const indeg=new Array(n).fill(0),out=o.map(()=>[]);
   for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(i!==j&&ahead(o[i],o[j])&&!ahead(o[j],o[i])){out[i].push(j);indeg[j]++}
   const key=b=>b.x0+b.x1+b.y0+b.y1+b.z0*.01+(b.sel?1e6:0),done=new Array(n).fill(false),res=[];
@@ -643,7 +646,8 @@ function scene(){
     // butterfly: side wall sits over the far slope but under the overhang of its own slope
     const vw=new Set(faces.filter(f=>f.bw!=null).map(f=>f.bw)),rank=f=>f.under?-1:f.bw!=null?1:f.bt!=null&&vw.has(f.bt)?2:f.bt!=null?0:3;
     faces.sort((a,b)=>bfy?rank(a)-rank(b)||a.depth-b.depth:(b.under?1:0)-(a.under?1:0)||a.depth-b.depth);
-    put({roof:true,rid:R.id,allF:F.map(f=>f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})),x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
+    {const q=TR(R.x-ep,R.y-ep,R.x+R.w+ep,R.y+R.d+ep,W,D,k);var PR={x0:q[0],y0:q[1],x1:q[2],y1:q[3]}}
+    put({roof:true,rid:R.id,pr:PR,allF:F.map(f=>f.p.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})),x0,y0,x1,y1,z0:zt,z1:zt+Math.max(H,.05),faces,color,all:allP.map(([x,y,z])=>{const q=T(x,y,W,D,k);return[q[0],q[1],z]})});
   });
   if(!zmax)zmax=S.floors[0].h;
   // drawn shapes (เครื่องมือวาดเส้น): closed outlines → flat face or extruded solid
