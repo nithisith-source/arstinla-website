@@ -622,12 +622,12 @@ function scene(){
     // eave (ชายคา): roof planes run past the walls and drop by eave×slope; gable/end walls stay on the wall line; fascia board along the edges
     const tn=Math.tan(clamp(R.pitch,1,60)*Math.PI/180),ov=ev-ep,drop=R.type==="butterfly"?0:ov*tn;
     const rz=riseOf(R),zr=zt+rz,qx0=R.x-ep,qy0=R.y-ep,qx1=R.x+R.w+ep,qy1=R.y+R.d+ep;
-    const Fo=roofFaces(R,px0,py0,px1,py1,zr-drop).F,Fi=roofFaces(R,qx0,qy0,qx1,qy1,zr).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
+    const RT=.18,Fo=roofFaces(R,px0,py0,px1,py1,zr-drop+RT).F,Fi=roofFaces(R,qx0,qy0,qx1,qy1,zr).F,H=Fi.length?Math.max(...Fi.concat(Fo).flatMap(f=>f.p.map(q=>q[2]-zt))):0;
     const bfy=R.type==="butterfly",und=true,F=Fo.filter(f=>f.kind==="slope").map((f,i)=>bfy?{...f,bt:i}:f).concat(Fi.filter(f=>f.kind==="wall").map(f=>({...f,under:bfy?f.p.length===5:und})));
     if(bfy){let j=0;F.forEach(f=>{if(f.kind==="wall"&&f.p.length===4&&!f.under)f.bw=j++})}
     // level above the wall plate (ระดับเหนืออะเส): band wall from the plate up to where the roof starts
     if(rz>.005)[[qx0,qy0,qx1,qy0],[qx1,qy0,qx1,qy1],[qx1,qy1,qx0,qy1],[qx0,qy1,qx0,qy0]].forEach(([a,b,c,d])=>F.push({kind:"wall",under:true,p:[[a,b,zt],[c,d,zt],[c,d,zr],[a,b,zr]]}));
-    if(ov>.01){const FB=.18,onB=q=>Math.abs(q[0]-px0)<1e-6||Math.abs(q[0]-px1)<1e-6||Math.abs(q[1]-py0)<1e-6||Math.abs(q[1]-py1)<1e-6,same=(a,b)=>(Math.abs(a[0]-b[0])<1e-6&&(Math.abs(a[0]-px0)<1e-6||Math.abs(a[0]-px1)<1e-6))||(Math.abs(a[1]-b[1])<1e-6&&(Math.abs(a[1]-py0)<1e-6||Math.abs(a[1]-py1)<1e-6));
+    if(true){const FB=RT,onB=q=>Math.abs(q[0]-px0)<1e-6||Math.abs(q[0]-px1)<1e-6||Math.abs(q[1]-py0)<1e-6||Math.abs(q[1]-py1)<1e-6,same=(a,b)=>(Math.abs(a[0]-b[0])<1e-6&&(Math.abs(a[0]-px0)<1e-6||Math.abs(a[0]-px1)<1e-6))||(Math.abs(a[1]-b[1])<1e-6&&(Math.abs(a[1]-py0)<1e-6||Math.abs(a[1]-py1)<1e-6));
       Fo.filter(f=>f.kind==="slope").forEach(f=>f.p.forEach((a,i)=>{const b=f.p[(i+1)%f.p.length];if(onB(a)&&onB(b)&&same(a,b))F.push({kind:"wall",p:[a,b,[b[0],b[1],b[2]-FB],[a[0],a[1],a[2]-FB]]})}))}
     const allP=F.flatMap(f=>f.p);
     const cen=allP.reduce((s,p)=>[s[0]+p[0],s[1]+p[1],s[2]+p[2]],[0,0,0]).map(v=>v/allP.length),vc=T(cen[0],cen[1],W,D,k),c3=[vc[0],vc[1],cen[2]];
@@ -707,7 +707,7 @@ function draw(){
   // north arrow
   const na=northAngle()*Math.PI/180,[nx,ny]=TV(Math.sin(na),-Math.cos(na),k),cx=Wr+1.9,cy=1.2,tip=P(cx+nx*1.1,cy+ny*1.1),tl=P(cx-nx*.8,cy-ny*.8),l=P(cx-nx*.2-ny*.35,cy-ny*.2+nx*.35),r=P(cx-nx*.2+ny*.35,cy-ny*.2-nx*.35),lab=P(cx+nx*1.7,cy+ny*1.7);
   // level lines on elevations: FFL of each floor + roof top
-  if(ORTHO[mode]){const lv=[];for(let L=0;L<nF();L++)lv.push({z:base(L),t:`${fl(L)} FFL`});lv.push({z:base(nF()),t:"ระดับบนผนังชั้นบนสุด"});
+  if(ORTHO[mode]){const lv=[];for(let L=0;L<nF();L++)lv.push({z:base(L),t:`${fl(L)} FFL`});{const top=nF()-1,rs=onLevel(top).filter(r=>!r.void),wt=rs.length?base(top)+Math.max(...rs.map(roomH)):base(nF());lv.push({z:wt,t:"ระดับบนผนังชั้นบนสุด"})}
     if(sc.zmax>base(nF())+.05)lv.push({z:sc.zmax,t:"ยอดหลังคา",roof:true});
     const xa=-4.9,xb=Wr+1.4;
     parts.push(`<g id="isoLevels" pointer-events="none">`+lv.map(v=>{const a=P(xa,0,v.z),b=P(xb,0,v.z),c=P(-.6,0,v.z),lab=(v.z>=0?"+":"")+v.z.toFixed(2);
