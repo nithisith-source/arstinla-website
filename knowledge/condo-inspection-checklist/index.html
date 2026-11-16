@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="เช็กลิสต์ตรวจรับคอนโดด้วยตัวเอง 12 หมวด ตั้งแต่ประตูห้อง พื้น ห้องน้ำ ระเบียง ไฟฟ้า แอร์ ไปจนถึงเอกสารวันโอน พร้อมบันทึกผลและพิมพ์เป็น PDF โดย ARSTINLA">
+<meta name="color-scheme" content="light">
+<title>เช็กลิสต์ตรวจรับคอนโดด้วยตัวเอง | arstinla.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/knowledge/article-shell.css">
+<style>
+  @page { size: A4; margin: 12mm 10mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans Thai', 'Anuphan', sans-serif;
+    font-size: 10pt;
+    color: #26251f;
+    line-height: 1.45;
+    background: #f3f0e8;
+  }
+  .sheet {
+    max-width: 210mm;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 12mm 10mm 14mm 10mm;
+  }
+  /* ---------- Toolbar (screen only) ---------- */
+  .toolbar {
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 10px 10mm;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font-family: 'IBM Plex Sans Thai', 'Anuphan', sans-serif;
+    font-size: 10.5pt;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .btn-print { background: #d95f2b; color: #fff; }
+  .btn-clear { background: #d95f2b; color: #ffffff; border: 1px solid #171816 !important; }
+  .toolbar .tip { font-size: 8.5pt; color: #77746c; }
+  /* ---------- Cover header ---------- */
+  .cover-band {
+    background: #171816;
+    color: #ffffff;
+    padding: 14px 18px 12px 18px;
+    border-radius: 6px;
+    border-bottom: 4px solid #d95f2b;
+  }
+  input[type="checkbox"][data-role="fix"] { accent-color: #d95f2b; }
+  .cover-band .kicker { font-size: 9pt; letter-spacing: 2px; color: #ee8250; margin: 0 0 2px 0; }
+  .cover-band h1 { font-size: 21pt; font-weight: 700; margin: 0; line-height: 1.25; }
+  .cover-band .sub { font-size: 9.5pt; color: #cfccc4; margin: 4px 0 0 0; }
+  /* ---------- Inputs ---------- */
+  input[type="text"] {
+    font-family: 'IBM Plex Sans Thai', 'Anuphan', sans-serif;
+    font-size: 10pt;
+    color: #171816;
+    border: none;
+    border-bottom: 1px dotted #a8a49b;
+    background: transparent;
+    width: 100%;
+    padding: 1px 2px;
+    outline: none;
+  }
+  input[type="text"]:focus { border-bottom: 1.5px solid #d95f2b; background: #f1efe9; }
+  input[type="checkbox"] {
+    width: 15px; height: 15px;
+    accent-color: #171816;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  .inline-chk { white-space: nowrap; margin-right: 12px; }
+  .short { width: 70px !important; display: inline-block; }
+  .mid { width: 150px !important; display: inline-block; }
+  /* ---------- Info block ---------- */
+  .info-grid { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .info-grid td {
+    padding: 5px 8px;
+    border: 0.6pt solid #d8d4cb;
+    font-size: 9.5pt;
+    vertical-align: bottom;
+  }
+  .info-grid .lbl {
+    color: #171816; font-weight: 600; white-space: nowrap;
+    width: 1%; background: #f1efe9;
+  }
+  /* ---------- Section titles ---------- */
+  h2.section {
+    font-size: 11.5pt; font-weight: 700; color: #ffffff;
+    background: #171816; padding: 4px 10px; border-radius: 4px;
+    margin: 14px 0 6px 0;
+    break-after: avoid; page-break-after: avoid;
+  }
+  h2.section .num {
+    display: inline-block; background: #d95f2b; color: #ffffff;
+    border-radius: 3px; padding: 0 6px; margin-right: 7px; font-size: 10pt;
+  }
+  /* ---------- Checklist tables ---------- */
+  table.chk { width: 100%; border-collapse: collapse; }
+  table.chk thead { display: table-header-group; }
+  table.chk th {
+    font-size: 8.5pt; font-weight: 600; color: #171816;
+    background: #f1efe9; border: 0.6pt solid #d8d4cb;
+    padding: 3px 6px; text-align: center;
+  }
+  table.chk td { border: 0.6pt solid #e0ddd5; padding: 3.5px 6px; vertical-align: middle; }
+  table.chk tr { break-inside: avoid; page-break-inside: avoid; }
+  td.item { width: auto; }
+  td.box { width: 38px; text-align: center; }
+  td.note { width: 140px; }
+  .hint { color: #77746c; font-size: 8.5pt; }
+  tr.done td.item { color: #8a877f; }
+  tr.fix { background: #faeade; }
+  /* ---------- Panels ---------- */
+  .twocol { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .twocol td.col { vertical-align: top; }
+  .panel {
+    border: 0.6pt solid #d8d4cb; border-radius: 5px;
+    padding: 8px 10px; background: #f6f4ef;
+  }
+  .panel h3 { font-size: 10pt; color: #171816; margin: 0 0 4px 0; }
+  .panel ul { margin: 0; padding-left: 16px; }
+  .panel li { margin-bottom: 2px; }
+  .footer-brand {
+    margin-top: 16px; padding-top: 8px;
+    border-top: 2px solid #d95f2b;
+    font-size: 8.5pt; color: #77746c;
+  }
+  /* ---------- Progress ---------- */
+  .progress-wrap { margin-top: 10px; font-size: 9pt; color: #171816; }
+  .progress-bar {
+    height: 8px; background: #e6e3db; border-radius: 4px;
+    overflow: hidden; margin-top: 3px;
+  }
+  .progress-fill { height: 100%; width: 0%; background: #d95f2b; border-radius: 4px; }
+  @media screen and (max-width: 720px) {
+    body { font-size: 10.5pt; }
+    .article-nav { margin-bottom: 18px; }
+    .toolbar { padding: 0 20px 18px; }
+    .toolbar button { flex: 1 1 180px; }
+    .toolbar .tip { flex-basis: 100%; }
+    .sheet { width: 100%; padding: 22px 16px 48px; }
+    .cover-band { padding: 18px 16px 16px; }
+    .cover-band h1 { font-size: 19pt; }
+    .info-grid,.info-grid tbody,.info-grid tr,.info-grid td { display: block; width: 100%; }
+    .info-grid tr { display: grid; grid-template-columns: minmax(96px, .85fr) minmax(0, 1.5fr); }
+    .info-grid td { min-width: 0; min-height: 42px; }
+    .info-grid td[colspan] { grid-column: 2; }
+    .info-grid .inline-chk { white-space: normal; }
+    .info-grid .mid { max-width: 100%; }
+    .twocol,.twocol tbody,.twocol tr,.twocol td.col { display: block; width: 100% !important; }
+    .twocol td.col { padding: 0 0 10px !important; }
+    table.chk,table.chk tbody { display: block; width: 100%; }
+    table.chk thead { display: none; }
+    table.chk tr { display: grid; grid-template-columns: 64px 64px minmax(0,1fr); margin-bottom: 10px; border: .6pt solid #d8d4cb; background: #fff; }
+    table.chk td { border: 0; }
+    table.chk td.item { grid-column: 1 / -1; width: auto; padding: 12px 12px 10px; border-bottom: .6pt solid #e0ddd5; }
+    table.chk td.box { width: auto; min-height: 58px; padding: 7px 4px; text-align: center; }
+    table.chk td.note { width: auto; padding: 7px 10px; }
+    table.chk td.box::before,table.chk td.note::before { display: block; margin-bottom: 4px; color: #77746c; font-size: 7.5pt; }
+    table.chk td.box:nth-of-type(2)::before { content: "ผ่าน"; }
+    table.chk td.box:nth-of-type(3)::before { content: "แก้ไข"; }
+    table.chk td.note::before { content: "หมายเหตุ"; text-align: left; }
+    .panel { padding: 12px 14px; }
+  }
+  /* ---------- Print ---------- */
+  @media print {
+    body { background: #ffffff; }
+    .sheet { max-width: none; padding: 0; }
+    .toolbar { display: none; }
+    input[type="text"] { border-bottom: 1px dotted #a8a49b; background: transparent !important; }
+    input[type="checkbox"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h2.section, table.chk th, .cover-band, .info-grid .lbl, .progress-fill, tr.fix {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="article-nav" aria-label="Article navigation">
+  <a class="article-brand" href="/">ARSTINLA<small>Design &amp; Consult</small></a>
+  <a class="article-back" href="/#knowledge">← Knowledge</a>
+</nav>
+
+<div class="toolbar">
+  <button class="btn-print" type="button" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+  <button class="btn-clear" type="button" onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
+  <span class="tip">ข้อมูลที่กรอกจะถูกบันทึกในเบราว์เซอร์เครื่องนี้โดยอัตโนมัติ ปิดหน้าแล้วเปิดใหม่ข้อมูลยังอยู่</span>
+</div>
+
+<div class="sheet">
+
+<div class="cover-band">
+  <p class="kicker">BEFORE HANDOVER • INTERACTIVE CHECKLIST</p>
+  <h1>เช็คลิสต์ตรวจรับคอนโดด้วยตัวเอง</h1>
+  <p class="sub">คู่มือตรวจรับห้องชุดก่อนโอนกรรมสิทธิ์ 12 หมวด สำหรับเจ้าของห้อง — ไม่จำเป็นต้องมีความรู้ด้านช่าง</p>
+</div>
+
+<table class="info-grid">
+  <tr>
+    <td class="lbl">โครงการ / อาคาร</td><td><input type="text" data-k="project"></td>
+    <td class="lbl">ชั้น / ห้องเลขที่</td><td><input type="text" data-k="unit"></td>
+  </tr>
+  <tr>
+    <td class="lbl">แบบห้อง / พื้นที่</td><td><input type="text" data-k="model"></td>
+    <td class="lbl">ทิศระเบียง</td><td><input type="text" data-k="facing"></td>
+  </tr>
+  <tr>
+    <td class="lbl">วันที่ตรวจ</td><td><input type="text" data-k="date"></td>
+    <td class="lbl">ตรวจครั้งที่</td>
+    <td>
+      <label class="inline-chk"><input type="checkbox" data-k="r1"> 1</label>
+      <label class="inline-chk"><input type="checkbox" data-k="r2"> 2</label>
+      <label class="inline-chk"><input type="checkbox" data-k="r3"> 3</label>
+    </td>
+  </tr>
+  <tr>
+    <td class="lbl">ผู้ตรวจ</td><td><input type="text" data-k="inspector"></td>
+    <td class="lbl">เจ้าหน้าที่โครงการ</td><td><input type="text" data-k="staff"></td>
+  </tr>
+</table>
+
+<div class="progress-wrap">
+  ความคืบหน้าการตรวจ: <b><span id="prog-text">0 / 0 รายการ</span></b>
+  <div class="progress-bar" id="prog-bar" role="progressbar" aria-label="ความคืบหน้าการตรวจ" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="prog-fill"></div></div>
+</div>
+
+<table class="twocol">
+  <tr>
+    <td class="col" style="width:50%; padding-right:5px;">
+      <div class="panel">
+        <h3>อุปกรณ์ที่ควรเตรียม</h3>
+        <ul>
+          <li>ไฟฉาย — ส่องใต้ซิงก์ ใต้อ่าง ช่องเซอร์วิสฝ้า</li>
+          <li>ไขควงวัดไฟ หรือปลั๊กทดสอบไฟ — เช็กเต้ารับทุกจุด</li>
+          <li>ที่ชาร์จโทรศัพท์ — ทดสอบว่าเต้ารับจ่ายไฟได้จริง</li>
+          <li>ตลับเมตร — วัดขนาดห้อง ระเบียง ช่องตู้เย็น/เครื่องซักผ้า</li>
+          <li>ลูกแก้ว / ลูกปิงปอง — เช็กความลาดของพื้นระเบียงและห้องน้ำ</li>
+          <li>เหรียญหรือด้ามไขควง — เคาะหากระเบื้องโพรง</li>
+          <li>ถังหรือขวดน้ำ — ทดสอบการระบายน้ำตามจุดต่าง ๆ</li>
+          <li>แปลนห้อง สัญญาจะซื้อจะขาย และรายการเฟอร์นิเจอร์/เครื่องใช้ไฟฟ้าที่แถม</li>
+          <li>เทปกาวสี / สติกเกอร์ — มาร์กจุด Defect ให้ช่างเห็นชัด</li>
+        </ul>
+      </div>
+    </td>
+    <td class="col" style="width:50%; padding-left:5px;">
+      <div class="panel">
+        <h3>ข้อแนะนำก่อนเริ่มตรวจ</h3>
+        <ul>
+          <li>อ่านสัญญาและรายการวัสดุ (Spec) รวมถึงของแถมที่ระบุในสัญญาก่อนไปตรวจ</li>
+          <li>นัดช่วงกลางวัน ขอให้เปิดไฟและน้ำในห้องพร้อมใช้งาน</li>
+          <li>ไปอย่างน้อย 2 คน — คนหนึ่งตรวจ อีกคนจดและถ่ายรูป</li>
+          <li>ถ่ายรูปทุกจุดพร้อมติดเทปมาร์ก เลขห้องให้เห็นในภาพบางรูป</li>
+          <li>ตรวจอย่างน้อย 2 รอบ: รอบแรกทำ Defect List รอบสองตรวจซ้ำหลังแก้</li>
+          <li>ถ้าพื้นที่ห้องจริงต่างจากสัญญา ให้คุยเรื่องปรับราคาตามสัญญาก่อนวันโอน</li>
+          <li>ยังไม่เซ็นรับมอบจนกว่าจะแก้ครบ และเก็บ Defect List ที่เซ็นทั้งสองฝ่าย</li>
+        </ul>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<h2 class="section"><span class="num">1</span>ประตูทางเข้าห้องและโถงหน้าห้อง</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">ประตูหน้าห้องเปิด–ปิดสนิท ไม่ฝืด ไม่ครูดพื้น ไม่มีรอยบุบหรือรอยขีดข่วน</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">โช้คอัพปิดประตูทำงาน ประตูปิดเองได้สนิท <span class="hint">(ประตูหนีไฟ/กันไฟต้องปิดเองได้)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">กลอนประตู / Digital Door Lock ใช้ได้ทุกโหมด ได้รหัสหรือคีย์การ์ดครบตามจำนวน</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ตาแมว ป้ายเลขห้อง กริ่งหน้าห้อง ทำงานปกติ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ขอบวงกบและบัวประตู ยาแนว/ซิลิโคนเรียบร้อย ไม่มีช่องแสงลอด</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">2</span>พื้นภายในห้อง</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">กระเบื้องไม่แตก บิ่น หรือร้าว รอยต่อยาแนวเต็ม แนวตรงสม่ำเสมอ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">เคาะกระเบื้องทั่วห้องไม่มีเสียงโพรง <span class="hint">(เคาะด้วยเหรียญหรือด้ามไขควง)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">พื้นลามิเนต/ไม้ ไม่โก่ง ไม่ยวบ ไม่มีเสียงดังเวลาเดิน ไม่มีร่องห่าง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">บัวพื้นติดแน่น ไม่หลุดร่อน ไม่มีช่องว่างระหว่างบัวกับผนัง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ระดับพื้นเรียบสม่ำเสมอ ไม่มีจุดนูนหรือแอ่ง <span class="hint">(วางลูกแก้วดูทิศทางกลิ้ง)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">พื้นไม่มีคราบปูน สี หรือรอยขีดข่วนลึกจากการก่อสร้าง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">3</span>ผนังและฝ้าเพดาน</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">ผนังไม่มีรอยร้าว สีเรียบ ไม่ด่าง ไม่มีคราบหรือรอยมือ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ไม่มีรอยน้ำซึม คราบเชื้อรา หรือสีพองบนผนังที่ติดห้องน้ำ ระเบียง และผนังภายนอก</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ฝ้าเพดานเรียบ ไม่มีรอยต่อแตก ไม่ยุบตัว ไม่มีคราบน้ำ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ช่องเซอร์วิสฝ้า (Access Panel) เปิดได้ ส่องดูด้านบนไม่มีน้ำรั่วจากท่อ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">หัวสปริงเกอร์และเครื่องตรวจจับควัน ไม่ถูกทาสีทับ ไม่ชำรุด</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">4</span>ประตูภายใน หน้าต่าง และกระจก</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">ประตูห้องนอน/ห้องน้ำ เปิด–ปิดคล่อง ลูกบิดและกลอนล็อกได้จริง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ประตูบานเลื่อนระเบียงเลื่อนลื่น ไม่ตกราง ล็อกได้แน่น</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">กระจกไม่มีรอยร้าว รอยขีดข่วน หรือคราบปูนติด</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ซีลยางและซิลิโคนรอบบานกระจกเต็ม ไม่ฉีกขาด <span class="hint">(ทดลองฉีดน้ำที่ระเบียงดูการรั่วซึมเข้าห้อง)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">มุ้งลวด/ม่าน/ราวม่าน (ถ้ามีตามสัญญา) ติดตั้งครบ ใช้งานได้</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">5</span>ระเบียง</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">พื้นระเบียงลาดลงท่อระบายน้ำ ราดน้ำแล้วไม่มีน้ำขังเป็นแอ่ง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ท่อระบายน้ำ (Floor Drain) ไม่อุดตัน มีตะแกรงปิด</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ราวกันตกแข็งแรง ไม่โยก สูงอย่างน้อย 1.10 ม. ช่องห่างระหว่างซี่ไม่กว้างเกินไป <span class="hint">(สำคัญมากถ้ามีเด็ก)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ตำแหน่งคอยล์ร้อนแอร์วางมั่นคง มีที่ว่างระบายความร้อน ท่อน้ำทิ้งต่อลงท่อ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ขอบประตูระเบียงไม่มีน้ำย้อนเข้าห้องเมื่อราดน้ำ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">6</span>ห้องน้ำ</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">พื้นห้องน้ำลาดลงจุดระบาย ฝั่งอาบน้ำไม่ไหลออกมาฝั่งแห้ง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ก๊อก ฝักบัว สายฉีด น้ำไหลแรงพอ ไม่มีน้ำหยดเมื่อปิด</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">เครื่องทำน้ำอุ่นทำงาน มีเบรกเกอร์กันดูด (ELCB/RCBO) กดปุ่มทดสอบแล้วตัดไฟได้</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ชักโครกกดน้ำได้ปกติ น้ำไม่ไหลซึมตลอด ไม่โยกคลอน ซิลิโคนรอบฐานเรียบร้อย</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ใต้อ่างล้างหน้าไม่มีน้ำซึมจากข้อต่อ ท่อน้ำทิ้งมีที่ดักกลิ่น</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ฉากกั้นอาบน้ำ/บานกระจก ยึดแน่น ซิลิโคนเต็ม ไม่มีน้ำรั่วออกด้านนอก</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">พัดลมดูดอากาศทำงาน ไม่มีเสียงดังผิดปกติ ไม่มีกลิ่นท่อย้อนขึ้นมา</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">กระจกเงา ที่ใส่สบู่ ราวแขวนผ้า ติดตั้งแน่นหนาครบตามสัญญา</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">7</span>ครัวและเฟอร์นิเจอร์บิลท์อิน</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">บานตู้และลิ้นชัก เปิด–ปิดได้ตรง บานพับไม่หย่อน ไม่ครูดกัน</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ท็อปเคาน์เตอร์ไม่แตก ไม่บิ่น รอยต่อกับผนังยาแนวเรียบร้อย</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ซิงก์ล้างจาน ก๊อกน้ำ และท่อน้ำทิ้งใต้ซิงก์ไม่รั่วซึม <span class="hint">(เปิดน้ำทิ้งไว้สักพักแล้วส่องไฟฉายดู)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">เตาไฟฟ้า/เตาอินดักชัน และเครื่องดูดควันทำงานทุกระดับ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ตู้เสื้อผ้า ราวแขวน ชั้นวาง ติดตั้งครบและแข็งแรง ไม่มีกลิ่นอับหรือเชื้อรา</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ช่องวางตู้เย็น/เครื่องซักผ้า มีขนาดพอ มีเต้ารับ ก๊อกน้ำ และท่อน้ำทิ้งพร้อม</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">8</span>ระบบไฟฟ้าและสื่อสาร</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">ตู้ไฟ (Load Center) มีป้ายระบุวงจรครบ เบรกเกอร์ไม่ร้อนหรือมีกลิ่นไหม้</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">เบรกเกอร์กันดูด (RCBO) ในตู้ไฟ กดปุ่ม TEST แล้วตัดไฟได้จริง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">เต้ารับทุกจุดมีไฟ และมีสายดิน <span class="hint">(เสียบที่ชาร์จหรือใช้ปลั๊กทดสอบ)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">สวิตช์และหลอดไฟทุกดวงเปิด–ปิดได้ ไม่กะพริบ ฝาครอบไม่บิ่น</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">จุดต่อทีวี อินเทอร์เน็ต (LAN/Fiber) และอินเตอร์คอมใช้งานได้</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ตำแหน่งเต้ารับตรงตามแปลน — หัวเตียง โต๊ะทำงาน ทีวี ครัว</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">9</span>เครื่องปรับอากาศและเครื่องใช้ไฟฟ้า</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">แอร์ทุกเครื่องเปิดแล้วเย็นภายใน 10–15 นาที ไม่มีเสียงดังหรือสั่นผิดปกติ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">แอร์ไม่มีน้ำหยดจากคอยล์เย็น ท่อน้ำทิ้งไม่รั่วตามแนวผนัง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">รีโมตแอร์ครบทุกเครื่อง เบรกเกอร์แอร์แยกวงจร</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">เครื่องใช้ไฟฟ้าที่แถมตามสัญญา (ตู้เย็น ทีวี เครื่องซักผ้า ไมโครเวฟ) ครบ ใช้งานได้ ไม่มีรอยบุบ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">10</span>ระบบประปาและระบายน้ำ</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">ปิดก๊อกน้ำทุกจุดแล้วดูมิเตอร์น้ำ — ตัวเลขต้องไม่หมุน <span class="hint">(ถ้าหมุนแปลว่ามีท่อรั่ว)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">แรงดันน้ำเพียงพอทุกจุด แม้เปิดพร้อมกัน 2–3 ก๊อก</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ท่อระบายน้ำทุกจุดระบายเร็ว ไม่มีน้ำเอ่อหรือเสียงอากาศผิดปกติ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ไม่มีกลิ่นเหม็นย้อนจากท่อระบายพื้น <span class="hint">(ถ้ามีกลิ่น ต้องให้ติดตั้งที่ดักกลิ่น)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">11</span>ระบบความปลอดภัยและพื้นที่ส่วนกลาง</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">เครื่องตรวจจับควันและสปริงเกอร์ในห้องติดตั้งครบ <span class="hint">(สอบถามรอบทดสอบระบบดับเพลิงของอาคาร)</span></td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">รู้ตำแหน่งบันไดหนีไฟใกล้ห้อง ประตูหนีไฟไม่ถูกล็อกหรือมีของกีดขวาง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">คีย์การ์ดเข้าอาคาร ลิฟต์ และที่จอดรถใช้งานได้ ได้จำนวนครบตามสิทธิ์</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ที่จอดรถ (ถ้ามีสิทธิ์จองหรือแบบประจำ) ตรงตามที่ตกลง ตู้จดหมายมีกุญแจ</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ส่วนกลางที่สัญญาระบุ (ฟิตเนส สระว่ายน้ำ สวน ห้องขยะ) เปิดใช้งานได้จริง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<h2 class="section"><span class="num">12</span>เอกสารและวันรับมอบ / วันโอน</h2>
+<table class="chk">
+  <thead><tr><th style="text-align:left;">รายการตรวจ</th><th>ผ่าน</th><th>แก้ไข</th><th style="text-align:left;">หมายเหตุ</th></tr></thead>
+  <tr><td class="item">รายการแก้ไข (Defect List) ครั้งก่อนแก้ครบทุกข้อ ก่อนเซ็นรับมอบห้อง</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">พื้นที่ห้องชุดตามหนังสือกรรมสิทธิ์ห้องชุด (อ.ช.2) ตรงกับสัญญา ถ้าต่างกันให้ปรับราคาตามเงื่อนไขในสัญญา</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ได้รับใบรับประกันห้อง งานระบบ และเครื่องใช้ไฟฟ้า พร้อมระยะเวลาและช่องทางแจ้งซ่อม</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ได้รับกุญแจ คีย์การ์ด รีโมต และคู่มือการใช้งานอุปกรณ์ครบถ้วน</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">ทราบค่าส่วนกลางรายเดือน เงินกองทุนอาคาร และค่าใช้จ่ายวันโอนที่ต้องเตรียมชัดเจน</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+  <tr><td class="item">จดเลขมิเตอร์น้ำ–ไฟ ณ วันรับมอบ พร้อมถ่ายรูปเก็บไว้</td><td class="box"></td><td class="box"></td><td class="note"></td></tr>
+</table>
+
+<table class="info-grid" style="margin-top:14px;">
+  <tr>
+    <td class="lbl">สรุปผลการตรวจ</td>
+    <td colspan="3">
+      <label class="inline-chk"><input type="checkbox" data-k="pass"> ผ่าน พร้อมรับมอบ</label>
+      <label class="inline-chk"><input type="checkbox" data-k="hasfix"> มีรายการแก้ไข จำนวน <input type="text" class="short" data-k="fixcount"> รายการ</label>
+      — นัดตรวจซ้ำวันที่ <input type="text" class="mid" data-k="nextdate">
+    </td>
+  </tr>
+  <tr>
+    <td class="lbl">ลงชื่อผู้ตรวจ</td><td><input type="text" data-k="sign1"></td>
+    <td class="lbl">ลงชื่อเจ้าหน้าที่โครงการ</td><td><input type="text" data-k="sign2"></td>
+  </tr>
+</table>
+
+<p class="footer-brand">
+เอกสารนี้จัดทำเพื่อเป็นแนวทางเบื้องต้นสำหรับผู้ซื้อห้องชุดในการตรวจรับคอนโดด้วยตัวเอง หากพบรอยร้าวหรือน้ำรั่วซึมที่สงสัยว่ามาจากโครงสร้างหรือระบบส่วนกลางของอาคาร ควรปรึกษาสถาปนิกหรือวิศวกรผู้เชี่ยวชาญเพิ่มเติม<br>
+ดาวน์โหลดเครื่องมือฟรีเพิ่มเติมได้ที่ <b>www.arstinla.com</b>
+</p>
+
+</div><!-- /sheet -->
+
+<script>
+(function () {
+  var STORAGE_KEY = 'arstinla-condo-checklist-v1';
+
+  // ---- inject checkboxes into ผ่าน/แก้ไข cells and text inputs into หมายเหตุ cells ----
+  var rows = document.querySelectorAll('table.chk tr');
+  var itemIndex = 0;
+  rows.forEach(function (tr) {
+    var boxes = tr.querySelectorAll('td.box');
+    var note = tr.querySelector('td.note');
+    if (boxes.length === 2) {
+      var i = itemIndex++;
+      var itemCell = tr.querySelector('td.item');
+      var itemText = itemCell ? itemCell.textContent.trim() : 'รายการตรวจ ' + (i + 1);
+      boxes[0].innerHTML = '<input type="checkbox" data-k="p' + i + '" data-role="pass">';
+      boxes[1].innerHTML = '<input type="checkbox" data-k="f' + i + '" data-role="fix">';
+      if (note) note.innerHTML = '<input type="text" data-k="n' + i + '">';
+      boxes[0].firstChild.setAttribute('aria-label', 'ผ่าน: ' + itemText);
+      boxes[1].firstChild.setAttribute('aria-label', 'แก้ไข: ' + itemText);
+      if (note) note.firstChild.setAttribute('aria-label', 'หมายเหตุ: ' + itemText);
+      // ผ่าน กับ แก้ไข เลือกได้อย่างเดียว
+      var cbPass = boxes[0].firstChild, cbFix = boxes[1].firstChild;
+      cbPass.addEventListener('change', function () { if (this.checked) { cbFix.checked = false; } paintRow(tr); saveAll(); updateProgress(); });
+      cbFix.addEventListener('change', function () { if (this.checked) { cbPass.checked = false; } paintRow(tr); saveAll(); updateProgress(); });
+    }
+  });
+  var totalItems = itemIndex;
+
+  function paintRow(tr) {
+    var p = tr.querySelector('input[data-role="pass"]');
+    var f = tr.querySelector('input[data-role="fix"]');
+    tr.classList.toggle('done', !!(p && p.checked));
+    tr.classList.toggle('fix', !!(f && f.checked));
+  }
+
+  function updateProgress() {
+    var checked = document.querySelectorAll('input[data-role="pass"]:checked, input[data-role="fix"]:checked').length;
+    var pct = totalItems ? Math.round(checked / totalItems * 100) : 0;
+    var t = document.getElementById('prog-text');
+    var b = document.getElementById('prog-fill');
+    var progress = document.getElementById('prog-bar');
+    if (t) t.textContent = checked + ' / ' + totalItems + ' รายการ (' + pct + '%)';
+    if (b) b.style.width = pct + '%';
+    if (progress) progress.setAttribute('aria-valuenow', pct);
+  }
+
+  // ---- autosave (ทำงานเมื่อเปิดจากเว็บไซต์/ไฟล์ในเบราว์เซอร์ปกติ) ----
+  function saveAll() {
+    try {
+      var data = {};
+      document.querySelectorAll('input[data-k]').forEach(function (el) {
+        data[el.getAttribute('data-k')] = (el.type === 'checkbox') ? el.checked : el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) { /* storage ไม่พร้อมใช้งาน — ข้ามไป */ }
+  }
+
+  function loadAll() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      document.querySelectorAll('input[data-k]').forEach(function (el) {
+        var k = el.getAttribute('data-k');
+        if (!(k in data)) return;
+        if (el.type === 'checkbox') { el.checked = !!data[k]; }
+        else { el.value = data[k] || ''; }
+      });
+      document.querySelectorAll('table.chk tr').forEach(paintRow);
+    } catch (e) { /* ข้ามไป */ }
+  }
+
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.matches('input[data-k]')) { saveAll(); }
+  });
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.matches('input[data-k]')) { saveAll(); }
+  });
+
+  window.clearAll = function () {
+    if (!confirm('ล้างข้อมูลที่กรอกทั้งหมดหรือไม่?')) return;
+    document.querySelectorAll('input[data-k]').forEach(function (el) {
+      if (el.type === 'checkbox') el.checked = false; else el.value = '';
+    });
+    document.querySelectorAll('table.chk tr').forEach(paintRow);
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    updateProgress();
+  };
+
+  loadAll();
+  updateProgress();
+})();
+</script>
+
+</body>
+</html>
