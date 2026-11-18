@@ -4028,8 +4028,8 @@ window.ARSTINLA_PROJECT_CATEGORY_ORDER = {
   "residential": [
     "03",
     "04",
-    "39",
     "49",
+    "39",
     "46",
     "45",
     "02",
