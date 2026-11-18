@@ -4033,8 +4033,8 @@ window.ARSTINLA_PROJECT_CATEGORY_ORDER = {
     "45",
     "02",
     "01",
-    "29",
     "46",
+    "29",
     "32",
     "34"
   ],
