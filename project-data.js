@@ -4034,8 +4034,8 @@ window.ARSTINLA_PROJECT_CATEGORY_ORDER = {
     "02",
     "01",
     "29",
-    "32",
     "46",
+    "32",
     "34"
   ],
   "tiny-house": [
